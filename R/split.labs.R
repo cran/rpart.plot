@@ -127,10 +127,10 @@ paste.split.labs <- function(frame, split.var.names, lsplit, rsplit,
     # the heart of this function
 
     labs  <- paste0(split.prefix, left.names[parent], lsplit[parent], split.suffix)
-    labs[1] <- "root" # was NA
+    labs[1] <- "root" # was NA NA
     labs[is.right] <- paste0(right.split.prefix,
                              right.names[parent],
                              rsplit[parent],
                              right.split.suffix)[is.right]
-    clean.exponent(labs)
+    labs
 }

@@ -1,7 +1,7 @@
 # get.layout.R
 
 get.layout <- function(obj, type, nn, fallen.leaves, branch,
-    uniform, edge, cex, auto.cex, compress, ycompress,
+    uniform, Margin, cex, auto.cex, compress, ycompress,
     trace, main, sub,
     node.labs, node.font, node.family, box.col, border.col,
     under.font, under.cex,
@@ -23,9 +23,9 @@ get.layout <- function(obj, type, nn, fallen.leaves, branch,
         split.vec[is.leaf] <- vec[is.leaf]
         split.vec
     }
-    get.strheight <- function(x, y, s, edge, cex, font, family)
+    get.strheight <- function(x, y, s, Margin, cex, font, family)
     {
-        init.plot(x, y, edge, FALSE, FALSE, main, sub, 0, 1, 0, 1)
+        init.plot(x, y, Margin, FALSE, FALSE, main, sub, 0, 1, 0, 1)
         strwidth <- my.strheight(s, cex, font, family)
         par(new=TRUE)
         strwidth
@@ -50,7 +50,7 @@ get.layout <- function(obj, type, nn, fallen.leaves, branch,
         if(is.fancy(type)) {
             node.boxes <- get.boxes("default", node.labs, x, y,
                 xmax, ymax, nodes, branch,
-                edge, FALSE, FALSE, main, sub, 0, 1, 0, 1,
+                Margin, FALSE, FALSE, main, sub, 0, 1, 0, 1,
                 scale * node.cex, node.font, node.family, node.adj,
                 node.yshift, box.col, border.col,
                 node.space + gap/2, node.yspace + ygap/2,
@@ -58,7 +58,7 @@ get.layout <- function(obj, type, nn, fallen.leaves, branch,
 
             left.boxes <- get.boxes("left", split.labs, x, y,
                 xmax, ymax, nodes, branch,
-                edge, FALSE, FALSE, main, sub, 0, 1, 0, 1,
+                Margin, FALSE, FALSE, main, sub, 0, 1, 0, 1,
                 scale * node.cex * split.cex, split.font, split.family, split.adj,
                 split.yshift, split.box.col, split.border.col,
                 split.space + gap/2, split.yspace + ygap/2,
@@ -67,7 +67,7 @@ get.layout <- function(obj, type, nn, fallen.leaves, branch,
 
             right.boxes <- get.boxes("right", right.split.labs, x, y,
                 xmax, ymax, nodes, branch,
-                edge, FALSE, FALSE, main, sub, 0, 1, 0, 1,
+                Margin, FALSE, FALSE, main, sub, 0, 1, 0, 1,
                 scale * node.cex * split.cex, split.font, split.family, split.adj,
                 split.yshift, split.box.col, split.border.col,
                 split.space + gap/2, split.yspace + ygap/2,
@@ -84,7 +84,7 @@ get.layout <- function(obj, type, nn, fallen.leaves, branch,
         } else {
             node.boxes <- get.boxes("default", node.labs, x, y,
                 xmax, ymax, nodes, branch,
-                edge, FALSE, FALSE, main, sub, 0, 1, 0, 1,
+                Margin, FALSE, FALSE, main, sub, 0, 1, 0, 1,
                 scale * node.cex, node.font, node.family, node.adj,
                 node.yshift, box.col, border.col,
                 node.space + gap/2, node.yspace + ygap/2,
@@ -95,7 +95,7 @@ get.layout <- function(obj, type, nn, fallen.leaves, branch,
                 if(type == TYPE.all.under) "undersplit" else "default",
                 split.labs, x, y,
                 xmax, ymax, nodes, branch,
-                edge, FALSE, FALSE, main, sub, 0, 1, 0, 1,
+                Margin, FALSE, FALSE, main, sub, 0, 1, 0, 1,
                 scale * node.cex * split.cex, split.font, split.family, split.adj,
                 split.yshift, split.box.col, split.border.col,
                 split.space + gap/2, split.yspace + ygap/2,
@@ -439,7 +439,7 @@ get.layout <- function(obj, type, nn, fallen.leaves, branch,
         ymax <- new.ymax <- 1
         while(TRUE) {
             strheight1 <- get.strheight(xmax, new.ymax, "M",
-                                        edge, max.cex, font1, family1)
+                                        Margin, max.cex, font1, family1)
             # TODO fix type1 handling, although works ok most of the time
             type1 <- type
             if(type == TYPE.fancy.all)

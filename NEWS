@@ -1,6 +1,12 @@
 Changes to the rpart.plot package
 ---------------------------------
 
-1.1-0    Feb 25, 2011
+1.1-0    Mar 5, 2011
 
-Initial release
+    The prp.pdf file is now smaller, thanks to qpdf.
+    Made several miscellaneous touch-ups to docs and code.
+    Thanks to Jason Roberts for his feedback.
+
+1.0-0    Feb 25, 2011
+
+    Initial release

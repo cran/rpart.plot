@@ -55,7 +55,7 @@ get.anova.labs <- function(x, extra, under, digits, xsep, varlen)
     if(extra >= 100) {   # add percent?
         sep <- if(extra == 100) newline else "  "
         labs <- sprintf("%s%s%s%%", labs, sep,
-                        formatf(100 * frame$wt / frame$wt[1], digits=digits-2))
+                        formatf(100 * frame$wt / frame$wt[1], digits=max(0, digits-2)))
     }
     labs
 }
@@ -145,7 +145,7 @@ get.class.labs <- function(x, extra, under, digits, xsep, varlen)
                       "\n")                       # 9
 
         labs <- sprintf("%s%s%s%%", labs, sep,
-                        formatf(100 * frame$wt / frame$wt[1], digits=digits-2))
+                        formatf(100 * frame$wt / frame$wt[1], digits=max(0, digits-2)))
     }
     labs
 }
@@ -171,7 +171,7 @@ get.poisson.labs <- function(x, extra, under, digits, xsep, varlen)
 
     if(extra >= 100)        # add percent?
         labs <- sprintf("%s%s%s%%", labs, newline,
-                        formatf(100 * frame$wt / frame$wt[1], digits=digits-2))
+                        formatf(100 * frame$wt / frame$wt[1], digits=max(0, digits-2)))
     labs
 }
 # check returned labs because split.fun or node.fun may be user supplied

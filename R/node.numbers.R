@@ -1,7 +1,7 @@
 # node.numbers.R
 
 draw.node.numbers <- function(nn, ni, draw.shadow, type, branch,
-    edge, xflip, yflip, cex,
+    Margin, xflip, yflip, cex,
     main, sub, col.main, cex.main, col.sub, cex.sub,
     xlim, ylim, node.xy, is.leaf, nodes,
     node.labs, font,  family, box.col, border.col, shadow.col,
@@ -53,7 +53,7 @@ draw.node.numbers <- function(nn, ni, draw.shadow, type, branch,
     }
     box <- get.boxes("default", all.labs, node.xy$x, node.xy$y,
                      xlim, ylim, nodes, branch,
-                     edge, xflip, yflip, main, sub,
+                     Margin, xflip, yflip, main, sub,
                      col.main, cex.main, col.sub, cex.sub,
                      all.cex, all.font, all.family, all.adj,
                      all.yshift, box.col, border.col,
@@ -62,7 +62,7 @@ draw.node.numbers <- function(nn, ni, draw.shadow, type, branch,
                      do.init.plot=FALSE)
 
     if(is.null(nn.cex)) # auto cex?
-        nn.cex <- .8 * min(all.cex, .8)
+        nn.cex <- .7 * min(all.cex)
     strheight1 <- my.strheight("M", cex=nn.cex, font=nn.font, family=nn.family)
     x <- (box$x2 + box$x1) / 2
     if(ni) # ni's look better with a bit more whitespace
@@ -82,7 +82,7 @@ draw.node.numbers <- function(nn, ni, draw.shadow, type, branch,
     boxes <- draw.boxes("default", draw.shadow,
                nodes, list(x=x, y=y),  
                xlim, ylim, nodes, branch,
-               edge, xflip, yflip, main, sub,
+               Margin, xflip, yflip, main, sub,
                col.main, cex.main, col.sub, cex.sub,
                nn.cex, nn.font, nn.family, nn.adj, nn.yshift,
                nn.box.col, nn.border.col,

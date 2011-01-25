@@ -1,6 +1,6 @@
 \name{rpart.plot}
 \alias{rpart.plot}
-\title{Plot an rpart model.}
+\title{Plot an \code{rpart} model.}
 \description{
 Plot an \code{\link{rpart}} model.
 This function combines and extends \code{\link{plot.rpart}} and \code{\link{text.rpart}}
@@ -9,6 +9,7 @@ It automatically scales and adjusts the displayed tree for best fit.
 
 This is a front end to \code{\link{prp}},
 with the most useful arguments of that function.
+See \url{../doc/prp.pdf} for an overview.
 }
 \usage{
 rpart.plot(x=stop("no 'x' arg"),
@@ -96,7 +97,7 @@ For an overview of the other arguments see \url{../doc/prp.pdf}.
 
      \code{+100} Add \code{100} to any of the above to also display
                  the percentage of observations in the node.
-                 For example \code{use.n=101} displays the number
+                 For example \code{extra=101} displays the number
                  and percentage of observations in the node.
                  Actually, it's a weighted percentage
                  using the \code{weights} passed to \code{rpart}.\cr
@@ -129,27 +130,26 @@ For an overview of the other arguments see \url{../doc/prp.pdf}.
   \item{uniform}{
     If \code{TRUE} (the default), the vertical spacing of the nodes is uniform.
     If \code{FALSE}, the nodes are spaced proportionally to the fit
-    (more precisely, to the difference between a node's deviance and the sum of its children's deviances).
+    (more precisely, to the difference between a node's deviance and the sum of its two children's deviances).
     Small spaces must be expanded to leave room for the labels.
     Note: \code{uniform=FALSE} with \code{cex=NULL} (the default)
     can sometimes cause very small text.
   }
   \item{digits}{
-     The number of significant digits in displayed numbers (actually only a
-     suggestion, see \code{\link{format}} for details).
+     The number of significant digits in displayed numbers.
      Default \code{2}.
      If \code{0}, use \code{\link{getOption}("digits")}.
-     Note: Probabilities and percentages are treated specially.
-     Probabilities are displayed with \code{digits} digits after the decimal point
-     (by default 2 digits).
-     Percentages are displayed with \code{digits-2} digits after the decimal point
-     (by default no digits).
+     Details:
+     Numbers from \code{0.001} to \code{9999} are printed without an exponent
+     (and the number of digits is actually only a suggestion,
+     see \code{\link{format}} for details).
+     Otherwise an ``engineering'' exponent is used (a multiple of 3).
   }
   \item{varlen}{
      Length of variable names in text at the splits
-     (and, for class responses, the class displayed at the node).
+     (and, for class responses, the class in the node label).
      Default \code{-8}, meaning truncate to eight characters.
-     Three possibilities:\cr
+     Possible values:\cr
      =0 use full names.\cr
      >0 call \code{\link{abbreviate}} with the given \code{varlen}.\cr
      <0 truncate variable names to the shortest length where they are still unique,
@@ -158,7 +158,7 @@ For an overview of the other arguments see \url{../doc/prp.pdf}.
   }
   \item{faclen}{
      Length of factor level names in splits.
-     Default \code{3}, meaning abbreviate to three characters.
+     Default \code{3}, meaning \code{\link{abbreviate}} to three characters.
      Possible values are as \code{varlen} above, except that
      \code{1} is treated specially, meaning
      represent the factor levels with alphabetic characters
@@ -166,31 +166,28 @@ For an overview of the other arguments see \url{../doc/prp.pdf}.
   }
   \item{cex}{
      Default \code{NULL}, meaning calculate the text size automatically.
-     The default automatic calculation
-     means that this seemingly innocuous argument has a far reaching effect.
-     If necessary it will trigger the node shifting engine
-     to get a decent type size (see \code{ycompress}).
   }
   \item{tweak}{
      Adjust the (possibly automatically calculated) \code{cex}.
      Default \code{1}, meaning no adjustment.
-     Use say \code{tweak=1.1} to make the text 10\% larger.
+     Use say \code{tweak=1.2} to make the text 20\% larger.
      Note that font sizes are discrete, so the \code{cex} you ask for
      may not be the \code{cex} you get.
      And a small tweak may not actually change the type size
      or change it more than you want.
   }
   \item{compress}{
-     Default \code{TRUE}, meaning compress the tree horizontally
+     If \code{TRUE} (the default), make more space
      by shifting nodes horizontally where space is available.
+     This often allows larger text.
      (This is the same as \code{plot.rpart}'s argument of the same name,
      except that here the default is \code{TRUE}.)
   }
   \item{ycompress}{
-     If \code{TRUE} (the default unless \code{uniform=FALSE})
-     and the initial automatically calculated \code{cex} is less than \code{0.7},
-     shift crowded labels vertically where space is available.
-     This often allows considerably larger text.
+     If \code{TRUE} (the default unless \code{uniform=FALSE}),
+     make more space by shifting labels vertically where space is available.
+     Actually, this only kicks in
+     if the initial automatically calculated \code{cex} is less than \code{0.7}.
      Use \code{ycompress=FALSE} if you feel the resulting display is too messy.
      In the current implementation, the shifting algorithm
      works a little better (allowing larger text)

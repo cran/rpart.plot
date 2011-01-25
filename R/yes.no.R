@@ -8,10 +8,10 @@ draw.yes.no <- function(type, draw.shadow,
     nn.border.col, nn.lty, nn.round, bg)
 {
     if(is.null(nn.cex)) # auto cex?
-        nn.cex <- max(.8 * split.cex, .5)
-    # 1.4 for white space aound the text
-    height1 <- 1.4 * my.strheight("yes", nn.cex, nn.font, nn.family)
-    width1  <- 1.4 * my.strwidth("yes", nn.cex, nn.font, nn.family)
+        nn.cex <- .8 * min(split.cex)
+    # 1.5 for white space aound the text
+    height1 <- 1.5 * my.strheight("yes", nn.cex, nn.font, nn.family)
+    width1  <- 1.5 * my.strwidth("yes", nn.cex, nn.font, nn.family)
     xleft  <- split.boxes$x1[1] # horiz posn of left text
     xright <- split.boxes$x2[1] # horiz posn of right text
 
@@ -32,6 +32,7 @@ draw.yes.no <- function(type, draw.shadow,
                       nn.border.col
                   else
                       c(bg, bg)
+
     if(is.invisible(border.col, bg) && is.invisible(split.shadow.col, bg)) { # no border?
         split.shadow.col <- 0    # no shadow if no border
         height1 <- height1 / 1.3 # just small space around box so branch lines not blocked
@@ -70,7 +71,10 @@ draw.yes.no <- function(type, draw.shadow,
         left.msg <- "yes"
         right.msg <- "no"
     }
-    text(xcenter, y, left.msg,
+    # The .15 height adjustment is because the driver centers the "yes" accounting for
+    # the descender on "y", so must adjust to get "yes" and "no" at approx. same height.
+    height <- my.strheight("no", nn.cex, nn.font, nn.family)
+    text(xcenter, y - .15 * height, left.msg,
          cex=nn.cex[1], font=nn.font[1], family=nn.family[1], col=nn.col[1])
     xcenter <- (xright + .2 * width1 + xright + 1.2 * width1) / 2
     text(xcenter, y, right.msg,

@@ -8,7 +8,7 @@ ititanic <- ptitanic
 ititanic$survived <- as.integer(ititanic$survived == "survived")
 
 if(!interactive())
-    postscript(paper="letter")
+    postscript(paper="letter", fonts=c("Helvetica", "NewCenturySchoolbook"))
 
 example(rpart.plot)
 example(prp)
@@ -16,20 +16,29 @@ print(citation("rpart.plot"))
 
 # test format0 and formatf
 
-x <- c(1234567890, 1234567, 123456, 12345, 1234, 123, 12.34, 12, 1.67, 1.2345,
-       0.12345, 0.012345, 0.0012345, 0.00012345, 0.00000012345, 0,
-       -1234567890, -12.34, -1.2345, -0.12345, -0.00000012345,
-       NA, Inf, -Inf)
+x <- c(1.2345, 1.6, 1.23456, 12.345, 124.56,
+       123, 123.456789012345, 1234, 9999, 12345, 123456, 1.234e6, 1.234e7,
+       .123, .0123,
+       1, 1e1, 1e2, 1e3, 1e4, 1e5, 1e6,
+       1e-1, 1e-2, 1e-3, 1e-4, 1e-5, 1e-6,
+       .999, .999e1, .999e2, .999e3, .999e4, .999e5, .999e6,
+       .999e-1, .999e-2, .999e-3, .999e-4, .999e-5, .999e-6)
+
+x1 <- c(x, 1.2345e300, 1.2345e-300)
+
+x  <- c(NA, Inf, -Inf, 0, x, -x)
+x1 <- c(NA, Inf, -Inf, 0, x1, -x1)
 
 options(digits=7)
 
 cat("\n--- format0 ---\n")
-s4  <- rpart.plot:::format0(x, digits=4)
-s2  <- rpart.plot:::format0(x, digits=2)
-s1  <- rpart.plot:::format0(x, digits=1)
-s0  <- rpart.plot:::format0(x, digits=0)
-tab <- data.frame("digits=4"=s4, "digits=2"=s2, "digits=1"=s1, "digits=0"=s0, check.names=F)
-row.names(tab) <- format(x, digits=15)
+s4  <- rpart.plot:::format0(x1, digits=4)
+s2  <- rpart.plot:::format0(x1, digits=2)
+s1  <- rpart.plot:::format0(x1, digits=1)
+s0  <- rpart.plot:::format0(x1, digits=0)
+sm3 <- rpart.plot:::format0(x1, digits=-3)
+tab <- data.frame("digits=4"=s4, "digits=2"=s2, "digits=1"=s1, "digits=0"=s0, "digits=-3"=sm3, check.names=F)
+row.names(tab) <- format(x1, digits=15)
 print(tab)
 
 cat("\n--- formatf ---\n")
@@ -37,10 +46,8 @@ s4  <- rpart.plot:::formatf(x, digits=4)
 s2  <- rpart.plot:::formatf(x, digits=2)
 s1  <- rpart.plot:::formatf(x, digits=1)
 s0  <- rpart.plot:::formatf(x, digits=0)
-sm1 <- rpart.plot:::formatf(x, digits=-1)
-sm2 <- rpart.plot:::formatf(x, digits=-2)
 tab <- data.frame("digits=4"=s4, "digits=2"=s2, "digits=1"=s1, "digits=0"=s0,
-                  "digits=-1"=sm1, "digits=-2"=sm2, check.names=F)
+                  check.names=F)
 row.names(tab) <- format(x, digits=15)
 print(tab)
 
@@ -49,10 +56,8 @@ s4  <- rpart.plot:::formatf(x, digits=4, strip.leading.zeros=TRUE)
 s2  <- rpart.plot:::formatf(x, digits=2, strip.leading.zeros=TRUE)
 s1  <- rpart.plot:::formatf(x, digits=1, strip.leading.zeros=TRUE)
 s0  <- rpart.plot:::formatf(x, digits=0, strip.leading.zeros=TRUE)
-sm1 <- rpart.plot:::formatf(x, digits=-1, strip.leading.zeros=TRUE)
-sm2 <- rpart.plot:::formatf(x, digits=-2, strip.leading.zeros=TRUE)
 tab <- data.frame("digits=4"=s4, "digits=2"=s2, "digits=1"=s1, "digits=0"=s0,
-                  "digits=-1"=sm1, "digits=-2"=sm2, check.names=F)
+                  check.names=F)
 row.names(tab) <- format(x, digits=15)
 print(tab)
 
@@ -371,12 +376,18 @@ fit7 <- rpart(survived ~ ., data=ptitanic, cp=.01)
 prp(fit7, extra=1, branch=1, trace=3, nn=1, main="Page 9: more ycompress")
 
 par(mfrow=c(2,2))
-prp(fit2, prefix=ifelse(fit2$frame$yval > .5, "survived\n", "died\n"), main="Page 10: miscellaneous 1", trace=1)
+prp(fit2, prefix=ifelse(fit2$frame$yval > .5, "survived\n", "died\n"), main="Page 10: miscellaneous 1",
+    fam.main="NewCenturySchoolbook", cex.main=1.3, trace=1,
+    border.col=0, split.border.col="steelblue3")
+# test long names and big and small numbers
 ptitanic1 <- ptitanic
-ptitanic1$sibsp1234567890 <- ptitanic1$sibsp
+ptitanic1$sibsp1234567890 <- 1e3 * ptitanic1$sibsp
 ptitanic1$sibsp <- NULL
+ptitanic1$age <- 1e-5 * ptitanic1$age
+ptitanic1$parch <- 1e7 * ptitanic1$parch
 fit2 <- rpart(survived~., data=ptitanic1)
-prp(fit2, faclen=0, digits=4, trace=1)
+prp(fit2, faclen=0, digits=4, trace=1,
+    border.col=NA, split.border.col="steelblue3", split.round=1)
 
 # test small tree, also tests xcompact and ycompact
 fit.small <- rpart(survived~., data=ptitanic1, , control=list(cp=.1))
@@ -484,7 +495,7 @@ prp(a5, extra=102, type=4, under=TRUE, xsep="/", main="extra=102\ntype=4", trace
 a7 <- rpart(survived~., data=ptitanic, control=list(cp=.02))
 par(mfrow=c(2, 2))
 # test many parameters, and their vectorization
-prp(a7, main="Page 17: many params, prefix, suffix, etc.", edge=.03,
+prp(a7, main="Page 17: many params, prefix, suffix, etc.", Margin=.03,
     extra=4, under=T, prefix="res:", suffix=" (probs)", split.suffix="\n\nabc", faclen=0, trace=3,
     nn=1,
     under.col=c(2,3), under.font=c(3,2), under.ygap=c(.2,-.2), under.cex=c(1.1, .8),

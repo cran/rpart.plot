@@ -105,7 +105,7 @@ do.snip <- function(obj, nodes, split.labels, node.xy, branch.xy,
     #--- do.snip starts here ---
     if(!dev.interactive()) { # can't proceed if output device is not the screen
         warning0("ignoring snip=TRUE for ", names(dev.cur())[1], " device")
-        return(obj=obj, snipped.nodes=NULL) # NOTE: return
+        return(list(obj=obj, snipped.nodes=NULL)) # NOTE: return
     }
     snipped.nodes <- do.mouse.snip()
     if(length(snipped.nodes) == 0)

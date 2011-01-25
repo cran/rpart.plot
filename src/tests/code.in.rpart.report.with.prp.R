@@ -187,7 +187,7 @@ if (use.prp) {
     prp(fit, branch=0, extra=T, uniform=F, main="Section 9b")
     prp(fit, branch=.4, uniform=T, compress=T, type=1, extra=T, main="Section 9c")
     # post.rpart is essentially:
-    prp(fit, uniform=T, branch=0.2, compress=T, edge=0.1, type=4, extra=T, under=T, main="Section 9d")
+    prp(fit, uniform=T, branch=0.2, compress=T, Margin=0.1, type=4, extra=T, under=T, main="Section 9d")
 } else {
     plot(fit, main="Section 9")
     text(fit)
@@ -202,7 +202,7 @@ if (use.prp) {
     text(fit, fancy=T, use.n=T)
 
     # post.rpart is essentially:
-    plot(fit, uniform=T, branch=0.2, compress=T, edge=0.1, main="Section 9d")
+    plot(fit, uniform=T, branch=0.2, compress=T, margin=0.1, main="Section 9d")
     text(fit, fancy=T, use.n=T)
 }
 

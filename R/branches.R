@@ -57,7 +57,7 @@ get.branch.widths <- function(obj, branch.type)
 draw.branches <- function(obj, branch.type, branch.col,
         branch.lty, branch.lwd, branch.fill, branch.tweak,
         node.labs, split.labs, node.xy, strheight,
-        type, branch, xflip, yflip, edge, space, yspace,
+        type, branch, xflip, yflip, Margin, space, yspace,
         cex, font, family, adj, box.col, border.col,
         under.cex, under.font, under.ygap,
         split.cex, split.font, split.family, split.adj, split.yshift,
@@ -201,7 +201,7 @@ draw.branches <- function(obj, branch.type, branch.col,
     is.leaf <- is.leaf(obj$frame)
     stopifnot(is.function(branch.type) ||
                 (is.numeric(branch.type) && length(branch.type) == 1))
-    wide.branches <- !identical(branch.type, 0)
+    wide.branches <- !is.na.or.zero(branch.type)
     if(wide.branches &&
             type != TYPE.default && type != TYPE.all && type != TYPE.all.under)
         stop0("branch.type=", branch.type, " is not yet supported with type=", type)
@@ -218,13 +218,13 @@ draw.branches <- function(obj, branch.type, branch.col,
     # we need the boxes for adjusting the branch positions
     node.boxes <- get.boxes("default",
         node.labs, node.xy$x, node.xy$y, xlim, ylim, nodes, branch,
-        edge, xflip, yflip, main, sub, col.main, cex.main, col.sub, cex.sub,
+        Margin, xflip, yflip, main, sub, col.main, cex.main, col.sub, cex.sub,
         cex, font, family, adj, yshift, box.col, border.col, space, yspace,
         ygap, bg, do.init.plot=FALSE, box.around.all.text=wide.branches)
 
     split.boxes <- get.boxes("default",
         split.labs, node.xy$x, node.xy$y, xlim, ylim, nodes, branch,
-        edge, xflip, yflip, main, sub, col.main, cex.main, col.sub, cex.sub,
+        Margin, xflip, yflip, main, sub, col.main, cex.main, col.sub, cex.sub,
         split.cex * cex, split.font, split.family, split.adj, split.yshift,
         split.box.col, split.border.col, split.space, split.yspace,
         ygap, bg, do.init.plot=FALSE, box.around.all.text=wide.branches)

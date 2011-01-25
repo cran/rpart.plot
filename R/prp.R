@@ -74,7 +74,7 @@ prp <- function(x=stop("no 'x' arg"),
     type=0, extra=0, under=FALSE, clip.right.labs=TRUE,
     nn=FALSE, ni=FALSE, yesno=TRUE,
     fallen.leaves=FALSE, branch=if(fallen.leaves) 1 else .2,
-    uniform=TRUE, left=TRUE, xflip=FALSE, yflip=FALSE, edge=0, space=1, gap=NULL,
+    uniform=TRUE, left=TRUE, xflip=FALSE, yflip=FALSE, Margin=0, space=1, gap=NULL,
     digits=2, varlen=-8, faclen=3,
     cex=NULL, tweak=1,
     compress=TRUE, ycompress=uniform,
@@ -101,13 +101,13 @@ prp <- function(x=stop("no 'x' arg"),
 
     nn.cex=NULL, nn.font=3, nn.family="", nn.col=1,
     nn.box.col=0, nn.border.col=nn.col,
-    nn.lty=1, nn.lwd=NULL, nn.round=.2,
+    nn.lty=1, nn.lwd=NULL, nn.round=.3,
 
     node.fun=internal.node.labs,
     split.fun=internal.split.labs,
     FUN=text,
 
-    nspace=branch, minbranch=.3, do.par=TRUE, add.labs=TRUE,
+    nspace=branch, minbranch=.3, do.par=TRUE, add.labs=TRUE, fam.main="",
     yshift=0, yspace=space, shadow.offset=.4,
 
     split.adj=NULL, split.yshift=0, split.space=space,
@@ -124,6 +124,25 @@ prp <- function(x=stop("no 'x' arg"),
     boxes.include.gap=FALSE,
     ...)
 {
+    check.dots <- function(dots) # check dots arguments, if any
+    {
+        legal.dots.args <- # they are legal if we have code to process them later
+            c("adj", "cex.main", "cex.sub", "col", "col.main", "col.sub", "family",
+              "font", "lty", "lwd", "main", "mar", "sub", "xlim", "xpd", "ylim")
+
+        if(length(dots) > 0) {
+            names <- names(dots)
+            pmatch <- pmatch(names, legal.dots.args, duplicates.ok=TRUE)
+            if(any(is.na(pmatch))) {
+                # report the first illegal arg
+                ibad <- (1:length(dots))[is.na(pmatch)]
+                stop0("prp: illegal argument \"", names[ibad][1], "\"")
+            }
+            duplicated <- duplicated(pmatch)
+            if(any(duplicated))
+                stop0("prp: duplicated argument \"", names[duplicated][1], "\"")
+        }
+    }
     merge1 <- function(vec, split.vec)
     {
         split.vec <- recycle(split.vec, nodes)
@@ -192,7 +211,7 @@ prp <- function(x=stop("no 'x' arg"),
             draw.boxes(if(is.fancy(type)) "left" else "default", draw.split.shadows1,
                    split.labs, node.xy, xlim, ylim,
                    nodes, branch,
-                   edge, xflip, yflip, main, sub,
+                   Margin, xflip, yflip, main, sub,
                    col.main, cex.main, col.sub, cex.sub,
                    split.cex * cex, split.font, split.family, split.adj, split.yshift,
                    split.box.col, split.border.col,
@@ -212,7 +231,7 @@ prp <- function(x=stop("no 'x' arg"),
                 draw.boxes("right", draw.split.shadows1,
                    right.split.labs, node.xy, xlim, ylim,
                    nodes, branch,
-                   edge, xflip, yflip, main, sub,
+                   Margin, xflip, yflip, main, sub,
                    col.main, cex.main, col.sub, cex.sub,
                    split.cex * cex, split.font, split.family, split.adj, split.yshift,
                    split.box.col, split.border.col,
@@ -230,7 +249,7 @@ prp <- function(x=stop("no 'x' arg"),
         node.boxes <- draw.boxes("default", draw.shadows1,
                    node.labs, node.xy, xlim, ylim,
                    nodes, branch,
-                   edge, xflip, yflip, main, sub,
+                   Margin, xflip, yflip, main, sub,
                    col.main, cex.main, col.sub, cex.sub,
                    cex, font, family, adj, yshift,
                    box.col, border.col,
@@ -255,7 +274,7 @@ prp <- function(x=stop("no 'x' arg"),
 
         if(nn || ni)
             draw.node.numbers(nn, ni, draw.shadows1, type, branch,
-                    edge, xflip, yflip, cex,
+                    Margin, xflip, yflip, cex,
                     main, sub, col.main, cex.main, col.sub, cex.sub,
                     xlim, ylim, node.xy, is.leaf, nodes,
                     node.labs, font,  family, box.col, border.col, shadow.col,
@@ -282,20 +301,14 @@ prp <- function(x=stop("no 'x' arg"),
     if(!inherits(x, "rpart"))
         stop0("the object passed to prp is not an rpart object")
 
-    # Get dots args.  The call to eval.parent is necessary to evaluate the
+    # Process dots args.  The call to eval.parent is necessary to evaluate the
     # call to say "c" when user does something like "xlim=c(0,2)". Note
     # also that we allow abbreviations by using say "dots$fo" instead of "dots$font".
     # TODO Is there a better way? This approach is fragile, we have to be
     #       extremely careful that abbreviation doesn't alias with other args.
 
-    legal.dots.args <- # they are legal if we have code to process them later
-        c("adj", "cex.main", "cex.sub", "col", "col.main", "col.sub", "family",
-          "font", "lty", "lwd", "main", "mar", "sub", "xlim", "xpd", "ylim")
     dots <- match.call(expand.dots=FALSE)$...
-    if(length(dots) > 0 && (any(no.match <- is.na(pmatch(names(dots), legal.dots.args))))) {
-        ibad <- (1:length(dots))[no.match]
-        stop0("prp: illegal argument \"", names(dots)[ibad[1]], "\"") # report the first illegal arg
-    }
+    check.dots(dots)
     adj      <- eval.parent(dots$adj);   if(is.null(adj))      adj      <- par("adj")
     cex.main <- eval.parent(dots$cex.m)
     cex.sub  <- eval.parent(dots$cex.s)
@@ -375,7 +388,7 @@ prp <- function(x=stop("no 'x' arg"),
     stopifnot(length(digits) == 1 && floor(digits) == digits && digits >= 0)
     if(digits == 0)
         digits <- getOption("digits")
-    if(!identical(branch.type, 0)) {
+    if(!is.na.or.zero(branch.type)) {
         branch <- if(branch > .5) 1 else 0
         ycompact <- FALSE # want branches to be as vertical as possible
     }
@@ -398,8 +411,8 @@ prp <- function(x=stop("no 'x' arg"),
         # Make the side margins small.
         # Retain the top edge for the main title but only if necessary.
         # Likewise the bottom edge for the subtitle.
-        # Note that family may change in my.get.strheight, so we on.exit it here.
-        init.plot(1, 1, edge, xflip, yflip, main, sub,
+        # Note that family may change in my.strheight and init.plot, so we on.exit it here.
+        init.plot(1, 1, Margin, xflip, yflip, main, sub,
                   col.main, cex.main, col.sub, cex.sub)
         par <- par("mar", "xpd", "family")
         on.exit(par(par))
@@ -462,7 +475,7 @@ prp <- function(x=stop("no 'x' arg"),
     split.yshift <- temp$split.yshift
 
     layout <- get.layout(obj, type, nn, fallen.leaves, branch,
-        uniform, edge, cex, auto.cex, compress, ycompress,
+        uniform, Margin, cex, auto.cex, compress, ycompress,
         trace, main, sub,
         node.labs, font, family, box.col, border.col,
         under.font, under.cex,
@@ -504,9 +517,9 @@ prp <- function(x=stop("no 'x' arg"),
     lwd <- recycle(cex * lwd, nodes)
 
     node.xy <- layout$node.xy
-    init.plot(xlim, ylim, edge, xflip, yflip, main, sub,
+    init.plot(xlim, ylim, Margin, xflip, yflip, main, sub,
               col.main, cex.main, col.sub, cex.sub,
-              cex=cex[1], trace=trace, hide.title=FALSE)
+              fam.main=fam.main, cex=cex[1], trace=trace, hide.title=FALSE)
     split.strwidth  <- my.strwidth("M", split.cex * cex, split.font, split.family)
     strheight <- my.strheight("M", cex, font, family)
     split.strheight <- my.strheight("M", split.cex * cex, split.font, split.family)
@@ -529,7 +542,7 @@ prp <- function(x=stop("no 'x' arg"),
     branch.xy <- draw.branches(obj, branch.type, branch.col,
                     branch.lty, branch.lwd,  branch.fill, branch.tweak,
                     node.labs, split.labs, node.xy, strheight,
-                    type, branch, xflip, yflip, edge, space, yspace,
+                    type, branch, xflip, yflip, Margin, space, yspace,
                     cex, font, family, adj, box.col, border.col,
                     under.cex, under.font, under.ygap,
                     split.cex, split.font, split.family, split.adj, split.yshift,
@@ -557,20 +570,21 @@ prp <- function(x=stop("no 'x' arg"),
               split.labs="", split.cex=split.cex, split.box=split.boxes))
 }
 init.plot <- function(x, y,
-                      edge, xflip, yflip, main, sub,
+                      Margin, xflip, yflip, main, sub,
                       col.main, cex.main, col.sub, cex.sub,
-                      cex=1, trace=0, hide.title=TRUE)
+                      fam.main="", cex=1, trace=0, hide.title=TRUE)
 {
     if(length(x) == 1)
         x <- c(0, x)
     if(length(y) == 1)
         y <- c(0, y)
-    xlim <- range(x) + diff(range(x)) * c(-edge, edge)
+    xlim <- range(x) + diff(range(x)) * c(-Margin, Margin)
     if(xflip)
         xlim <- rev(xlim)
-    ylim <- range(y) + diff(range(y)) * c(-edge, edge)
+    ylim <- range(y) + diff(range(y)) * c(-Margin, Margin)
     if(yflip)
         ylim <- rev(ylim)
+    old.family <- NA
     if(hide.title) {
         # need to plot main and sub to get screen layout that accounts
         # for their allotted space, but want them to be invisible
@@ -582,10 +596,14 @@ init.plot <- function(x, y,
             cex.sub <- max(.8, min(1.5 * cex, 1.2))
         if(!is.null(sub)) # hack to make subtitle visible with our do.par()
             sub <- paste(sub, "\n")
+        if(!identical(fam.main, ""))
+            old.family <- par(family=fam.main) # on.exit for this already set up in prp()
     }
     plot(0, 0, xlim=xlim, ylim=ylim, type="n", axes=FALSE, xlab="", ylab="",
          main=main, sub=sub,
          col.main=col.main, cex.main=cex.main, col.sub=col.sub, cex.sub=cex.sub)
+    if(!is.na(old.family))
+        par(family=old.family)
     if(trace >= 2) { # draw the grid and region boxes
         col <- "palegreen"
         # set xpd so grid lines stay in our region
@@ -725,13 +743,13 @@ get.node.coords <- function(obj, uniform, branch, compress,
 
 get.boxes <- function(boxtype,  # one of "default", "left", "right", "undersplit"
     labs, x, y, xlim, ylim, nodes, branch,
-    edge, xflip, yflip, main, sub, col.main, cex.main, col.sub,  cex.sub,
+    Margin, xflip, yflip, main, sub, col.main, cex.main, col.sub,  cex.sub,
     cex, font, family, adj, yshift, box.col, border.col, space, yspace,
     ygap, bg, do.init.plot=TRUE,
     box.around.all.text=TRUE)   # else box only around "in box" text i.e. text before \n\n
 {                               # TRUE when figuring out box spacing, FALSE when drawing boxes
     if(do.init.plot)
-        init.plot(xlim, ylim, edge, xflip, yflip, main, sub,
+        init.plot(xlim, ylim, Margin, xflip, yflip, main, sub,
                   col.main, cex.main, col.sub, cex.sub)
 
     # to minimize blanking out parts of the branch lines, we want only a
@@ -806,7 +824,7 @@ get.boxes <- function(boxtype,  # one of "default", "left", "right", "undersplit
 }
 draw.boxes <- function(fancy.style, draw.shadow, labs, xy,
                        xlim, ylim, nodes, branch,
-                       edge, xflip, yflip, main, sub,
+                       Margin, xflip, yflip, main, sub,
                        col.main, cex.main, col.sub, cex.sub,
                        cex, font, family, adj, yshift,
                        box.col, border.col,
@@ -816,7 +834,7 @@ draw.boxes <- function(fancy.style, draw.shadow, labs, xy,
                        small.underspace=FALSE, split.strwidth=0, split.strheight=0)
 {
     box <- get.boxes(fancy.style, labs, xy$x, xy$y, xlim, ylim, nodes, branch,
-                     edge, xflip, yflip, main, sub,
+                     Margin, xflip, yflip, main, sub,
                      col.main, cex.main, col.sub, cex.sub,
                      cex, font, family, adj,
                      yshift, box.col, border.col, space, yspace,

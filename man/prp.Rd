@@ -1,6 +1,6 @@
 \name{prp}
 \alias{prp}
-\title{Plot an rpart model.  A superset of \code{rpart.plot}.}
+\title{Plot an \code{rpart} model.  A superset of \code{rpart.plot}.}
 \description{
 Plot an \code{\link{rpart}} model.
 The arguments of this function are a superset of those of \code{\link{rpart.plot}}.
@@ -17,7 +17,7 @@ prp(x=stop("no 'x' arg"),
     nn=FALSE, ni=FALSE, yesno=TRUE,
     fallen.leaves=FALSE, branch=if(fallen.leaves) 1 else .2,
     uniform=TRUE, left=TRUE, xflip=FALSE, yflip=FALSE,
-    edge=0, space=1, gap=NULL,
+    Margin=0, space=1, gap=NULL,
     digits=2, varlen=-8, faclen=3,
     cex=NULL, tweak=1,
     compress=TRUE, ycompress=uniform,
@@ -44,13 +44,13 @@ prp(x=stop("no 'x' arg"),
 
     nn.cex=NULL, nn.font=3, nn.family="", nn.col=1,
     nn.box.col=0, nn.border.col=nn.col,
-    nn.lty=1, nn.lwd=NULL, nn.round=.2,
+    nn.lty=1, nn.lwd=NULL, nn.round=.3,
 
     node.fun=internal.node.labs,
     split.fun=internal.split.labs,
     FUN=text,
 
-    nspace=branch, minbranch=.3, do.par=TRUE, add.labs=TRUE,
+    nspace=branch, minbranch=.3, do.par=TRUE, add.labs=TRUE, fam.main="",
     yshift=0, yspace=space, shadow.offset=.4,
     split.adj=NULL, split.yshift=0, split.space=space,
     split.yspace=yspace, split.shadow.offset=shadow.offset,
@@ -133,7 +133,7 @@ prp(x=stop("no 'x' arg"),
 
      \code{+100} Add \code{100} to any of the above to also display
                  the percentage of observations in the node.
-                 For example \code{use.n=101} displays the number
+                 For example \code{extra=101} displays the number
                  and percentage of observations in the node.
                  Actually, it's a weighted percentage
                  using the \code{weights} passed to \code{rpart}.\cr
@@ -170,8 +170,8 @@ prp(x=stop("no 'x' arg"),
      Default \code{TRUE}, meaning write \code{yes} and \code{no} on the appropriate
      sides of the top split.
      Ignored if \code{type=3} or \code{4}.
-     Use \code{nn.col} and the other \code{nn} parameters
-     to change the color etc. of the \code{yesno} text.
+     (Use \code{nn.col} and the other \code{nn} parameters
+     to change the color etc. of the \code{yesno} text.)
   }
   \item{fallen.leaves}{
      Default \code{FALSE}. If \code{TRUE}, display the leaves at the bottom of the graph.
@@ -202,10 +202,10 @@ prp(x=stop("no 'x' arg"),
      Default \code{FALSE}. If \code{TRUE}, flip the tree vertically, so the root
      is at the bottom.
   }
-  \item{edge}{
+  \item{Margin}{
      Extra white space around the tree, as a fraction of the graph width.
      Default \code{0}, meaning no extra space.
-     To add say 10\% space around the tree use \code{edge=0.1}.
+     To add say 10\% space around the tree use \code{Margin=0.1}.
      (This is the \code{margin} argument of \code{plot.rpart}.
      The name was changed to prevent partial matching with \code{mar},
      which can be passed in as a \dots argument.)
@@ -214,25 +214,24 @@ prp(x=stop("no 'x' arg"),
      Minimum horizontal gap between the (possibly invisible) boxes, in character widths.
      Default \code{NULL}, meaning automatically choose a suitable value
      (normally \code{1}, but if the graph is very crowded will be set to \code{0},
-     permitting boxes to touch to allow a bigger \code{cex}.)
+     permitting boxes to touch to allow a bigger \code{cex}).
      See also \code{space}.
   }
   \item{digits}{
-     The number of significant digits in displayed numbers (actually only a
-     suggestion, see \code{\link{format}} for details).
+     The number of significant digits in displayed numbers.
      Default \code{2}.
      If \code{0}, use \code{\link{getOption}("digits")}.
-     Note: Probabilities and percentages are treated specially.
-     Probabilities are displayed with \code{digits} digits after the decimal point
-     (by default 2 digits).
-     Percentages are displayed with \code{digits-2} digits after the decimal point
-     (by default no digits).
+     Details:
+     Numbers from \code{0.001} to \code{9999} are printed without an exponent
+     (and the number of digits is actually only a suggestion,
+     see \code{\link{format}} for details).
+     Otherwise an ``engineering'' exponent is used (a multiple of 3).
   }
   \item{varlen}{
      Length of variable names in text at the splits
-     (and, for class responses, the class displayed at the node).
+     (and, for class responses, the class in the node label).
      Default \code{-8}, meaning truncate to eight characters.
-     Three possibilities:\cr
+     Possible values:\cr
      =0 use full names.\cr
      >0 call \code{\link{abbreviate}} with the given \code{varlen}.\cr
      <0 truncate variable names to the shortest length where they are still unique,
@@ -241,7 +240,7 @@ prp(x=stop("no 'x' arg"),
   }
   \item{faclen}{
      Length of factor level names in splits.
-     Default \code{3}, meaning abbreviate to three characters.
+     Default \code{3}, meaning \code{\link{abbreviate}} to three characters.
      Possible values are as \code{varlen} above, except that
      \code{1} is treated specially, meaning
      represent the factor levels with alphabetic characters
@@ -249,31 +248,28 @@ prp(x=stop("no 'x' arg"),
   }
   \item{cex}{
      Default \code{NULL}, meaning calculate the text size automatically.
-     The default automatic calculation
-     means that this seemingly innocuous argument has a far reaching effect.
-     If necessary it will trigger the node shifting engine
-     to get a decent type size (see \code{ycompress}).
   }
   \item{tweak}{
      Adjust the (possibly automatically calculated) \code{cex}.
      Default \code{1}, meaning no adjustment.
-     Use say \code{tweak=1.1} to make the text 10\% larger.
+     Use say \code{tweak=1.2} to make the text 20\% larger.
      Note that font sizes are discrete, so the \code{cex} you ask for
      may not be the \code{cex} you get.
      And a small tweak may not actually change the type size
      or change it more than you want.
   }
   \item{compress}{
-     Default \code{TRUE}, meaning compress the tree horizontally
+     If \code{TRUE} (the default), make more space
      by shifting nodes horizontally where space is available.
+     This often allows larger text.
      (This is the same as \code{plot.rpart}'s argument of the same name,
      except that here the default is \code{TRUE}.)
   }
   \item{ycompress}{
-     If \code{TRUE} (the default unless \code{uniform=FALSE})
-     and the initial automatically calculated \code{cex} is less than \code{0.7},
-     shift crowded labels vertically where space is available.
-     This often allows considerably larger text.
+     If \code{TRUE} (the default unless \code{uniform=FALSE}),
+     make more space by shifting labels vertically where space is available.
+     Actually, this only kicks in
+     if the initial automatically calculated \code{cex} is less than \code{0.7}.
      Use \code{ycompress=FALSE} if you feel the resulting display is too messy.
      In the current implementation, the shifting algorithm
      works a little better (allowing larger text)
@@ -286,8 +282,7 @@ prp(x=stop("no 'x' arg"),
   }
   \item{trace}{
      Default \code{FALSE}.
-     Use \code{TRUE} to print the automatically calculated \code{cex} and
-     related values.
+     Use \code{TRUE} to print the automatically calculated \code{cex}, \code{xlim}, and \code{ylim}.
      Use integer values greater than 1 for more detailed tracing.\cr
 
      \bold{The following control the node labels.}
@@ -320,8 +315,8 @@ prp(x=stop("no 'x' arg"),
   \item{shadow.col}{
      Color of the shadow under the boxes.
      Default \code{0}, no shadow.
-     Useful values are \code{shadow.col="gray"} or \code{shadow.col="darkgray"}.
-     (Overlapping shadows look better on devices that support \code{\link[=rgb]{alpha}} channels.
+     Try \code{"gray"} or \code{"darkgray"}.
+     (Note: overlapping shadows look better on devices that support \code{\link[=rgb]{alpha}} channels.
      If you get the message "Warning: semi-transparency is not supported" please let me know ---
      it means that a fix is needed to the code that determines if the device supports alpha channels.)
   }
@@ -333,18 +328,17 @@ prp(x=stop("no 'x' arg"),
   \item{suffix}{
      Default \code{""}.
      Append this string to the node labels.
-     Text after a double newline \code{"\\n\\n"} if any will be plotted \emph{under} the box.
+     Text after a double newline \code{"\\n\\n"} (if any) will be plotted \emph{under} the box.
      (Actually, double newlines can be used in any of the prefix or suffix
      arguments for this purpose.)
   }
   \item{xsep}{
      String which separates the individual counts and probabilities
-     in node labels when \code{extra > 0}.
+     in node labels when \code{extra>0}.
      Default NULL meaning automatically select: usually\cr
      \code{"  "} (two spaces), but \code{" / "} for rates.
      Use \code{xsep="/"} for compatibility with \code{text.rpart}.
-     See also \code{under}, which puts the extra text under the box,
-     and \code{facsep}, which separates the factor levels in split labels.\cr
+     See also \code{facsep}, which separates the factor levels in split labels.\cr
 
      \bold{The following control the text under the boxes} (apply only if
      \code{under=TRUE} or there is a double newline \code{\\n\\n} in \code{prefix} or \code{suffix}).
@@ -374,7 +368,8 @@ prp(x=stop("no 'x' arg"),
   }
   \item{split.family}{
      Font family for the split labels.
-     Default \code{""}.
+     Default \code{""},
+     or use something like \code{split.family="serif"}.
      (Note: use \code{family} to change the \emph{node} label text.)
   }
   \item{split.col}{
@@ -552,7 +547,7 @@ prp(x=stop("no 'x' arg"),
   }
   \item{nn.round}{
      Controls the rounding of the corners of the node number boxes.
-     Default \code{.2}, meaning small corners.
+     Default \code{.3}, meaning small corners.
      Else specify a value greater than or equal to \code{0}.\cr
 
      \bold{The following are user definable functions.}
@@ -609,6 +604,12 @@ prp(x=stop("no 'x' arg"),
   \item{add.labs}{
      Default \code{TRUE}, meaning display the labels.
      If \code{FALSE}, gives a bare bones display similar to \code{plot.rpart}.
+  }
+  \item{fam.main}{
+     Font family for the main text.  Default \code{""}.
+     The (inconsistent) name was chosen to minimize partial matching
+     with \code{main} and \code{family} which can be passed in as a
+     which can be passed in as \dots arguments.
   }
   \item{yshift}{
      Vertical position of the labels, in character heights relative to their default position.

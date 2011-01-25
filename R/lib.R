@@ -22,6 +22,12 @@ is.left <- function(nodes) nodes %% 2 == 0
 
 is.leaf <- function(frame) frame$var == "<leaf>"
 
+# We use identical() and not is.na() below because is.na(x) gives warnings
+# for certain x's, e.g if x is a function, and x == 0 gives warnings if x
+# is a vector or a function etc.
+
+is.na.or.zero <- function(x) identical(x, NA) || identical(x, 0)
+
 stopifnot.boolean <- function(b) # b==0 or b==1 is also ok
 {
     if(length(b) != 1 || !(is.logical(b) || is.numeric(b)) ||
@@ -34,7 +40,9 @@ stopifnot.boolean <- function(b) # b==0 or b==1 is also ok
               " argument is not FALSE or TRUE or 0 or 1 (see above print)")
     }
 }
-# Check that func is indeed a function and has the same args as the reference function.
+# Check that func is indeed a function and has the same args as 
+# the reference function.
+
 check.func.args <- function(func, func.name, ref.func)
 {
     if(is.null(func))
@@ -55,6 +63,7 @@ check.func.args <- function(func, func.name, ref.func)
 }
 # Return TRUE if col matches the background color
 # where "match" means if we plot the color we will not see it
+
 is.invisible <- function(col, bg)
 {
     all(col == bg | col == 0 | col == "transparent" | is.na(col))
@@ -108,30 +117,70 @@ my.strwidth <- function(s, cex=NULL, font=NULL, family="", units="user")
     }
     abs(width)
 }
-# Remove excess zeros from exponents, so 1e-02 becomes 1e-2 (the zero prefix
-# is seen only some architectures).  Also remove + sign from exponent if any.
-# This function will be confused by strings with +e0 or -e0 in unexpected places,
-# but works fine if you just pass it strings representing numbers.
+# formate converts the given number (could also be a vector of
+# numbers) to a string using engineering exponents (multiple of 3).
+# Numbers between smallest and largest will be printed by
+# format() without an exponent.
+# TODO test different values for smallest and largest
 
-clean.exponent <- function(string)
+formate <- function(x, digits=2, smallest=.001, largest=9999)
 {
-    string <- gsub("([0-9])e-0+([1-9])", "\\1e-\\2", string) # 1e-02 becomes 1e-2
-    gsub("([0-9])e[+]0([1-9])", "\\1e\\2",  string)          # 1e+02 becomes 1e2
+    formate1 <- function(x) # x is a scalar, convert it to eng notation
+    {
+        neg <- if(x < 0) "-" else ""
+        n <- 0
+        x <- abs(x)
+        if(x > 1) {
+            while(x / 10^n > 1)
+                n <- n + 3
+            n <- n - 3
+            x <- paste0(neg, format(x / 10^n, digits=digits), "e+", n)
+        } else { # x <= 1
+            while(x * 10^n < 1)
+                n <- n + 3
+            x <- paste0(neg, format(x * 10^n, digits=digits), "e-", n)
+        }
+        x
+    }
+    format1 <- function(x) {  # x is a scalar, apply appropriate formatting function
+        if(digits==0 || x == 0 || is.na(x) || is.infinite(x) ||
+                (abs(x) >= smallest && abs(x) <= largest))
+            format(x, digits=digits)
+        else
+            formate1(x)
+    }
+    # formate starts here
+    stopifnot(is.numeric(digits) && length(digits) == 1 && digits > 0)
+    stopifnot(is.numeric(x) && length(x) >= 1)
+    stopifnot(is.numeric(smallest) && length(smallest) == 1 && smallest <= .1)
+    stopifnot(is.numeric(largest)  && length(largest) == 1  && largest >= 100)
+    s <- sapply(x, format1)
+    gsub(" ", "", s) # remove spaces sometimes inserted by format
 }
 # format0 converts the given number (could also be a vector of
 # numbers) to a string in the following manner:
-# (i)  Calls format on each number individually, so no aggregation
-# (ii) Strips excess zeros from exponents: 1e-02 becomes 1e-2
 #
-# TODO if exponents are used (numbers greater than 1e5) then it would be nice
-# to print all numbers with the same exponent to facilitate comparison by eye.
-# Also, would be nice to use exponents that are multiples of 3 (engineering notation).
+# (i)    Each number is formatted individually, so no
+#        aggregation of widths etc.
+#
+# (ii)  If digits == 0 use options("digits")
+#
+# (iii) If digits < 0 use format()
+#
+#       If digits > 0 use exponents only for numbers not in range
+#       .001 to 9999, and use engineering exponents (multiple of 3)
+#
+# (iv) Strips excess zeros from exponents: 1e-02 becomes 1e-2.
 
 format0 <- function(x, digits=2)
 {
-    stopifnot(digits >= 0)
-    s <- sapply(x, format, digits=if(digits == 0) getOption("digits") else digits)
-    clean.exponent(s)
+    stopifnot(is.numeric(digits) && length(digits) == 1)
+    if(digits == 0)
+        digits <- getOption("digits")
+    if(digits >= 0)
+        formate(x, digits, smallest=.001, largest=9999)
+    else # digits < 0 TODO not documented on prp man page
+        sapply(x, format, digits=-digits)
 }
 # formatf converts the given number (could also be a vector of
 # numbers) to a string in the following manner:

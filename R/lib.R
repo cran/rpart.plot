@@ -40,7 +40,7 @@ stopifnot.boolean <- function(b) # b==0 or b==1 is also ok
               " argument is not FALSE or TRUE or 0 or 1 (see above print)")
     }
 }
-# Check that func is indeed a function and has the same args as 
+# Check that func is indeed a function and has the same args as
 # the reference function.
 
 check.func.args <- function(func, func.name, ref.func)
@@ -123,7 +123,7 @@ my.strwidth <- function(s, cex=NULL, font=NULL, family="", units="user")
 # format() without an exponent.
 # TODO test different values for smallest and largest
 
-formate <- function(x, digits=2, smallest=.001, largest=9999)
+formate <- function(x, digits=2, smallest=.001, largest=9999, strip.leading.zeros=FALSE)
 {
     formate1 <- function(x) # x is a scalar, convert it to eng notation
     {
@@ -155,7 +155,10 @@ formate <- function(x, digits=2, smallest=.001, largest=9999)
     stopifnot(is.numeric(smallest) && length(smallest) == 1 && smallest <= .1)
     stopifnot(is.numeric(largest)  && length(largest) == 1  && largest >= 100)
     s <- sapply(x, format1)
-    gsub(" ", "", s) # remove spaces sometimes inserted by format
+    s <- gsub(" ", "", s) # remove spaces sometimes inserted by format
+    if(strip.leading.zeros)
+        s <- gsub("^0\\.([0-9])", ".\\1", s) # 0.12 becomes .12, -0.12 doesn't change
+    s
 }
 # format0 converts the given number (could also be a vector of
 # numbers) to a string in the following manner:

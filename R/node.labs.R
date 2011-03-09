@@ -13,7 +13,9 @@ internal.node.labs <- function(x, node.fun, node.fun.name, type, extra,
             get.class.labs(x, extra, under, digits, xsep, varlen)
         else if(x$method == "poisson" || x$method == "exp")
             get.poisson.labs(x, extra, under, digits, xsep, varlen)
-        else if(x$method == "user") {
+        else if(x$method == "mrt")
+            get.mrt.labs(x, extra, under, digits, xsep, varlen)
+        else {
             check.func.args(x$functions$text, "x$functions$text",
                   function(yval, dev, wt, ylevel, digits, n, use.n) NA)
             labs <- x$functions$text(
@@ -24,9 +26,7 @@ internal.node.labs <- function(x, node.fun, node.fun.name, type, extra,
             if(under)
                 labs <- sub("\n", "\n\n", labs) # replace \n with \n\n
             labs
-        } else
-            stop0("rpart object has an unknown method \"", x$method, "\"")
-
+        }
     if(!identical(node.fun.name, "internal.node.labs")) { # call user's node.fun?
         check.func.args(node.fun, "node.fun",
                         function(x, labs, digits, varlen) NA)
@@ -98,13 +98,15 @@ get.class.labs <- function(x, extra, under, digits, xsep, varlen)
         prob.per.lev  <- prob.per.lev * scale / ntotal
     }
     if(is.null(xsep))
-        xsep <- "  "
+        xsep <- "  " # two spaces
     n.per.lev <- format0(n.per.lev, digits)
-    n.per.lev <- apply(matrix(n.per.lev, ncol=nlev), 1, paste, collapse=xsep)
+    n.per.lev <- apply(matrix(n.per.lev, ncol=nlev),
+                       1, paste.with.breaks, collapse=xsep)
     prob.per.lev <- formatf(prob.per.lev, digits,
                             strip.leading.zeros=print.all.probs)
     if(print.all.probs)
-        prob.per.lev <- apply(matrix(prob.per.lev, ncol=nlev), 1, paste, collapse=xsep)
+        prob.per.lev <- apply(matrix(prob.per.lev, ncol=nlev),
+                              1, paste.with.breaks, collapse=xsep)
 
     fitted <- # fitted level as a string
         if(is.null(ylevel <- attr(x, "ylevel")))
@@ -132,7 +134,7 @@ get.class.labs <- function(x, extra, under, digits, xsep, varlen)
             stop0("extra=", extra, " is illegal (for method=\"", x$method, "\")")
 
     if(extra >= 100) { # add percent?
-        sep <- switch(ex+1,
+        sep <- switch(ex+1,  # figure out where to put percent (same line? below? etc.)
                       newline,                    # 0 may be a double newline
                       "\n",                       # 1
                       "\n",                       # 2
@@ -174,6 +176,81 @@ get.poisson.labs <- function(x, extra, under, digits, xsep, varlen)
                         formatf(100 * frame$wt / frame$wt[1], digits=max(0, digits-2)))
     labs
 }
+# This extends the text() function in rpart.mrt.
+# Note that extra=0 and extra=1 are compatible with that function.
+# The following table shows allowable values for extra (and as always,
+# add 100 to include the percent).  My personal favorites are 107 and 111.
+#
+#    0   dev
+#    1   dev, n
+#    2   dev, yhat
+#    3   dev, yhat / sum(yhat)
+#    4   sqrt(dev)
+#    5   sqrt(dev), n
+#    6   sqrt(dev), yhat
+#    7   sqrt(dev), yhat / sum(yhat)
+#    8   predominant species
+#    9   predominant species, n
+#    10  predominant species, yhat
+#    11  predominant species, yhat / sum(yhat)
+
+get.mrt.labs <- function(x, extra, under, digits, xsep, varlen)
+{
+    frame <- x$frame
+    yval2 <- frame$yval2 # fit per species i.e. per column of response matrix y
+    nspecies <- ncol(yval2)
+    if(is.null(xsep))
+        xsep <- "  " # two spaces
+    ex <- if(extra < 100) extra else extra - 100
+    if(ex <= 3)
+        main <- formate(frame$dev, digits=digits)
+    else if(ex <= 7)
+        main <- formate(sqrt(frame$dev), digits=digits)
+    else {
+        stopifnot(all(!is.na(yval2))) # needed because which.max discards NAs
+        main <- apply(yval2, 1, which.max) # index of max in each row
+        # convert species number to species name, if the names are available
+        if(length(colnames(x$y)) == nspecies)
+            main <- colnames(x$y)[main]
+        main <- as.character(main)
+    }
+    if(ex == 3 || ex == 7 || ex == 11) # divide each row by its sum
+        for (i in 1:nrow(yval2))
+            yval2[i,] <- yval2[i,] / sum(yval2[i,])
+    resp.per.species <- formatf(yval2, digits, strip.leading.zeros=TRUE) # TODO use formate?
+    resp.per.species <- apply(matrix(resp.per.species, ncol=nspecies),
+                              1, paste.with.breaks, collapse=xsep)
+    newline <- if(under) "\n\n" else "\n"
+    labs <-
+        if(ex == 0 || ex == 4 || ex == 8)
+            main
+        else if(ex == 1 || ex == 5 || ex == 9)
+            sprintf("%s%sn=%s", main, newline, format0(frame$n, digits))
+        else if(ex == 2 || ex == 3 || ex == 6 || ex == 7 || ex == 10 || ex == 11)
+            paste0(main, newline, resp.per.species)
+        else
+            stop0("extra=", extra, " is illegal (for method=\"", x$method, "\")")
+
+    if(extra >= 100) { # add percent?
+        sep <- switch(ex+1,   # figure out where to put percent (same line? below? etc.)
+                      newline,  # 0 may be a double newline
+                      "  ",     # 1
+                      "\n",     # 2
+                      "\n",     # 3
+                      newline,  # 4
+                      "  ",     # 5
+                      "\n",     # 6
+                      "\n",     # 7
+                      newline,  # 8
+                      "  ",     # 9
+                      "\n",     # 10
+                      "\n")     # 11
+
+        labs <- sprintf("%s%s%s%%", labs, sep,
+                        formatf(100 * frame$wt / frame$wt[1], digits=max(0, digits-2)))
+    }
+    labs
+}
 # check returned labs because split.fun or node.fun may be user supplied
 check.returned.labs <- function(x, labs, fun.name)
 {
@@ -192,4 +269,33 @@ check.returned.labs <- function(x, labs, fun.name)
         print.and.stop("\nthe number ", length(labs),
             " of returned labels is not equal to the number of rows in frame ",
             nrow(x$frame))
+}
+# similar to paste but insert \n as necessary to break up long lines
+paste.with.breaks <- function(x, collapse)
+{
+    n.per.line <- 100
+    len <- length(x)
+    if(len >= 7) {
+        # want approximately equal number of values in each line
+        n.per.line <-
+            if     (len == 11)     6    # 6 numbers per line
+            else if(len == 9)      5
+            else if(len == 7)      4
+            else if(len %% 7 == 0) 7
+            else if(len %% 6 == 0) 6
+            else if(len %% 5 == 0) 5
+            else if(len %% 4 == 0) 4
+            else if(len %% 3 == 0) 6
+            else if(len %% 2 == 0) 6
+            else                   5
+    }
+    s <- ""
+    for(i in 1:len)
+        s <- if(i == len)
+                paste0(s, x[i])
+             else if(i %% n.per.line == 0)
+                paste0(s, x[i], "\n")
+             else
+                paste0(s, x[i], collapse)
+    s
 }

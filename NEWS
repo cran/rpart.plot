@@ -1,5 +1,10 @@
-Changes to the rpart.plot package
----------------------------------
+Changes to the rpart.plot
+-------------------------
+
+1.1-1    Mar 9, 2011
+    We now call the object's text() function unless it has the object
+    has a standard method
+    We now support mvpart::mrt objects
 
 1.1-0    Mar 5, 2011
 

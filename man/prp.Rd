@@ -138,11 +138,12 @@ prp(x=stop("no 'x' arg"),
                  Actually, it's a weighted percentage
                  using the \code{weights} passed to \code{rpart}.\cr
 
-    Note: Unlike \code{text.rpart},
+    Note 1: Unlike \code{text.rpart},
     by default \code{prp} uses its own routine for
     generating node  labels (not the function attached to the object).
     See \code{node.fun}.\cr
-
+    Note 2: mrt models (the \code{mvpart} package) are also supported. 
+    See \code{get.mrt.labs} in the source code.
   }
   \item{under}{
      Applies only if \code{extra > 0}.
@@ -557,9 +558,7 @@ prp(x=stop("no 'x' arg"),
      The default is \code{internal.node.labs},
      which specifies a function internal to \code{prp}.
      This is necessary for full support of \code{extra} as described
-     in the section on \code{extra} above.
-     (Except that if the \code{rpart} object's \code{method} is \code{"user"}, \code{prp}
-     invokes the function associated with the object, \code{object$functions$text}.)
+     in the section on \code{extra} above.\cr
      Otherwise set \code{node.fun} to your own function
      with the prototype
      \code{function(x, labs, digits, varlen)}.

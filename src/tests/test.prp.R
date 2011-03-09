@@ -398,7 +398,9 @@ fit4 <- rpart(survived~., data=ititanic, method="class", control=list(cp=.02))
 prp(fit4, trace=2, cex=.8, tweak=1.1, main="Page 11: miscellaneous 2, tweak",
        xflip=TRUE, yflip=TRUE, type=1, extra=100,  yesno=FALSE)
 # TODO wanna include family below, but postscript giving me grief
-prp(fit4, main="left=FALSE, fonts", left=FALSE, font=c(1,2,3), split.cex=c(1, 1.2), branch=.5, trace=1)
+fit4.strange.method <- fit4
+fit4.strange.method$method <- "unknown.method" # will call the default text() function, extra=99 treated as use.n=T
+prp(fit4.strange.method, main="left=FALSE, fonts, user method", left=FALSE, font=c(1,2,3), split.cex=c(1, 1.2), branch=.5, trace=1, extra=99)
 prp(fit4, main="uniform=FALSE", uniform=FALSE, trace=1)
 data(ozone1)
 fit.oz1 <- rpart(O3~., data=ozone1)
@@ -638,6 +640,27 @@ set.seed(1924)
 # source("code.in.rpart.report.with.prp.R")
 use.prp <- TRUE
 source("code.in.rpart.report.with.prp.R")
+
+# mvpart, must be last because it changes plot.rpart, text.rpart, etc.
+library(mvpart)
+data(spider)
+par(mfrow=c(3,3))
+a <- mvpart(data.matrix(spider[,1:12])~twigs+water,spider, legend=FALSE, all=TRUE)
+prp(a, fallen=T, branch=1, under=T, type=0, extra=0, main="mvpart page 1\nnresp=12, extra=0")
+prp(a, fallen=T, under=T, type=1, extra=2, main="nresp=12, extra=2, under=T", under.cex=1)
+a <- mvpart(data.matrix(spider[,1:3])~twigs+water,spider, legend=FALSE, all=TRUE)
+prp(a, under=T, type=1, extra=101, main="extra=101")
+prp(a, under=T, type=2, extra=102, main="extra=102")
+prp(a, under=T, type=4, extra=3,   main="extra=3, under=F")
+prp(a, under=T, type=1, extra=4,   main="extra=4")
+prp(a, under=T, type=1, extra=105, main="extra=105")
+
+prp(a, under=F, type=4, extra=106, main="mvpart page 2\nextra=106, under=F")
+prp(a, under=T, type=4, extra=107, main="extra=107")
+prp(a, under=T, type=1, extra=8,   main="extra=8")
+prp(a, under=F, type=2, extra=109, main="extra=109, under=F")
+prp(a, under=T, type=3, extra=110, main="extra=110")
+prp(a, under=T, type=4, extra=111, main="extra=111")
 
 if(!interactive()) {
     dev.off()         # finish postscript plot

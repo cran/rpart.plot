@@ -2,6 +2,7 @@
 @rem Stephen Milborrow Nov 2010 Gardens, Cape Town
 
 @echo === test.prp ===============================================
+time /T
 @"\PROGRA~1\R\R-2.12.0\bin\R.exe" CMD BATCH --quiet --vanilla test.prp.R
 @if %errorlevel% equ 0 goto good1:
 @echo error: R returned errorlevel %errorlevel%, see test.prp.Rout:
@@ -23,4 +24,5 @@ diffps Rplots.ps test.prp.save.ps
 :good3
 @rm -f test.prp.Rout
 @rm -f Rplots.ps
+time /T
 @exit /B  0

@@ -107,7 +107,8 @@ prp <- function(x=stop("no 'x' arg"),
     split.fun=internal.split.labs,
     FUN=text,
 
-    nspace=branch, minbranch=.3, do.par=TRUE, add.labs=TRUE, fam.main="",
+    nspace=branch, minbranch=.3, do.par=TRUE, 
+    add.labs=TRUE, clip.left.labs=FALSE, fam.main="",
     yshift=0, yspace=space, shadow.offset=.4,
 
     split.adj=NULL, split.yshift=0, split.space=space,
@@ -353,12 +354,13 @@ prp <- function(x=stop("no 'x' arg"),
     # errors here where possible before they cause an obscure message
     # later on.  But it is impossible to be exhaustive.
 
-    stopifnot(length(type) == 1 && floor(type) == type)
+    stopifnot(is.numeric(type) && length(type) == 1 && floor(type) == type)
     if(type < TYPE.default || type > TYPE.fancy.all)
         stop0("type must be ", TYPE.default, "...",
               TYPE.fancy.all, ", you have type=", type)
     stopifnot.boolean(under)
-    stopifnot.boolean(clip.right.labs)
+    stopifnot.boolean(clip.left.labs[1])
+    stopifnot.boolean(clip.right.labs[1])
     stopifnot.boolean(nn)
     stopifnot.boolean(ni)
     stopifnot.boolean(yesno)
@@ -385,7 +387,8 @@ prp <- function(x=stop("no 'x' arg"),
     stopifnot(branch >= 0 && branch <= 1)
     if(length(family) != 1 || length(split.family) != 1 || length(nn.family) != 1)
         stop0("prp: family argument must be length 1 (family cannot be vectorized)")
-    stopifnot(length(digits) == 1 && floor(digits) == digits && digits >= 0)
+    stopifnot(is.numeric(digits) && length(digits) == 1 &&
+              floor(digits) == digits && digits >= 0)
     if(digits == 0)
         digits <- getOption("digits")
     if(!is.na.or.zero(branch.type)) {
@@ -435,7 +438,7 @@ prp <- function(x=stop("no 'x' arg"),
                 deparse(substitute(split.fun)),
                 split.prefix, split.suffix,
                 right.split.prefix, right.split.suffix,
-                type, clip.right.labs, xflip, digits,
+                type, clip.left.labs, clip.right.labs, xflip, digits,
                 varlen, faclen, facsep, eq, lt, ge)
 
     if(is.fancy(type)) {

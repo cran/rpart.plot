@@ -70,7 +70,7 @@ For an overview of the other arguments see \url{../doc/prp.pdf}.
 
      \code{4} Class models:
               probability per class of observations in the node
-              (conditioned on the node, sum aross a node is 1).
+              (conditioned on the node, sum across a node is 1).
               % (One could argue that \code{2} should be the default value
               % for \code{class} models.)
               % For example, \code{.81 .19} means that of the observations in the node,
@@ -114,7 +114,7 @@ For an overview of the other arguments see \url{../doc/prp.pdf}.
      Use \code{TRUE} to put the text under the box.
   }
   \item{clip.right.labs}{
-     Deafult is \code{TRUE} meaing ``clip'' the right-hand split labels,
+     Default is \code{TRUE} meaning ``clip'' the right-hand split labels,
      i.e. do not print \code{variable=}.
      Applies only if \code{type=3} or \code{4}.
   }
@@ -228,7 +228,7 @@ old.par <- par(mfrow=c(2,2))
 
 rpart.plot(tree, main="default rpart.plot\n(type = 0, extra = 0)")
 
-prp(tree, main="type = 4,  extra = 6", type=4, extra=6, faclen=0)
+prp(tree, main="type = 4, extra = 6", type=4, extra=6, faclen=0)
                          # faclen=0 to print full factor names
 
 rpart.plot(tree, main="extra = 106,  under = TRUE", extra=106, under=TRUE, faclen=0)

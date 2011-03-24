@@ -15,7 +15,7 @@ cols <- c("#EE8888", "#EEEE88", "#88CC88")
 cols <- ifelse(y > 20, cols[1], ifelse(y < 15, cols[3], cols[2]))
 prp(a, main="[front] An Example",
     box.col=cols, type=4, fallen=T, branch=.3, round=0, leaf.round=9,
-    clip=F, under.cex=1,
+    clip.right.labs=F, under.cex=1,
     prefix="ozone\n", branch.col="gray", branch.lwd=2,
     extra=101, under=T, lt=" < ", ge=" >= ", cex.main=1.5)
 
@@ -68,10 +68,10 @@ prp(a, faclen=0, type=4, main="type = 4\nlike type=3 but with interior labels\n(
 #--- anova-extra.R ---
 
 a <- rpart(Volume~., data=trees, cp=.5)
-prp(a, clip=F, split.cex=.8, tweak=1.3, type=4, extra=0,   yesno=F, faclen=0, under=T, cex.main=1.3, main="[anova-extra] extra = 0\ndefault\n")
-prp(a, clip=F, split.cex=.8, tweak=1.3, type=4, extra=1,   yesno=F, faclen=0, under=T, cex.main=1.3, main="extra = 1\nnbr of obs\n")
-prp(a, clip=F, split.cex=.8, tweak=1.3, type=4, extra=100, yesno=F, faclen=0, under=T, cex.main=1.3, main="extra = 100\npercentage of obs\n")
-prp(a, clip=F, split.cex=.8, tweak=1.3, type=4, extra=101, yesno=F, faclen=0, under=T, cex.main=1.3, main="extra = 101\nnbr and percentage\nof obs")
+prp(a, clip.right.labs=F, split.cex=.8, tweak=1.3, type=4, extra=0,   yesno=F, faclen=0, under=T, cex.main=1.3, main="[anova-extra] extra = 0\ndefault\n")
+prp(a, clip.right.labs=F, split.cex=.8, tweak=1.3, type=4, extra=1,   yesno=F, faclen=0, under=T, cex.main=1.3, main="extra = 1\nnbr of obs\n")
+prp(a, clip.right.labs=F, split.cex=.8, tweak=1.3, type=4, extra=100, yesno=F, faclen=0, under=T, cex.main=1.3, main="extra = 100\npercentage of obs\n")
+prp(a, clip.right.labs=F, split.cex=.8, tweak=1.3, type=4, extra=101, yesno=F, faclen=0, under=T, cex.main=1.3, main="extra = 101\nnbr and percentage\nof obs")
 
 #--- class-extra.R ---
 

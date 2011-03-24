@@ -3,10 +3,10 @@
 split.labs.wrapper <- function(x, split.fun, split.fun.name,
                                split.prefix, split.suffix,
                                right.split.prefix, right.split.suffix,
-                               type, clip.right.labs, xflip, digits,
+                               type, clip.left.labs, clip.right.labs, xflip, digits,
                                varlen, faclen, facsep, eq, lt, ge)
 {
-    labs <- internal.split.labs(x, type, clip.right.labs, xflip,
+    labs <- internal.split.labs(x, type, clip.left.labs, clip.right.labs, xflip,
                                 digits, varlen, faclen, facsep, eq, lt, ge,
                                 split.prefix, right.split.prefix,
                                 split.suffix, right.split.suffix)
@@ -22,7 +22,7 @@ split.labs.wrapper <- function(x, split.fun, split.fun.name,
 }
 # Modified version of labels.rpart.
 # This uses format0 instead of formatg and has various other extensions.
-internal.split.labs <- function(x, type, clip.right.labs, xflip,
+internal.split.labs <- function(x, type, clip.left.labs, clip.right.labs, xflip,
                                 digits, varlen, faclen, facsep, eq, lt, ge,
                                 split.prefix, right.split.prefix,
                                 split.suffix, right.split.suffix)
@@ -33,13 +33,15 @@ internal.split.labs <- function(x, type, clip.right.labs, xflip,
     is.leaf <- is.leaf(frame)
     split.var.names <- frame$var[!is.leaf]  # variable names for the (primary) splits
     split.var.names <- as.character(split.var.names) # factor levels to character
+    clip.left.labs  <- recycle(clip.left.labs,  split.var.names)
+    clip.right.labs <- recycle(clip.right.labs, split.var.names)
 
     # isplit is the row index of the primary split in x$splits
     index <- cumsum(c(1, frame$ncompete + frame$nsurrogate + !is.leaf))
     isplit  <- index[c(!is.leaf, FALSE)]
 
     split <- get.lsplit.rsplit(x, isplit, split.var.names,
-                               type, clip.right.labs, xflip,
+                               type, clip.left.labs, clip.right.labs, xflip,
                                digits, faclen, facsep, eq, lt, ge)
 
     # We now have something like this:
@@ -48,12 +50,12 @@ internal.split.labs <- function(x, type, clip.right.labs, xflip,
     #    split$rsplit:      fml   <9.5    =1st       <2.5    =1st,2nd
 
     paste.split.labs(frame, split.var.names, split$lsplit, split$rsplit,
-                     type, clip.right.labs, xflip, varlen,
+                     type, clip.left.labs, clip.right.labs, xflip, varlen,
                      split.prefix, right.split.prefix,
                      split.suffix, right.split.suffix)
 }
 get.lsplit.rsplit <- function(x, isplit, split.var.names,
-                              type, clip.right.labs, xflip,
+                              type, clip.left.labs, clip.right.labs, xflip,
                               digits, faclen, facsep, eq, lt, ge)
 {
     frame <- x$frame
@@ -75,8 +77,9 @@ get.lsplit.rsplit <- function(x, isplit, split.var.names,
         crow <- x$splits[isplit[is.cat], "index"] # row number in csplit
         xlevels <- attr(x, "xlevels")
         cindex <- match(split.var.names, names(xlevels))[is.cat]
-        paste.left.eq  <- !is.fancy(type) || !clip.right.labs || !xflip
-        paste.right.eq <- !is.fancy(type) || !clip.right.labs || xflip
+        # decide if we must add a "=" prefix
+        paste.left.eq  <- !is.fancy(type) | (if(xflip) !clip.right.labs else !clip.left.labs)
+        paste.right.eq <- !is.fancy(type) | (if(xflip) !clip.left.labs  else !clip.right.labs)
         for(i in 1:length(jrow)) {
             node.xlevels <- my.abbreviate(xlevels[[cindex[i]]],
                                           faclen, one.is.special=TRUE)
@@ -87,10 +90,10 @@ get.lsplit.rsplit <- function(x, isplit, split.var.names,
             right <- (1:length(splits))[splits == 3]
             collapse <- if(faclen==1) "" else facsep
             lsplit[j] <- paste(node.xlevels[left],  collapse=collapse)
-            if(paste.left.eq)
+            if(paste.left.eq[i])
                 lsplit[j] <- paste0(eq, lsplit[j])
             rsplit[j] <- paste0(node.xlevels[right], collapse=collapse)
-            if(paste.right.eq)
+            if(paste.right.eq[i])
                 rsplit[j] <- paste0(eq, rsplit[j])
         }
     }
@@ -103,7 +106,7 @@ get.lsplit.rsplit <- function(x, isplit, split.var.names,
 #    rsplit:         fml   <9.5    =1st       <2.5    =1st,2nd
 
 paste.split.labs <- function(frame, split.var.names, lsplit, rsplit,
-                             type, clip.right.labs, xflip, varlen,
+                             type, clip.left.labs, clip.right.labs, xflip, varlen,
                              split.prefix, right.split.prefix,
                              split.suffix, right.split.suffix)
 {
@@ -113,11 +116,15 @@ paste.split.labs <- function(frame, split.var.names, lsplit, rsplit,
     parent <- match(nodes %/% 2, nodes[!is.leaf])
     split.var.names <- my.abbreviate(split.var.names, varlen)
     left.names <- right.names <- split.var.names
-    if(is.fancy(type) && clip.right.labs) {
+    if(is.fancy(type)) {
         if(xflip)
-            left.names <- recycle("", nodes)
+            right.names[clip.left.labs] <- ""
         else
-            right.names <- recycle("", nodes)
+            left.names[clip.left.labs] <- ""
+        if(xflip)
+            left.names[clip.right.labs] <- ""
+        else
+            right.names[clip.right.labs] <- ""
     }
     if(is.null(right.split.prefix))
         right.split.prefix <- split.prefix

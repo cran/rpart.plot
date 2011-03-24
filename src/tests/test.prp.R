@@ -421,7 +421,7 @@ prp(a1, extra=100, faclen=3,             digits=3,  type=4, clip.right.labs=FALS
 prp(a1, main="\n\nxflip",                xflip=TRUE,             extra=101, faclen=0, trace=1)
 prp(a1, main="type=4",                                type=4, extra=101, faclen=0, trace=1)
 prp(a1, main="xflip type=4",              xflip=TRUE, type=4, extra=101, faclen=0, trace=1)
-prp(a1, main="xflip type=4 clip=FALSE",   xflip=TRUE, type=4, extra=101, faclen=0, clip=FALSE, trace=1)
+prp(a1, main="xflip type=4 clip.right=FALSE",   xflip=TRUE, type=4, extra=101, faclen=0, clip.right=FALSE, trace=1)
 
 # test extra and faclen etc. on class model
 a2 <- rpart(survived~., data=ptitanic, control=list(cp=.02))
@@ -489,7 +489,7 @@ a5 <- rpart(y~.-O3-O3a, data=ozone2, control=list(cp=.04))
 par(mfrow=c(2, 3))
 plot(a5, unif=TRUE, branch=.3, main="Page 16: poisson\n"); text(a5, use.n=TRUE, all=T, digits=3, xpd=NA, cex=1.1)
 prp(a5, extra=0, digits=3, type=4, trace=1, main="extra=0\ntype=4")
-prp(a5, extra=1, type=4, clip=FALSE, under=TRUE, main="extra=1: nbr of events, nbr of obs\ntype=4", trace=1, under.cex=1)
+prp(a5, extra=1, type=4, clip.right=FALSE, under=TRUE, main="extra=1: nbr of events, nbr of obs\ntype=4", trace=1, under.cex=1)
 prp(a5, extra=2, trace=1, type=0, under=T, main="extra=2: nbr of events", under.cex=1)
 prp(a5, extra=102, type=4, under=TRUE, xsep="/", main="extra=102\ntype=4", trace=1, under.cex=1)
 
@@ -640,6 +640,22 @@ set.seed(1924)
 # source("code.in.rpart.report.with.prp.R")
 use.prp <- TRUE
 source("code.in.rpart.report.with.prp.R")
+
+# clip.left.labs and clip.right.labs
+par(mfrow=c(3,3))
+prp(tree, type=4, clip.left.labs=F, clip.right.labs=F, main="clip.left.labs=F, clip.right.labs=F")
+# prp(tree, type=4, clip.left.labs=F, clip.right.labs=T, main="clip.left.labs=F, clip.right.labs=T") #default
+prp(tree, type=3, clip.left.labs=T, clip.right.labs=F, main="clip.left.labs=T, clip.right.labs=F")
+prp(tree, type=3, clip.left.labs=T, clip.right.labs=T, main="clip.left.labs=T, clip.right.labs=T")
+
+prp(tree, type=3, xflip=T, clip.left.labs=F, clip.right.labs=F, main="clip.left.labs=F, clip.right.labs=F\n                 xflip=T")
+prp(tree, type=3, xflip=T, clip.left.labs=F, clip.right.labs=T, main="clip.left.labs=F, clip.right.labs=T\n                 xflip=T")
+prp(tree, type=4, xflip=T, clip.left.labs=T, clip.right.labs=F, main="clip.left.labs=T, clip.right.labs=F\n                 xflip=T")
+prp(tree, type=4, xflip=T, clip.left.labs=T, clip.right.labs=T, main="clip.left.labs=T, clip.right.labs=T\n                 xflip=T")
+
+prp(tree, type=4,          clip.left.labs=c(T, F, T), clip.right.labs=c(T, F, F), main="clip.labs vectorization")
+prp(tree, type=4, xflip=T, clip.left.labs=c(T, F, T), clip.right.labs=F,          main="xflip=T\nclip.labs vectorization")
+par(mfrow=c(1,1))
 
 # mvpart, must be last because it changes plot.rpart, text.rpart, etc.
 library(mvpart)

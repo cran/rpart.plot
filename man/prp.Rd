@@ -50,7 +50,8 @@ prp(x=stop("no 'x' arg"),
     split.fun=internal.split.labs,
     FUN=text,
 
-    nspace=branch, minbranch=.3, do.par=TRUE, add.labs=TRUE, fam.main="",
+    nspace=branch, minbranch=.3, do.par=TRUE,
+    add.labs=TRUE, clip.left.labs=FALSE, fam.main="",
     yshift=0, yspace=space, shadow.offset=.4,
     split.adj=NULL, split.yshift=0, split.space=space,
     split.yspace=yspace, split.shadow.offset=shadow.offset,
@@ -106,7 +107,7 @@ prp(x=stop("no 'x' arg"),
 
      \code{4} Class models:
               probability per class of observations in the node
-              (conditioned on the node, sum aross a node is 1).
+              (conditioned on the node, sum across a node is 1).
               % (One could argue that \code{2} should be the default value
               % for \code{class} models.)
               % For example, \code{.81 .19} means that of the observations in the node,
@@ -142,7 +143,7 @@ prp(x=stop("no 'x' arg"),
     by default \code{prp} uses its own routine for
     generating node  labels (not the function attached to the object).
     See \code{node.fun}.\cr
-    Note 2: mrt models (the \code{mvpart} package) are also supported. 
+    Note 2: mrt models (the \code{mvpart} package) are also supported.
     See \code{get.mrt.labs} in the source code.
   }
   \item{under}{
@@ -152,9 +153,10 @@ prp(x=stop("no 'x' arg"),
      See also \code{under.cex}.
   }
   \item{clip.right.labs}{
-     Deafult is \code{TRUE} meaing ``clip'' the right-hand split labels,
+     Default is \code{TRUE} meaning ``clip'' the right split labels,
      i.e. do not print \code{variable=}.
      Applies only if \code{type=3} or \code{4}.
+     See also \code{clip.left.labs}.
   }
   \item{nn}{
      Display the node numbers.
@@ -603,6 +605,12 @@ prp(x=stop("no 'x' arg"),
   \item{add.labs}{
      Default \code{TRUE}, meaning display the labels.
      If \code{FALSE}, gives a bare bones display similar to \code{plot.rpart}.
+  }
+  \item{clip.left.labs}{
+     Like \code{clip.right.labs} but for the left labels.
+     Default is \code{FALSE}.
+     Note that \code{clip.left.labs} and \code{clip.right.labs} can be vectors,
+     indexed on the split number.
   }
   \item{fam.main}{
      Font family for the main text.  Default \code{""}.

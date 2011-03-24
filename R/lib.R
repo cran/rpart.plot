@@ -227,7 +227,7 @@ unique.substr <- function(names, minlen)
 
 my.abbreviate <- function(names, minlen, one.is.special=FALSE)
 {
-    stopifnot(floor(minlen) == minlen) # sanity check, should be an integer
+    stopifnot(is.numeric(minlen) && floor(minlen) == minlen)
     if(minlen == 1 && one.is.special) {
         if(length(names) > 52) # 52 = 2 * 26 letters in alphabet
             stop0(deparse(substitute(minlen)),

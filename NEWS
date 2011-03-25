@@ -1,6 +1,9 @@
 Changes to the rpart.plot
 -------------------------
 
+1.2-1    Mar 25, 2011
+    Touch-ups to the vignette.
+
 1.2-0    Mar 24, 2011
     Added the clip.left.labs argument.
     Extended the vignette.

@@ -98,7 +98,7 @@ prp> par(old.par)
 To cite package 'rpart.plot' in publications use:
 
   Stephen Milborrow (). rpart.plot: Plot rpart models.  An enhanced
-  version of plot.rpart.. R package version 1.2-0.
+  version of plot.rpart.. R package version 1.2-1.
   http://www.milbo.org/rpart-plot
 
 A BibTeX entry for LaTeX users is
@@ -106,7 +106,7 @@ A BibTeX entry for LaTeX users is
   @Manual{,
     title = {rpart.plot: Plot rpart models.  An enhanced version of plot.rpart.},
     author = {Stephen Milborrow},
-    note = {R package version 1.2-0},
+    note = {R package version 1.2-1},
     url = {http://www.milbo.org/rpart-plot},
   }
 

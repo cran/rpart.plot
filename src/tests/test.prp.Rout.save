@@ -4,12 +4,13 @@
 Loading required package: rpart
 Warning message:
 package 'rpart' was built under R version 2.12.2 
+> data(ptitanic)
 > library(earth)
 Loading required package: leaps
+Loading required package: plotmo
 Loading required package: plotrix
 Warning message:
 package 'plotrix' was built under R version 2.12.2 
-> data(ptitanic)
 > data(ozone1)
 > ititanic <- ptitanic
 > ititanic$survived <- as.integer(ititanic$survived == "survived")
@@ -98,7 +99,7 @@ prp> par(old.par)
 To cite package 'rpart.plot' in publications use:
 
   Stephen Milborrow (). rpart.plot: Plot rpart models.  An enhanced
-  version of plot.rpart.. R package version 1.2-1.
+  version of plot.rpart.. R package version 1.2-2.
   http://www.milbo.org/rpart-plot
 
 A BibTeX entry for LaTeX users is
@@ -106,9 +107,13 @@ A BibTeX entry for LaTeX users is
   @Manual{,
     title = {rpart.plot: Plot rpart models.  An enhanced version of plot.rpart.},
     author = {Stephen Milborrow},
-    note = {R package version 1.2-1},
+    note = {R package version 1.2-2},
     url = {http://www.milbo.org/rpart-plot},
   }
+
+ATTENTION: This citation information has been auto-generated from the
+package DESCRIPTION file and may need manual editing, see
+'help("citation")' .
 
 Warning message:
 In citation("rpart.plot") :

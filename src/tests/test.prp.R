@@ -1,8 +1,8 @@
 # test.prp.R
 
 library(rpart.plot)
-library(earth)
 data(ptitanic)
+library(earth)
 data(ozone1)
 ititanic <- ptitanic
 ititanic$survived <- as.integer(ititanic$survived == "survived")

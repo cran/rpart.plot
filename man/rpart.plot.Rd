@@ -131,7 +131,8 @@ For an overview of the other arguments see \url{../doc/prp.pdf}.
     If \code{TRUE} (the default), the vertical spacing of the nodes is uniform.
     If \code{FALSE}, the nodes are spaced proportionally to the fit
     (more precisely, to the difference between a node's deviance and the sum of its two children's deviances).
-    Small spaces must be expanded to leave room for the labels.
+    Small vertical spaces are automatically artificially expanded
+    to make room for the labels.
     Note: \code{uniform=FALSE} with \code{cex=NULL} (the default)
     can sometimes cause very small text.
   }

@@ -53,10 +53,14 @@ check.func.args <- function(func, func.name, ref.func)
     ref.names <- names(formals(ref.func))
     if(!identical(names, ref.names)) {
         if(length(names) == 0)
-            stop0("the ", func.name, " function needs the following args:\n    ",
+            stop0("the ", func.name, " function needs the following argument:\n    ",
                 paste.with.space(ref.names))
         else
-            stop0("the ", func.name, " function needs the following args:\n    ",
+            stop0("the ", func.name,
+                if(length(ref.names)==1)
+                    " function needs the following argument:\n    "
+                else
+                    " function needs the following arguments:\n    ",
                 paste.with.space(ref.names),
                 "\nYou have:\n    ", paste.with.space(names))
     }

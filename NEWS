@@ -1,17 +1,39 @@
 Changes to the rpart.plot
 -------------------------
 
+1.3-0    Aug 15, 2012
+
+    There is now more white space in the split text (achieved by
+    adding white space to the default eq, lt, and ge args).
+    To revert to the old behaviour, explictly set these args.
+
+    Added the trim.fun argument, invoked after each mouse click
+    when interactively trimming the tree.
+
+    Incorporated Gene Cutler's fix to get.class.labs (so we no longer
+    get an incorrect error message when case weights are used).
+
+    Added Josh Browning's heat tree example to the vignette.
+
+    Touch-ups for the new version of plotmo (1.3-2).
+
+    Removed unnecessary LICENSE file because rpart is now GSL-3.
+
 1.2-2    Mar 31, 2011
-    Touch-ups for the new version of plotmo
+
+    Touch-ups for the new version of plotmo (1.2-6)
 
 1.2-1    Mar 25, 2011
+
     Touch-ups to the vignette.
 
 1.2-0    Mar 24, 2011
+
     Added the clip.left.labs argument.
     Extended the vignette.
 
 1.1-1    Mar 9, 2011
+
     We now call the object's text() function unless the object
     has a standard method ("anova", "class", "poisson" or "exp").
     We now support mvpart::mrt objects

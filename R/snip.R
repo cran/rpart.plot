@@ -1,8 +1,15 @@
 # do.snip.R
 
 do.snip <- function(obj, nodes, split.labels, node.xy, branch.xy,
-                    branch.lty, branch.lwd, xlim, ylim, digits)
+                    branch.lty, branch.lwd, xlim, ylim, digits, snip.fun)
 {
+    my.snip.rpart <- function(obj, deleted.nodes)
+    {
+        if(length(deleted.nodes))
+            rpart:::snip.rpart(obj, deleted.nodes)
+        else
+            obj # no changes
+    }
     do.mouse.snip <- function()
     {
         draw.quit.button <- function(col)
@@ -66,7 +73,9 @@ do.snip <- function(obj, nodes, split.labels, node.xy, branch.xy,
         #--- do.mouse.snip starts here ---
         old.options <- options(width=1000, digits=digits) # so no wrap in print.node.info
         on.exit(options(width=old.options$width, digits=old.options$digits))
-        cat("Click to snip ...\n\n")
+        cat("Click to snip ...\n")
+        if(!is.null(snip.fun))
+            snip.fun(obj)
         flush.console()
         is.leaf <- is.leaf(obj$frame)
         node.xy <- draw.quit.button("black")
@@ -80,19 +89,24 @@ do.snip <- function(obj, nodes, split.labels, node.xy, branch.xy,
                 print.node.info("Leaf", inode)
             else {
                 if(!deleted.nodes[inode]) { # if node is not currently deleted, then delete it
-                    print.node.info("Delete", inode)
                     deleted.nodes[match(get.children(nodes[inode]), nodes)] <- TRUE
+                    if(is.null(snip.fun)) # reduce clutter
+                        print.node.info("Delete", inode)
+                    else
+                        snip.fun(my.snip.rpart(obj, nodes[deleted.nodes]))
                 } else {
                     # Node is currently deleted, so undelete it and its children ---
                     # but not if any of its ancestors are deleted.
                     # [-1] below removes node itself from its path to the root.
                     if(any(nodes[deleted.nodes] %in% get.parents(nodes[inode])[-1])) {
                         cat("Cannot delete node", nodes[inode],
-                            "because its parent is deleted\n")
-                        print.node.info("", inode)
+                            "because its parent is already deleted\n")
                     } else {
-                        print.node.info("Undelete", inode)
                         deleted.nodes[match(get.children(nodes[inode]), nodes)] <- FALSE
+                        if(is.null(snip.fun))
+                            print.node.info("Undelete", inode)
+                        else
+                            snip.fun(my.snip.rpart(obj, nodes[deleted.nodes]))
                     }
                 }
                 show.branches()
@@ -111,5 +125,5 @@ do.snip <- function(obj, nodes, split.labels, node.xy, branch.xy,
     if(length(snipped.nodes) == 0)
         list(obj=obj, snipped.nodes=NULL)
     else
-        list(obj=rpart:::snip.rpart(obj, snipped.nodes), snipped.nodes=snipped.nodes)
+        list(obj=my.snip.rpart(obj, snipped.nodes), snipped.nodes=snipped.nodes)
 }

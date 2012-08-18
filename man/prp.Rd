@@ -21,7 +21,7 @@ prp(x=stop("no 'x' arg"),
     digits=2, varlen=-8, faclen=3,
     cex=NULL, tweak=1,
     compress=TRUE, ycompress=uniform,
-    snip=FALSE, trace=FALSE,
+    trace=FALSE, snip=FALSE, snip.fun=NULL,
 
     box.col=0, border.col=col,
     round=NULL, leaf.round=NULL,
@@ -35,7 +35,7 @@ prp(x=stop("no 'x' arg"),
     split.shadow.col=0,
     split.prefix="", right.split.prefix=NULL,
     split.suffix="", right.split.suffix=NULL,
-    facsep=",", eq="=", lt="<", ge=">=",
+    facsep=",", eq=" = ", lt=" < ", ge=" >= ",
 
     branch.col=if(identical(branch.type, 0)) 1 else "gray",
     branch.lty=1, branch.lwd=NULL,
@@ -143,7 +143,7 @@ prp(x=stop("no 'x' arg"),
     by default \code{prp} uses its own routine for
     generating node  labels (not the function attached to the object).
     See \code{node.fun}.\cr
-    Note 2: mrt models (the \code{mvpart} package) are also supported.
+    Note 2: \code{mrt} models (the \code{mvpart} package) are also supported.
     See \code{get.mrt.labs} in the source code.
   }
   \item{under}{
@@ -189,7 +189,8 @@ prp(x=stop("no 'x' arg"),
     If \code{TRUE} (the default), the vertical spacing of the nodes is uniform.
     If \code{FALSE}, the nodes are spaced proportionally to the fit
     (more precisely, to the difference between a node's deviance and the sum of its two children's deviances).
-    Small spaces must be expanded to leave room for the labels, see \code{minbranch}.
+    Small vertical spaces are automatically artificially expanded
+    to make room for the labels, see \code{minbranch}.
     Note: \code{uniform=FALSE} with \code{cex=NULL} (the default)
     can sometimes cause very small text.
   }
@@ -278,15 +279,22 @@ prp(x=stop("no 'x' arg"),
      works a little better (allowing larger text)
      with \code{type=1}, \code{2}, or \code{3}. % (i.e. not "fancy").
   }
+  \item{trace}{
+     Default \code{FALSE}.
+     Use \code{TRUE} to print the automatically calculated \code{cex}, \code{xlim}, and \code{ylim}.
+     Use integer values greater than 1 for more detailed tracing.\cr
+  }
   \item{snip}{
      Default \code{FALSE}.
      Set \code{TRUE} to interactively trim the tree with the mouse.
      See \url{../doc/prp.pdf} (or just try it).
   }
-  \item{trace}{
-     Default \code{FALSE}.
-     Use \code{TRUE} to print the automatically calculated \code{cex}, \code{xlim}, and \code{ylim}.
-     Use integer values greater than 1 for more detailed tracing.\cr
+  \item{snip.fun}{
+     Function invoked after each mouse click when \code{snip=TRUE}.
+     Default \code{NULL}, meaning no function.
+     Otherwise set \code{snip.fun} to your own function
+     with the prototype \code{function(tree)}, where \code{tree} is the snipped tree.
+     See \url{../doc/prp.pdf} for an example.
 
      \bold{The following control the node labels.}
   }
@@ -434,17 +442,17 @@ prp(x=stop("no 'x' arg"),
      See also \code{xsep}, which separates the individual counts when \code{extra} is used.
   }
   \item{eq}{
-     Default \code{"="}.
+     Default \code{" = "}.
      String which separates the factor name from the levels in split labels.
-     The idea is that you can add spaces around the = or use
+     The idea is that you can add or remove spaces around the \code{=}, or use
      words if that suits you.
   }
   \item{lt}{
-     Default \code{"<"}.
+     Default \code{" < "}.
      String which represents ``less than'' in split labels.
   }
   \item{ge}{
-     Default \code{">="}.
+     Default \code{" >= "}.
      String which represents ``greater than or equal'' in split labels.\cr
 
      \bold{The following control the branches.}
@@ -812,8 +820,6 @@ With the default args most of these are automatically calculated.
 Please see \url{../doc/prp.pdf} for an overview.
 (If your help system does follow that link correctly,
 please follow the link on this package's Index page.)
-
-This is an initial version of \code{prp} and the code could be cleaned up.
 }
 \seealso{
   \url{../doc/prp.pdf}\cr

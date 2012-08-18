@@ -80,7 +80,7 @@ draw.node.numbers <- function(nn, ni, draw.shadow, type, branch,
     nn.space  <- recycle(nn.space, nodes)
     nn.yspace <- recycle(nn.yspace, nodes)
     boxes <- draw.boxes("default", draw.shadow,
-               nodes, list(x=x, y=y),  
+               nodes, list(x=x, y=y),
                xlim, ylim, nodes, branch,
                Margin, xflip, yflip, main, sub,
                col.main, cex.main, col.sub, cex.sub,

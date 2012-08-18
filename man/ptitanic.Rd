@@ -52,4 +52,12 @@ This version of the data differs from
 in that here \code{survived} is a factor (not an integer)
 and \code{age} has some \code{NA}s.
 }
+\examples{
+data(ptitanic)
+summary(ptitanic)
+# main indicator of missing data is 3rd class esp. with many children
+obs.with.nas <- rowSums(is.na(ptitanic)) > 0
+prp(rpart(obs.with.nas~., data=ptitanic, method="class"),
+    main="observations with missing data", extra=7)
+}
 \keyword{datasets}

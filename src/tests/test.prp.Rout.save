@@ -2,15 +2,11 @@
 > 
 > library(rpart.plot)
 Loading required package: rpart
-Warning message:
-package 'rpart' was built under R version 2.12.2 
 > data(ptitanic)
 > library(earth)
 Loading required package: leaps
 Loading required package: plotmo
 Loading required package: plotrix
-Warning message:
-package 'plotrix' was built under R version 2.12.2 
 > data(ozone1)
 > ititanic <- ptitanic
 > ititanic$survived <- as.integer(ititanic$survived == "survived")
@@ -99,7 +95,7 @@ prp> par(old.par)
 To cite package 'rpart.plot' in publications use:
 
   Stephen Milborrow (). rpart.plot: Plot rpart models.  An enhanced
-  version of plot.rpart.. R package version 1.2-2.
+  version of plot.rpart.. R package version 1.3-0.
   http://www.milbo.org/rpart-plot
 
 A BibTeX entry for LaTeX users is
@@ -107,7 +103,7 @@ A BibTeX entry for LaTeX users is
   @Manual{,
     title = {rpart.plot: Plot rpart models.  An enhanced version of plot.rpart.},
     author = {Stephen Milborrow},
-    note = {R package version 1.2-2},
+    note = {R package version 1.3-0},
     url = {http://www.milbo.org/rpart-plot},
   }
 
@@ -437,7 +433,7 @@ In citation("rpart.plot") :
 -9.99000000000000e-06        -0.0000        -0.00        -0.0        -0
 -9.99000000000000e-07        -0.0000        -0.00        -0.0        -0
 > 
-> # examples from the vignette TODO update
+> # examples from the vignette
 > 
 > fit <- rpart(survived~., data=ititanic)
 > cols <- ifelse(fit$frame$yval > .5, "palegreen", "pink")
@@ -752,9 +748,9 @@ cex 1   xlim c(0, 1)   ylim c(0, 1)
 +     yshift=c(3, 0, 3, 3, 0, 0, 0),
 +     split.prefix=c("", "", "down\n", "", "", "", ""),
 +     split.yshift=c(0, -1, 0, 0, 0, 0, 0))
-Initial scale 1.33
+Initial scale 1.06
 Shifter: cex improvement 1 best.shift.amount 0 best.split.yshift.amount 0 (will not be used)
-Clipped scale 1.33 to max.auto.cex 1
+Clipped scale 1.06 to max.auto.cex 1
 cex 1   xlim c(0, 1)   ylim c(0, 1)
 > 
 > 
@@ -822,7 +818,7 @@ cex 1   xlim c(0, 1)   ylim c(-0.05, 1.05)
 > fit2 <- rpart(survived~., data=ptitanic1)
 > prp(fit2, faclen=0, digits=4, trace=1,
 +     border.col=NA, split.border.col="steelblue3", split.round=1)
-cex 1   xlim c(0, 1)   ylim c(0, 1)
+cex 0.948   xlim c(0, 1)   ylim c(0, 1)
 > 
 > # test small tree, also tests xcompact and ycompact
 > fit.small <- rpart(survived~., data=ptitanic1, , control=list(cp=.1))
@@ -962,9 +958,9 @@ $split.cex
 
 $split.box
 $split.box$x1
- [1] 0.3307836 0.0538049        NA 0.1475118        NA 0.2354216        NA
- [8]        NA 0.6053710 0.4192930        NA        NA 0.7207400        NA
-[15] 0.8189100        NA        NA
+ [1] 0.32400033 0.04702165         NA 0.14072857         NA 0.22863838
+ [7]         NA         NA 0.59858779 0.41250975         NA         NA
+[13] 0.71395672         NA 0.81212679         NA         NA
 
 $split.box$y1
  [1] 0.9371943 0.7016733        NA 0.4661523        NA 0.2306313        NA
@@ -972,9 +968,9 @@ $split.box$y1
 [15] 0.2306313        NA        NA
 
 $split.box$x2
- [1] 0.4711333 0.2138456        NA 0.2749783        NA 0.3405131        NA
- [8]        NA 0.7308123 0.6030262        NA        NA 0.8735094        NA
-[15] 0.9287840        NA        NA
+ [1] 0.4779166 0.2206288        NA 0.2817615        NA 0.3472964        NA
+ [8]        NA 0.7375955 0.6098095        NA        NA 0.8802926        NA
+[15] 0.9355672        NA        NA
 
 $split.box$y2
  [1] 1.0082338 0.7727128        NA 0.5371918        NA 0.3016709        NA
@@ -1736,8 +1732,6 @@ Node number 7: 10 observations
 
 ### Section 9
 ### Section 10
-Warning message:
-package 'survival' was built under R version 2.12.2 
 > 
 > # clip.left.labs and clip.right.labs
 > par(mfrow=c(3,3))
@@ -1766,8 +1760,6 @@ The following object(s) are masked from 'package:rpart':
     prune.rpart, rpart, rpart.control, rpconvert, rsq.rpart,
     snip.rpart, xpred.rpart
 
-Warning message:
-package 'mvpart' was built under R version 2.12.2 
 > data(spider)
 > par(mfrow=c(3,3))
 > a <- mvpart(data.matrix(spider[,1:12])~twigs+water,spider, legend=FALSE, all=TRUE)

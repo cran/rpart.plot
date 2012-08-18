@@ -1,4 +1,4 @@
-# user-manual-figs.R: figures in prp user manual
+# user-manual-figs.R: figures and code in the rpart.plot vignette
 
 library(rpart.plot)
 library(earth)
@@ -33,8 +33,7 @@ cols <- ifelse(tree$frame$yval == 1, "darkred", "green4")
                          # green if survived
 
 prp(tree, main="assorted arguments",
-    branch.lwd=2,      # gyp for user manual
-    eq=" = ", ge=" >= ", lt=" < ", # gyp for user manual
+    branch.lwd=2,        # gyp for user manual
     extra=106,           # display prob of survival and percent of obs
     nn=TRUE,             # display the node numbers
     fallen.leaves=TRUE,  # put the leaves on the bottom of the page
@@ -135,7 +134,7 @@ prp(tree, extra=6, tweak=1.2, main="prefix-col",
 
 #--- movie.R ---
 
-# ommitted, tested elsewhere
+# ommitted, tested in test.prp.R
 
 #--- path-to-root.R ---
 
@@ -170,6 +169,25 @@ par(bg=old.bg)
 tree <- rpart(survived~., data=ptitanic, cp=.012)
 new.tree <- prp(tree, main="[snip-part1]")$obj # interactively trim the tree
 prp(new.tree, main="[snip-part2]")             # display the new tree
+
+#--- heat-tree.R ---
+
+par(mfrow=c(2,2))
+heat.tree <- function (tree, low.is.green=FALSE, ...) {
+    y <- tree$frame$yval
+    if(low.is.green)
+        y <- -y
+    max <- max(y)
+    min <- min(y)
+    cols <- rainbow(99, end=.36)[
+                ifelse(y >  y[1], (y-y[1]) * (99-50) / (max-y[1])+50,
+                                  (y-min)  * (50-1)  / (y[1]-min)+1)]
+    prp(tree, branch.col=cols, box.col=cols, ...)
+}
+data(ptitanic)
+tree <- rpart(age ~ ., data=ptitanic)
+heat.tree(tree, type=4, varlen=0, faclen=0, fallen.leaves=TRUE)
+heat.tree(tree, low.is.green=TRUE)
 
 #--- compress.R ---
 

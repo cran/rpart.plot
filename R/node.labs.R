@@ -70,7 +70,9 @@ get.class.labs <- function(x, extra, under, digits, xsep, varlen)
     nlev <- (ncol(yval2) - 1) / 2
     stopifnot(nlev > 1)
     n.per.lev <- yval2[, 1 + (1:nlev), drop=FALSE]
-    stopifnot(sum(n.per.lev[1,]) == ntotal) # sanity check
+    # aug 2012: commented out the following check because it
+    # falsely fails when cases weights are used in the rpart model
+    # stopifnot(sum(n.per.lev[1,]) == ntotal) # sanity check
     prob.per.lev <- yval2[, 1 + nlev + (1:nlev), drop=FALSE]
     stopifnot(sum(prob.per.lev[1,]) == 1)   # sanity check
     print.all.probs <- TRUE

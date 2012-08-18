@@ -78,7 +78,7 @@ prp <- function(x=stop("no 'x' arg"),
     digits=2, varlen=-8, faclen=3,
     cex=NULL, tweak=1,
     compress=TRUE, ycompress=uniform,
-    snip=FALSE, trace=FALSE,
+    trace=FALSE, snip=FALSE, snip.fun=NULL,
 
     box.col=0, border.col=col,
     round=NULL, leaf.round=NULL,
@@ -92,7 +92,7 @@ prp <- function(x=stop("no 'x' arg"),
     split.shadow.col=0,
     split.prefix="", right.split.prefix=NULL,
     split.suffix="", right.split.suffix=NULL,
-    facsep=",", eq="=", lt="<", ge=">=",
+    facsep=",", eq=" = ", lt=" < ", ge=" >= ",
 
     branch.col=if(identical(branch.type, 0)) 1 else "gray",
     branch.lty=1, branch.lwd=NULL,
@@ -107,7 +107,7 @@ prp <- function(x=stop("no 'x' arg"),
     split.fun=internal.split.labs,
     FUN=text,
 
-    nspace=branch, minbranch=.3, do.par=TRUE, 
+    nspace=branch, minbranch=.3, do.par=TRUE,
     add.labs=TRUE, clip.left.labs=FALSE, fam.main="",
     yshift=0, yspace=space, shadow.offset=.4,
 
@@ -385,6 +385,8 @@ prp <- function(x=stop("no 'x' arg"),
     stopifnot(xcompact.ratio > 0 && xcompact.ratio <= 2) # 2 is arb, max useful is probably 1
     stopifnot(min.auto.cex >= 0 && min.auto.cex <= 1)
     stopifnot(branch >= 0 && branch <= 1)
+    if(!is.null(snip.fun))
+        check.func.args(snip.fun, "snip.fun", function(tree) NULL)
     if(length(family) != 1 || length(split.family) != 1 || length(nn.family) != 1)
         stop0("prp: family argument must be length 1 (family cannot be vectorized)")
     stopifnot(is.numeric(digits) && length(digits) == 1 &&
@@ -561,7 +563,8 @@ prp <- function(x=stop("no 'x' arg"),
     snipped.nodes <- NULL
     if(snip) {
         temp <- do.snip(obj, nodes, split.labs, node.xy, branch.xy,
-                        branch.lty, branch.lwd, xlim, ylim, digits)
+                        branch.lty, branch.lwd, xlim, ylim, digits,
+                        snip.fun)
         obj <- temp$obj
         snipped.nodes <- temp$snipped.nodes
     }

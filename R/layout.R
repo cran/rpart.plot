@@ -1,4 +1,4 @@
-# get.layout.R
+# layout.R
 
 get.layout <- function(obj, type, nn, fallen.leaves, branch,
     uniform, Margin, cex, auto.cex, compress, ycompress,

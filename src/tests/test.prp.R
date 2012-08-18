@@ -61,7 +61,7 @@ tab <- data.frame("digits=4"=s4, "digits=2"=s2, "digits=1"=s1, "digits=0"=s0,
 row.names(tab) <- format(x, digits=15)
 print(tab)
 
-# examples from the vignette TODO update
+# examples from the vignette
 
 fit <- rpart(survived~., data=ititanic)
 cols <- ifelse(fit$frame$yval > .5, "palegreen", "pink")

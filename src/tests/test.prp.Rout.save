@@ -95,7 +95,7 @@ prp> par(old.par)
 To cite package 'rpart.plot' in publications use:
 
   Stephen Milborrow (). rpart.plot: Plot rpart models.  An enhanced
-  version of plot.rpart.. R package version 1.3-0.
+  version of plot.rpart.. R package version 1.4-0.
   http://www.milbo.org/rpart-plot
 
 A BibTeX entry for LaTeX users is
@@ -103,7 +103,7 @@ A BibTeX entry for LaTeX users is
   @Manual{,
     title = {rpart.plot: Plot rpart models.  An enhanced version of plot.rpart.},
     author = {Stephen Milborrow},
-    note = {R package version 1.3-0},
+    note = {R package version 1.4-0},
     url = {http://www.milbo.org/rpart-plot},
   }
 
@@ -501,28 +501,27 @@ cex 1   xlim c(0, 1)   ylim c(-0.05, 1.05)
 > prp(fit2, node.fun=my.labs3, main="my.labs3\nextra=100", trace=1, extra=100, under=T)
 cex 1   xlim c(0, 1)   ylim c(0, 1)
 > 
-> fit.user <- rpart(survived~., data=ptitanic, cp=.02)
-> fit.user$method <- "user"
-> fit.user$functions$text <- function (yval, dev, wt, ylevel, digits, n, use.n)
-+ {
-+     nclass <- (ncol(yval) - 1L)/2
-+     group <- yval[, 1L]
-+     counts <- yval[, 1L + (1L:nclass)]
-+     if (!is.null(ylevel))
-+         group <- ylevel[group]
-+     temp1 <- format(counts)
-+     if (nclass > 1)
-+         temp1 <- apply(matrix(temp1, ncol = nclass), 1, paste, collapse = "/")
-+     cat("use.n=", use.n, "\n")
-+     if (use.n)
-+         out <- paste(group, "!\n", temp1, sep = "")
-+     else
-+         out <- format(group)
-+     return(out)
-+ }
-> prp(fit.user, node.fun=my.labs3, main="method=user\nmy.labs3 extra=100", trace=1, extra=100, under=T, prefix="result: ")
-use.n= 100 
-cex 1   xlim c(0, 1)   ylim c(0, 1)
+> # commented out for rpart.plot version 1.4-0 (user mode no longer supported)
+> # fit.user <- rpart(survived~., data=ptitanic, cp=.02)
+> # fit.user$method <- "user"
+> # fit.user$functions$text <- function (yval, dev, wt, ylevel, digits, n, use.n)
+> # {
+> #     nclass <- (ncol(yval) - 1L)/2
+> #     group <- yval[, 1L]
+> #     counts <- yval[, 1L + (1L:nclass)]
+> #     if (!is.null(ylevel))
+> #         group <- ylevel[group]
+> #     temp1 <- format(counts)
+> #     if (nclass > 1)
+> #         temp1 <- apply(matrix(temp1, ncol = nclass), 1, paste, collapse = "/")
+> #     cat("use.n=", use.n, "\n")
+> #     if (use.n)
+> #         out <- paste(group, "!\n", temp1, sep = "")
+> #     else
+> #         out <- format(group)
+> #     return(out)
+> # }
+> # prp(fit.user, node.fun=my.labs3, main="method=user\nmy.labs3 extra=100", trace=1, extra=100, under=T, prefix="result: ")
 > 
 > a20 <- rpart(survived~., data=ptitanic, control=list(cp=.02))
 > par(mfrow=c(3,3))
@@ -836,9 +835,11 @@ Warning message:
 cex and tweak both specified, applying both 
 > # TODO wanna include family below, but postscript giving me grief
 > fit4.strange.method <- fit4
-> fit4.strange.method$method <- "unknown.method" # will call the default text() function, extra=99 treated as use.n=T
-> prp(fit4.strange.method, main="left=FALSE, fonts, user method", left=FALSE, font=c(1,2,3), split.cex=c(1, 1.2), branch=.5, trace=1, extra=99)
-cex 1   xlim c(0, 1)   ylim c(0, 1)
+> fit4.strange.method$method <- "unknown.method"
+> prp(fit4.strange.method, main="left=FALSE, fonts, user method", left=FALSE, font=c(1,2,3), split.cex=c(1, 1.2), branch=.5, trace=1, extra=1)
+cex 1   xlim c(-0.2, 1.2)   ylim c(0, 1)
+Warning message:
+Unrecognized rpart object: treating as a class response model 
 > prp(fit4, main="uniform=FALSE", uniform=FALSE, trace=1)
 cex 1   xlim c(0, 1)   ylim c(0, 1)
 > data(ozone1)
@@ -1396,10 +1397,10 @@ n= 200
 8  0.0222222      8   0.33889 0.40000 0.0377124
 9  0.0166667      9   0.31667 0.39444 0.0375956
 10 0.0111111     10   0.30000 0.37222 0.0370831
-11 0.0083333     15   0.24444 0.37778 0.0372181
-12 0.0055556     22   0.18333 0.37778 0.0372181
+11 0.0083333     15   0.24444 0.37222 0.0370831
+12 0.0055556     22   0.18333 0.37222 0.0370831
 13 0.0037037     31   0.13333 0.40000 0.0377124
-14 0.0000000     34   0.12222 0.41111 0.0379327
+14 0.0000000     34   0.12222 0.42778 0.0382305
 ### Section 5
 
 Classification tree:
@@ -1428,7 +1429,7 @@ rpart(formula = progstat ~ age + eet + g2 + grade + gleason +
 3 0.01000000      5 0.5925926 0.8518519 0.1039462
 
 Node number 1: 146 observations,    complexity param=0.117284
-  predicted class=No    expected loss=0.369863
+  predicted class=No    expected loss=0.369863  P(node) =1
     class counts:    92    54
    probabilities: 0.630 0.370 
   left son=2 (61 obs) right son=3 (85 obs)
@@ -1445,12 +1446,12 @@ Node number 1: 146 observations,    complexity param=0.117284
       age     < 66.5   to the right, agree=0.589, adj=0.016, (0 split)
 
 Node number 2: 61 observations
-  predicted class=No    expected loss=0.147541
+  predicted class=No    expected loss=0.147541  P(node) =0.4178082
     class counts:    52     9
    probabilities: 0.852 0.148 
 
 Node number 3: 85 observations,    complexity param=0.117284
-  predicted class=Prog  expected loss=0.4705882
+  predicted class=Prog  expected loss=0.4705882  P(node) =0.5821918
     class counts:    40    45
    probabilities: 0.471 0.529 
   left son=6 (35 obs) right son=7 (50 obs)
@@ -1466,12 +1467,12 @@ Node number 3: 85 observations,    complexity param=0.117284
       gleason < 6.5    to the left,  agree=0.582, adj=0.057, (0 split)
 
 Node number 6: 35 observations
-  predicted class=No    expected loss=0.4
+  predicted class=No    expected loss=0.4  P(node) =0.239726
     class counts:    21    14
    probabilities: 0.600 0.400 
 
 Node number 7: 50 observations,    complexity param=0.117284
-  predicted class=Prog  expected loss=0.38
+  predicted class=Prog  expected loss=0.38  P(node) =0.3424658
     class counts:    19    31
    probabilities: 0.380 0.620 
   left son=14 (25 obs) right son=15 (25 obs)
@@ -1487,12 +1488,12 @@ Node number 7: 50 observations,    complexity param=0.117284
       gleason < 6.5    to the right, agree=0.545, adj=0.048, (0 split)
 
 Node number 14: 25 observations
-  predicted class=No    expected loss=0.36
+  predicted class=No    expected loss=0.36  P(node) =0.1712329
     class counts:    16     9
    probabilities: 0.640 0.360 
 
 Node number 15: 25 observations
-  predicted class=Prog  expected loss=0.12
+  predicted class=Prog  expected loss=0.12  P(node) =0.1712329
     class counts:     3    22
    probabilities: 0.120 0.880 
 
@@ -1609,127 +1610,6 @@ node), split, n, deviance, yval
       14) g2>=17.91 25  5.760000 0.3600000 *
       15) g2< 17.91 25  2.640000 0.8800000 *
 ### Section 8
-Call:
-rpart(formula = skips ~ Opening + Solder + Mask + PadType + Panel, 
-    data = solder, method = "poisson", control = rpart.control(cp = 0.05, 
-        maxcompete = 2))
-  n= 720 
-
-          CP nsplit rel error    xerror       xstd
-1 0.36602468      0 1.0000000 1.0051342 0.06461212
-2 0.14356853      1 0.6339753 0.6422530 0.03746887
-3 0.07081271      2 0.4904068 0.4965263 0.02698739
-4 0.05274593      3 0.4195941 0.4264514 0.02284248
-5 0.05000000      4 0.3668481 0.4111188 0.02302237
-
-Node number 1: 720 observations,    complexity param=0.3660247
-  events=3575,  estimated rate=4.965278 , mean deviance=9.521792 
-  left son=2 (480 obs) right son=3 (240 obs)
-  Primary splits:
-      Opening splits as  LLR,  improve=2509.3530, (0 missing)
-      Mask    splits as  LLRR, improve=1323.3680, (0 missing)
-      Solder  splits as  LR,   improve= 936.9548, (0 missing)
-
-Node number 2: 480 observations
-  events=918,  estimated rate=1.91378 , mean deviance=3.75659 
-
-Node number 3: 240 observations,    complexity param=0.1435685
-  events=2657,  estimated rate=11.06571 , mean deviance=10.59656 
-  left son=6 (120 obs) right son=7 (120 obs)
-  Primary splits:
-      Mask    splits as  LLRR,       improve=984.2639, (0 missing)
-      Solder  splits as  LR,         improve=631.5271, (0 missing)
-      PadType splits as  RRRRLLRLRL, improve=244.9255, (0 missing)
-
-Node number 6: 120 observations
-  events=546,  estimated rate=4.550696 , mean deviance=4.970788 
-
-Node number 7: 120 observations
-  events=2111,  estimated rate=17.57051 , mean deviance=8.020159 
-
-Loading required package: splines
-n= 146 
-
-node), split, n, deviance, yval
-      * denotes terminal node
-
- 1) root 146 195.411600 1.0000000  
-   2) grade< 2.5 61  45.021520 0.3624701  
-     4) g2< 11.36 33   9.120116 0.1225562 *
-     5) g2>=11.36 28  27.804100 0.7335298  
-      10) gleason< 5.5 20  14.376900 0.5292190 *
-      11) gleason>=5.5 8  11.201470 1.3083680 *
-   3) grade>=2.5 85 125.327400 1.6190620  
-     6) age>=56.5 75 104.154700 1.4287310  
-      12) gleason< 7.5 50  66.701410 1.1431320 *
-      13) gleason>=7.5 25  33.993130 2.0355220  
-        26) g2>=15.29 13  16.555970 1.3494740 *
-        27) g2< 15.29 12  14.220260 2.9210480 *
-     7) age< 56.5 10  15.522810 3.1977430 *
-Call:
-rpart(formula = Surv(stagec$pgtime, stagec$pgstat) ~ age + eet + 
-    g2 + grade + gleason + ploidy, data = stagec)
-  n= 146 
-
-          CP nsplit rel error    xerror       xstd
-1 0.12825561      0 1.0000000 1.0143020 0.07405392
-2 0.04143718      1 0.8717444 0.8865059 0.07590486
-3 0.02891302      2 0.8303072 0.8940595 0.08030319
-4 0.01770700      3 0.8013942 0.9564897 0.08650164
-5 0.01646215      4 0.7836872 0.9734598 0.08936699
-6 0.01138994      5 0.7672250 1.0077870 0.09133677
-7 0.01000000      6 0.7558351 1.0178375 0.09248707
-
-Node number 1: 146 observations,    complexity param=0.1282556
-  events=54,  estimated rate=1 , mean deviance=1.338436 
-  left son=2 (61 obs) right son=3 (85 obs)
-  Primary splits:
-      grade   < 2.5    to the left,  improve=25.114360, (0 missing)
-      gleason < 5.5    to the left,  improve=21.515590, (3 missing)
-      ploidy  < 1.5    to the left,  improve=13.874260, (0 missing)
-      g2      < 13.2   to the left,  improve=12.370770, (7 missing)
-      age     < 58.5   to the right, improve= 2.659133, (0 missing)
-  Surrogate splits:
-      gleason < 5.5    to the left,  agree=0.863, adj=0.672, (0 split)
-      ploidy  < 1.5    to the left,  agree=0.644, adj=0.148, (0 split)
-      g2      < 9.945  to the left,  agree=0.630, adj=0.115, (0 split)
-      age     < 66.5   to the right, agree=0.589, adj=0.016, (0 split)
-
-Node number 2: 61 observations,    complexity param=0.04143718
-  events=9,  estimated rate=0.3624701 , mean deviance=0.7380577 
-  left son=4 (33 obs) right son=5 (28 obs)
-  Primary splits:
-      g2      < 11.36  to the left,  improve=8.9819660, (1 missing)
-      ploidy  < 1.5    to the left,  improve=6.8795730, (0 missing)
-      age     < 68.5   to the right, improve=4.1362190, (0 missing)
-      gleason < 5.5    to the left,  improve=1.6564990, (3 missing)
-      eet     < 1.5    to the left,  improve=0.5950964, (1 missing)
-  Surrogate splits:
-      ploidy < 1.5    to the left,  agree=0.917, adj=0.815, (1 split)
-      age    < 65.5   to the left,  agree=0.617, adj=0.148, (0 split)
-
-Node number 3: 85 observations,    complexity param=0.02891302
-  events=45,  estimated rate=1.619062 , mean deviance=1.47444 
-  left son=6 (75 obs) right son=7 (10 obs)
-  Primary splits:
-      age     < 56.5   to the right, improve=6.3899780, (0 missing)
-      g2      < 22.765 to the right, improve=4.7850160, (6 missing)
-      gleason < 8.5    to the left,  improve=4.3730790, (0 missing)
-      ploidy  < 1.5    to the left,  improve=1.5650740, (0 missing)
-      eet     < 1.5    to the right, improve=0.8319287, (1 missing)
-
-Node number 4: 33 observations
-  events=1,  estimated rate=0.1225562 , mean deviance=0.2763672 
-
-Node number 5: 28 observations
-  events=8,  estimated rate=0.7335298 , mean deviance=0.9930034 
-
-Node number 6: 75 observations
-  events=37,  estimated rate=1.428731 , mean deviance=1.388729 
-
-Node number 7: 10 observations
-  events=8,  estimated rate=3.197743 , mean deviance=1.552281 
-
 ### Section 9
 ### Section 10
 > 
@@ -1778,6 +1658,74 @@ The following object(s) are masked from 'package:rpart':
 > prp(a, under=F, type=2, extra=109, main="extra=109, under=F")
 > prp(a, under=T, type=3, extra=110, main="extra=110")
 > prp(a, under=T, type=4, extra=111, main="extra=111")
+> par(mfrow=c(1,1))
+> 
+> # TODO this seems to not work with the new version of rpart (4.0.2)
+> # library(rpart.plot)
+> # library(rpartOrdinal)
+> # library(rpartScore)
+> # data(lowbwt)
+> # lowbwt <- lowbwt[1:80,]
+> # lowbwt$Category.s <-
+> #     ifelse(lowbwt$bwt <= 2500, 3,
+> #     ifelse(lowbwt$bwt <= 3000, 2,
+> #     ifelse(lowbwt$bwt <= 3500, 1, 
+> #                                0)))
+> # Gives error
+> # a <- rpartScore(Category.s ~ age + lwt + race + smoke +
+> #                 ptl + ht + ui + ftv, data = lowbwt)
+> # prp(a, extra=100, main="rpartScore\nextra=100", under=TRUE)
+> 
+> library(rpartOrdinal)
+
+Attaching package: 'rpartOrdinal'
+
+The following object(s) are masked from 'package:mvpart':
+
+    formatg
+
+> data(lowbwt)
+> lowbwt$Category <- factor(
++ 	ifelse(lowbwt$bwt<=2500,3,
++ 	ifelse(lowbwt$bwt<=3000,2,
++ 	ifelse(lowbwt$bwt<=3500,1,
++ 							0))),ordered=TRUE)
+> a <- rpart(Category~age+lwt+race+smoke+ptl+ht+ui+ftv,data=lowbwt,method=ordinal)
+> prp(a, main="rpartOrdinal\ntype=1, extra=0", type=1, extra=0, faclen=0)
+Warning message:
+Unrecognized rpart object: treating as a numeric response model 
+> 
+> #--- appendix mvpart.R  ---
+> 
+> library(mvpart)
+> library(rpart.plot)
+> data(spider)
+> set.seed(1)
+> response <- data.matrix(spider[,1:3, drop=F])
+> tree1 <- mvpart(response~herbs+reft+moss+sand+twigs+water, data=spider,
++             legend=F, method="mrt", plot.add=F, xv="min")
+> 
+> old.par <- par(par(mfrow=c(4,4)), mar = c(3, 3, 3, 1), mgp = c(1.5, .5, 0))
+> prp1 <- function(tree1, extra, main, type=1, under=T, col=1, yesno=F, tweak=1,
++                  col.main="skyblue4", cex.main=1, ...)
++ {
++     prp(tree1, type=type, extra=extra, main=main,
++         under=under, col=col, yesno=yesno, tweak=tweak,
++         col.main=col.main, cex.main=cex.main, ...)
++ }
+> prp1(tree1, extra=0, main="extra = 0\ndev", tweak=.8)
+> prp1(tree1, extra=1, type=3, main="extra = 1 (type=3)\ndev,  n")
+> prp1(tree1, extra=2, main="extra = 2\ndev,  frac", tweak=1.2)
+> prp1(tree1, extra=3, main="extra = 3\ndev,  frac / sum(frac)")
+> prp1(tree1, extra=4, main="extra = 4\nsqrt(dev)")
+> prp1(tree1, extra=5, main="extra = 5\nsqrt(dev),  n")
+> prp1(tree1, extra=6, main="extra = 6\nsqrt(dev),  frac", tweak=1.2)
+> prp1(tree1, extra=7, main="extra = 7\nsqrt(dev),  frac / sum(frac)", tweak=1.1)
+> prp1(tree1, extra=8, main="extra = 8\npredom species",   tweak=.8)
+> prp1(tree1, extra=9, main="extra = 9\npredom species,  n", tweak=1)
+> prp1(tree1, extra=10, main="extra = 10\npredom species,  frac", tweak=1.2)
+> prp1(tree1, extra=11, main="extra = 11\npredom spec,  frac / sum(frac)", tweak=1.15)
+> par(old.par)
 > 
 > if(!interactive()) {
 +     dev.off()         # finish postscript plot

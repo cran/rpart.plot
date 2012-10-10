@@ -464,6 +464,11 @@ get.layout <- function(obj, type, nn, fallen.leaves, branch,
             printf2("Compacted vertically, new ylim is c(0, %.3g)\n", ymax)
         ymax
     }
+    tree.depth <- function (nodes) # lifted from rpart::tree.depth.R
+    {
+        depth <- floor(log(nodes, base = 2) + 1e-7)
+        depth - min(depth) # doesn't seem to need as.vector.
+    }
     #--- get.layout starts here ---
     frame <- obj$frame
     nodes <- as.numeric(row.names(frame))
@@ -487,7 +492,7 @@ get.layout <- function(obj, type, nn, fallen.leaves, branch,
     }
     x.org <- x <- node.xy$x
     y.org <- y <- node.xy$y
-    tree.depth <- rpart:::tree.depth(nodes)
+    tree.depth <- tree.depth(nodes)
     max.tree.depth <- max(tree.depth)
     scale <- ymax <- xmax <- 1
     scale <- get.actual.scale(x.org, y.org, split.yshift)

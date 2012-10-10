@@ -408,7 +408,7 @@ prp <- function(x=stop("no 'x' arg"),
         compress <- FALSE
     obj <- x
     if(!is.null(obj$frame$splits))
-        obj <- rpart:::rpconvert(obj) # convert from old format rpart objectt
+        obj <- my.rpconvert(obj) # convert from old format rpart objectt
     frame <- obj$frame
     is.leaf <- is.leaf(frame)
     nodes <- as.numeric(row.names(frame))
@@ -712,15 +712,7 @@ get.node.coords <- function(obj, uniform, branch, compress,
         nspace <- -1    # magic value for rpartco meaning no compression
     if(is.null(nspace))
         nspace <- branch
-    # Create a variable in the global environment called
-    # ".rpart.parms.D" where D is the current device number
-    # This is used to communicate with rpartco.
-    if(dev.cur() == 1)  # no device is active?
-        dev.new()       # make active so can create global var for the device
-    assign(paste0(".rpart.parms.", dev.cur()),
-           list(uniform=uniform, branch=branch, nspace=nspace, minbranch=minbranch),
-           envir=.GlobalEnv)
-    xy <- rpart:::rpartco(obj) # compute the xy coords of the nodes
+    xy <- my.rpartco(obj, uniform, nspace, minbranch)
     x <- xy$x
     y <- xy$y
 

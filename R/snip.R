@@ -3,10 +3,10 @@
 do.snip <- function(obj, nodes, split.labels, node.xy, branch.xy,
                     branch.lty, branch.lwd, xlim, ylim, digits, snip.fun)
 {
-    my.snip.rpart <- function(obj, deleted.nodes)
+    snip.rpart1 <- function(obj, deleted.nodes)
     {
         if(length(deleted.nodes))
-            rpart:::snip.rpart(obj, deleted.nodes)
+            my.snip.rpart(obj, deleted.nodes)
         else
             obj # no changes
     }
@@ -93,7 +93,7 @@ do.snip <- function(obj, nodes, split.labels, node.xy, branch.xy,
                     if(is.null(snip.fun)) # reduce clutter
                         print.node.info("Delete", inode)
                     else
-                        snip.fun(my.snip.rpart(obj, nodes[deleted.nodes]))
+                        snip.fun(snip.rpart1(obj, nodes[deleted.nodes]))
                 } else {
                     # Node is currently deleted, so undelete it and its children ---
                     # but not if any of its ancestors are deleted.
@@ -106,7 +106,7 @@ do.snip <- function(obj, nodes, split.labels, node.xy, branch.xy,
                         if(is.null(snip.fun))
                             print.node.info("Undelete", inode)
                         else
-                            snip.fun(my.snip.rpart(obj, nodes[deleted.nodes]))
+                            snip.fun(snip.rpart1(obj, nodes[deleted.nodes]))
                     }
                 }
                 show.branches()
@@ -125,5 +125,5 @@ do.snip <- function(obj, nodes, split.labels, node.xy, branch.xy,
     if(length(snipped.nodes) == 0)
         list(obj=obj, snipped.nodes=NULL)
     else
-        list(obj=my.snip.rpart(obj, snipped.nodes), snipped.nodes=snipped.nodes)
+        list(obj=snip.rpart1(obj, snipped.nodes), snipped.nodes=snipped.nodes)
 }

@@ -3,6 +3,9 @@
 # must set use.prp to TRUE or FALSE before using this file
 # use.prp <- TRUE
 
+# Not all the data in the rpart reports is (easily) available
+# so sometimes we use alternative data below
+
 cat("### Section 3\n")
 
 # get the stagec data (you will find it in library/rpart/tests/data.stagec)
@@ -130,47 +133,48 @@ print(cfit2, cp=.03)
 
 cat("### Section 8\n")
 
-fit <- rpart(skips ~ Opening + Solder + Mask + PadType + Panel, data=solder,
-             method='poisson', control=rpart.control(cp=.05, maxcompete=2))
-summary(fit, cp=.10)
-par(mfrow=c(2,2))
-if (use.prp) {
-    prp(fit, extra=T, main="Section 8", uniform=F, faclen=-1, tweak=1.1)
-} else {
-    plot(fit, main="Section 8")
-    text(fit, use.n=T, xpd=NA)
-}
+# TODO commented out because crashes in summary.rpart with rpart version 4.0.2
+# fit <- rpart(skips ~ Opening + Solder + Mask + PadType + Panel, data=solder,
+#              method='poisson', control=rpart.control(cp=.05, maxcompete=2))
+# summary(fit, cp=.10)
+# par(mfrow=c(2,2))
+# if (use.prp) {
+#     prp(fit, extra=T, main="Section 8", uniform=F, faclen=-1, tweak=1.1)
+# } else {
+#     plot(fit, main="Section 8")
+#     text(fit, use.n=T, xpd=NA)
+# }
+#
+# fit.prune <- prune(fit, cp=.15)
+# if (use.prp) {
+#     prp(fit.prune, extra=T, main="Section 8a")
+# } else {
+#     plot(fit.prune)
+#     text(fit.prune, use.n=T, xpd=NA, main="Section 8a")
+# }
 
-fit.prune <- prune(fit, cp=.15)
-if (use.prp) {
-    prp(fit.prune, extra=T, main="Section 8a")
-} else {
-    plot(fit.prune)
-    text(fit.prune, use.n=T, xpd=NA, main="Section 8a")
-}
+# library(survival)
+# fit <- rpart(Surv(stagec$pgtime, stagec$pgstat) ~ age + eet + g2 + grade +
+#              gleason + ploidy, data=stagec)
+# print(fit)
+# if (use.prp) {
+#     prp(fit, uniform=T, branch=.4, compress=T, extra=T, main="Section 8b")
+# } else {
+#     plot(fit, uniform=T, branch=.4, compress=T, main="Section 8b")
+#     text(fit, use.n=T)
+# }
+#
+# summary(fit, cp=.02)
 
-library(survival)
-fit <- rpart(Surv(stagec$pgtime, stagec$pgstat) ~ age + eet + g2 + grade +
-             gleason + ploidy, data=stagec)
-print(fit)
-if (use.prp) {
-    prp(fit, uniform=T, branch=.4, compress=T, extra=T, main="Section 8b")
-} else {
-    plot(fit, uniform=T, branch=.4, compress=T, main="Section 8b")
-    text(fit, use.n=T)
-}
-
-summary(fit, cp=.02)
-
-# modified for running in a script
-fit2 <- prune(fit, cp=.015) # was fit2 <- snip.rpart(fit)
-if (use.prp) {
-    prp(fit2, uniform=T, branch=.4, compress=T, extra=T, main="Section 8c")
-} else {
-    plot(fit2)
-    text(fit2, use.n=T, main="Section 8c")
-}
-par(mfrow=c(1,1))
+# # modified for running in a script
+# fit2 <- prune(fit, cp=.015) # was fit2 <- snip.rpart(fit)
+# if (use.prp) {
+#     prp(fit2, uniform=T, branch=.4, compress=T, extra=T, main="Section 8c")
+# } else {
+#     plot(fit2)
+#     text(fit2, use.n=T, main="Section 8c")
+# }
+# par(mfrow=c(1,1))
 
 # newgrp <- fit2$where
 # plot(survfit(Surv(pgtime, pgstat) ~ newgrp, data=stagec), mark.time=F, lty=1:4)

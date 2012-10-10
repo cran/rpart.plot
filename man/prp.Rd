@@ -143,8 +143,9 @@ prp(x=stop("no 'x' arg"),
     by default \code{prp} uses its own routine for
     generating node  labels (not the function attached to the object).
     See \code{node.fun}.\cr
-    Note 2: \code{mrt} models (the \code{mvpart} package) are also supported.
-    See \code{get.mrt.labs} in the source code.
+    Note 2: The \code{extra} argument has special meaning
+    for \code{\link[mvpart:mvpart]{mvpart}} objects.
+    See the Appendix to this package's vignette.
   }
   \item{under}{
      Applies only if \code{extra > 0}.
@@ -229,7 +230,7 @@ prp(x=stop("no 'x' arg"),
      Numbers from \code{0.001} to \code{9999} are printed without an exponent
      (and the number of digits is actually only a suggestion,
      see \code{\link{format}} for details).
-     Otherwise an ``engineering'' exponent is used (a multiple of 3).
+     Numbers out that range are printed with an ``engineering'' exponent (a multiple of 3).
   }
   \item{varlen}{
      Length of variable names in text at the splits
@@ -623,8 +624,8 @@ prp(x=stop("no 'x' arg"),
   \item{fam.main}{
      Font family for the main text.  Default \code{""}.
      The (inconsistent) name was chosen to minimize partial matching
-     with \code{main} and \code{family} which can be passed in as a
-     which can be passed in as \dots arguments.
+     with \code{main} and \code{family} which can be passed in as
+     in as \dots arguments.
   }
   \item{yshift}{
      Vertical position of the labels, in character heights relative to their default position.

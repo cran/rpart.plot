@@ -4,6 +4,20 @@
 internal.node.labs <- function(x, node.fun, node.fun.name, type, extra,
                                under, xsep, digits, varlen, prefix, suffix)
 {
+    is.vec <- function(x) {
+        (NROW(x) == 1 || NCOL(x) == 1) && NROW(x) * NCOL(x) > 0
+    }
+    is.numeric.response <- function(x) {
+        # see if we have the fields necessary for
+        # get.anova.labs (but not get.class.labs)
+        is.vec(x$frame$yval) && is.null(x$frame$yval2)
+    }
+    is.class.response <- function(x) {
+        # see if we have the fields necessary for get.class.labs
+        yval2 <- x$frame$yval2
+        NCOL(yval2) >= 5 && is.vec(x$frame$n) && is.vec(x$frame$wt)
+    }
+    #--- internal.node.labs starts here ---
     stopifnot((is.numeric(extra) || (is.logical(extra)) && length(extra) == 1))
     frame <- x$frame
     labs <-
@@ -14,18 +28,31 @@ internal.node.labs <- function(x, node.fun, node.fun.name, type, extra,
         else if(x$method == "poisson" || x$method == "exp")
             get.poisson.labs(x, extra, under, digits, xsep, varlen)
         else if(x$method == "mrt")
-            get.mrt.labs(x, extra, under, digits, xsep, varlen)
+            get.mvpart.labs(x, extra, under, digits, xsep, varlen)
         else {
-            check.func.args(x$functions$text, "x$functions$text",
-                  function(yval, dev, wt, ylevel, digits, n, use.n) NA)
-            labs <- x$functions$text(
-                      yval=if(is.null(frame$yval2)) frame$yval else frame$yval2,
-                      dev=frame$dev, wt=frame$wt, ylevel=attr(x, "ylevels"),
-                      digits=digits, n=frame$n, use.n=extra)
-            check.returned.labs(x, labs, "x$functions$text()")
-            if(under)
-                labs <- sub("\n", "\n\n", labs) # replace \n with \n\n
-            labs
+            if(is.numeric.response(x)) {
+                warning0("Unrecognized rpart object: treating as a numeric response model")
+                if(x$method == "user")
+                    x$method = "user.with.numeric.response" # used only in err msgs
+                get.anova.labs(x, extra, under, digits, xsep, varlen)
+            } else if(is.class.response(x)) {
+                warning0("Unrecognized rpart object: treating as a class response model")
+                if(x$method == "user")
+                    x$method = "user.with.class.response" # used only in err msgs
+                get.class.labs(x, extra, under, digits, xsep, varlen)
+            } else {
+                warning0("Unrecognized rpart object")
+                check.func.args(x$functions$text, "x$functions$text",
+                      function(yval, dev, wt, ylevel, digits, n, use.n) NA)
+                labs <- x$functions$text(
+                          yval=if(is.null(frame$yval2)) frame$yval else frame$yval2,
+                          dev=frame$dev, wt=frame$wt, ylevel=attr(x, "ylevels"),
+                          digits=digits, n=frame$n, use.n=extra)
+                check.returned.labs(x, labs, "x$functions$text()")
+                if(under)
+                    labs <- sub("\n", "\n\n", labs) # replace \n with \n\n
+                labs
+            }
         }
     if(!identical(node.fun.name, "internal.node.labs")) { # call user's node.fun?
         check.func.args(node.fun, "node.fun",
@@ -64,14 +91,21 @@ get.class.labs <- function(x, extra, under, digits, xsep, varlen)
     frame <- x$frame
     n <- frame$n
     ntotal <- n[1]
-    # columns of yval2 for a two-level response are: fitted n1 n2 prob1 prob2
+    # columns of yval2 for e.g. a two-level response are: fitted n1 n2 prob1 prob2
     yval2 <- frame$yval2
+    if(NCOL(yval2) < 5)
+        stop0("frame$yval2 is not a matrix with five or more columns")
     fitted <- yval2[, 1] # fitted level as an integer
-    nlev <- (ncol(yval2) - 1) / 2
+    if(NCOL(yval2) %% 2 == 0) { # new style yval2?
+        stopifnot(colnames(yval2)[length(colnames(yval2))] == "nodeprob")
+        nlev <- (ncol(yval2) - 2) / 2
+    } else # old style yval2
+        nlev <- (ncol(yval2) - 1) / 2
     stopifnot(nlev > 1)
+    stopifnot(floor(nlev) == nlev)
     n.per.lev <- yval2[, 1 + (1:nlev), drop=FALSE]
     # aug 2012: commented out the following check because it
-    # falsely fails when cases weights are used in the rpart model
+    # incorrectly fails when cases weights are used in the rpart model
     # stopifnot(sum(n.per.lev[1,]) == ntotal) # sanity check
     prob.per.lev <- yval2[, 1 + nlev + (1:nlev), drop=FALSE]
     stopifnot(sum(prob.per.lev[1,]) == 1)   # sanity check
@@ -137,7 +171,7 @@ get.class.labs <- function(x, extra, under, digits, xsep, varlen)
 
     if(extra >= 100) { # add percent?
         sep <- switch(ex+1,  # figure out where to put percent (same line? below? etc.)
-                      newline,                    # 0 may be a double newline
+                      newline,                    # 0 (may be a double newline)
                       "\n",                       # 1
                       "\n",                       # 2
                       "\n",                       # 3
@@ -176,81 +210,6 @@ get.poisson.labs <- function(x, extra, under, digits, xsep, varlen)
     if(extra >= 100)        # add percent?
         labs <- sprintf("%s%s%s%%", labs, newline,
                         formatf(100 * frame$wt / frame$wt[1], digits=max(0, digits-2)))
-    labs
-}
-# This extends the text() function in rpart.mrt.
-# Note that extra=0 and extra=1 are compatible with that function.
-# The following table shows allowable values for extra (and as always,
-# add 100 to include the percent).  My personal favorites are 107 and 111.
-#
-#    0   dev
-#    1   dev, n
-#    2   dev, yhat
-#    3   dev, yhat / sum(yhat)
-#    4   sqrt(dev)
-#    5   sqrt(dev), n
-#    6   sqrt(dev), yhat
-#    7   sqrt(dev), yhat / sum(yhat)
-#    8   predominant species
-#    9   predominant species, n
-#    10  predominant species, yhat
-#    11  predominant species, yhat / sum(yhat)
-
-get.mrt.labs <- function(x, extra, under, digits, xsep, varlen)
-{
-    frame <- x$frame
-    yval2 <- frame$yval2 # fit per species i.e. per column of response matrix y
-    nspecies <- ncol(yval2)
-    if(is.null(xsep))
-        xsep <- "  " # two spaces
-    ex <- if(extra < 100) extra else extra - 100
-    if(ex <= 3)
-        main <- formate(frame$dev, digits=digits)
-    else if(ex <= 7)
-        main <- formate(sqrt(frame$dev), digits=digits)
-    else {
-        stopifnot(all(!is.na(yval2))) # needed because which.max discards NAs
-        main <- apply(yval2, 1, which.max) # index of max in each row
-        # convert species number to species name, if the names are available
-        if(length(colnames(x$y)) == nspecies)
-            main <- colnames(x$y)[main]
-        main <- as.character(main)
-    }
-    if(ex == 3 || ex == 7 || ex == 11) # divide each row by its sum
-        for (i in 1:nrow(yval2))
-            yval2[i,] <- yval2[i,] / sum(yval2[i,])
-    resp.per.species <- formatf(yval2, digits, strip.leading.zeros=TRUE) # TODO use formate?
-    resp.per.species <- apply(matrix(resp.per.species, ncol=nspecies),
-                              1, paste.with.breaks, collapse=xsep)
-    newline <- if(under) "\n\n" else "\n"
-    labs <-
-        if(ex == 0 || ex == 4 || ex == 8)
-            main
-        else if(ex == 1 || ex == 5 || ex == 9)
-            sprintf("%s%sn=%s", main, newline, format0(frame$n, digits))
-        else if(ex == 2 || ex == 3 || ex == 6 || ex == 7 || ex == 10 || ex == 11)
-            paste0(main, newline, resp.per.species)
-        else
-            stop0("extra=", extra, " is illegal (for method=\"", x$method, "\")")
-
-    if(extra >= 100) { # add percent?
-        sep <- switch(ex+1,   # figure out where to put percent (same line? below? etc.)
-                      newline,  # 0 may be a double newline
-                      "  ",     # 1
-                      "\n",     # 2
-                      "\n",     # 3
-                      newline,  # 4
-                      "  ",     # 5
-                      "\n",     # 6
-                      "\n",     # 7
-                      newline,  # 8
-                      "  ",     # 9
-                      "\n",     # 10
-                      "\n")     # 11
-
-        labs <- sprintf("%s%s%s%%", labs, sep,
-                        formatf(100 * frame$wt / frame$wt[1], digits=max(0, digits-2)))
-    }
     labs
 }
 # check returned labs because split.fun or node.fun may be user supplied

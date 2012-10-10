@@ -120,26 +120,27 @@ my.labs3 <- function(x, labs, digits, varlen) # use passed in labs
 }
 prp(fit2, node.fun=my.labs3, main="my.labs3\nextra=100", trace=1, extra=100, under=T)
 
-fit.user <- rpart(survived~., data=ptitanic, cp=.02)
-fit.user$method <- "user"
-fit.user$functions$text <- function (yval, dev, wt, ylevel, digits, n, use.n)
-{
-    nclass <- (ncol(yval) - 1L)/2
-    group <- yval[, 1L]
-    counts <- yval[, 1L + (1L:nclass)]
-    if (!is.null(ylevel))
-        group <- ylevel[group]
-    temp1 <- format(counts)
-    if (nclass > 1)
-        temp1 <- apply(matrix(temp1, ncol = nclass), 1, paste, collapse = "/")
-    cat("use.n=", use.n, "\n")
-    if (use.n)
-        out <- paste(group, "!\n", temp1, sep = "")
-    else
-        out <- format(group)
-    return(out)
-}
-prp(fit.user, node.fun=my.labs3, main="method=user\nmy.labs3 extra=100", trace=1, extra=100, under=T, prefix="result: ")
+# commented out for rpart.plot version 1.4-0 (user mode no longer supported)
+# fit.user <- rpart(survived~., data=ptitanic, cp=.02)
+# fit.user$method <- "user"
+# fit.user$functions$text <- function (yval, dev, wt, ylevel, digits, n, use.n)
+# {
+#     nclass <- (ncol(yval) - 1L)/2
+#     group <- yval[, 1L]
+#     counts <- yval[, 1L + (1L:nclass)]
+#     if (!is.null(ylevel))
+#         group <- ylevel[group]
+#     temp1 <- format(counts)
+#     if (nclass > 1)
+#         temp1 <- apply(matrix(temp1, ncol = nclass), 1, paste, collapse = "/")
+#     cat("use.n=", use.n, "\n")
+#     if (use.n)
+#         out <- paste(group, "!\n", temp1, sep = "")
+#     else
+#         out <- format(group)
+#     return(out)
+# }
+# prp(fit.user, node.fun=my.labs3, main="method=user\nmy.labs3 extra=100", trace=1, extra=100, under=T, prefix="result: ")
 
 a20 <- rpart(survived~., data=ptitanic, control=list(cp=.02))
 par(mfrow=c(3,3))
@@ -399,8 +400,8 @@ prp(fit4, trace=2, cex=.8, tweak=1.1, main="Page 11: miscellaneous 2, tweak",
        xflip=TRUE, yflip=TRUE, type=1, extra=100,  yesno=FALSE)
 # TODO wanna include family below, but postscript giving me grief
 fit4.strange.method <- fit4
-fit4.strange.method$method <- "unknown.method" # will call the default text() function, extra=99 treated as use.n=T
-prp(fit4.strange.method, main="left=FALSE, fonts, user method", left=FALSE, font=c(1,2,3), split.cex=c(1, 1.2), branch=.5, trace=1, extra=99)
+fit4.strange.method$method <- "unknown.method"
+prp(fit4.strange.method, main="left=FALSE, fonts, user method", left=FALSE, font=c(1,2,3), split.cex=c(1, 1.2), branch=.5, trace=1, extra=1)
 prp(fit4, main="uniform=FALSE", uniform=FALSE, trace=1)
 data(ozone1)
 fit.oz1 <- rpart(O3~., data=ozone1)
@@ -677,6 +678,65 @@ prp(a, under=T, type=1, extra=8,   main="extra=8")
 prp(a, under=F, type=2, extra=109, main="extra=109, under=F")
 prp(a, under=T, type=3, extra=110, main="extra=110")
 prp(a, under=T, type=4, extra=111, main="extra=111")
+par(mfrow=c(1,1))
+
+# TODO this seems to not work with the new version of rpart (4.0.2)
+# library(rpart.plot)
+# library(rpartOrdinal)
+# library(rpartScore)
+# data(lowbwt)
+# lowbwt <- lowbwt[1:80,]
+# lowbwt$Category.s <-
+#     ifelse(lowbwt$bwt <= 2500, 3,
+#     ifelse(lowbwt$bwt <= 3000, 2,
+#     ifelse(lowbwt$bwt <= 3500, 1, 
+#                                0)))
+# Gives error
+# a <- rpartScore(Category.s ~ age + lwt + race + smoke +
+#                 ptl + ht + ui + ftv, data = lowbwt)
+# prp(a, extra=100, main="rpartScore\nextra=100", under=TRUE)
+
+library(rpartOrdinal)
+data(lowbwt)
+lowbwt$Category <- factor(
+	ifelse(lowbwt$bwt<=2500,3,
+	ifelse(lowbwt$bwt<=3000,2,
+	ifelse(lowbwt$bwt<=3500,1,
+							0))),ordered=TRUE)
+a <- rpart(Category~age+lwt+race+smoke+ptl+ht+ui+ftv,data=lowbwt,method=ordinal)
+prp(a, main="rpartOrdinal\ntype=1, extra=0", type=1, extra=0, faclen=0)
+
+#--- appendix mvpart.R  ---
+
+library(mvpart)
+library(rpart.plot)
+data(spider)
+set.seed(1)
+response <- data.matrix(spider[,1:3, drop=F])
+tree1 <- mvpart(response~herbs+reft+moss+sand+twigs+water, data=spider,
+            legend=F, method="mrt", plot.add=F, xv="min")
+
+old.par <- par(par(mfrow=c(4,4)), mar = c(3, 3, 3, 1), mgp = c(1.5, .5, 0))
+prp1 <- function(tree1, extra, main, type=1, under=T, col=1, yesno=F, tweak=1,
+                 col.main="skyblue4", cex.main=1, ...)
+{
+    prp(tree1, type=type, extra=extra, main=main,
+        under=under, col=col, yesno=yesno, tweak=tweak,
+        col.main=col.main, cex.main=cex.main, ...)
+}
+prp1(tree1, extra=0, main="extra = 0\ndev", tweak=.8)
+prp1(tree1, extra=1, type=3, main="extra = 1 (type=3)\ndev,  n")
+prp1(tree1, extra=2, main="extra = 2\ndev,  frac", tweak=1.2)
+prp1(tree1, extra=3, main="extra = 3\ndev,  frac / sum(frac)")
+prp1(tree1, extra=4, main="extra = 4\nsqrt(dev)")
+prp1(tree1, extra=5, main="extra = 5\nsqrt(dev),  n")
+prp1(tree1, extra=6, main="extra = 6\nsqrt(dev),  frac", tweak=1.2)
+prp1(tree1, extra=7, main="extra = 7\nsqrt(dev),  frac / sum(frac)", tweak=1.1)
+prp1(tree1, extra=8, main="extra = 8\npredom species",   tweak=.8)
+prp1(tree1, extra=9, main="extra = 9\npredom species,  n", tweak=1)
+prp1(tree1, extra=10, main="extra = 10\npredom species,  frac", tweak=1.2)
+prp1(tree1, extra=11, main="extra = 11\npredom spec,  frac / sum(frac)", tweak=1.15)
+par(old.par)
 
 if(!interactive()) {
     dev.off()         # finish postscript plot

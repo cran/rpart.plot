@@ -102,11 +102,13 @@ For an overview of the other arguments see \url{../doc/prp.pdf}.
                  Actually, it's a weighted percentage
                  using the \code{weights} passed to \code{rpart}.\cr
 
-    Note: Unlike \code{text.rpart},
+    Note 1: Unlike \code{text.rpart},
     by default \code{prp} uses its own routine for
     generating node  labels (not the function attached to the object).
     See \code{node.fun}.\cr
-
+    Note 2: The \code{extra} argument has special meaning
+    for \code{\link[mvpart:mvpart]{mvpart}} objects.
+    See the Appendix to this package's vignette.
   }
   \item{under}{
      Applies only if \code{extra > 0}.
@@ -144,7 +146,7 @@ For an overview of the other arguments see \url{../doc/prp.pdf}.
      Numbers from \code{0.001} to \code{9999} are printed without an exponent
      (and the number of digits is actually only a suggestion,
      see \code{\link{format}} for details).
-     Otherwise an ``engineering'' exponent is used (a multiple of 3).
+     Numbers out that range are printed with an ``engineering'' exponent (a multiple of 3).
   }
   \item{varlen}{
      Length of variable names in text at the splits

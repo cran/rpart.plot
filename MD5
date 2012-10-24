@@ -1,6 +1,6 @@
-b2d6f428095d74ce0d575a27e3e69ff3 *DESCRIPTION
+f2e3e077a9ccff618fe1731865b55128 *DESCRIPTION
 748f6da7aeebbc2747cd152aed7d7548 *NAMESPACE
-dd12c8ca1621632a33132fd1c115335b *NEWS
+f3f75a5ad13ea8f0ee849c35ccc28916 *NEWS
 6a13d1062530769810a7826febe4f967 *R/branches.R
 342e24b272805c37e0a4fbe8df725281 *R/layout.R
 7ca0a24160d50f2c0fc8f5cde49232a9 *R/lib.R
@@ -17,7 +17,7 @@ ff66d322d0b6a85b3005832bb438816b *R/split.labs.R
 a25a226a4abc62744caf0cb974c1e3a2 *R/yes.no.R
 f66787088c53930a51438504efeca4bf *data/ptitanic.rda
 11e86e8af30f22e5c3743e9c2644d572 *inst/doc/index.html
-3d3aadffe82f786bbc59bc69327d11eb *inst/doc/prp.pdf
+4d8c4a707a763b06e7b6e432cb0c1509 *inst/doc/prp.pdf
 993802a09862f5a6e06590bd281b6304 *man/prp.Rd
 41cd096262595e3199fd303dcd47a43e *man/ptitanic.Rd
 6d1694dd822090528a33f9d66eee8fe1 *man/rpart.plot.Rd
@@ -26,7 +26,7 @@ f66787088c53930a51438504efeca4bf *data/ptitanic.rda
 8485c8e16261d1d9d6d8e785dec4aa55 *src/tests/code.in.rpart.report.with.prp.R
 147bd7a75b6159f73762a034b106c82a *src/tests/data.stagec
 26501204a89ce2d844376c2c467442e1 *src/tests/make.bat
-16870dfde75cc825da68a9609118d719 *src/tests/test.prp.R
-6c107b781d26ae6957b0374407368027 *src/tests/test.prp.Rout.save
-b6457d24ccb12ab0d248ed1462c77871 *src/tests/test.prp.save.ps
-edc5e43cd09a4b93d6e02737735ace87 *src/tests/user-manual-figs.R
+db822cd741021994f1a23182664209dc *src/tests/test.prp.R
+137300ee0bfc0ad7c0f4166f946baa08 *src/tests/test.prp.Rout.save
+c53d1fd8931deedcff3dc18829ff9c59 *src/tests/test.prp.save.ps
+27b9121b60975086e56fcaf4caa593cf *src/tests/user-manual-figs.R

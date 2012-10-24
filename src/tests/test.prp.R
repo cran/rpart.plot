@@ -4,6 +4,7 @@ library(rpart.plot)
 data(ptitanic)
 library(earth)
 data(ozone1)
+sessionInfo()
 ititanic <- ptitanic
 ititanic$survived <- as.integer(ititanic$survived == "survived")
 
@@ -680,7 +681,7 @@ prp(a, under=T, type=3, extra=110, main="extra=110")
 prp(a, under=T, type=4, extra=111, main="extra=111")
 par(mfrow=c(1,1))
 
-# TODO this seems to not work with the new version of rpart (4.0.2)
+# # TODO this seems to not work with the new version of rpart (4.0.2)
 # library(rpart.plot)
 # library(rpartOrdinal)
 # library(rpartScore)
@@ -691,7 +692,7 @@ par(mfrow=c(1,1))
 #     ifelse(lowbwt$bwt <= 3000, 2,
 #     ifelse(lowbwt$bwt <= 3500, 1, 
 #                                0)))
-# Gives error
+# # Gives error
 # a <- rpartScore(Category.s ~ age + lwt + race + smoke +
 #                 ptl + ht + ui + ftv, data = lowbwt)
 # prp(a, extra=100, main="rpartScore\nextra=100", under=TRUE)

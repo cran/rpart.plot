@@ -1,10 +1,18 @@
 Changes to the rpart.plot
 -------------------------
 
+1.4-1    Oct 24, 2012
+
+    Updates for compatibility with rpart_3.1-55 (R 2.15.2).
+
+    Updates to the vignette (extended section on compatibility
+    with plot.rpart,  added section on using split.fun, other
+    touchups).
+
 1.4-0    Oct 10, 2012
 
-    We now minimally access internal functions in the rpart package 
-    (which are accessed using "rpart:::") and thus are now less 
+    We now minimally access internal functions in the rpart package
+    (which are accessed using "rpart:::") and thus are now less
     dependent on changes to those functions.
 
     We now try harder to support rpart objects with "user" node lab funcs.

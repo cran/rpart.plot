@@ -215,6 +215,24 @@ prp(a, faclen=0, trace=1, extra=6,
     main="\ndefault:\nxcompact=TRUE\nycompact=TRUE", cex.main=1, split.border.col=0, tweak=1.2)
 rect(-.76, -1.96, 1.76, 3.35, xpd=NA) # , border=2)
 
+#--- compatibility example ---
+
+fit <- rpart(Kyphosis ~ Age + Number + Start, data=kyphosis) # from example(rpart)
+oldpar <- par(mfrow=c(1,2), xpd=NA) # side by side comparison
+plot(fit)
+text(fit, use.n=TRUE)
+prp(fit, extra=1, uniform=F, branch=1, yesno=F, border.col=0, xsep="/")
+par(oldpar)
+
+#--- split.fun example ---
+
+a9 <- rpart(Price/1000 ~ Mileage + Type + Country, cu.summary)
+split.fun <- function(x, labs, digits, varlen, faclen)
+{
+    gsub(" = ", ":\n", labs)
+}
+prp(a9, extra=100, under=T, yesno=F, split.fun=split.fun, main="a9 (split.fun example)")
+
 #--- utilities.R ---
 
 tree <- rpart(survived~., data=ptitanic, cp=.02)

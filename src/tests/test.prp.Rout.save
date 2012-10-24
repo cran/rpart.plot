@@ -8,6 +8,26 @@ Loading required package: leaps
 Loading required package: plotmo
 Loading required package: plotrix
 > data(ozone1)
+> sessionInfo()
+R version 2.15.1 (2012-06-22)
+Platform: i386-pc-mingw32/i386 (32-bit)
+
+locale:
+[1] LC_COLLATE=English_United States.1252 
+[2] LC_CTYPE=English_United States.1252   
+[3] LC_MONETARY=English_United States.1252
+[4] LC_NUMERIC=C                          
+[5] LC_TIME=English_United States.1252    
+
+attached base packages:
+[1] stats     graphics  grDevices utils     datasets  methods   base     
+
+other attached packages:
+[1] earth_3.2-5      plotrix_3.4-3    plotmo_1.3-2     leaps_2.9       
+[5] rpart.plot_1.4-1 rpart_3.1-55    
+
+loaded via a namespace (and not attached):
+[1] tools_2.15.1
 > ititanic <- ptitanic
 > ititanic$survived <- as.integer(ititanic$survived == "survived")
 > 
@@ -95,7 +115,7 @@ prp> par(old.par)
 To cite package 'rpart.plot' in publications use:
 
   Stephen Milborrow (). rpart.plot: Plot rpart models.  An enhanced
-  version of plot.rpart.. R package version 1.4-0.
+  version of plot.rpart.. R package version 1.4-1.
   http://www.milbo.org/rpart-plot
 
 A BibTeX entry for LaTeX users is
@@ -103,7 +123,7 @@ A BibTeX entry for LaTeX users is
   @Manual{,
     title = {rpart.plot: Plot rpart models.  An enhanced version of plot.rpart.},
     author = {Stephen Milborrow},
-    note = {R package version 1.4-0},
+    note = {R package version 1.4-1},
     url = {http://www.milbo.org/rpart-plot},
   }
 
@@ -1397,10 +1417,10 @@ n= 200
 8  0.0222222      8   0.33889 0.40000 0.0377124
 9  0.0166667      9   0.31667 0.39444 0.0375956
 10 0.0111111     10   0.30000 0.37222 0.0370831
-11 0.0083333     15   0.24444 0.37222 0.0370831
-12 0.0055556     22   0.18333 0.37222 0.0370831
+11 0.0083333     15   0.24444 0.37778 0.0372181
+12 0.0055556     22   0.18333 0.37778 0.0372181
 13 0.0037037     31   0.13333 0.40000 0.0377124
-14 0.0000000     34   0.12222 0.42778 0.0382305
+14 0.0000000     34   0.12222 0.41111 0.0379327
 ### Section 5
 
 Classification tree:
@@ -1429,7 +1449,7 @@ rpart(formula = progstat ~ age + eet + g2 + grade + gleason +
 3 0.01000000      5 0.5925926 0.8518519 0.1039462
 
 Node number 1: 146 observations,    complexity param=0.117284
-  predicted class=No    expected loss=0.369863  P(node) =1
+  predicted class=No    expected loss=0.369863
     class counts:    92    54
    probabilities: 0.630 0.370 
   left son=2 (61 obs) right son=3 (85 obs)
@@ -1446,12 +1466,12 @@ Node number 1: 146 observations,    complexity param=0.117284
       age     < 66.5   to the right, agree=0.589, adj=0.016, (0 split)
 
 Node number 2: 61 observations
-  predicted class=No    expected loss=0.147541  P(node) =0.4178082
+  predicted class=No    expected loss=0.147541
     class counts:    52     9
    probabilities: 0.852 0.148 
 
 Node number 3: 85 observations,    complexity param=0.117284
-  predicted class=Prog  expected loss=0.4705882  P(node) =0.5821918
+  predicted class=Prog  expected loss=0.4705882
     class counts:    40    45
    probabilities: 0.471 0.529 
   left son=6 (35 obs) right son=7 (50 obs)
@@ -1467,12 +1487,12 @@ Node number 3: 85 observations,    complexity param=0.117284
       gleason < 6.5    to the left,  agree=0.582, adj=0.057, (0 split)
 
 Node number 6: 35 observations
-  predicted class=No    expected loss=0.4  P(node) =0.239726
+  predicted class=No    expected loss=0.4
     class counts:    21    14
    probabilities: 0.600 0.400 
 
 Node number 7: 50 observations,    complexity param=0.117284
-  predicted class=Prog  expected loss=0.38  P(node) =0.3424658
+  predicted class=Prog  expected loss=0.38
     class counts:    19    31
    probabilities: 0.380 0.620 
   left son=14 (25 obs) right son=15 (25 obs)
@@ -1488,12 +1508,12 @@ Node number 7: 50 observations,    complexity param=0.117284
       gleason < 6.5    to the right, agree=0.545, adj=0.048, (0 split)
 
 Node number 14: 25 observations
-  predicted class=No    expected loss=0.36  P(node) =0.1712329
+  predicted class=No    expected loss=0.36
     class counts:    16     9
    probabilities: 0.640 0.360 
 
 Node number 15: 25 observations
-  predicted class=Prog  expected loss=0.12  P(node) =0.1712329
+  predicted class=Prog  expected loss=0.12
     class counts:     3    22
    probabilities: 0.120 0.880 
 
@@ -1660,7 +1680,7 @@ The following object(s) are masked from 'package:rpart':
 > prp(a, under=T, type=4, extra=111, main="extra=111")
 > par(mfrow=c(1,1))
 > 
-> # TODO this seems to not work with the new version of rpart (4.0.2)
+> # # TODO this seems to not work with the new version of rpart (4.0.2)
 > # library(rpart.plot)
 > # library(rpartOrdinal)
 > # library(rpartScore)
@@ -1671,7 +1691,7 @@ The following object(s) are masked from 'package:rpart':
 > #     ifelse(lowbwt$bwt <= 3000, 2,
 > #     ifelse(lowbwt$bwt <= 3500, 1, 
 > #                                0)))
-> # Gives error
+> # # Gives error
 > # a <- rpartScore(Category.s ~ age + lwt + race + smoke +
 > #                 ptl + ht + ui + ftv, data = lowbwt)
 > # prp(a, extra=100, main="rpartScore\nextra=100", under=TRUE)

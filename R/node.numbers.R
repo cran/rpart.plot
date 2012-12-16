@@ -49,7 +49,7 @@ draw.node.numbers <- function(nn, ni, draw.shadow, type, branch,
             identical(shadow.col, split.shadow.col) || type == TYPE.fancy.all || type == TYPE.all.under
         shadow.col <- recycle(shadow.col, nodes)
         if(!want.interior.node.shadows)
-            shadow.col[!is.leaf] <- 0
+            shadow.col[!is.leaf] <- if(is.character(col)) par("bg") else 0
     }
     box <- get.boxes("default", all.labs, node.xy$x, node.xy$y,
                      xlim, ylim, nodes, branch,

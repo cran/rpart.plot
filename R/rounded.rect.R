@@ -58,6 +58,10 @@ draw.shadow <- function(x1, y1, x2, y2, xlim, ylim, r,
     # lighten color by alpha 0 ... 1 where 0 is white.
     lighten <- function(col, alpha)
     {
+        if(is.character(col)) {
+            # needed when elems of col were set to 0 although col has type character
+            col[col=="0"] = par("bg")
+        }
         rgb <- col2rgb(col) / 255
         if(device.supports.alpha)
             rgb(rgb[1,], rgb[2,], rgb[3,], alpha=alpha)

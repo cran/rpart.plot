@@ -1,6 +1,13 @@
 Changes to the rpart.plot
 -------------------------
 
+1.4-2    Dec 15, 2012
+
+    Changed some code that was using "0" as a color.  
+    Changed some code that was doing rep(NULL, n).
+    R 2.15-2 complains about the above, although previous versions 
+    let them slip by.
+
 1.4-1    Oct 24, 2012
 
     Updates for compatibility with rpart_3.1-55 (R 2.15.2).

@@ -9,8 +9,8 @@ Loading required package: plotmo
 Loading required package: plotrix
 > data(ozone1)
 > sessionInfo()
-R version 2.15.1 (2012-06-22)
-Platform: i386-pc-mingw32/i386 (32-bit)
+R version 2.15.2 (2012-10-26)
+Platform: i386-w64-mingw32/i386 (32-bit)
 
 locale:
 [1] LC_COLLATE=English_United States.1252 
@@ -23,11 +23,11 @@ attached base packages:
 [1] stats     graphics  grDevices utils     datasets  methods   base     
 
 other attached packages:
-[1] earth_3.2-5      plotrix_3.4-3    plotmo_1.3-2     leaps_2.9       
-[5] rpart.plot_1.4-1 rpart_3.1-55    
+[1] earth_3.2-3      plotrix_3.4-5    plotmo_1.3-2     leaps_2.9       
+[5] rpart.plot_1.4-2 rpart_3.1-55    
 
 loaded via a namespace (and not attached):
-[1] tools_2.15.1
+[1] tools_2.15.2
 > ititanic <- ptitanic
 > ititanic$survived <- as.integer(ititanic$survived == "survived")
 > 
@@ -115,7 +115,7 @@ prp> par(old.par)
 To cite package 'rpart.plot' in publications use:
 
   Stephen Milborrow (). rpart.plot: Plot rpart models.  An enhanced
-  version of plot.rpart.. R package version 1.4-1.
+  version of plot.rpart.. R package version 1.4-2.
   http://www.milbo.org/rpart-plot
 
 A BibTeX entry for LaTeX users is
@@ -123,7 +123,7 @@ A BibTeX entry for LaTeX users is
   @Manual{,
     title = {rpart.plot: Plot rpart models.  An enhanced version of plot.rpart.},
     author = {Stephen Milborrow},
-    note = {R package version 1.4-1},
+    note = {R package version 1.4-2},
     url = {http://www.milbo.org/rpart-plot},
   }
 

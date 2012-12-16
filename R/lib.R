@@ -16,7 +16,13 @@ cat0 <- function(...) cat(..., sep="") # cat with no added spaces
 
 recycle <- function(x, refx) rep(x, length.out=length(refx))
 
-repn <- function(x, n) rep(x, length.out=n)
+repn <- function(x, n) {
+    # following "if" added for R-2.15.3 otherwise
+    # get warning: 'x' is NULL so the result will be NULL
+    if(is.null(x))
+        return(NULL)
+    rep(x, length.out=n)
+}
 
 is.left <- function(nodes) nodes %% 2 == 0
 

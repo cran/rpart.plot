@@ -1,11 +1,18 @@
 Changes to the rpart.plot
 -------------------------
 
+1.4-3    Dec 20, 2012
+   Loosened sanity check in get.class.labs to allow for numerical error.
+   Thanks for Sandrine Lunven for help with this issue.
+
+   Tweaked vignette to refer now to the rpart package vignette (instead
+   of the old rpart reports).
+
 1.4-2    Dec 15, 2012
 
-    Changed some code that was using "0" as a color.  
+    Changed some code that was using "0" as a color.
     Changed some code that was doing rep(NULL, n).
-    R 2.15-2 complains about the above, although previous versions 
+    R 2.15-2 complains about the above, although previous versions
     let them slip by.
 
 1.4-1    Oct 24, 2012

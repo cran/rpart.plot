@@ -108,7 +108,8 @@ get.class.labs <- function(x, extra, under, digits, xsep, varlen)
     # incorrectly fails when cases weights are used in the rpart model
     # stopifnot(sum(n.per.lev[1,]) == ntotal) # sanity check
     prob.per.lev <- yval2[, 1 + nlev + (1:nlev), drop=FALSE]
-    stopifnot(sum(prob.per.lev[1,]) == 1)   # sanity check
+    # dec 2012: loosened following check to allow for numerical error
+    stopifnot(abs(sum(prob.per.lev[1,]) - 1) < 1e-8) # sanity check
     print.all.probs <- TRUE
     ex <- if(extra < 100) extra else extra - 100
     if(ex == 2 || ex == 3) {        # classification rate?

@@ -1,6 +1,12 @@
 Changes to the rpart.plot
 -------------------------
 
+1.4-4    Feb 5, 2014
+   Removed use of ::: by removing outdated conversion from old-style
+   rpart objects.  This change was made mainly to satisfy CRAN checks.
+
+   Moved slow tests from the src/tests to the inst/slowtests directory.
+
 1.4-3    Dec 20, 2012
    Loosened sanity check in get.class.labs to allow for numerical error.
    Thanks for Sandrine Lunven for help with this issue.

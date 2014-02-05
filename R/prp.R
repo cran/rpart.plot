@@ -1,7 +1,5 @@
 # prp.R: expanded version of plot.rpart and related functions
 #
-# Please see the LICENSE file in this package's root directory.
-#
 # This is derived from the rpart code by written by
 #   Terry M Therneau and Beth Atkinson:
 #   http://mayoresearch.mayo.edu/mayo/research/biostat/splusfunctions.cfm
@@ -31,6 +29,7 @@
 # Allow use of par srt?
 # Allow other values for uniform, like branch.type.
 # Option to print deviance and normalized deviance.
+# Option to use expression in split.labs as requested by Jeffrey Evans.
 #
 # Code assumes that combined split and label boxes with type=1 are rectangular.
 # This can causes smaller text than necessary esp with unif=F.
@@ -180,7 +179,7 @@ prp <- function(x=stop("no 'x' arg"),
                 }
             }
             #--- draw.labs1 starts here ---
-            check.func.args(FUN, "FUN", text)
+            check.func.args(FUN, "the FUN argument to prp", text)
             sep.labs <- separate.labs(labs)
             xy <- get.box.centers(boxes)
             # draw the text after \n\n if any under the box
@@ -408,7 +407,7 @@ prp <- function(x=stop("no 'x' arg"),
         compress <- FALSE
     obj <- x
     if(!is.null(obj$frame$splits))
-        obj <- my.rpconvert(obj) # convert from old format rpart objectt
+        stop0("Old-style rpart object?  (frame$splits is NULL)")
     frame <- obj$frame
     is.leaf <- is.leaf(frame)
     nodes <- as.numeric(row.names(frame))

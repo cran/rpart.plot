@@ -1,0 +1,1762 @@
+> # test.prp.R
+> 
+> library(rpart.plot)
+Loading required package: rpart
+> data(ptitanic)
+> library(earth)
+Loading required package: plotmo
+Loading required package: plotrix
+> data(ozone1)
+> sessionInfo()
+R version 3.0.2 (2013-09-25)
+Platform: i386-w64-mingw32/i386 (32-bit)
+
+locale:
+[1] LC_COLLATE=English_United States.1252 
+[2] LC_CTYPE=English_United States.1252   
+[3] LC_MONETARY=English_United States.1252
+[4] LC_NUMERIC=C                          
+[5] LC_TIME=English_United States.1252    
+
+attached base packages:
+[1] stats     graphics  grDevices utils     datasets  methods   base     
+
+other attached packages:
+[1] earth_3.2-7      plotrix_3.5-2    plotmo_1.3-3     rpart.plot_1.4-4
+[5] rpart_4.1-3     
+
+loaded via a namespace (and not attached):
+[1] tools_3.0.2
+> ititanic <- ptitanic
+> ititanic$survived <- as.integer(ititanic$survived == "survived")
+> 
+> if(!interactive())
++     postscript(paper="letter", fonts=c("Helvetica", "NewCenturySchoolbook"))
+> 
+> example(rpart.plot)
+
+rprt.p> data(ptitanic)
+
+rprt.p> tree <- rpart(survived ~ ., data=ptitanic, cp=.02)
+
+rprt.p>                          # cp=.02 because want small tree for demo
+rprt.p> 
+rprt.p> old.par <- par(mfrow=c(2,2))
+
+rprt.p>                          # put 4 figures on one page
+rprt.p> 
+rprt.p> rpart.plot(tree, main="default rpart.plot\n(type = 0, extra = 0)")
+
+rprt.p> prp(tree, main="type = 4, extra = 6", type=4, extra=6, faclen=0)
+
+rprt.p>                          # faclen=0 to print full factor names
+rprt.p> 
+rprt.p> rpart.plot(tree, main="extra = 106,  under = TRUE", extra=106, under=TRUE, faclen=0)
+
+rprt.p> # the old way for comparison
+rprt.p> plot(tree, uniform=TRUE, compress=TRUE, branch=.2)
+
+rprt.p> text(tree, use.n=TRUE, cex=.6, xpd=NA) # cex is a guess, depends on your window size
+
+rprt.p> title("rpart.plot for comparison", cex=.6)
+
+rprt.p> par(old.par)
+> example(prp)
+
+prp> data(ptitanic)
+
+prp> tree <- rpart(survived ~ ., data=ptitanic, cp=.02)
+
+prp>                          # cp=.02 because want small tree for demo
+prp> 
+prp> old.par <- par(mfrow=c(2,2))
+
+prp>                          # put 4 figures on one page
+prp> 
+prp> prp(tree, main="default prp\n(type = 0, extra = 0)")
+
+prp> prp(tree, main="type = 4,  extra = 6", type=4, extra=6, faclen=0)
+
+prp>                          # faclen=0 to print full factor names
+prp> 
+prp> cols <- ifelse(tree$frame$yval == 1, "darkred", "green4")
+
+prp>                          # green if survived
+prp> 
+prp> prp(tree, main="assorted arguments",
+prp+     extra=106,           # display prob of survival and percent of obs
+prp+     nn=TRUE,             # display the node numbers
+prp+     fallen.leaves=TRUE,  # put the leaves on the bottom of the page
+prp+     branch=.5,           # change angle of branch lines
+prp+     faclen=0,            # do not abbreviate factor levels
+prp+     trace=1,             # print the automatically calculated cex
+prp+     shadow.col="gray",   # shadows under the leaves
+prp+     branch.lty=3,        # draw branches using dotted lines
+prp+     split.cex=1.2,       # make the split text larger than the node text
+prp+     split.prefix="is ",  # put "is " before split text
+prp+     split.suffix="?",    # put "?" after split text
+prp+     col=cols, border.col=cols,   # green if survived
+prp+     split.box.col="lightgray",   # lightgray split boxes (default is white)
+prp+     split.border.col="darkgray", # darkgray border on split boxes
+prp+     split.round=.5)              # round the split box corners a tad
+cex 1   xlim c(0, 1)   ylim c(0, 1)
+
+prp> # the old way for comparison
+prp> plot(tree, uniform=TRUE, compress=TRUE, branch=.2)
+
+prp> text(tree, use.n=TRUE, cex=.6, xpd=NA) # cex is a guess, depends on your window size
+
+prp> title("plot.rpart for comparison", cex=.6)
+
+prp> par(old.par)
+> print(citation("rpart.plot"))
+
+To cite package 'rpart.plot' in publications use:
+
+  Stephen Milborrow (). rpart.plot: Plot rpart models.  An enhanced
+  version of plot.rpart.. R package version 1.4-4.
+  http://www.milbo.org/rpart-plot
+
+A BibTeX entry for LaTeX users is
+
+  @Manual{,
+    title = {rpart.plot: Plot rpart models.  An enhanced version of plot.rpart.},
+    author = {Stephen Milborrow},
+    note = {R package version 1.4-4},
+    url = {http://www.milbo.org/rpart-plot},
+  }
+
+ATTENTION: This citation information has been auto-generated from the
+package DESCRIPTION file and may need manual editing, see
+'help("citation")'.
+
+Warning message:
+In citation("rpart.plot") :
+  no date field in DESCRIPTION file of package 'rpart.plot'
+> 
+> # test format0 and formatf
+> 
+> x <- c(1.2345, 1.6, 1.23456, 12.345, 124.56,
++        123, 123.456789012345, 1234, 9999, 12345, 123456, 1.234e6, 1.234e7,
++        .123, .0123,
++        1, 1e1, 1e2, 1e3, 1e4, 1e5, 1e6,
++        1e-1, 1e-2, 1e-3, 1e-4, 1e-5, 1e-6,
++        .999, .999e1, .999e2, .999e3, .999e4, .999e5, .999e6,
++        .999e-1, .999e-2, .999e-3, .999e-4, .999e-5, .999e-6)
+> 
+> x1 <- c(x, 1.2345e300, 1.2345e-300)
+> 
+> x  <- c(NA, Inf, -Inf, 0, x, -x)
+> x1 <- c(NA, Inf, -Inf, 0, x1, -x1)
+> 
+> options(digits=7)
+> 
+> cat("\n--- format0 ---\n")
+
+--- format0 ---
+> s4  <- rpart.plot:::format0(x1, digits=4)
+> s2  <- rpart.plot:::format0(x1, digits=2)
+> s1  <- rpart.plot:::format0(x1, digits=1)
+> s0  <- rpart.plot:::format0(x1, digits=0)
+> sm3 <- rpart.plot:::format0(x1, digits=-3)
+> tab <- data.frame("digits=4"=s4, "digits=2"=s2, "digits=1"=s1, "digits=0"=s0, "digits=-3"=sm3, check.names=F)
+> row.names(tab) <- format(x1, digits=15)
+> print(tab)
+                          digits=4  digits=2 digits=1     digits=0  digits=-3
+                    NA          NA        NA       NA           NA         NA
+                   Inf         Inf       Inf      Inf          Inf        Inf
+                  -Inf        -Inf      -Inf     -Inf         -Inf       -Inf
+  0.00000000000000e+00           0         0        0            0          0
+  1.23450000000000e+00       1.234       1.2        1       1.2345       1.23
+  1.60000000000000e+00         1.6       1.6        2          1.6        1.6
+  1.23456000000000e+00       1.235       1.2        1      1.23456       1.23
+  1.23450000000000e+01       12.35        12       12       12.345       12.3
+  1.24560000000000e+02       124.6       125      125       124.56        125
+  1.23000000000000e+02         123       123      123          123        123
+  1.23456789012345e+02       123.5       123      123     123.4568        123
+  1.23400000000000e+03        1234      1234     1234         1234       1234
+  9.99900000000000e+03        9999      9999     9999         9999       9999
+  1.23450000000000e+04    12.35e+3     12e+3    12e+3    12.345e+3      12345
+  1.23456000000000e+05    123.5e+3    123e+3   123e+3   123.456e+3     123456
+  1.23400000000000e+06    1.234e+6    1.2e+6     1e+6     1.234e+6    1234000
+  1.23400000000000e+07    12.34e+6     12e+6    12e+6     12.34e+6   12340000
+  1.23000000000000e-01       0.123      0.12      0.1        0.123      0.123
+  1.23000000000000e-02      0.0123     0.012     0.01       0.0123     0.0123
+  1.00000000000000e+00           1         1        1            1          1
+  1.00000000000000e+01          10        10       10           10         10
+  1.00000000000000e+02         100       100      100          100        100
+  1.00000000000000e+03        1000      1000     1000         1000       1000
+  1.00000000000000e+04       10e+3     10e+3    10e+3        10e+3      10000
+  1.00000000000000e+05      100e+3    100e+3   100e+3       100e+3      1e+05
+  1.00000000000000e+06     1000e+3   1000e+3  1000e+3      1000e+3      1e+06
+  1.00000000000000e-01         0.1       0.1      0.1          0.1        0.1
+  1.00000000000000e-02        0.01      0.01     0.01         0.01       0.01
+  1.00000000000000e-03       0.001     0.001    0.001        0.001      0.001
+  1.00000000000000e-04      100e-6    100e-6   100e-6       100e-6      1e-04
+  1.00000000000000e-05       10e-6     10e-6    10e-6        10e-6      1e-05
+  1.00000000000000e-06        1e-6      1e-6     1e-6         1e-6      1e-06
+  9.99000000000000e-01       0.999         1        1        0.999      0.999
+  9.99000000000000e+00        9.99        10       10         9.99       9.99
+  9.99000000000000e+01        99.9       100      100         99.9       99.9
+  9.99000000000000e+02         999       999      999          999        999
+  9.99000000000000e+03        9990      9990     9990         9990       9990
+  9.99000000000000e+04     99.9e+3    100e+3   100e+3      99.9e+3      99900
+  9.99000000000000e+05      999e+3    999e+3   999e+3       999e+3     999000
+  9.99000000000000e-02      0.0999       0.1      0.1       0.0999     0.0999
+  9.99000000000000e-03     0.00999      0.01     0.01      0.00999    0.00999
+  9.99000000000000e-04      999e-6    999e-6   999e-6       999e-6   0.000999
+  9.99000000000000e-05     99.9e-6    100e-6   100e-6      99.9e-6   9.99e-05
+  9.99000000000000e-06     9.99e-6     10e-6    10e-6      9.99e-6   9.99e-06
+  9.99000000000000e-07      999e-9    999e-9   999e-9       999e-9   9.99e-07
+ 1.23450000000000e+300  1.234e+300  1.2e+300   1e+300  1.2345e+300  1.23e+300
+ 1.23450000000000e-300  1.234e-300  1.2e-300   1e-300  1.2345e-300  1.23e-300
+ -1.23450000000000e+00      -1.234      -1.2       -1      -1.2345      -1.23
+ -1.60000000000000e+00        -1.6      -1.6       -2         -1.6       -1.6
+ -1.23456000000000e+00      -1.235      -1.2       -1     -1.23456      -1.23
+ -1.23450000000000e+01      -12.35       -12      -12      -12.345      -12.3
+ -1.24560000000000e+02      -124.6      -125     -125      -124.56       -125
+ -1.23000000000000e+02        -123      -123     -123         -123       -123
+ -1.23456789012345e+02      -123.5      -123     -123    -123.4568       -123
+ -1.23400000000000e+03       -1234     -1234    -1234        -1234      -1234
+ -9.99900000000000e+03       -9999     -9999    -9999        -9999      -9999
+ -1.23450000000000e+04   -12.35e+3    -12e+3   -12e+3   -12.345e+3     -12345
+ -1.23456000000000e+05   -123.5e+3   -123e+3  -123e+3  -123.456e+3    -123456
+ -1.23400000000000e+06   -1.234e+6   -1.2e+6    -1e+6    -1.234e+6   -1234000
+ -1.23400000000000e+07   -12.34e+6    -12e+6   -12e+6    -12.34e+6  -12340000
+ -1.23000000000000e-01      -0.123     -0.12     -0.1       -0.123     -0.123
+ -1.23000000000000e-02     -0.0123    -0.012    -0.01      -0.0123    -0.0123
+ -1.00000000000000e+00          -1        -1       -1           -1         -1
+ -1.00000000000000e+01         -10       -10      -10          -10        -10
+ -1.00000000000000e+02        -100      -100     -100         -100       -100
+ -1.00000000000000e+03       -1000     -1000    -1000        -1000      -1000
+ -1.00000000000000e+04      -10e+3    -10e+3   -10e+3       -10e+3     -10000
+ -1.00000000000000e+05     -100e+3   -100e+3  -100e+3      -100e+3     -1e+05
+ -1.00000000000000e+06    -1000e+3  -1000e+3 -1000e+3     -1000e+3     -1e+06
+ -1.00000000000000e-01        -0.1      -0.1     -0.1         -0.1       -0.1
+ -1.00000000000000e-02       -0.01     -0.01    -0.01        -0.01      -0.01
+ -1.00000000000000e-03      -0.001    -0.001   -0.001       -0.001     -0.001
+ -1.00000000000000e-04     -100e-6   -100e-6  -100e-6      -100e-6     -1e-04
+ -1.00000000000000e-05      -10e-6    -10e-6   -10e-6       -10e-6     -1e-05
+ -1.00000000000000e-06       -1e-6     -1e-6    -1e-6        -1e-6     -1e-06
+ -9.99000000000000e-01      -0.999        -1       -1       -0.999     -0.999
+ -9.99000000000000e+00       -9.99       -10      -10        -9.99      -9.99
+ -9.99000000000000e+01       -99.9      -100     -100        -99.9      -99.9
+ -9.99000000000000e+02        -999      -999     -999         -999       -999
+ -9.99000000000000e+03       -9990     -9990    -9990        -9990      -9990
+ -9.99000000000000e+04    -99.9e+3   -100e+3  -100e+3     -99.9e+3     -99900
+ -9.99000000000000e+05     -999e+3   -999e+3  -999e+3      -999e+3    -999000
+ -9.99000000000000e-02     -0.0999      -0.1     -0.1      -0.0999    -0.0999
+ -9.99000000000000e-03    -0.00999     -0.01    -0.01     -0.00999   -0.00999
+ -9.99000000000000e-04     -999e-6   -999e-6  -999e-6      -999e-6  -0.000999
+ -9.99000000000000e-05    -99.9e-6   -100e-6  -100e-6     -99.9e-6  -9.99e-05
+ -9.99000000000000e-06    -9.99e-6    -10e-6   -10e-6     -9.99e-6  -9.99e-06
+ -9.99000000000000e-07     -999e-9   -999e-9  -999e-9      -999e-9  -9.99e-07
+-1.23450000000000e+300 -1.234e+300 -1.2e+300  -1e+300 -1.2345e+300 -1.23e+300
+-1.23450000000000e-300 -1.234e-300 -1.2e-300  -1e-300 -1.2345e-300 -1.23e-300
+> 
+> cat("\n--- formatf ---\n")
+
+--- formatf ---
+> s4  <- rpart.plot:::formatf(x, digits=4)
+> s2  <- rpart.plot:::formatf(x, digits=2)
+> s1  <- rpart.plot:::formatf(x, digits=1)
+> s0  <- rpart.plot:::formatf(x, digits=0)
+> tab <- data.frame("digits=4"=s4, "digits=2"=s2, "digits=1"=s1, "digits=0"=s0,
++                   check.names=F)
+> row.names(tab) <- format(x, digits=15)
+> print(tab)
+                            digits=4     digits=2    digits=1  digits=0
+                   NA             NA           NA          NA        NA
+                  Inf            Inf          Inf         Inf       Inf
+                 -Inf           -Inf         -Inf        -Inf      -Inf
+ 0.00000000000000e+00         0.0000         0.00         0.0         0
+ 1.23450000000000e+00         1.2345         1.23         1.2         1
+ 1.60000000000000e+00         1.6000         1.60         1.6         2
+ 1.23456000000000e+00         1.2346         1.23         1.2         1
+ 1.23450000000000e+01        12.3450        12.35        12.3        12
+ 1.24560000000000e+02       124.5600       124.56       124.6       125
+ 1.23000000000000e+02       123.0000       123.00       123.0       123
+ 1.23456789012345e+02       123.4568       123.46       123.5       123
+ 1.23400000000000e+03      1234.0000      1234.00      1234.0      1234
+ 9.99900000000000e+03      9999.0000      9999.00      9999.0      9999
+ 1.23450000000000e+04     12345.0000     12345.00     12345.0     12345
+ 1.23456000000000e+05    123456.0000    123456.00    123456.0    123456
+ 1.23400000000000e+06   1234000.0000   1234000.00   1234000.0   1234000
+ 1.23400000000000e+07  12340000.0000  12340000.00  12340000.0  12340000
+ 1.23000000000000e-01         0.1230         0.12         0.1         0
+ 1.23000000000000e-02         0.0123         0.01         0.0         0
+ 1.00000000000000e+00         1.0000         1.00         1.0         1
+ 1.00000000000000e+01        10.0000        10.00        10.0        10
+ 1.00000000000000e+02       100.0000       100.00       100.0       100
+ 1.00000000000000e+03      1000.0000      1000.00      1000.0      1000
+ 1.00000000000000e+04     10000.0000     10000.00     10000.0     10000
+ 1.00000000000000e+05    100000.0000    100000.00    100000.0    100000
+ 1.00000000000000e+06   1000000.0000   1000000.00   1000000.0   1000000
+ 1.00000000000000e-01         0.1000         0.10         0.1         0
+ 1.00000000000000e-02         0.0100         0.01         0.0         0
+ 1.00000000000000e-03         0.0010         0.00         0.0         0
+ 1.00000000000000e-04         0.0001         0.00         0.0         0
+ 1.00000000000000e-05         0.0000         0.00         0.0         0
+ 1.00000000000000e-06         0.0000         0.00         0.0         0
+ 9.99000000000000e-01         0.9990         1.00         1.0         1
+ 9.99000000000000e+00         9.9900         9.99        10.0        10
+ 9.99000000000000e+01        99.9000        99.90        99.9       100
+ 9.99000000000000e+02       999.0000       999.00       999.0       999
+ 9.99000000000000e+03      9990.0000      9990.00      9990.0      9990
+ 9.99000000000000e+04     99900.0000     99900.00     99900.0     99900
+ 9.99000000000000e+05    999000.0000    999000.00    999000.0    999000
+ 9.99000000000000e-02         0.0999         0.10         0.1         0
+ 9.99000000000000e-03         0.0100         0.01         0.0         0
+ 9.99000000000000e-04         0.0010         0.00         0.0         0
+ 9.99000000000000e-05         0.0001         0.00         0.0         0
+ 9.99000000000000e-06         0.0000         0.00         0.0         0
+ 9.99000000000000e-07         0.0000         0.00         0.0         0
+-1.23450000000000e+00        -1.2345        -1.23        -1.2        -1
+-1.60000000000000e+00        -1.6000        -1.60        -1.6        -2
+-1.23456000000000e+00        -1.2346        -1.23        -1.2        -1
+-1.23450000000000e+01       -12.3450       -12.35       -12.3       -12
+-1.24560000000000e+02      -124.5600      -124.56      -124.6      -125
+-1.23000000000000e+02      -123.0000      -123.00      -123.0      -123
+-1.23456789012345e+02      -123.4568      -123.46      -123.5      -123
+-1.23400000000000e+03     -1234.0000     -1234.00     -1234.0     -1234
+-9.99900000000000e+03     -9999.0000     -9999.00     -9999.0     -9999
+-1.23450000000000e+04    -12345.0000    -12345.00    -12345.0    -12345
+-1.23456000000000e+05   -123456.0000   -123456.00   -123456.0   -123456
+-1.23400000000000e+06  -1234000.0000  -1234000.00  -1234000.0  -1234000
+-1.23400000000000e+07 -12340000.0000 -12340000.00 -12340000.0 -12340000
+-1.23000000000000e-01        -0.1230        -0.12        -0.1        -0
+-1.23000000000000e-02        -0.0123        -0.01        -0.0        -0
+-1.00000000000000e+00        -1.0000        -1.00        -1.0        -1
+-1.00000000000000e+01       -10.0000       -10.00       -10.0       -10
+-1.00000000000000e+02      -100.0000      -100.00      -100.0      -100
+-1.00000000000000e+03     -1000.0000     -1000.00     -1000.0     -1000
+-1.00000000000000e+04    -10000.0000    -10000.00    -10000.0    -10000
+-1.00000000000000e+05   -100000.0000   -100000.00   -100000.0   -100000
+-1.00000000000000e+06  -1000000.0000  -1000000.00  -1000000.0  -1000000
+-1.00000000000000e-01        -0.1000        -0.10        -0.1        -0
+-1.00000000000000e-02        -0.0100        -0.01        -0.0        -0
+-1.00000000000000e-03        -0.0010        -0.00        -0.0        -0
+-1.00000000000000e-04        -0.0001        -0.00        -0.0        -0
+-1.00000000000000e-05        -0.0000        -0.00        -0.0        -0
+-1.00000000000000e-06        -0.0000        -0.00        -0.0        -0
+-9.99000000000000e-01        -0.9990        -1.00        -1.0        -1
+-9.99000000000000e+00        -9.9900        -9.99       -10.0       -10
+-9.99000000000000e+01       -99.9000       -99.90       -99.9      -100
+-9.99000000000000e+02      -999.0000      -999.00      -999.0      -999
+-9.99000000000000e+03     -9990.0000     -9990.00     -9990.0     -9990
+-9.99000000000000e+04    -99900.0000    -99900.00    -99900.0    -99900
+-9.99000000000000e+05   -999000.0000   -999000.00   -999000.0   -999000
+-9.99000000000000e-02        -0.0999        -0.10        -0.1        -0
+-9.99000000000000e-03        -0.0100        -0.01        -0.0        -0
+-9.99000000000000e-04        -0.0010        -0.00        -0.0        -0
+-9.99000000000000e-05        -0.0001        -0.00        -0.0        -0
+-9.99000000000000e-06        -0.0000        -0.00        -0.0        -0
+-9.99000000000000e-07        -0.0000        -0.00        -0.0        -0
+> 
+> cat("\n--- formatf strip.leading.zeros ---\n")
+
+--- formatf strip.leading.zeros ---
+> s4  <- rpart.plot:::formatf(x, digits=4, strip.leading.zeros=TRUE)
+> s2  <- rpart.plot:::formatf(x, digits=2, strip.leading.zeros=TRUE)
+> s1  <- rpart.plot:::formatf(x, digits=1, strip.leading.zeros=TRUE)
+> s0  <- rpart.plot:::formatf(x, digits=0, strip.leading.zeros=TRUE)
+> tab <- data.frame("digits=4"=s4, "digits=2"=s2, "digits=1"=s1, "digits=0"=s0,
++                   check.names=F)
+> row.names(tab) <- format(x, digits=15)
+> print(tab)
+                            digits=4     digits=2    digits=1  digits=0
+                   NA             NA           NA          NA        NA
+                  Inf            Inf          Inf         Inf       Inf
+                 -Inf           -Inf         -Inf        -Inf      -Inf
+ 0.00000000000000e+00          .0000          .00          .0         0
+ 1.23450000000000e+00         1.2345         1.23         1.2         1
+ 1.60000000000000e+00         1.6000         1.60         1.6         2
+ 1.23456000000000e+00         1.2346         1.23         1.2         1
+ 1.23450000000000e+01        12.3450        12.35        12.3        12
+ 1.24560000000000e+02       124.5600       124.56       124.6       125
+ 1.23000000000000e+02       123.0000       123.00       123.0       123
+ 1.23456789012345e+02       123.4568       123.46       123.5       123
+ 1.23400000000000e+03      1234.0000      1234.00      1234.0      1234
+ 9.99900000000000e+03      9999.0000      9999.00      9999.0      9999
+ 1.23450000000000e+04     12345.0000     12345.00     12345.0     12345
+ 1.23456000000000e+05    123456.0000    123456.00    123456.0    123456
+ 1.23400000000000e+06   1234000.0000   1234000.00   1234000.0   1234000
+ 1.23400000000000e+07  12340000.0000  12340000.00  12340000.0  12340000
+ 1.23000000000000e-01          .1230          .12          .1         0
+ 1.23000000000000e-02          .0123          .01          .0         0
+ 1.00000000000000e+00         1.0000         1.00         1.0         1
+ 1.00000000000000e+01        10.0000        10.00        10.0        10
+ 1.00000000000000e+02       100.0000       100.00       100.0       100
+ 1.00000000000000e+03      1000.0000      1000.00      1000.0      1000
+ 1.00000000000000e+04     10000.0000     10000.00     10000.0     10000
+ 1.00000000000000e+05    100000.0000    100000.00    100000.0    100000
+ 1.00000000000000e+06   1000000.0000   1000000.00   1000000.0   1000000
+ 1.00000000000000e-01          .1000          .10          .1         0
+ 1.00000000000000e-02          .0100          .01          .0         0
+ 1.00000000000000e-03          .0010          .00          .0         0
+ 1.00000000000000e-04          .0001          .00          .0         0
+ 1.00000000000000e-05          .0000          .00          .0         0
+ 1.00000000000000e-06          .0000          .00          .0         0
+ 9.99000000000000e-01          .9990         1.00         1.0         1
+ 9.99000000000000e+00         9.9900         9.99        10.0        10
+ 9.99000000000000e+01        99.9000        99.90        99.9       100
+ 9.99000000000000e+02       999.0000       999.00       999.0       999
+ 9.99000000000000e+03      9990.0000      9990.00      9990.0      9990
+ 9.99000000000000e+04     99900.0000     99900.00     99900.0     99900
+ 9.99000000000000e+05    999000.0000    999000.00    999000.0    999000
+ 9.99000000000000e-02          .0999          .10          .1         0
+ 9.99000000000000e-03          .0100          .01          .0         0
+ 9.99000000000000e-04          .0010          .00          .0         0
+ 9.99000000000000e-05          .0001          .00          .0         0
+ 9.99000000000000e-06          .0000          .00          .0         0
+ 9.99000000000000e-07          .0000          .00          .0         0
+-1.23450000000000e+00        -1.2345        -1.23        -1.2        -1
+-1.60000000000000e+00        -1.6000        -1.60        -1.6        -2
+-1.23456000000000e+00        -1.2346        -1.23        -1.2        -1
+-1.23450000000000e+01       -12.3450       -12.35       -12.3       -12
+-1.24560000000000e+02      -124.5600      -124.56      -124.6      -125
+-1.23000000000000e+02      -123.0000      -123.00      -123.0      -123
+-1.23456789012345e+02      -123.4568      -123.46      -123.5      -123
+-1.23400000000000e+03     -1234.0000     -1234.00     -1234.0     -1234
+-9.99900000000000e+03     -9999.0000     -9999.00     -9999.0     -9999
+-1.23450000000000e+04    -12345.0000    -12345.00    -12345.0    -12345
+-1.23456000000000e+05   -123456.0000   -123456.00   -123456.0   -123456
+-1.23400000000000e+06  -1234000.0000  -1234000.00  -1234000.0  -1234000
+-1.23400000000000e+07 -12340000.0000 -12340000.00 -12340000.0 -12340000
+-1.23000000000000e-01        -0.1230        -0.12        -0.1        -0
+-1.23000000000000e-02        -0.0123        -0.01        -0.0        -0
+-1.00000000000000e+00        -1.0000        -1.00        -1.0        -1
+-1.00000000000000e+01       -10.0000       -10.00       -10.0       -10
+-1.00000000000000e+02      -100.0000      -100.00      -100.0      -100
+-1.00000000000000e+03     -1000.0000     -1000.00     -1000.0     -1000
+-1.00000000000000e+04    -10000.0000    -10000.00    -10000.0    -10000
+-1.00000000000000e+05   -100000.0000   -100000.00   -100000.0   -100000
+-1.00000000000000e+06  -1000000.0000  -1000000.00  -1000000.0  -1000000
+-1.00000000000000e-01        -0.1000        -0.10        -0.1        -0
+-1.00000000000000e-02        -0.0100        -0.01        -0.0        -0
+-1.00000000000000e-03        -0.0010        -0.00        -0.0        -0
+-1.00000000000000e-04        -0.0001        -0.00        -0.0        -0
+-1.00000000000000e-05        -0.0000        -0.00        -0.0        -0
+-1.00000000000000e-06        -0.0000        -0.00        -0.0        -0
+-9.99000000000000e-01        -0.9990        -1.00        -1.0        -1
+-9.99000000000000e+00        -9.9900        -9.99       -10.0       -10
+-9.99000000000000e+01       -99.9000       -99.90       -99.9      -100
+-9.99000000000000e+02      -999.0000      -999.00      -999.0      -999
+-9.99000000000000e+03     -9990.0000     -9990.00     -9990.0     -9990
+-9.99000000000000e+04    -99900.0000    -99900.00    -99900.0    -99900
+-9.99000000000000e+05   -999000.0000   -999000.00   -999000.0   -999000
+-9.99000000000000e-02        -0.0999        -0.10        -0.1        -0
+-9.99000000000000e-03        -0.0100        -0.01        -0.0        -0
+-9.99000000000000e-04        -0.0010        -0.00        -0.0        -0
+-9.99000000000000e-05        -0.0001        -0.00        -0.0        -0
+-9.99000000000000e-06        -0.0000        -0.00        -0.0        -0
+-9.99000000000000e-07        -0.0000        -0.00        -0.0        -0
+> 
+> # examples from the vignette
+> 
+> fit <- rpart(survived~., data=ititanic)
+> cols <- ifelse(fit$frame$yval > .5, "palegreen", "pink")
+> par(mfrow=c(2,2))
+> prp(fit, box.col=cols, main="Page 3", prefix="probability\n", trace=1)
+cex 1   xlim c(0, 1)   ylim c(-0.05, 1.05)
+> 
+> fit <- rpart(survived~., data=ititanic)
+> cp <- sort(unique(fit$frame$complexity))[4:5] # just do 2, for a quicker test
+> for(i in 1:length(cp)) {
++     col <- ifelse(fit$frame$complexity >= cp[i], 1, "gray")
++     lwd <- ifelse(fit$frame$complexity >= cp[i], 2, 1)
++     prp(fit, type=1, col=col, branch.col=col, lwd=lwd,
++            sub=sprintf("movie %g", i), col.s=2, trace=1)
++ }
+cex 1   xlim c(0, 1)   ylim c(0, 1)
+cex 1   xlim c(0, 1)   ylim c(0, 1)
+> 
+> # return the given node and all its ancestors (a vector of node numbers)
+> path.to.root <- function(node, ancestors=NULL)
++ {
++     if(node == 1)   # root?
++         c(1, ancestors)
++     else            # recurse, %/% 2 gives the parent of node
++         c(node, path.to.root(node %/% 2, ancestors))
++ }
+> fit.oz <- rpart(O3~., data=ozone1)
+> node <- 22 # 22 is our chosen node, arbitrary for this example
+> path <- path.to.root(node)
+> nodes <- as.numeric(row.names(fit.oz$frame))
+> cols <- ifelse(nodes %in% path, 1, "slategray4")
+> lwds <- ifelse(nodes %in% path, 2, 1)
+> lty  <- ifelse(nodes %in% path, 1, 2)
+> prp(fit.oz, type=4, clip.right.labs=F, nn=TRUE, trace=3, # some niceties
++    main=paste("Path to node", node), col.m=3, lwd=lwds, digits=4,
++    col=cols, branch.col=cols, split.col=cols, nn.col=cols)
+Initial scale 0.849
+Shifter: cex improvement 1 best.shift.amount 0 best.split.yshift.amount 0 (will not be used)
+cex 0.849   xlim c(0, 1)   ylim c(0, 1)
+> 
+> my.labs <- function(x, labs, digits, varlen)
++ {
++     sprintf("ozone %.3g\ndev %.1f", x$frame$yval, x$frame$dev)
++ }
+> data(ozone1)
+> fit <- rpart(O3~., data=ozone1)
+> par(mfrow=c(2,2))
+> prp(fit, node.fun=my.labs, main="Page 4: my.labs", trace=1)
+cex 0.75   xlim c(0, 1)   ylim c(-0.1, 1.1)
+> 
+> my.labs2 <- function(x, labs, digits, varlen)
++ {
++     sprintf("%s\n%.2g",
++             ifelse(x$frame$yval > .5, "survived", "died"),
++             x$frame$yval)
++ }
+> fit2 <- rpart(survived~., data=ititanic)
+> prp(fit2, node.fun=my.labs2, main="my.labs2", trace=1)
+cex 1   xlim c(0, 1)   ylim c(-0.05, 1.05)
+> 
+> my.labs3 <- function(x, labs, digits, varlen) # use passed in labs
++ {
++     sprintf("%s\n\ndev %.1f", labs, x$frame$dev)
++ }
+> prp(fit2, node.fun=my.labs3, main="my.labs3\nextra=100", trace=1, extra=100, under=T)
+cex 1   xlim c(0, 1)   ylim c(0, 1)
+> 
+> # commented out for rpart.plot version 1.4-0 (user mode no longer supported)
+> # fit.user <- rpart(survived~., data=ptitanic, cp=.02)
+> # fit.user$method <- "user"
+> # fit.user$functions$text <- function (yval, dev, wt, ylevel, digits, n, use.n)
+> # {
+> #     nclass <- (ncol(yval) - 1L)/2
+> #     group <- yval[, 1L]
+> #     counts <- yval[, 1L + (1L:nclass)]
+> #     if (!is.null(ylevel))
+> #         group <- ylevel[group]
+> #     temp1 <- format(counts)
+> #     if (nclass > 1)
+> #         temp1 <- apply(matrix(temp1, ncol = nclass), 1, paste, collapse = "/")
+> #     cat("use.n=", use.n, "\n")
+> #     if (use.n)
+> #         out <- paste(group, "!\n", temp1, sep = "")
+> #     else
+> #         out <- format(group)
+> #     return(out)
+> # }
+> # prp(fit.user, node.fun=my.labs3, main="method=user\nmy.labs3 extra=100", trace=1, extra=100, under=T, prefix="result: ")
+> 
+> a20 <- rpart(survived~., data=ptitanic, control=list(cp=.02))
+> par(mfrow=c(3,3))
+> 
+> boxes.include.gap <- FALSE
+> 
+> prp(a20, type=4,
++     main="Page 5: box positioning, type=4\n(1) extra=0\nprefix=0 suffix=0 split.suffix=0\nsplit.cex=1\n",
++     cex.main=.9,
++     under=F,
++     extra=0,
++     split.cex=1,
++     faclen=0, trace=1,
++     boxes.include.gap=boxes.include.gap)
+cex 0.931   xlim c(0, 1)   ylim c(0, 1)
+> 
+> prp(a20, type=4,
++     main="(2) extra=1\nprefix=0 suffix=0 split.suffix=0\nsplit.cex=1\n",
++     cex.main=.9,
++     under=F,
++     extra=1,
++     split.cex=1,
++     faclen=1, trace=1,
++     branch=1,
++     boxes.include.gap=boxes.include.gap)
+cex 0.688   xlim c(0, 1)   ylim c(0, 1)
+> 
+> prp(a20, type=4,
++     main="(3) extra=1\nprefix=1 suffix=0 split.suffix=0\nsplit.cex=1\n",
++     cex.main=.9,
++     under=F,
++     extra=1,
++     prefix="prefix ",
++     suffix="",
++     split.suffix="",
++     split.cex=1,
++     faclen=0, trace=1,
++     split.border.col=1,
++     boxes.include.gap=boxes.include.gap)
+cex 0.688   xlim c(0, 1)   ylim c(0, 1)
+> 
+> prp(a20, type=4,
++     main="(4) extra=4\nprefix=1 suffix=1 split.suffix=1\nsplit.cex=1\n",
++     cex.main=.9,
++     under=F,
++     extra=4,
++     prefix="prefix ",
++     suffix="\nsuffix",
++     split.suffix="\nsplit.suffix",
++     split.cex=1,
++     faclen=0, trace=1,
++     boxes.include.gap=boxes.include.gap)
+cex 0.438   xlim c(0, 1)   ylim c(-0.1, 1.1)
+> 
+> prp(a20, type=4,
++     main="(5) extra=5\nprefix=0 suffix=0 split.suffix=0\nsplit.cex=1.4\n",
++     cex.main=.9,
++     under=F,
++     extra=5,
++     split.cex=1.4,
++     faclen=0, trace=1,
++     split.border.col=1,
++     boxes.include.gap=boxes.include.gap)
+cex 0.762   xlim c(0, 1)   ylim c(0, 1)
+> 
+> prp(a20, type=4,
++     main="(6) extra=101\nprefix=0 suffix=0 split.suffix=0\nsplit.cex=.7\n",
++     cex.main=.9,
++     under=F,
++     extra=101,
++     split.cex=.7,
++     faclen=0, trace=1,
++     branch=1,
++     boxes.include.gap=boxes.include.gap)
+cex 0.65   xlim c(0, 1)   ylim c(0, 1)
+> 
+> prp(a20, type=4,
++     main="(7) extra=1\nprefix=1 suffix=1 split.suffix=1\nsplit.cex=1.4\n",
++     cex.main=.9,
++     under=F,
++     extra=1,
++     prefix="prefix ",
++     suffix="\nsuffix",
++     split.suffix="\nsplit.suffix",
++     split.cex=1.4,
++     faclen=1, trace=1,
++     split.border.col=1,
++     boxes.include.gap=boxes.include.gap)
+cex 0.4   xlim c(0, 1)   ylim c(0, 1)
+> 
+> prp(a20, type=4,
++     main="(8) extra=0\nprefix=1 suffix=1 split.suffix=1\nsplit.cex=.7\n",
++     cex.main=.9,
++     under=F,
++     extra=0,
++     prefix="prefix ",
++     suffix="\nsuffix",
++     split.suffix="\nsplit.suffix",
++     split.cex=.7,
++     faclen=0, trace=1,
++     boxes.include.gap=boxes.include.gap)
+cex 0.625   xlim c(0, 1)   ylim c(-0.05, 1.05)
+> 
+> # TODO split.yshift indexing is confusing
+> prp(a20, type=4, trace=2, nn=T, split.border.col=1,
++     main="(9) manual yshift and split.yshift\n",
++     prefix=c("up ", "", "up ", "", "", "", ""),
++     yshift=c(2, 0, 2, 0, 0, 0, 0),
++     branch=1,
++     split.prefix=c("", "", "down ", "", "", "", ""),
++     split.yshift=c(0, -3, 0, 0, 0, 0, 0))
+Initial scale 0.688
+Shifter: cex improvement 1 best.shift.amount 0 best.split.yshift.amount 0 (will not be used)
+cex 0.688   xlim c(0, 1)   ylim c(0, 1)
+> 
+> 
+> a21 <- rpart(survived~., data=ptitanic, control=list(cp=.02))
+> par(mfrow=c(3,3))
+> 
+> prp(a21, type=1,
++     main="Page 6: type=1\n(1) extra=0\nprefix=0 suffix=0 split.suffix=0\nsplit.cex=1\n",
++     cex.main=.9,
++     under=F,
++     extra=0,
++     split.cex=1,
++     faclen=0, trace=1,
++     boxes.include.gap=boxes.include.gap)
+cex 1   xlim c(0, 1)   ylim c(0, 1)
+> 
+> prp(a21, type=1,
++     main="(2) extra=1\nprefix=0 suffix=0 split.suffix=0\nsplit.cex=1\n",
++     cex.main=.9,
++     under=F,
++     extra=1,
++     split.cex=1,
++     faclen=1, trace=1,
++     branch=1,
++     boxes.include.gap=boxes.include.gap)
+cex 1   xlim c(0, 1)   ylim c(0, 1)
+> 
+> prp(a21, type=1,
++     main="(3) extra=1\nprefix=1 suffix=0 split.suffix=0\nsplit.cex=1\n",
++     cex.main=.9,
++     under=F,
++     extra=1,
++     prefix="prefix ",
++     suffix="",
++     split.suffix="",
++     split.cex=1,
++     faclen=0, trace=1,
++     boxes.include.gap=boxes.include.gap)
+cex 1   xlim c(0, 1)   ylim c(0, 1)
+> 
+> prp(a21, type=1,
++     main="(4) extra=1\nprefix=1 suffix=1 split.suffix=1\nsplit.cex=1\n",
++     cex.main=.9,
++     under=F,
++     extra=1,
++     prefix="prefix ",
++     suffix="\nsuffix",
++     split.suffix="\nsplit.suffix",
++     split.cex=1,
++     faclen=1, trace=1,
++     boxes.include.gap=boxes.include.gap)
+cex 0.931   xlim c(0, 1)   ylim c(0, 1)
+> 
+> prp(a21, type=1,
++     main="(5) extra=0\nprefix=0 suffix=0 split.suffix=0\nsplit.cex=1.4\n",
++     cex.main=.9,
++     under=F,
++     extra=0,
++     split.cex=1.4,
++     faclen=0, trace=1,
++     branch=1,
++     boxes.include.gap=boxes.include.gap)
+cex 1   xlim c(0, 1)   ylim c(0, 1)
+> 
+> prp(a21, type=1,
++     main="(6) extra=1\nprefix=0 suffix=0 split.suffix=0\nsplit.cex=.7\n",
++     cex.main=.9,
++     under=F,
++     extra=1,
++     split.cex=.7,
++     faclen=1, trace=1,
++     split.border.col=1,
++     boxes.include.gap=boxes.include.gap)
+cex 1   xlim c(0, 1)   ylim c(0, 1)
+> 
+> prp(a21, type=1,
++     main="(7) extra=1\nprefix=1 suffix=1 split.suffix=1\nsplit.cex=1.4\n",
++     cex.main=.9,
++     under=F,
++     extra=1,
++     prefix="prefix ",
++     suffix="\nsuffix",
++     split.suffix="\nsplit.suffix",
++     split.cex=1.4,
++     faclen=0, trace=1,
++     branch=1,
++     split.border.col=1,
++     boxes.include.gap=boxes.include.gap)
+cex 0.688   xlim c(0, 1)   ylim c(0, 1)
+> 
+> prp(a21, type=1,
++     main="(8) extra=0\nprefix=1 suffix=1 split.suffix=1\nsplit.cex=.7\n",
++     cex.main=.9,
++     under=F,
++     extra=0,
++     prefix="prefix ",
++     suffix="\nsuffix",
++     split.suffix="\nsplit.suffix",
++     split.cex=.7,
++     faclen=1, trace=1,
++     split.border.col=1,
++     boxes.include.gap=boxes.include.gap)
+cex 1   xlim c(0, 1)   ylim c(0, 1)
+> 
+> prp(a21, type=1, trace=2, nn=0, ni=0,
++     main="(9) manual yshift and split.yshift\n",
++     split.border.col=1,
++     cex.main=.9,
++     prefix=c("up\n", "", "up\n", "up\n", "", "", ""),
++     yshift=c(3, 0, 3, 3, 0, 0, 0),
++     split.prefix=c("", "", "down\n", "", "", "", ""),
++     split.yshift=c(0, -1, 0, 0, 0, 0, 0))
+Initial scale 1.06
+Shifter: cex improvement 1 best.shift.amount 0 best.split.yshift.amount 0 (will not be used)
+Clipped scale 1.06 to max.auto.cex 1
+cex 1   xlim c(0, 1)   ylim c(0, 1)
+> 
+> 
+> par(mfrow=c(3,3))
+> a8 <- rpart(survived~., data=ptitanic, control=list(cp=.02))
+> prp(a8, type=2, main="Page 7: type=2")
+> prp(a8, type=2, extra=4, main="extra=4")
+> prp(a8, type=2, extra=104, main="extra=104")
+> 
+> prp(a8, type=2, extra=0,   under=T, main="extra=0,   under=T")
+> prp(a8, type=2, extra=4,   under=T, main="extra=4,   under=T")
+> prp(a8, type=2, extra=104, under=T, main="extra=104, under=T")
+> 
+> prp(a8, type=2, extra=104, under=T, under.cex=.6, main="extra=104, under=T\nunder.cex=.6")
+> prp(a8, type=2, extra=104, under=T, under.cex=1, main="extra=104, under=T\nunder.cex=1.2")
+> prp(a8, type=2, extra=104, under=T, split.border.col=1, border.col=0, main="extra=104, under=T\nsplit.border=1, border=0")
+> 
+> par(mfrow=c(2,2))
+> fit3 <- rpart(survived~., data=ititanic, control=list(cp=.002))
+> prp(fit3, trace=3, nn=0, faclen=0, prefix="prob ", main="Page 8: ycompress")
+Initial scale 0.65
+    Node shifter: cex improvement 1     shift.amount 1.5  <new best
+    Node shifter: cex improvement 0.538 shift.amount 2.0  
+Shifter: cex improvement 1 best.shift.amount 1.5 best.split.yshift.amount 0 (will not be used)
+cex 0.65   xlim c(0, 1)   ylim c(0, 1)
+> prp(fit3, extra=100, trace=3, nn=TRUE, faclen=0, fallen.leaves=TRUE, main="fallen leaves")
+Initial scale 0.45
+    Node shifter: cex improvement 0.778 shift.amount 1.5  
+    Node shifter: cex improvement 0.556 shift.amount 2.0  
+Shifter: cex improvement 1 best.shift.amount 0 best.split.yshift.amount 0 (will not be used)
+cex 0.45   xlim c(0, 1)   ylim c(0, 1)
+> prp(fit3, type=4, trace=3, nn=TRUE, clip.right.labs=0, split.border.col=1, main="type=4 ")
+Initial scale 0.45
+Shifter: cex improvement 1 best.shift.amount 0 best.split.yshift.amount 0 (will not be used)
+cex 0.45   xlim c(0, 1)   ylim c(0, 1)
+> # use prefix below to force shifting of fallen leaves to test shifter
+> prp(fit3, type=4, branch=.5, extra=1, under=TRUE, trace=3, nn=FALSE, fallen.leaves=1, prefix="probability ", main="type=4, fallen leaves")
+Initial scale 0.25
+    Node shifter: cex improvement 1.35  shift.amount 1.5  <new best
+    Node shifter: cex improvement 1.4   shift.amount 2.0  <new best
+Shifter: cex improvement 1.4 best.shift.amount 2 best.split.yshift.amount 0 (will be used)
+ycompress increased cex by 1.40
+cex 0.35   xlim c(0, 1)   ylim c(0, 1)
+> 
+> par(mfrow=c(2,2))
+> fit7 <- rpart(survived ~ ., data=ptitanic, cp=.01)
+> # this was wrong until I added check that a shift doesn't move nodes above the nodes for the level above
+> prp(fit7, extra=1, branch=1, trace=3, nn=1, main="Page 9: more ycompress")
+Initial scale 1.03
+Shifter: cex improvement 1 best.shift.amount 0 best.split.yshift.amount 0 (will not be used)
+Clipped scale 1.03 to max.auto.cex 1
+cex 1   xlim c(0, 1)   ylim c(0, 1)
+> 
+> par(mfrow=c(2,2))
+> prp(fit2, prefix=ifelse(fit2$frame$yval > .5, "survived\n", "died\n"), main="Page 10: miscellaneous 1",
++     fam.main="NewCenturySchoolbook", cex.main=1.3, trace=1,
++     border.col=0, split.border.col="steelblue3")
+cex 1   xlim c(0, 1)   ylim c(-0.05, 1.05)
+> # test long names and big and small numbers
+> ptitanic1 <- ptitanic
+> ptitanic1$sibsp1234567890 <- 1e3 * ptitanic1$sibsp
+> ptitanic1$sibsp <- NULL
+> ptitanic1$age <- 1e-5 * ptitanic1$age
+> ptitanic1$parch <- 1e7 * ptitanic1$parch
+> fit2 <- rpart(survived~., data=ptitanic1)
+> prp(fit2, faclen=0, digits=4, trace=1,
++     border.col=NA, split.border.col="steelblue3", split.round=1)
+cex 0.948   xlim c(0, 1)   ylim c(0, 1)
+> 
+> # test small tree, also tests xcompact and ycompact
+> fit.small <- rpart(survived~., data=ptitanic1, , control=list(cp=.1))
+> prp(fit.small, extra=100, faclen=0, main="small tree", trace=1)
+cex 1   xlim c(-0.65, 1.65)   ylim c(-1.05, 2.05)
+> 
+> par(mfrow=c(2,2))
+> fit4 <- rpart(survived~., data=ititanic, method="class", control=list(cp=.02))
+> prp(fit4, trace=2, cex=.8, tweak=1.1, main="Page 11: miscellaneous 2, tweak",
++        xflip=TRUE, yflip=TRUE, type=1, extra=100,  yesno=FALSE)
+Initial scale 1.33
+Shifter: cex improvement 1 best.shift.amount 0 best.split.yshift.amount 0 (will not be used)
+cex 0.8 (before applying tweak 1.1)   xlim c(0, 1)   ylim c(0, 1)
+Warning message:
+cex and tweak both specified, applying both 
+> # TODO wanna include family below, but postscript giving me grief
+> fit4.strange.method <- fit4
+> fit4.strange.method$method <- "unknown.method"
+> prp(fit4.strange.method, main="left=FALSE, fonts, user method", left=FALSE, font=c(1,2,3), split.cex=c(1, 1.2), branch=.5, trace=1, extra=1)
+cex 1   xlim c(-0.2, 1.2)   ylim c(0, 1)
+Warning message:
+Unrecognized rpart object: treating as a class response model 
+> prp(fit4, main="uniform=FALSE", uniform=FALSE, trace=1)
+cex 1   xlim c(0, 1)   ylim c(0, 1)
+> data(ozone1)
+> fit.oz1 <- rpart(O3~., data=ozone1)
+> obj <- prp(fit.oz1, main="digits=7", digits=7, trace=1)
+cex 0.849   xlim c(0, 1)   ylim c(-0.15, 1.15)
+> cat("obj returned by prp:\n")
+obj returned by prp:
+> print(obj)
+$obj
+n= 330 
+
+node), split, n, deviance, yval
+      * denotes terminal node
+
+ 1) root 330 21115.4100 11.775760  
+   2) temp< 67.5 214  4114.3040  7.425234  
+     4) ibh>=3573.5 108   689.6296  5.148148 *
+     5) ibh< 3573.5 106  2294.1230  9.745283  
+      10) dpg< -9.5 35   362.6857  6.457143 *
+      11) dpg>=-9.5 71  1366.4790 11.366200  
+        22) ibt< 159 40   287.9000  9.050000 *
+        23) ibt>=159 31   587.0968 14.354840 *
+   3) temp>=67.5 116  5478.4400 19.801720  
+     6) ibt< 226.5 55  1276.8360 15.945450  
+      12) humidity< 59.5 10   167.6000 10.800000 *
+      13) humidity>=59.5 45   785.6444 17.088890 *
+     7) ibt>=226.5 61  2646.2620 23.278690  
+      14) doy>=306.5 8   398.0000 16.000000 *
+      15) doy< 306.5 53  1760.4530 24.377360  
+        30) vis>=55 36  1149.8890 22.944440 *
+        31) vis< 55 17   380.1176 27.411760 *
+
+$snipped.nodes
+NULL
+
+$xlim
+[1] 0 1
+
+$ylim
+[1] -0.15  1.15
+
+$x
+ [1] 0.40095844 0.13382523 0.05640542 0.21124504 0.13452271 0.28796737
+ [7] 0.21821980 0.35771495 0.66809166 0.51115961 0.44141204 0.58090719
+[13] 0.79712467 0.72040234 0.87384700 0.80409943 0.94359458
+
+$y
+ [1] 0.95495420 0.71943321 0.48391221 0.48391221 0.24839122 0.24839122
+ [7] 0.01287023 0.01287023 0.71943321 0.48391221 0.24839122 0.24839122
+[13] 0.48391221 0.24839122 0.24839122 0.01287023 0.01287023
+
+$branch.x
+       [,1]      [,2]       [,3]      [,4]      [,5]      [,6]      [,7]
+x 0.4009584 0.1338252 0.05640542 0.2112450 0.1345227 0.2879674 0.2182198
+         NA 0.3475318 0.11834127 0.1493092 0.1959006 0.2265895 0.2740179
+         NA 0.4009584 0.13382523 0.1338252 0.2112450 0.2112450 0.2879674
+       [,8]      [,9]     [,10]     [,11]     [,12]     [,13]     [,14]
+x 0.3577149 0.6680917 0.5111596 0.4414120 0.5809072 0.7971247 0.7204023
+  0.3019169 0.4543851 0.6255456 0.4972101 0.5251091 0.6827386 0.7817802
+  0.2879674 0.4009584 0.6680917 0.5111596 0.5111596 0.6680917 0.7971247
+      [,15]     [,16]     [,17]
+x 0.8738470 0.8040994 0.9435946
+  0.8124691 0.8598975 0.8877965
+  0.7971247 0.8738470 0.8738470
+
+$branch.y
+       [,1]      [,2]      [,3]      [,4]      [,5]      [,6]       [,7]
+y 0.9608505 0.7253295 0.5371918 0.4898085 0.3016709 0.2542875 0.06614986
+         NA 0.9549542 0.7194332 0.7194332 0.4839122 0.4839122 0.24839122
+         NA 0.9549542 0.7194332 0.7194332 0.4839122 0.4839122 0.24839122
+        [,8]      [,9]     [,10]     [,11]     [,12]     [,13]     [,14]
+y 0.06614986 0.7253295 0.4898085 0.3016709 0.3016709 0.4898085 0.3016709
+  0.24839122 0.9549542 0.7194332 0.4839122 0.4839122 0.7194332 0.4839122
+  0.24839122 0.9549542 0.7194332 0.4839122 0.4839122 0.7194332 0.4839122
+      [,15]      [,16]      [,17]
+y 0.2542875 0.06614986 0.06614986
+  0.4839122 0.24839122 0.24839122
+  0.4839122 0.24839122 0.24839122
+
+$labs
+ [1] NA         NA         "5.148148" NA         "6.457143" NA        
+ [7] "9.05"     "14.35484" NA         NA         "10.8"     "17.08889"
+[13] NA         "16"       NA         "22.94444" "27.41176"
+
+$cex
+[1] 0.8492188
+
+$boxes
+$boxes$x1
+ [1]           NA           NA -0.004631584           NA  0.073485700
+ [6]           NA  0.184315771  0.296677940           NA           NA
+[11]  0.407508011  0.519870180           NA  0.696673179           NA
+[16]  0.743062420  0.882557570
+
+$boxes$y1
+ [1]          NA          NA  0.46615234          NA  0.23063134          NA
+ [7] -0.00488965 -0.00488965          NA          NA  0.23063134  0.23063134
+[13]          NA  0.23063134          NA -0.00488965 -0.00488965
+
+$boxes$x2
+ [1]        NA        NA 0.1174424        NA 0.1955597        NA 0.2521238
+ [8] 0.4187520        NA        NA 0.4753161 0.6419442        NA 0.7441315
+[15]        NA 0.8651364 1.0046316
+
+$boxes$y2
+ [1]         NA         NA 0.53719185         NA 0.30167086         NA
+ [7] 0.06614986 0.06614986         NA         NA 0.30167086 0.30167086
+[13]         NA 0.30167086         NA 0.06614986 0.06614986
+
+
+$split.labs
+[1] ""
+
+$split.cex
+[1] 1
+
+$split.box
+$split.box$x1
+ [1] 0.32400033 0.04702165         NA 0.14072857         NA 0.22863838
+ [7]         NA         NA 0.59858779 0.41250975         NA         NA
+[13] 0.71395672         NA 0.81212679         NA         NA
+
+$split.box$y1
+ [1] 0.9371943 0.7016733        NA 0.4661523        NA 0.2306313        NA
+ [8]        NA 0.7016733 0.4661523        NA        NA 0.4661523        NA
+[15] 0.2306313        NA        NA
+
+$split.box$x2
+ [1] 0.4779166 0.2206288        NA 0.2817615        NA 0.3472964        NA
+ [8]        NA 0.7375955 0.6098095        NA        NA 0.8802926        NA
+[15] 0.9355672        NA        NA
+
+$split.box$y2
+ [1] 1.0082338 0.7727128        NA 0.5371918        NA 0.3016709        NA
+ [8]        NA 0.7727128 0.5371918        NA        NA 0.5371918        NA
+[15] 0.3016709        NA        NA
+
+
+> 
+> # test extra and faclen etc. on anova model
+> a1 <- rpart(survived~., data=ititanic, control=list(cp=.03))
+> par(mfrow=c(3, 3))
+> plot(a1, unif=TRUE, branch=.3, main="Page 12: anova\nwith extra faclen etc.\n")
+> text(a1, fancy=T, fwidth=.35, fheight=0.3, use.n=TRUE, all=T, digits=3, xpd=NA, pretty=0)
+> prp(a1, extra=0, faclen=-3, varlen=2,             type=1, main="extra=0", trace=1)
+cex 1   xlim c(-0.2, 1.2)   ylim c(-0.1, 1.1)
+> prp(a1, extra=1, faclen=1,  varlen=-2,              type=4, main="extra=1", trace=1)
+cex 1   xlim c(0, 1)   ylim c(0, 1)
+> prp(a1, extra=100, faclen=3,             digits=3,  type=4, clip.right.labs=FALSE, facsep=" or ", main="extra=100", trace=1)
+cex 1   xlim c(0, 1)   ylim c(0, 1)
+> # plot(1, 1, type="n", axes=FALSE, xlab="", ylab="") # blank
+> # test xflip and left (note: left=FALSE cannot be used with type=4)
+> prp(a1, main="\n\nxflip",                xflip=TRUE,             extra=101, faclen=0, trace=1)
+cex 1   xlim c(0, 1)   ylim c(-0.15, 1.15)
+> prp(a1, main="type=4",                                type=4, extra=101, faclen=0, trace=1)
+cex 1   xlim c(0, 1)   ylim c(0, 1)
+> prp(a1, main="xflip type=4",              xflip=TRUE, type=4, extra=101, faclen=0, trace=1)
+cex 1   xlim c(0, 1)   ylim c(0, 1)
+> prp(a1, main="xflip type=4 clip.right=FALSE",   xflip=TRUE, type=4, extra=101, faclen=0, clip.right=FALSE, trace=1)
+cex 1   xlim c(0, 1)   ylim c(0, 1)
+> 
+> # test extra and faclen etc. on class model
+> a2 <- rpart(survived~., data=ptitanic, control=list(cp=.02))
+> par(mfrow=c(3, 2))
+> plot(a2, unif=TRUE, branch=.3, main="Page 13: class")
+> text(a2, use.n=TRUE, all=T, digits=3, xpd=NA, pretty=0)
+> prp(a2, extra=0, eq=" eq ", lt=" lt ", ge=" ge ", facsep="|", xsep="/",
++     type=4, main="extra=0", trace=3, split.border.col=1)
+Initial scale 0.931
+Shifter: cex improvement 1 best.shift.amount 0 best.split.yshift.amount 0 (will not be used)
+cex 0.931   xlim c(0, 1)   ylim c(0, 1)
+> prp(a2, extra=1, type=1,  xsep=", ", main="extra=1", trace=1)
+cex 1   xlim c(0, 1)   ylim c(0, 1)
+> prp(a2, extra=100, type=3, clip.right.labs=FALSE, main="extra=100", trace=3, split.border.col=1, ycompress.cex=1)
+Initial scale 0.931
+Shifter: cex improvement 1 best.shift.amount 0 best.split.yshift.amount 0 (will not be used)
+cex 0.931   xlim c(0, 1)   ylim c(0, 1)
+> prp(a2, extra=4, type=0, main="extra=4", faclen=0, trace=1, under=TRUE, col=2)
+cex 1   xlim c(-0.2, 1.2)   ylim c(0, 1)
+> prp(a2, extra=104, type=0, main="extra=104", faclen=0, trace=1)
+cex 1   xlim c(0, 1)   ylim c(0, 1)
+> 
+> old.par <- par(mfrow=c(8,4), mar = c(4, 3, 2, 1), mgp = c(1.5, .5, 0))
+> 
+> a4 <- rpart(survived~., data=ptitanic, cp=.03)
+> plot(a4, unif=T, branch=.3); text(a4, use.n=1, cex=1, xpd=NA, pretty=0); title("Page 14: class extra\n", cex.main=.9)
+> prp(a4, type=1, yesno=T, faclen=-1, under=F, extra=0, cex.main=.9, main="extra=0\nunder=F")
+> prp(a4, type=1, yesno=T, faclen=-1, under=F, extra=1, cex.main=.9, main="extra=1\nunder=F")
+> prp(a4, type=1, yesno=T, faclen=-1, under=F, extra=4, cex.main=.9, main="extra=4\nunder=F")
+> prp(a4, type=1, yesno=T, faclen=-1, under=F, extra=5, cex.main=.9, main="extra=5\nunder=F")
+> prp(a4, type=1, yesno=T, faclen=-1, under=F, extra=6, cex.main=.9, main="extra=6\nunder=F")
+> prp(a4, type=1, yesno=T, faclen=-1, extra=7, under=F, cex.main=.9, main="extra=7\nunder=F")
+> prp(a4, type=1, yesno=T, faclen=-1, under=F, extra=8, cex.main=.9, main="extra=8\nunder=F")
+> prp(a4, type=1, yesno=T, faclen=-1, under=F, extra=9, cex.main=.9, main="extra=9\nunder=F")
+> prp(a4, type=1, yesno=T, faclen=-1, under=F, extra=100, cex.main=.9, main="extra=100\nunder=F")
+> prp(a4, type=1, yesno=T, faclen=-1, under=F, extra=101, cex.main=.9, main="extra=101\nunder=F")
+> prp(a4, type=1, yesno=T, faclen=-1, under=F, extra=104, cex.main=.9, main="extra=104\nunder=F")
+> prp(a4, type=1, yesno=T, faclen=-1, under=F, extra=105, cex.main=.9, main="extra=105\nunder=F")
+> prp(a4, type=1, yesno=T, faclen=-1, under=F, extra=106, cex.main=.9, main="extra=106\nunder=F")
+> prp(a4, type=1, yesno=T, faclen=-1, under=F, extra=107, cex.main=.9, main="extra=107\nunder=F")
+> prp(a4, type=1, yesno=T, faclen=-1, under=F, extra=109, cex.main=.9, main="extra=109\n under=F")
+> 
+> plot(0, 0, type="n", axes=FALSE, xlab="", ylab="")
+> prp(a4, type=1, yesno=T, faclen=-1, under=T, extra=0, cex.main=.9, main="extra=0\nunder=T")
+> prp(a4, type=1, yesno=T, faclen=-1, under=T, extra=1, cex.main=.9, main="extra=1\nunder=T")
+> prp(a4, type=1, yesno=T, faclen=-1, under=T, extra=4, cex.main=.9, main="extra=4\nunder=T")
+> prp(a4, type=1, yesno=T, faclen=-1, under=T, extra=5, cex.main=.9, main="extra=5\nunder=T")
+> prp(a4, type=1, yesno=T, faclen=-1, under=T, extra=6, cex.main=.9, main="extra=6\nunder=T")
+> prp(a4, type=1, yesno=T, faclen=-1, extra=7, under=T, cex.main=.9, main="extra=7\nunder=T (ignored)")
+> prp(a4, type=1, yesno=T, faclen=-1, under=T, extra=8, cex.main=.9, main="extra=8\nunder=T")
+> prp(a4, type=1, yesno=T, faclen=-1, under=T, extra=9, cex.main=.9, main="extra=9\nunder=T")
+> prp(a4, type=1, yesno=T, faclen=-1, under=T, extra=100, cex.main=.9, main="extra=100\nunder=T")
+> prp(a4, type=1, yesno=T, faclen=-1, under=T, extra=101, cex.main=.9, main="extra=101\nunder=T")
+> prp(a4, type=1, yesno=T, faclen=-1, under=T, extra=104, cex.main=.9, main="extra=104\nunder=T")
+> prp(a4, type=1, yesno=T, faclen=-1, under=T, extra=105, cex.main=.9, main="extra=105\nunder=T")
+> prp(a4, type=1, yesno=T, faclen=-1, under=T, extra=106, cex.main=.9, main="extra=106\nunder=T")
+> prp(a4, type=1, yesno=T, faclen=-1, under=T, extra=107, cex.main=.9, main="extra=107\nunder=T")
+> prp(a4, type=1, yesno=T, faclen=-1, under=T, extra=109, cex.main=.9, main="extra=109\n under=T")
+> 
+> par(old.par)
+> 
+> par(mfrow=c(3,3))
+> prp(a4, type=1,          extra=2,   main="Page 15: class extra continued\nextra=2 (classification rate)")
+> prp(a4, type=1, under=T, extra=3,   main="extra=3 (misclassification rate)\nunder=T")
+> prp(a4, type=1,          extra=102, main="extra=102 (classification rate)\n")
+> prp(a4, type=1, under=T, extra=103, main="extra=103 (misclassification rate)\nunder=T")
+> 
+> # poisson
+> set.seed(8)
+> ozone2 <- ozone1
+> ozone2$O3a <- round(runif(330, 1, 10))
+> y <- cbind(ozone2$O3, ozone2$O3a)
+> a5 <- rpart(y~.-O3-O3a, data=ozone2, control=list(cp=.04))
+> par(mfrow=c(2, 3))
+> plot(a5, unif=TRUE, branch=.3, main="Page 16: poisson\n"); text(a5, use.n=TRUE, all=T, digits=3, xpd=NA, cex=1.1)
+> prp(a5, extra=0, digits=3, type=4, trace=1, main="extra=0\ntype=4")
+cex 1   xlim c(-0.2, 1.2)   ylim c(-0.45, 1.45)
+> prp(a5, extra=1, type=4, clip.right=FALSE, under=TRUE, main="extra=1: nbr of events, nbr of obs\ntype=4", trace=1, under.cex=1)
+cex 1   xlim c(0, 1)   ylim c(-0.3, 1.3)
+> prp(a5, extra=2, trace=1, type=0, under=T, main="extra=2: nbr of events", under.cex=1)
+cex 1   xlim c(-0.2, 1.2)   ylim c(-0.65, 1.65)
+> prp(a5, extra=102, type=4, under=TRUE, xsep="/", main="extra=102\ntype=4", trace=1, under.cex=1)
+cex 1   xlim c(0, 1)   ylim c(-0.3, 1.3)
+> 
+> # prefix, suffix, etc.
+> a7 <- rpart(survived~., data=ptitanic, control=list(cp=.02))
+> par(mfrow=c(2, 2))
+> # test many parameters, and their vectorization
+> prp(a7, main="Page 17: many params, prefix, suffix, etc.", Margin=.03,
++     extra=4, under=T, prefix="res:", suffix=" (probs)", split.suffix="\n\nabc", faclen=0, trace=3,
++     nn=1,
++     under.col=c(2,3), under.font=c(3,2), under.ygap=c(.2,-.2), under.cex=c(1.1, .8),
++     adj=c(0,.5), split.adj=c(.5,1), yshift=c(-.5,.5),
++     shadow.col=c(1,2), split.shadow.col=c("pink","blue"),
++     space=c(.8,.6), yspace=c(.5,.1), border.col=c("gray", "green3", "pink"),
++     lty=c(1,2),
++     shadow.offset=c(.4,1,2),
++     split.shadow.offset=c(.4,.4,1),
++     nn.font=c(1,3), nn.adj=c(1,0), nn.col=c(1,2), nn.border.col=c(0,1,2))
+Initial scale 1.06
+Shifter: cex improvement 1 best.shift.amount 0 best.split.yshift.amount 0 (will not be used)
+Clipped scale 1.06 to max.auto.cex 1
+cex 1   xlim c(0, 1)   ylim c(0, 1)
+> 
+> my.split.labs <- function(x, labs, digits, varlen, faclen)
++ {
++     sprintf("my.split.lab\n%s", labs)
++ }
+> prp(a7, type=4, extra=4, under=T,
++     faclen=0, trace=3,
++     split.fun=my.split.labs,
++     split.prefix="L[", split.suffix="]L",
++     right.split.prefix="R[", right.split.suffix="]R",
++     round=9, leaf.round=0,
++     ycompress.cex=.8) # force ycompress for testing with type=4
+Initial scale 0.849
+Shifter: cex improvement 1 best.shift.amount 0 best.split.yshift.amount 0 (will not be used)
+cex 0.849   xlim c(0, 1)   ylim c(0, 1)
+> 
+> prp(a7, type=4, extra=1, under=F, prefix="response:",
++     suffix="\n\n (probs)", split.suffix="\n\nabc", faclen=0, trace=3)
+Initial scale 0.738
+Shifter: cex improvement 1 best.shift.amount 0 best.split.yshift.amount 0 (will not be used)
+cex 0.738   xlim c(0, 1)   ylim c(0, 1)
+> par(mfrow=c(1, 1))
+> 
+> data(iris)
+> a.iris <- rpart(Species~., data=iris)
+> par(mfrow=c(2, 2))
+> old.bg <- par(bg="darkgray")
+> prp(a.iris, main="Page 18: gray background",
++     type=4, extra=1, under=TRUE,
++     col=c("orange", "green", "wheat")[a.iris$frame$yval], under.col="red",
++     border.col=c(3,4), nn.col=c(2,3),
++     split.border.col=5,
++     shadow.col="black",
++     split.shadow.col="lightgray",
++     branch.col=c("orange4", "white"),
++     branch.lwd=c(3,2), branch.lty=1:3)
+> par(bg=old.bg)
+> par(mfrow=c(1, 1))
+> 
+> par(mfrow=c(2, 3))
+> a <- rpart(survived~., data=ptitanic, control=list(cp=.01))
+> prp(a, uniform=T, branch=.4, compress=T, extra=104, trace=2, main="Page 19: test mar and xpd args")
+Initial scale 0.931
+Shifter: cex improvement 1 best.shift.amount 0 best.split.yshift.amount 0 (will not be used)
+cex 0.931   xlim c(0, 1)   ylim c(0, 1)
+> prp(a, uniform=T, branch=.4, compress=T, extra=104, mar=c(1,2,3,4), trace=2, main="test mar=c(1,2,3,4)")
+Initial scale 0.816
+Shifter: cex improvement 1 best.shift.amount 0 best.split.yshift.amount 0 (will not be used)
+cex 0.816   xlim c(0, 1)   ylim c(0, 1)
+> prp(a, uniform=T, branch=.4, compress=T, extra=104, mar=c(5,2,3,4), trace=2, main="test mar=c(5,2,3,4)")
+Initial scale 0.816
+Shifter: cex improvement 1 best.shift.amount 0 best.split.yshift.amount 0 (will not be used)
+cex 0.816   xlim c(0, 1)   ylim c(0, 1)
+> prp(a, uniform=T, branch=.4, compress=T, extra=104, xpd=T, trace=2, prefix="123456789", cex=1, main="test xpd=T, par=1")
+Initial scale 0.562
+    Node shifter: cex improvement 0.778 shift.amount 1.5  
+    Node shifter: skipping invalid      shift.amount 2.0 
+Shifter: cex improvement 1 best.shift.amount 0 best.split.yshift.amount 0 (will not be used)
+cex 1   xlim c(0, 1)   ylim c(0, 1)
+> prp(a, uniform=T, branch=.4, compress=T, extra=104, xpd=F, trace=2, prefix="123456789", cex=1, main="test xpd=F, par=1")
+Initial scale 0.562
+    Node shifter: cex improvement 0.778 shift.amount 1.5  
+    Node shifter: skipping invalid      shift.amount 2.0 
+Shifter: cex improvement 1 best.shift.amount 0 best.split.yshift.amount 0 (will not be used)
+cex 1   xlim c(0, 1)   ylim c(0, 1)
+> par(mfrow=c(1, 1))
+> 
+> # shadows
+> 
+> a <- rpart(pclass ~ ., data=ptitanic, control=rpart.control(cp=.01))
+> par(mfrow=c(2,3))
+> prp(a, type=0, faclen=0, extra=1, under=F, shadow.col="darkgray", nn=T, split.shadow.col="darkgray", main="Page 20: shadows")
+> prp(a, type=1, faclen=0, extra=1, under=F, shadow.col="darkgray", nn=T, main="type=1")
+> prp(a, type=1, faclen=0, extra=2, under=T, shadow.col="darkgray", nn=T, main="type=1")
+> prp(a, type=2, faclen=0, extra=3, under=F, shadow.col="darkgray", nn=T, split.shadow.col="darkgray", main="type=2")
+> prp(a, type=3, faclen=0, extra=4, under=T, shadow.col="darkgray", nn=T, split.shadow.col="darkgray", main="type=3")
+> prp(a, type=4, faclen=0, extra=101, under=T, shadow.col="darkgray", nn=T, split.shadow.col="darkgray", main="type=4")
+> par(mfrow=c(1,1))
+> 
+> # misc.
+> 
+> # test that do.par correctly restores eveything, also test do.par=FALSE
+> a <- rpart(pclass ~ ., data=ptitanic, cp=.005)
+> par(mfrow=c(3,3))
+> old.par <- par(no.readonly=TRUE)
+> prp(a, trace=2, main="Page 21: do.par=default") # trace=2 so can see the grid
+Initial scale 1.06
+Shifter: cex improvement 1 best.shift.amount 0 best.split.yshift.amount 0 (will not be used)
+Clipped scale 1.06 to max.auto.cex 1
+cex 1   xlim c(0, 1)   ylim c(0, 1)
+>     # set par settings that can legally change to NULL for comparison
+>     old.par$usr <- old.par$fig <- old.par$mfg <- old.par$xaxp <- old.par$yaxp <- NULL
+>     par <- par(no.readonly=TRUE)
+>     par$usr <- par$fig <- par$mfg <- par$xaxp <- par$yaxp <- NULL
+>     stopifnot(isTRUE(all.equal(old.par, par)))
+> prp(a, trace=2, main="do.par=FALSE", do.par=FALSE)
+Initial scale 0.816
+Shifter: cex improvement 1 best.shift.amount 0 best.split.yshift.amount 0 (will not be used)
+cex 0.816   xlim c(0, 1)   ylim c(0, 1)
+>     par <- par(no.readonly=TRUE)
+>     par$usr <- par$fig <- par$mfg <- par$xaxp <- par$yaxp <- NULL
+>     stopifnot(isTRUE(all.equal(old.par, par)))
+> par(mfrow=c(1,1))
+> 
+> # different branch types
+> a <- rpart(pclass ~ ., data=ptitanic, cp=.02)
+> par(mfrow=c(2,3))
+> prp(a, branch.type=5, main="Page 22: branch.type=5\nwt")
+> prp(a, branch.type=1, main="branch.type=1\ndev")
+> prp(a, branch.type=2, main="branch.type=2\nsqrt(dev)\nuniform=FALSE", uniform=FALSE)
+> prp(a, branch.type=6, fallen.leaves=T, main="branch.type=6\ncomplexity\nfallen.leaves")
+> prp(a, branch.type=7, fallen.leaves=T, main="branch.type=7\nabs(yval)\nfallen.leaves")
+> prp(a, branch.type=8, main="branch.type=8\nyval - min(yval)")
+> 
+> par(mfrow=c(2,3))
+> # continuous response
+> a.age <- rpart(age~., data=ptitanic, cp=.04)
+> prp(a.age, branch.type=7, branch.col="pink", main="Page 23: branch.type=7\ncontinuous response")
+> 
+> # test different types with branch.type
+> # prp(a, type=1, branch.type=5, branch.col="slategray3", main="type=1\nbranch.type=5") # already tested
+> prp(a, type=2, branch.type=5, branch.col="slategray3", main="type=2\nbranch.type=5\n")
+> # prp(a, type=3, branch.type=5, branch.col="slategray3", main="type=1\nbranch.type=5") # not yet supported
+> # prp(a, type=4, branch.type=5, branch.col="slategray3", main="type=1\nbranch.type=5") # not yet supported
+> prp(a, type=2, branch.type=3, branch=0, branch.col="slategray3", main="type=2\nbranch.type=3\nbranch=0")
+> prp(a, type=2, branch.type=4, branch=1, main="type=2\nbranch.type=4\nbranch=1",
++     branch.col=c("slategray","slateblue2","slateblue")[a$frame$yval])
+> 
+> branch.fun1 <- function(x)
++ {
++     width <- x$frame$wt
++ }
+> root <- rpart(survived ~ ., data=ptitanic, cp=.5)
+> prp(a, branch.type=branch.fun1, branch.col="slategray3", main="branch.fun1")
+> 
+> par(mfrow=c(2,3))
+> prp(root, branch.type=5, main="Page 24: branch.type=5\nsingle node tree")
+> prp(a, branch=0, branch.type=5, branch.tweak=1.5, branch.col="slategray3",
++     branch.fill=2, main="branch.type=5\nbranch args")
+> 
+> par(mfrow=c(4,4))
+> set.seed(1924)
+> root <- rpart(survived ~ ., data=ptitanic, cp=.5)
+> temp <- prp(root, main="Page 25: single node tree")
+> print(temp)
+$obj
+n= 1309 
+
+node), split, n, loss, yval, (yprob)
+      * denotes terminal node
+
+1) root 1309 500 died (0.6180290 0.3819710) *
+
+$snipped.nodes
+NULL
+
+$xlim
+[1] 0 1
+
+$ylim
+[1] 0 1
+
+$x
+[1] 0.5
+
+$y
+[1] 0.5
+
+$branch.x
+  [,1]
+x  0.5
+    NA
+    NA
+
+$branch.y
+  [,1]
+y  0.5
+    NA
+    NA
+
+$labs
+[1] "died"
+
+$cex
+[1] 1
+
+$boxes
+$boxes$x1
+[1] 0.4308005
+
+$boxes$y1
+[1] 0.4675309
+
+$boxes$x2
+[1] 0.5691995
+
+$boxes$y2
+[1] 0.5974073
+
+
+$split.labs
+[1] ""
+
+$split.cex
+[1] 1
+
+$split.box
+$split.box$x1
+[1] NA
+
+$split.box$y1
+[1] NA
+
+$split.box$x2
+[1] NA
+
+$split.box$y2
+[1] NA
+
+
+> prp(root, type=1, main="type=1")
+> prp(root, type=2, extra=1, main="type=2, extra=1")
+> prp(root, type=3, extra=2, under=T, main="type=3, extra=4, under=T")
+> prp(root, type=4, extra=3, main="type=4, extra=4",
++     prefix="l[", suffix="]r",
++     split.prefix="L[", split.suffix="]L",
++     right.split.prefix="R[", right.split.suffix="]R",
++     round=9, leaf.round=0)
+> prp(root, branch.type=5, main="branch.type=5")
+> par(mfrow=c(1,1))
+> 
+> source("user-manual-figs.R")
+cex 1   xlim c(0, 1)   ylim c(0, 1)
+cex 0.688   xlim c(0, 1)   ylim c(0, 1)
+cex 0.931   xlim c(0, 1)   ylim c(0, 1)
+cex 0.931   xlim c(0, 1)   ylim c(0, 1)
+cex 1 (before applying tweak 1.2)   xlim c(0, 1)   ylim c(0, 1)
+cex 1 (before applying tweak 1.2)   xlim c(-0.65, 1.65)   ylim c(-0.75, 1.75)
+[1]  1  2  4  5 10 11  3
+[1] 1
+[1] 2
+[1] FALSE FALSE  TRUE FALSE  TRUE  TRUE  TRUE
+[1]  4 10 11  3
+[1] FALSE  TRUE  TRUE FALSE  TRUE FALSE FALSE
+[1]  0  3  5  4 11 10  2
+[1]  2  4  5 10 11
+> par(mfrow=c(1,1))
+> 
+> set.seed(1924)
+> # use.prp <- FALSE
+> # source("code.in.rpart.report.with.prp.R")
+> use.prp <- TRUE
+> source("code.in.rpart.report.with.prp.R")
+### Section 3
+n= 146 
+
+node), split, n, loss, yval, (yprob)
+      * denotes terminal node
+
+ 1) root 146 54 No (0.6301370 0.3698630)  
+   2) grade< 2.5 61  9 No (0.8524590 0.1475410) *
+   3) grade>=2.5 85 40 Prog (0.4705882 0.5294118)  
+     6) g2< 13.2 35 14 No (0.6000000 0.4000000)  
+      12) g2>=11.845 7  1 No (0.8571429 0.1428571) *
+      13) g2< 11.845 28 13 No (0.5357143 0.4642857)  
+        26) g2< 11.005 21  8 No (0.6190476 0.3809524) *
+        27) g2>=11.005 7  2 Prog (0.2857143 0.7142857) *
+     7) g2>=13.2 50 19 Prog (0.3800000 0.6200000)  
+      14) g2>=17.91 25  9 No (0.6400000 0.3600000) *
+      15) g2< 17.91 25  3 Prog (0.1200000 0.8800000) *
+### Section 4
+
+Classification tree:
+rpart(formula = y ~ x, method = "class", control = temp3)
+
+Variables actually used in tree construction:
+ [1] x1  x11 x12 x16 x18 x19 x2  x21 x3  x4  x5  x6  x7  x8 
+
+Root node error: 180/200 = 0.9
+
+n= 200 
+
+          CP nsplit rel error  xerror      xstd
+1  0.1111111      0   1.00000 1.10000 0.0078174
+2  0.1000000      1   0.88889 1.05000 0.0179118
+3  0.0888889      2   0.78889 0.94444 0.0280542
+4  0.0833333      3   0.70000 0.77778 0.0360041
+5  0.0777778      5   0.53333 0.77778 0.0360041
+6  0.0666667      6   0.45556 0.63333 0.0388968
+7  0.0500000      7   0.38889 0.46667 0.0387776
+8  0.0222222      8   0.33889 0.40000 0.0377124
+9  0.0166667      9   0.31667 0.39444 0.0375956
+10 0.0111111     10   0.30000 0.37222 0.0370831
+11 0.0083333     15   0.24444 0.37222 0.0370831
+12 0.0055556     22   0.18333 0.37222 0.0370831
+13 0.0037037     31   0.13333 0.40000 0.0377124
+14 0.0000000     34   0.12222 0.42778 0.0382305
+### Section 5
+
+Classification tree:
+rpart(formula = progstat ~ age + eet + g2 + grade + gleason + 
+    ploidy, data = stagec, method = "class")
+
+Variables actually used in tree construction:
+[1] g2    grade
+
+Root node error: 54/146 = 0.36986
+
+n= 146 
+
+        CP nsplit rel error  xerror    xstd
+1 0.117284      0   1.00000 1.00000 0.10802
+2 0.027778      3   0.64815 0.87037 0.10454
+3 0.010000      5   0.59259 0.85185 0.10395
+Call:
+rpart(formula = progstat ~ age + eet + g2 + grade + gleason + 
+    ploidy, data = stagec, method = "class")
+  n= 146 
+
+          CP nsplit rel error    xerror      xstd
+1 0.11728395      0 1.0000000 1.0000000 0.1080241
+2 0.02777778      3 0.6481481 0.8703704 0.1045433
+3 0.01000000      5 0.5925926 0.8518519 0.1039462
+
+Variable importance
+     g2   grade gleason  ploidy     age     eet 
+     31      31      21      10       5       2 
+
+Node number 1: 146 observations,    complexity param=0.117284
+  predicted class=No    expected loss=0.369863  P(node) =1
+    class counts:    92    54
+   probabilities: 0.630 0.370 
+  left son=2 (61 obs) right son=3 (85 obs)
+  Primary splits:
+      grade   < 2.5    to the left,  improve=10.357590, (0 missing)
+      gleason < 5.5    to the left,  improve= 8.399574, (3 missing)
+      ploidy  < 1.5    to the left,  improve= 7.656533, (0 missing)
+      g2      < 13.2   to the left,  improve= 7.186766, (7 missing)
+      age     < 58.5   to the right, improve= 1.388128, (0 missing)
+  Surrogate splits:
+      gleason < 5.5    to the left,  agree=0.863, adj=0.672, (0 split)
+      ploidy  < 1.5    to the left,  agree=0.644, adj=0.148, (0 split)
+      g2      < 9.945  to the left,  agree=0.630, adj=0.115, (0 split)
+      age     < 66.5   to the right, agree=0.589, adj=0.016, (0 split)
+
+Node number 2: 61 observations
+  predicted class=No    expected loss=0.147541  P(node) =0.4178082
+    class counts:    52     9
+   probabilities: 0.852 0.148 
+
+Node number 3: 85 observations,    complexity param=0.117284
+  predicted class=Prog  expected loss=0.4705882  P(node) =0.5821918
+    class counts:    40    45
+   probabilities: 0.471 0.529 
+  left son=6 (35 obs) right son=7 (50 obs)
+  Primary splits:
+      g2      < 13.2   to the left,  improve=2.1781360, (6 missing)
+      ploidy  < 1.5    to the left,  improve=1.9834830, (0 missing)
+      age     < 56.5   to the right, improve=1.6596080, (0 missing)
+      gleason < 8.5    to the left,  improve=1.6386550, (0 missing)
+      eet     < 1.5    to the right, improve=0.1086108, (1 missing)
+  Surrogate splits:
+      ploidy  < 1.5    to the left,  agree=0.924, adj=0.829, (6 split)
+      age     < 68.5   to the right, agree=0.608, adj=0.114, (0 split)
+      gleason < 6.5    to the left,  agree=0.582, adj=0.057, (0 split)
+
+Node number 6: 35 observations
+  predicted class=No    expected loss=0.4  P(node) =0.239726
+    class counts:    21    14
+   probabilities: 0.600 0.400 
+
+Node number 7: 50 observations,    complexity param=0.117284
+  predicted class=Prog  expected loss=0.38  P(node) =0.3424658
+    class counts:    19    31
+   probabilities: 0.380 0.620 
+  left son=14 (25 obs) right son=15 (25 obs)
+  Primary splits:
+      g2      < 17.91  to the right, improve=5.24148300, (6 missing)
+      age     < 61.5   to the right, improve=1.12666700, (0 missing)
+      gleason < 7.5    to the left,  improve=0.25269950, (0 missing)
+      eet     < 1.5    to the right, improve=0.06310024, (1 missing)
+  Surrogate splits:
+      age     < 61.5   to the right, agree=0.614, adj=0.190, (6 split)
+      eet     < 1.5    to the right, agree=0.591, adj=0.143, (0 split)
+      grade   < 3.5    to the right, agree=0.545, adj=0.048, (0 split)
+      gleason < 6.5    to the right, agree=0.545, adj=0.048, (0 split)
+
+Node number 14: 25 observations
+  predicted class=No    expected loss=0.36  P(node) =0.1712329
+    class counts:    16     9
+   probabilities: 0.640 0.360 
+
+Node number 15: 25 observations
+  predicted class=Prog  expected loss=0.12  P(node) =0.1712329
+    class counts:     3    22
+   probabilities: 0.120 0.880 
+
+### Section 6
+### Section 7
+
+Regression tree:
+rpart(formula = Price ~ ., data = cars)
+
+Variables actually used in tree construction:
+[1] Country Type    Weight 
+
+Root node error: 983551497/60 = 16392525
+
+n= 60 
+
+        CP nsplit rel error  xerror    xstd
+1 0.432114      0   1.00000 1.08415 0.22382
+2 0.157616      1   0.56789 0.89295 0.17252
+3 0.097521      2   0.41027 0.75347 0.17287
+4 0.024107      3   0.31275 0.67654 0.15105
+5 0.010000      4   0.28864 0.66649 0.14773
+n= 60 
+
+node), split, n, deviance, yval
+      * denotes terminal node
+
+1) root 60 983551500 12615.670  
+  2) Weight< 2980 36 283686500 10442.580  
+    4) Type=Small 13  21804710  7682.385 *
+    5) Type=Compact,Medium,Sporty 23 106857900 12002.700 *
+  3) Weight>=2980 24 274858800 15875.290 *
+Call:
+rpart(formula = Price ~ ., data = cars)
+  n= 60 
+
+          CP nsplit rel error    xerror      xstd
+1 0.43211383      0 1.0000000 1.0841527 0.2238160
+2 0.15761648      1 0.5678862 0.8929462 0.1725168
+3 0.09752105      2 0.4102697 0.7534675 0.1728720
+4 0.02410734      3 0.3127486 0.6765415 0.1510521
+5 0.01000000      4 0.2886413 0.6664934 0.1477282
+
+Variable importance
+     Weight       Disp.        Type          HP     Mileage     Country 
+         23          21          18          16          14           8 
+Reliability 
+          1 
+
+Node number 1: 60 observations,    complexity param=0.4321138
+  mean=12615.67, MSE=1.639252e+07 
+  left son=2 (36 obs) right son=3 (24 obs)
+  Primary splits:
+      Weight  < 2980   to the left,  improve=0.4321138, (0 missing)
+      HP      < 104.5  to the left,  improve=0.4141712, (0 missing)
+      Type    splits as  RRRLRR,     improve=0.4106497, (0 missing)
+      Disp.   < 115    to the left,  improve=0.4083029, (0 missing)
+      Mileage < 24.5   to the right, improve=0.3628025, (0 missing)
+  Surrogate splits:
+      Disp.   < 158    to the left,  agree=0.917, adj=0.792, (0 split)
+      HP      < 132.5  to the left,  agree=0.867, adj=0.667, (0 split)
+      Mileage < 22.5   to the right, agree=0.850, adj=0.625, (0 split)
+      Type    splits as  LRRLLR,     agree=0.850, adj=0.625, (0 split)
+      Country splits as  LLLLLLRR,   agree=0.650, adj=0.125, (0 split)
+
+Node number 2: 36 observations,    complexity param=0.1576165
+  mean=10442.58, MSE=7880181 
+  left son=4 (13 obs) right son=5 (23 obs)
+  Primary splits:
+      Type    splits as  R-RLR-,     improve=0.5464621, (0 missing)
+      Weight  < 2462.5 to the left,  improve=0.5308886, (0 missing)
+      Disp.   < 115    to the left,  improve=0.4550460, (0 missing)
+      Mileage < 31     to the right, improve=0.4382905, (0 missing)
+      HP      < 105.5  to the left,  improve=0.4144004, (0 missing)
+  Surrogate splits:
+      Weight  < 2462.5 to the left,  agree=0.944, adj=0.846, (0 split)
+      Disp.   < 115    to the left,  agree=0.917, adj=0.769, (0 split)
+      HP      < 91     to the left,  agree=0.861, adj=0.615, (0 split)
+      Mileage < 27.5   to the right, agree=0.833, adj=0.538, (0 split)
+      Country splits as  RRRRLL-R,   agree=0.694, adj=0.154, (0 split)
+
+Node number 3: 24 observations
+  mean=15875.29, MSE=1.145245e+07 
+
+Node number 4: 13 observations
+  mean=7682.385, MSE=1677286 
+
+Node number 5: 23 observations
+  mean=12002.7, MSE=4645995 
+
+
+Regression tree:
+rpart(formula = pgstat ~ age + eet + g2 + grade + gleason + ploidy, 
+    data = stagec)
+
+Variables actually used in tree construction:
+[1] g2      gleason grade  
+
+Root node error: 34.027/146 = 0.23306
+
+n= 146 
+
+        CP nsplit rel error  xerror     xstd
+1 0.152195      0   1.00000 1.01206 0.045309
+2 0.064308      1   0.84781 0.91485 0.066783
+3 0.029446      3   0.71919 0.91640 0.082375
+4 0.019350      4   0.68974 0.93745 0.084810
+5 0.017213      5   0.67039 0.97689 0.089218
+6 0.010000      8   0.61875 0.97910 0.090020
+n= 146 
+
+node), split, n, deviance, yval
+      * denotes terminal node
+
+ 1) root 146 34.027400 0.3698630  
+   2) grade< 2.5 61  7.672131 0.1475410 *
+   3) grade>=2.5 85 21.176470 0.5294118  
+     6) g2< 13.2 35  8.400000 0.4000000 *
+     7) g2>=13.2 50 11.780000 0.6200000  
+      14) g2>=17.91 25  5.760000 0.3600000 *
+      15) g2< 17.91 25  2.640000 0.8800000 *
+### Section 8
+### Section 9
+### Section 10
+> 
+> # clip.left.labs and clip.right.labs
+> par(mfrow=c(3,3))
+> prp(tree, type=4, clip.left.labs=F, clip.right.labs=F, main="clip.left.labs=F, clip.right.labs=F")
+> # prp(tree, type=4, clip.left.labs=F, clip.right.labs=T, main="clip.left.labs=F, clip.right.labs=T") #default
+> prp(tree, type=3, clip.left.labs=T, clip.right.labs=F, main="clip.left.labs=T, clip.right.labs=F")
+> prp(tree, type=3, clip.left.labs=T, clip.right.labs=T, main="clip.left.labs=T, clip.right.labs=T")
+> 
+> prp(tree, type=3, xflip=T, clip.left.labs=F, clip.right.labs=F, main="clip.left.labs=F, clip.right.labs=F\n                 xflip=T")
+> prp(tree, type=3, xflip=T, clip.left.labs=F, clip.right.labs=T, main="clip.left.labs=F, clip.right.labs=T\n                 xflip=T")
+> prp(tree, type=4, xflip=T, clip.left.labs=T, clip.right.labs=F, main="clip.left.labs=T, clip.right.labs=F\n                 xflip=T")
+> prp(tree, type=4, xflip=T, clip.left.labs=T, clip.right.labs=T, main="clip.left.labs=T, clip.right.labs=T\n                 xflip=T")
+> 
+> prp(tree, type=4,          clip.left.labs=c(T, F, T), clip.right.labs=c(T, F, F), main="clip.labs vectorization")
+> prp(tree, type=4, xflip=T, clip.left.labs=c(T, F, T), clip.right.labs=F,          main="xflip=T\nclip.labs vectorization")
+> par(mfrow=c(1,1))
+> 
+> # mvpart, must be last because it changes plot.rpart, text.rpart, etc.
+> library(mvpart)
+
+Attaching package: 'mvpart'
+
+The following objects are masked from 'package:rpart':
+
+    meanvar, na.rpart, path.rpart, plotcp, post, printcp, prune,
+    prune.rpart, rpart, rpart.control, rsq.rpart, snip.rpart,
+    xpred.rpart
+
+> data(spider)
+> par(mfrow=c(3,3))
+> a <- mvpart(data.matrix(spider[,1:12])~twigs+water,spider, legend=FALSE, all=TRUE)
+> prp(a, fallen=T, branch=1, under=T, type=0, extra=0, main="mvpart page 1\nnresp=12, extra=0")
+> prp(a, fallen=T, under=T, type=1, extra=2, main="nresp=12, extra=2, under=T", under.cex=1)
+> a <- mvpart(data.matrix(spider[,1:3])~twigs+water,spider, legend=FALSE, all=TRUE)
+> prp(a, under=T, type=1, extra=101, main="extra=101")
+> prp(a, under=T, type=2, extra=102, main="extra=102")
+> prp(a, under=T, type=4, extra=3,   main="extra=3, under=F")
+> prp(a, under=T, type=1, extra=4,   main="extra=4")
+> prp(a, under=T, type=1, extra=105, main="extra=105")
+> 
+> prp(a, under=F, type=4, extra=106, main="mvpart page 2\nextra=106, under=F")
+> prp(a, under=T, type=4, extra=107, main="extra=107")
+> prp(a, under=T, type=1, extra=8,   main="extra=8")
+> prp(a, under=F, type=2, extra=109, main="extra=109, under=F")
+> prp(a, under=T, type=3, extra=110, main="extra=110")
+> prp(a, under=T, type=4, extra=111, main="extra=111")
+> par(mfrow=c(1,1))
+> 
+> # # TODO this seems to not work with the new version of rpart (4.0.2)
+> # library(rpart.plot)
+> # library(rpartOrdinal)
+> # library(rpartScore)
+> # data(lowbwt)
+> # lowbwt <- lowbwt[1:80,]
+> # lowbwt$Category.s <-
+> #     ifelse(lowbwt$bwt <= 2500, 3,
+> #     ifelse(lowbwt$bwt <= 3000, 2,
+> #     ifelse(lowbwt$bwt <= 3500, 1,
+> #                                0)))
+> # # Gives error
+> # a <- rpartScore(Category.s ~ age + lwt + race + smoke +
+> #                 ptl + ht + ui + ftv, data = lowbwt)
+> # prp(a, extra=100, main="rpartScore\nextra=100", under=TRUE)
+> 
+> library(rpartOrdinal)
+
+Attaching package: 'rpartOrdinal'
+
+The following object is masked from 'package:mvpart':
+
+    formatg
+
+> data(lowbwt)
+> lowbwt$Category <- factor(
++     ifelse(lowbwt$bwt<=2500,3,
++     ifelse(lowbwt$bwt<=3000,2,
++     ifelse(lowbwt$bwt<=3500,1,
++                             0))),ordered=TRUE)
+> a <- rpart(Category~age+lwt+race+smoke+ptl+ht+ui+ftv,data=lowbwt,method=ordinal)
+> prp(a, main="rpartOrdinal\ntype=1, extra=0", type=1, extra=0, faclen=0)
+Warning message:
+Unrecognized rpart object: treating as a numeric response model 
+> 
+> #--- appendix mvpart.R  ---
+> 
+> library(mvpart)
+> library(rpart.plot)
+> data(spider)
+> set.seed(1)
+> response <- data.matrix(spider[,1:3, drop=F])
+> tree1 <- mvpart(response~herbs+reft+moss+sand+twigs+water, data=spider,
++             legend=F, method="mrt", plot.add=F, xv="min")
+> 
+> old.par <- par(par(mfrow=c(4,4)), mar = c(3, 3, 3, 1), mgp = c(1.5, .5, 0))
+> prp1 <- function(tree1, extra, main, type=1, under=T, col=1, yesno=F, tweak=1,
++                  col.main="skyblue4", cex.main=1, ...)
++ {
++     prp(tree1, type=type, extra=extra, main=main,
++         under=under, col=col, yesno=yesno, tweak=tweak,
++         col.main=col.main, cex.main=cex.main, ...)
++ }
+> prp1(tree1, extra=0, main="extra = 0\ndev", tweak=.8)
+> prp1(tree1, extra=1, type=3, main="extra = 1 (type=3)\ndev,  n")
+> prp1(tree1, extra=2, main="extra = 2\ndev,  frac", tweak=1.2)
+> prp1(tree1, extra=3, main="extra = 3\ndev,  frac / sum(frac)")
+> prp1(tree1, extra=4, main="extra = 4\nsqrt(dev)")
+> prp1(tree1, extra=5, main="extra = 5\nsqrt(dev),  n")
+> prp1(tree1, extra=6, main="extra = 6\nsqrt(dev),  frac", tweak=1.2)
+> prp1(tree1, extra=7, main="extra = 7\nsqrt(dev),  frac / sum(frac)", tweak=1.1)
+> prp1(tree1, extra=8, main="extra = 8\npredom species",   tweak=.8)
+> prp1(tree1, extra=9, main="extra = 9\npredom species,  n", tweak=1)
+> prp1(tree1, extra=10, main="extra = 10\npredom species,  frac", tweak=1.2)
+> prp1(tree1, extra=11, main="extra = 11\npredom spec,  frac / sum(frac)", tweak=1.15)
+> par(old.par)
+> 
+> if(!interactive()) {
++     dev.off()         # finish postscript plot
++     q(runLast=FALSE)  # needed else R prints the time on exit (R2.5 and higher) which messes up the diffs
++ }

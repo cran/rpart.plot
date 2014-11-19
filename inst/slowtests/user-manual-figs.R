@@ -260,3 +260,30 @@ get.children <- function(node)          # node and all its children
           get.children(2 * node + 1))   # right child
 
 print(get.children(2))
+
+#--- split-label12.R ---
+
+tree.split.label12 <- rpart(Price/1000 ~ Mileage + Type + Country, cu.summary)
+split.fun <- function(x, labs, digits, varlen, faclen)
+{
+    gsub(" = ", ":\n", labs)
+}
+prp(tree.split.label12, extra=1, branch=1, split.border.col=1, branch.col=0, split.yspace=1.5, main="split-label12")
+prp(tree.split.label12, extra=1, branch=1, split.border.col=1, branch.col=0, , split.yspace=1.5, split.fun=split.fun)
+prp(tree.split.label12, extra=100, under=T, yesno=F, split.fun=split.fun, tweak=.8)
+
+#--- split-label13.R ---
+
+tree.split.label13 <- rpart(Price/1000 ~ Mileage + Type + Country, cu.summary)
+split.fun <- function(x, labs, digits, varlen, faclen)
+{
+    # replace commas with spaces (needed for strwrap)
+    labs <- gsub(",", " ", labs)
+    for(i in 1:length(labs)) {
+        # split labs[i] into multiple lines
+        labs[i] <- paste(strwrap(labs[i], width=25), collapse="\n")
+    }
+    labs
+}
+prp(tree, cex=1.05)
+prp(tree.split.label13, split.fun=split.fun, main="split-label13")

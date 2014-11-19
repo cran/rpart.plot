@@ -1,6 +1,12 @@
 Changes to the rpart.plot
 -------------------------
 
+1.4-5    Nov 19, 2014
+   Added an example to the vignette for wrapping long split labels over multiple lines.
+   Added inst/slowtests/webpage-figs.R so user can regenerate the web page figures.
+   Added bibliography to the vignette.
+   Minor updates to the vignette and test scripts.
+
 1.4-4    Feb 5, 2014
    Removed use of ::: by removing outdated conversion from old-style
    rpart objects.  This change was made mainly to satisfy CRAN checks.

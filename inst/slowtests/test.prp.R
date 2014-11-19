@@ -697,15 +697,16 @@ par(mfrow=c(1,1))
 #                 ptl + ht + ui + ftv, data = lowbwt)
 # prp(a, extra=100, main="rpartScore\nextra=100", under=TRUE)
 
-library(rpartOrdinal)
-data(lowbwt)
-lowbwt$Category <- factor(
-    ifelse(lowbwt$bwt<=2500,3,
-    ifelse(lowbwt$bwt<=3000,2,
-    ifelse(lowbwt$bwt<=3500,1,
-                            0))),ordered=TRUE)
-a <- rpart(Category~age+lwt+race+smoke+ptl+ht+ui+ftv,data=lowbwt,method=ordinal)
-prp(a, main="rpartOrdinal\ntype=1, extra=0", type=1, extra=0, faclen=0)
+# Cannot install rpartOrdinal: package 'rpartOrdinal' is not available (for R version 3.1.1)
+# library(rpartOrdinal)
+# data(lowbwt)
+# lowbwt$Category <- factor(
+#     ifelse(lowbwt$bwt<=2500,3,
+#     ifelse(lowbwt$bwt<=3000,2,
+#     ifelse(lowbwt$bwt<=3500,1,
+#                             0))),ordered=TRUE)
+# a <- rpart(Category~age+lwt+race+smoke+ptl+ht+ui+ftv,data=lowbwt,method=ordinal)
+# prp(a, main="rpartOrdinal\ntype=1, extra=0", type=1, extra=0, faclen=0)
 
 #--- appendix mvpart.R  ---
 
@@ -738,6 +739,9 @@ prp1(tree1, extra=9, main="extra = 9\npredom species,  n", tweak=1)
 prp1(tree1, extra=10, main="extra = 10\npredom species,  frac", tweak=1.2)
 prp1(tree1, extra=11, main="extra = 11\npredom spec,  frac / sum(frac)", tweak=1.15)
 par(old.par)
+
+par(mfrow=c(2,2))
+source("webpage-figs.R")
 
 if(!interactive()) {
     dev.off()         # finish postscript plot

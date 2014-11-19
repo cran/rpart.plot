@@ -112,8 +112,8 @@ For an overview of the other arguments see \url{../doc/prp.pdf}.
   }
   \item{under}{
      Applies only if \code{extra > 0}.
-     Default \code{FALSE}, meaning put the extra text in the box.
-     Use \code{TRUE} to put the text under the box.
+     Default \code{FALSE}, meaning put the extra text \emph{in} the box.
+     Use \code{TRUE} to put the text \emph{under} the box.
   }
   \item{clip.right.labs}{
      Default is \code{TRUE} meaning ``clip'' the right-hand split labels,
@@ -126,7 +126,7 @@ For an overview of the other arguments see \url{../doc/prp.pdf}.
   \item{branch}{
     Controls the shape of the branch lines.
      Specify a value between \code{0} (V shaped branches) and
-     \code{1} (square shouldered branches).
+     \code{1} (square shouldered branches).\cr
      Default is \code{if(fallen.leaves) 1 else .2}.
   }
   \item{uniform}{
@@ -141,7 +141,7 @@ For an overview of the other arguments see \url{../doc/prp.pdf}.
   \item{digits}{
      The number of significant digits in displayed numbers.
      Default \code{2}.
-     If \code{0}, use \code{\link{getOption}("digits")}.
+     If \code{0}, use \code{\link{getOption}("digits")}.\cr
      Details:
      Numbers from \code{0.001} to \code{9999} are printed without an exponent
      (and the number of digits is actually only a suggestion,

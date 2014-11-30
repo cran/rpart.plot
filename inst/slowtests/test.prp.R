@@ -697,7 +697,7 @@ par(mfrow=c(1,1))
 #                 ptl + ht + ui + ftv, data = lowbwt)
 # prp(a, extra=100, main="rpartScore\nextra=100", under=TRUE)
 
-# Cannot install rpartOrdinal: package 'rpartOrdinal' is not available (for R version 3.1.1)
+# Cannot install rpartOrdinal: package 'rpartOrdinal' is not available (for R version 3.1.2)
 # library(rpartOrdinal)
 # data(lowbwt)
 # lowbwt$Category <- factor(

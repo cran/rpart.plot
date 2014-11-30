@@ -3,7 +3,7 @@
 
 @echo === test.prp ===============================================
 time /T
-@"\PROGRA~1\R\R-3.1.1\bin\R.exe" CMD BATCH --quiet --vanilla test.prp.R
+@"\PROGRA~1\R\R-3.1.2\bin\R.exe" CMD BATCH --quiet --vanilla test.prp.R
 @if %errorlevel% equ 0 goto good1:
 @echo error: R returned errorlevel %errorlevel%, see test.prp.Rout:
 @echo.
@@ -14,10 +14,10 @@ time /T
 diff -w test.prp.Rout test.prp.Rout.save
 @if %errorlevel% equ 0 goto good2:
 @echo test.prp.Rout test.prp.Rout.save: files differ
-@diffps -s Rplots.ps test.prp.save.ps
+@diffps -s Rplots.ps ../../.#/test.prp.save.ps
 @exit /B %errorlevel%
 :good2
-diffps Rplots.ps test.prp.save.ps
+diffps Rplots.ps ../../.#/test.prp.save.ps
 @if %errorlevel% equ 0 goto good3:
 @echo Rplots.ps test.prp.save.ps: files differ
 @exit /B %errorlevel%

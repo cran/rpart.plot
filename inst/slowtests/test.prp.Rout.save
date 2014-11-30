@@ -8,7 +8,7 @@ Loading required package: plotmo
 Loading required package: plotrix
 > data(ozone1)
 > sessionInfo()
-R version 3.1.1 (2014-07-10)
+R version 3.1.2 (2014-10-31)
 Platform: i386-w64-mingw32/i386 (32-bit)
 
 locale:
@@ -22,11 +22,11 @@ attached base packages:
 [1] stats     graphics  grDevices utils     datasets  methods   base     
 
 other attached packages:
-[1] earth_3.2.9      plotrix_3.5-7    plotmo_1.3.4     rpart.plot_1.4-5
+[1] earth_3.2.10     plotrix_3.5-10   plotmo_2.1.0     rpart.plot_1.5.0
 [5] rpart_4.1-8     
 
 loaded via a namespace (and not attached):
-[1] tools_3.1.1
+[1] tools_3.1.2
 > ititanic <- ptitanic
 > ititanic$survived <- as.integer(ititanic$survived == "survived")
 > 
@@ -113,16 +113,16 @@ prp> par(old.par)
 
 To cite package 'rpart.plot' in publications use:
 
-  Stephen Milborrow (). rpart.plot: Plot rpart models.  An enhanced
-  version of plot.rpart.. R package version 1.4-5.
+  Stephen Milborrow (). rpart.plot: Plot rpart Models.  An Enhanced
+  Version of plot.rpart. R package version 1.5.0.
   http://www.milbo.org/rpart-plot
 
 A BibTeX entry for LaTeX users is
 
   @Manual{,
-    title = {rpart.plot: Plot rpart models.  An enhanced version of plot.rpart.},
+    title = {rpart.plot: Plot rpart Models.  An Enhanced Version of plot.rpart},
     author = {Stephen Milborrow},
-    note = {R package version 1.4-5},
+    note = {R package version 1.5.0},
     url = {http://www.milbo.org/rpart-plot},
   }
 
@@ -1705,7 +1705,7 @@ The following objects are masked from 'package:rpart':
 > #                 ptl + ht + ui + ftv, data = lowbwt)
 > # prp(a, extra=100, main="rpartScore\nextra=100", under=TRUE)
 > 
-> # Cannot install rpartOrdinal: package 'rpartOrdinal' is not available (for R version 3.1.1)
+> # Cannot install rpartOrdinal: package 'rpartOrdinal' is not available (for R version 3.1.2)
 > # library(rpartOrdinal)
 > # data(lowbwt)
 > # lowbwt$Category <- factor(

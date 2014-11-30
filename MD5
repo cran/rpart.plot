@@ -1,6 +1,6 @@
-50cca5deb2a0bc859ae298f87755c28e *DESCRIPTION
+912da65853c7de425926c335a5820aa9 *DESCRIPTION
 748f6da7aeebbc2747cd152aed7d7548 *NAMESPACE
-4e66c39baa4bc3db001effedc236432c *NEWS
+2b87dc43b6c99ff06a38dbd4b4ca6350 *NEWS
 6a13d1062530769810a7826febe4f967 *R/branches.R
 342e24b272805c37e0a4fbe8df725281 *R/layout.R
 0fc1407a07112f9a5b0a047a49c3dcd6 *R/lib.R
@@ -16,14 +16,13 @@ ff66d322d0b6a85b3005832bb438816b *R/split.labs.R
 a25a226a4abc62744caf0cb974c1e3a2 *R/yes.no.R
 f66787088c53930a51438504efeca4bf *data/ptitanic.rda
 11e86e8af30f22e5c3743e9c2644d572 *inst/doc/index.html
-442c1bed13da79c08bedc03594907bbd *inst/doc/prp.pdf
+6b83f82792a816671c8a9883311da5a3 *inst/doc/prp.pdf
 3c62240e2713b9df6c690f278b0dc377 *inst/slowtests/README.txt
 8485c8e16261d1d9d6d8e785dec4aa55 *inst/slowtests/code.in.rpart.report.with.prp.R
 147bd7a75b6159f73762a034b106c82a *inst/slowtests/data.stagec
-2487e67852fd9ba9dcb056d0f76d4438 *inst/slowtests/make.bat
-d341314d62d8bbe245d5876d96a5bcf1 *inst/slowtests/test.prp.R
-e1e3c49d0d42ecae3d4b6dffbee7fd9b *inst/slowtests/test.prp.Rout.save
-844f8878e544837302b3362ffdc82652 *inst/slowtests/test.prp.save.ps
+0d9cbd887d9f3606b5ef88504ed48fd1 *inst/slowtests/make.bat
+854a94ff2ca9ba7d281dd8bc339f372d *inst/slowtests/test.prp.R
+4794c3291dc2c3b3ade8e63d4aea33e5 *inst/slowtests/test.prp.Rout.save
 aecf283053f5ec547719b7cfcf6b3c4f *inst/slowtests/user-manual-figs.R
 2073b278e6966d754d116497187bed2f *inst/slowtests/webpage-figs.R
 e5425e9bce9e969f22a86427244ca124 *man/prp.Rd

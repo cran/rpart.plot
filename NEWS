@@ -1,6 +1,10 @@
 Changes to rpart.plot
 ---------------------
 
+1.5.1    Dec 14, 2014
+   Removed link in the man pages to obsoleted package mvpart.
+   Documentation touchups.
+
 1.5.0    Nov 30, 2014
    Updates to the documentation, mostly to satisfy CRAN recommendations.
    The slowtests postscript file is no longer included, to reduce package size.

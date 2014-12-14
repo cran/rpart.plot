@@ -4,12 +4,9 @@
 \description{
 Plot an \code{\link{rpart}} model.
 The arguments of this function are a superset of those of \code{\link{rpart.plot}}.
-See \url{../doc/prp.pdf} for an overview.
-% To start off, look at the arguments \code{x}, \code{type} and \code{extra}.
-% Just those arguments will suffice for many users.
-% Arguments that are shared with \code{rpart.plot} behave identically.
-% % TODO add: don't be overwhelmed by the number of arguments.
-% % Basic plotting of rpart models should be --- and is -- simple.
+
+For an overview, please see the package vignette
+\dQuote{\href{../doc/prp.pdf}{Plotting rpart trees with prp}}.
 }
 \usage{
 prp(x=stop("no 'x' arg"),
@@ -144,7 +141,7 @@ prp(x=stop("no 'x' arg"),
     generating node  labels (not the function attached to the object).
     See \code{node.fun}.\cr
     Note 2: The \code{extra} argument has special meaning
-    for \code{\link[mvpart:mvpart]{mvpart}} objects.
+    for \code{mvpart} objects.
     See the Appendix to this package's vignette.
   }
   \item{under}{
@@ -288,14 +285,14 @@ prp(x=stop("no 'x' arg"),
   \item{snip}{
      Default \code{FALSE}.
      Set \code{TRUE} to interactively trim the tree with the mouse.
-     See \url{../doc/prp.pdf} (or just try it).
+     See the \href{../doc/prp.pdf}{package vignette} (or just try it).
   }
   \item{snip.fun}{
      Function invoked after each mouse click when \code{snip=TRUE}.
      Default \code{NULL}, meaning no function.
      Otherwise set \code{snip.fun} to your own function
      with the prototype \code{function(tree)}, where \code{tree} is the snipped tree.
-     See \url{../doc/prp.pdf} for an example.
+     See the \href{../doc/prp.pdf}{package vignette} for an example.
 
      \bold{The following control the node labels.}
   }
@@ -573,7 +570,7 @@ prp(x=stop("no 'x' arg"),
      Otherwise set \code{node.fun} to your own function
      with the prototype\cr
      \code{function(x, labs, digits, varlen)}\cr
-     See \url{../doc/prp.pdf} for details.
+     See the \href{../doc/prp.pdf}{package vignette} for details.
   }
   \item{split.fun}{
      The function that generates the text at the splits.
@@ -817,13 +814,8 @@ With the default args most of these are automatically calculated.
   \item{split.cex}{ The split label \code{cex}.}
   \item{split.boxes}{ The coords of the boxes around the splits.}
 }
-\note{
-Please see \url{../doc/prp.pdf} for an overview.
-(If your help system does follow that link correctly,
-please follow the link on this package's Index page.)
-}
 \seealso{
-  \url{../doc/prp.pdf}\cr
+  The package vignette \dQuote{\href{../doc/prp.pdf}{Plotting rpart trees with prp}}\cr
   \code{\link{rpart.plot}}\cr
   \code{\link{plot.rpart}}\cr
   \code{\link{text.rpart}}\cr

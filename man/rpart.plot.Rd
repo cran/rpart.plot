@@ -9,7 +9,9 @@ It automatically scales and adjusts the displayed tree for best fit.
 
 This is a front end to \code{\link{prp}},
 with the most useful arguments of that function.
-See \url{../doc/prp.pdf} for an overview.
+
+For an overview, please see the package vignette
+\dQuote{\href{../doc/prp.pdf}{Plotting rpart trees with prp}}.
 }
 \usage{
 rpart.plot(x=stop("no 'x' arg"),
@@ -25,7 +27,8 @@ rpart.plot(x=stop("no 'x' arg"),
 \arguments{
 To start off, look at the arguments \code{x}, \code{type} and \code{extra}.
 Just those arguments will suffice for many users.
-For an overview of the other arguments see \url{../doc/prp.pdf}.
+For an overview of the other arguments see
+the \href{../doc/prp.pdf}{package vignette}.
 
   \item{x}{
      An \code{\link{rpart}} object.  The only required argument.
@@ -107,7 +110,7 @@ For an overview of the other arguments see \url{../doc/prp.pdf}.
     generating node  labels (not the function attached to the object).
     See \code{node.fun}.\cr
     Note 2: The \code{extra} argument has special meaning
-    for \code{\link[mvpart:mvpart]{mvpart}} objects.
+    for \code{mvpart} objects.
     See the Appendix to this package's vignette.
   }
   \item{under}{
@@ -199,7 +202,7 @@ For an overview of the other arguments see \url{../doc/prp.pdf}.
   \item{snip}{
      Default \code{FALSE}.
      Set \code{TRUE} to interactively trim the tree with the mouse.
-     See \url{../doc/prp.pdf} (or just try it).
+     See the \href{../doc/prp.pdf}{package vignette} (or just try it).
   }
   \item{\dots}{
     Extra arguments passed to \code{\link{prp}} and the plotting routines.
@@ -215,7 +218,7 @@ The returned value is identical to that of \code{\link{prp}}.
   and the R port of that package by Brian Ripley.
 }
 \seealso{
-  \url{../doc/prp.pdf}\cr
+  The package vignette \dQuote{\href{../doc/prp.pdf}{Plotting rpart trees with prp}}\cr
   \code{\link{prp}}\cr
   \code{\link{plot.rpart}}\cr
   \code{\link{text.rpart}}\cr

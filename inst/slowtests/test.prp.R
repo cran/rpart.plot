@@ -97,6 +97,17 @@ prp(fit.oz, type=4, clip.right.labs=F, nn=TRUE, trace=3, # some niceties
    main=paste("Path to node", node), col.m=3, lwd=lwds, digits=4,
    col=cols, branch.col=cols, split.col=cols, nn.col=cols)
 
+par(mfrow=c(4,5))
+data(ptitanic)
+tree1 <- rpart(survived~., data=ptitanic)
+for(iframe in 1:nrow(tree1$frame)) {
+    cols <- ifelse(1:nrow(tree1$frame) <= iframe, "black", "gray")
+    dev.hold()     # hold screen output to prevent flashing
+    prp(tree1, col=cols, branch.col=cols, split.col=cols)
+    dev.flush()
+    # Sys.sleep(1) # wait one second
+}
+
 my.labs <- function(x, labs, digits, varlen)
 {
     sprintf("ozone %.3g\ndev %.1f", x$frame$yval, x$frame$dev)

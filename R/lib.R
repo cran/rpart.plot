@@ -1,14 +1,12 @@
 # lib.R: miscellaneous definitions for plot.rpart
 
-stop0 <- function(...)          # call.=FALSE, so must use traceback() to see call
-    stop(..., call.=FALSE)
+stop0 <- function(...) stop(..., call.=FALSE)
 
-warning0 <- function(...)       # set options(warn=2) and traceback() to see the call
-    warning(..., call.=FALSE)
+warning0 <- function(...) warning(..., call.=FALSE)
 
-printf <- function(format, ...) cat(sprintf(format, ...))  # like c printf
+printf <- function(format, ...) cat(sprintf(format, ...), sep="") # like c printf
 
-paste0 <- function(...) paste(..., sep="") # paste with no added spaces
+paste0 <- function(...) paste(..., sep="")  # paste with no added spaces
 
 paste.with.space <- function(s) paste(s, collapse=" ")
 
@@ -36,15 +34,13 @@ is.na.or.zero <- function(x) identical(x, NA) || identical(x, 0)
 
 stopifnot.boolean <- function(b) # b==0 or b==1 is also ok
 {
-    if(length(b) != 1 || !(is.logical(b) || is.numeric(b)) ||
-            is.na(b) || !(b == 0 || b == 1)) {
-        name <- deparse(substitute(b))
-        cat0("\n", name, ": ")
-        print(b)
-        cat("\n")
-        stop0("the ", name,
-              " argument is not FALSE or TRUE or 0 or 1 (see above print)")
-    }
+    if(length(b) != 1)
+        stop0("the ", deparse(substitute(b)),
+              " argument is not FALSE, TRUE, 0, or 1")
+    if(!(is.logical(b) || is.numeric(b)) || is.na(b) || !(b == 0 || b == 1))
+        stop0(deparse(substitute(b)), "=", b,
+            " but it should be FALSE, TRUE, 0, or 1")
+    b != 0 # convert to logical
 }
 # Check that func is indeed a function and has the same args as
 # the reference function.

@@ -22,7 +22,7 @@ attached base packages:
 [1] stats     graphics  grDevices utils     datasets  methods   base     
 
 other attached packages:
-[1] earth_4.0.1      plotrix_3.5-10   plotmo_2.2.0     rpart.plot_1.5.1
+[1] earth_4.2.1      plotrix_3.5-10   plotmo_2.2.2     rpart.plot_1.5.1
 [5] rpart_4.1-8     
 
 loaded via a namespace (and not attached):
@@ -492,6 +492,17 @@ cex 1   xlim c(0, 1)   ylim c(0, 1)
 Initial scale 0.849
 Shifter: cex improvement 1 best.shift.amount 0 best.split.yshift.amount 0 (will not be used)
 cex 0.849   xlim c(0, 1)   ylim c(0, 1)
+> 
+> par(mfrow=c(4,5))
+> data(ptitanic)
+> tree1 <- rpart(survived~., data=ptitanic)
+> for(iframe in 1:nrow(tree1$frame)) {
++     cols <- ifelse(1:nrow(tree1$frame) <= iframe, "black", "gray")
++     dev.hold()     # hold screen output to prevent flashing
++     prp(tree1, col=cols, branch.col=cols, split.col=cols)
++     dev.flush()
++     # Sys.sleep(1) # wait one second
++ }
 > 
 > my.labs <- function(x, labs, digits, varlen)
 + {

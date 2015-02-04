@@ -13,8 +13,8 @@ get.layout <- function(obj, type, nn, fallen.leaves, branch,
     max.auto.cex, min.auto.cex, ycompress.cex, accept.cex,
     shift.amounts, Fallen.yspace, bg)
 {
-    printf2 <- function(...) if(trace >= 2) cat0(sprintf(...))
-    printf3 <- function(...) if(trace >= 4) cat0("        ", sprintf(...))
+    printf2 <- function(...) if(trace >= 2) cat0(sprintf(..., sep=""))
+    printf3 <- function(...) if(trace >= 4) cat0("        ", sprintf(..., sep=""))
 
     merge1 <- function(vec, split.vec)
     {

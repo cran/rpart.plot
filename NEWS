@@ -1,6 +1,10 @@
 Changes to rpart.plot
 ---------------------
 
+1.5.2    Feb 4, 2015
+   Added an example to the vignette based on a question on Stack Exchange.
+   Unified some small utility funcs like printf with my other packages.
+
 1.5.1    Dec 14, 2014
    Removed link in the man pages to obsoleted package mvpart.
    Documentation touchups.

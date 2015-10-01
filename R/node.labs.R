@@ -55,7 +55,7 @@ internal.node.labs <- function(x, node.fun, node.fun.name, type, extra,
             }
         }
     if(!identical(node.fun.name, "internal.node.labs")) { # call user's node.fun?
-        check.func.args(node.fun, "node.fun",
+        node.fun <- check.func.args(node.fun, "node.fun",
                         function(x, labs, digits, varlen) NA)
         labs <- node.fun(x, labs, digits, varlen)
         check.returned.labs(x, labs, node.fun.name)

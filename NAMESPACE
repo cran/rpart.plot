@@ -1,3 +1,7 @@
 import(rpart)
 export(prp)
 export(rpart.plot)
+importFrom("grDevices", "col2rgb", "dev.cur", "dev.interactive")
+importFrom("graphics", "axis", "grid", "identify", "lines", "par",
+           "plot", "polygon", "rect", "strheight", "strwidth", "text")
+importFrom("utils", "flush.console")

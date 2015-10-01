@@ -134,7 +134,25 @@ prp(tree, extra=6, tweak=1.2, main="prefix-col",
 
 #--- movie.R ---
 
-# ommitted, tested in test.prp.R
+# omitted, tested in test.prp.R
+
+#--- depth-first-tree-construction.R ---
+
+old.par <- par(no.readonly=TRUE)
+par(mfrow=c(4,5))
+data(ptitanic)
+tree1 <- rpart(survived~., data=ptitanic, cp=.012)
+par(mfrow=c(4,3), mar = c(0, 0, 2, 0))
+for(iframe in 1:nrow(tree1$frame)) {
+    cols <- ifelse(1:nrow(tree1$frame) <= iframe, "black", "gray")
+    dev.hold()     # hold screen output to prevent flashing
+    prp(tree1, compress=FALSE, faclen=3, varlen=-3,
+       col=cols, branch.col=cols, split.col=cols,
+       main=sprintf("\n%d", iframe), yesno=FALSE)
+    dev.flush()
+    # Sys.sleep(1) # wait one second
+}
+par(old.par)
 
 #--- path-to-root.R ---
 

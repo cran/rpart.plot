@@ -1,14 +1,15 @@
 Package: rpart.plot
-Version: 1.5.2
-Title: Plot rpart Models.  An Enhanced Version of plot.rpart
+Version: 1.5.3
+Title: Plot 'rpart' Models: An Enhanced Version of 'plot.rpart'
 Author: Stephen Milborrow
 Maintainer: Stephen Milborrow <milbo@sonic.net>
 Depends: rpart (>= 4.1-0)
-Description: Plot rpart models. Extends plot.rpart and text.rpart in
-        the rpart package.
+Suggests: earth
+Description: Plot 'rpart' models. Extends plot.rpart() and text.rpart()
+             in the 'rpart' package.
 License: GPL-3
 URL: http://www.milbo.org/rpart-plot
-Packaged: 2015-02-04 12:55:20 UTC; milbo
 NeedsCompilation: no
+Packaged: 2015-09-30 15:21:02 UTC; milbo
 Repository: CRAN
-Date/Publication: 2015-02-04 15:56:16
+Date/Publication: 2015-10-01 13:18:59

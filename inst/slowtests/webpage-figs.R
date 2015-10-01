@@ -1,14 +1,14 @@
 # webpage-figs.R
 
 #png("rpart.plot-example1.png", width=600, height=600)
-tree <- rpart(survived ~ ., data=ptitanic, cp=.02)
+tree <- rpart(survived ~ ., data=ptitanic, cp=.012)
 prp(tree, type=4, extra=6, faclen=0, main="rpart.plot",
     # fam.main="serif", # not supported for postscript devices (ok with png files)
     cex.main=3, col.main="slategray4", col=1, max.auto.cex=1.6)
 #dev.off()
 
 #png("rpart.plot-example2.png", width=600, height=600)
-tree <- rpart(survived ~ ., data=ptitanic, cp=.02)
+tree <- rpart(survived ~ ., data=ptitanic, cp=.012)
 prp(tree, branch.type=5, yesno=FALSE, faclen=0,
     main="rpart.plot:\nbranch width shows number of observations",
     # fam.main="serif", # not supported for postscript devices (ok with png files)

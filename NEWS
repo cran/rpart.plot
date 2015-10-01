@@ -1,6 +1,12 @@
 Changes to rpart.plot
 ---------------------
 
+1.5.3    Sep 30, 2015
+   We now deal correctly with the situation when the user has
+   a variable named "text" in the current environment.
+
+   Minor updates for CRAN checks.
+
 1.5.2    Feb 4, 2015
    Added an example to the vignette based on a question on Stack Exchange.
    Unified some small utility funcs like printf with my other packages.

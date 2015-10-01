@@ -29,6 +29,7 @@ is.leaf <- function(frame) frame$var == "<leaf>"
 # We use identical() and not is.na() below because is.na(x) gives warnings
 # for certain x's, e.g if x is a function, and x == 0 gives warnings if x
 # is a vector or a function etc.
+# TODO this won't work if x is a numeric NA (as opposed to a logical NA)?
 
 is.na.or.zero <- function(x) identical(x, NA) || identical(x, 0)
 
@@ -44,21 +45,52 @@ stopifnot.boolean <- function(b) # b==0 or b==1 is also ok
 }
 # Check that func is indeed a function and has the same args as
 # the reference function.
+#
+# If func is a string, we find the function with that name (and the
+# returned value is the function, not the string).  The advantage of
+# specifying func as a string is that we only match on the object in
+# the current environment that is a _function_.
 
-check.func.args <- function(func, func.name, ref.func)
+check.func.args <- function(func, func.name.msg, ref.func)
 {
     if(is.null(func))
-        stop0("NULL is not a legal value for ", func.name)
+        stop0("NULL is not a legal value for ", func.name.msg)
+    if(is.character(func)) {
+        if(length(func) != 1)
+            stop0("bad value for", func.name.msg)
+        # n=2 for the caller of this func's caller (this won't always
+        # be a big enough n, but it helps prevent func name aliasing
+        # with the internal objects of whoever called check.func.args)
+        func <- eval.parent(func, n=2)
+        func <- get(func, mode="function")
+    }
     if(!is.function(func))
-        stop0(func.name, " is not a function");
+        stop0(func.name.msg, " is not a function");
     names <- names(formals(func))
     ref.names <- names(formals(ref.func))
-    if(!identical(names, ref.names)) {
+
+    # some processing because the argnames for func have
+    # to match the ref.func only up to the dots
+    names.nodots <- names
+    ref.names.nodots <- ref.names
+    len <- length(ref.names.nodots)
+    dots.index <- which(ref.names.nodots[len] == "...")
+    if(length(dots.index))
+    {
+        # truncate to include only the argnames up to the dots
+        newlen <- dots.index[1] - 1
+        ref.names.nodots <- ref.names.nodots[1:newlen]
+        if(newlen <= length(names.nodots))
+            names.nodots <- names.nodots[1:newlen]
+    }
+
+    if(!identical(names.nodots, ref.names.nodots)) {
         if(length(names) == 0)
-            stop0("the ", func.name, " function needs the following argument:\n    ",
+            stop0("the ", func.name.msg,
+                " function needs the following argument:\n    ",
                 paste.with.space(ref.names))
         else
-            stop0("the ", func.name,
+            stop0("the ", func.name.msg,
                 if(length(ref.names)==1)
                     " function needs the following argument:\n    "
                 else
@@ -66,6 +98,7 @@ check.func.args <- function(func, func.name, ref.func)
                 paste.with.space(ref.names),
                 "\nYou have:\n    ", paste.with.space(names))
     }
+    func
 }
 # Return TRUE if col matches the background color
 # where "match" means if we plot the color we will not see it

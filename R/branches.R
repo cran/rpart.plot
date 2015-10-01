@@ -31,9 +31,8 @@ get.branches <- function(x, y, nodes, branch)
 }
 get.branch.widths <- function(obj, branch.type)
 {
-
     if(is.function(branch.type)) {
-        check.func.args(branch.type, "branch.type", function(x) NA)
+        branch.type <- check.func.args(branch.type, "branch.type", function(x) NA)
         branch.type(x=obj)
     } else {
         frame <- obj$frame

@@ -11,7 +11,7 @@
 #
 # TODO
 #
-# This is an initial version and could be much cleaned up.
+# Much could be cleaned up.
 # Revisit the ycompress algorithm.  Rework, or at least tidy up.
 # Incorporate node number boxes into graph layout algorithm.
 # Add code to undo unnecessary shifts when ycompress=TRUE.
@@ -104,7 +104,7 @@ prp <- function(x=stop("no 'x' arg"),
 
     node.fun=internal.node.labs,
     split.fun=internal.split.labs,
-    FUN=text,
+    FUN="text",
 
     nspace=branch, minbranch=.3, do.par=TRUE,
     add.labs=TRUE, clip.left.labs=FALSE, fam.main="",
@@ -179,7 +179,7 @@ prp <- function(x=stop("no 'x' arg"),
                 }
             }
             #--- draw.labs1 starts here ---
-            check.func.args(FUN, "the FUN argument to prp", text)
+            FUN <- check.func.args(FUN, "FUN argument to the prp", graphics::text)
             sep.labs <- separate.labs(labs)
             xy <- get.box.centers(boxes)
             # draw the text after \n\n if any under the box

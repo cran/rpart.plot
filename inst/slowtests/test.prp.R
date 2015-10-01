@@ -97,17 +97,6 @@ prp(fit.oz, type=4, clip.right.labs=F, nn=TRUE, trace=3, # some niceties
    main=paste("Path to node", node), col.m=3, lwd=lwds, digits=4,
    col=cols, branch.col=cols, split.col=cols, nn.col=cols)
 
-par(mfrow=c(4,5))
-data(ptitanic)
-tree1 <- rpart(survived~., data=ptitanic)
-for(iframe in 1:nrow(tree1$frame)) {
-    cols <- ifelse(1:nrow(tree1$frame) <= iframe, "black", "gray")
-    dev.hold()     # hold screen output to prevent flashing
-    prp(tree1, col=cols, branch.col=cols, split.col=cols)
-    dev.flush()
-    # Sys.sleep(1) # wait one second
-}
-
 my.labs <- function(x, labs, digits, varlen)
 {
     sprintf("ozone %.3g\ndev %.1f", x$frame$yval, x$frame$dev)
@@ -670,27 +659,29 @@ prp(tree, type=4,          clip.left.labs=c(T, F, T), clip.right.labs=c(T, F, F)
 prp(tree, type=4, xflip=T, clip.left.labs=c(T, F, T), clip.right.labs=F,          main="xflip=T\nclip.labs vectorization")
 par(mfrow=c(1,1))
 
-# mvpart, must be last because it changes plot.rpart, text.rpart, etc.
-library(mvpart)
-data(spider)
-par(mfrow=c(3,3))
-a <- mvpart(data.matrix(spider[,1:12])~twigs+water,spider, legend=FALSE, all=TRUE)
-prp(a, fallen=T, branch=1, under=T, type=0, extra=0, main="mvpart page 1\nnresp=12, extra=0")
-prp(a, fallen=T, under=T, type=1, extra=2, main="nresp=12, extra=2, under=T", under.cex=1)
-a <- mvpart(data.matrix(spider[,1:3])~twigs+water,spider, legend=FALSE, all=TRUE)
-prp(a, under=T, type=1, extra=101, main="extra=101")
-prp(a, under=T, type=2, extra=102, main="extra=102")
-prp(a, under=T, type=4, extra=3,   main="extra=3, under=F")
-prp(a, under=T, type=1, extra=4,   main="extra=4")
-prp(a, under=T, type=1, extra=105, main="extra=105")
-
-prp(a, under=F, type=4, extra=106, main="mvpart page 2\nextra=106, under=F")
-prp(a, under=T, type=4, extra=107, main="extra=107")
-prp(a, under=T, type=1, extra=8,   main="extra=8")
-prp(a, under=F, type=2, extra=109, main="extra=109, under=F")
-prp(a, under=T, type=3, extra=110, main="extra=110")
-prp(a, under=T, type=4, extra=111, main="extra=111")
-par(mfrow=c(1,1))
+# TODO mvpart is no longer on CRAN
+#
+# # mvpart, must be last because it changes plot.rpart, text.rpart, etc.
+# library(mvpart)
+# data(spider)
+# par(mfrow=c(3,3))
+# a <- mvpart(data.matrix(spider[,1:12])~twigs+water,spider, legend=FALSE, all=TRUE)
+# prp(a, fallen=T, branch=1, under=T, type=0, extra=0, main="mvpart page 1\nnresp=12, extra=0")
+# prp(a, fallen=T, under=T, type=1, extra=2, main="nresp=12, extra=2, under=T", under.cex=1)
+# a <- mvpart(data.matrix(spider[,1:3])~twigs+water,spider, legend=FALSE, all=TRUE)
+# prp(a, under=T, type=1, extra=101, main="extra=101")
+# prp(a, under=T, type=2, extra=102, main="extra=102")
+# prp(a, under=T, type=4, extra=3,   main="extra=3, under=F")
+# prp(a, under=T, type=1, extra=4,   main="extra=4")
+# prp(a, under=T, type=1, extra=105, main="extra=105")
+#
+# prp(a, under=F, type=4, extra=106, main="mvpart page 2\nextra=106, under=F")
+# prp(a, under=T, type=4, extra=107, main="extra=107")
+# prp(a, under=T, type=1, extra=8,   main="extra=8")
+# prp(a, under=F, type=2, extra=109, main="extra=109, under=F")
+# prp(a, under=T, type=3, extra=110, main="extra=110")
+# prp(a, under=T, type=4, extra=111, main="extra=111")
+# par(mfrow=c(1,1))
 
 # # TODO this seems to not work with the new version of rpart (4.0.2)
 # library(rpart.plot)
@@ -708,7 +699,7 @@ par(mfrow=c(1,1))
 #                 ptl + ht + ui + ftv, data = lowbwt)
 # prp(a, extra=100, main="rpartScore\nextra=100", under=TRUE)
 
-# Cannot install rpartOrdinal: package 'rpartOrdinal' is not available (for R version 3.1.2)
+# Cannot install rpartOrdinal: package 'rpartOrdinal' is not available (for R version 3.2.0)
 # library(rpartOrdinal)
 # data(lowbwt)
 # lowbwt$Category <- factor(
@@ -719,40 +710,89 @@ par(mfrow=c(1,1))
 # a <- rpart(Category~age+lwt+race+smoke+ptl+ht+ui+ftv,data=lowbwt,method=ordinal)
 # prp(a, main="rpartOrdinal\ntype=1, extra=0", type=1, extra=0, faclen=0)
 
-#--- appendix mvpart.R  ---
-
-library(mvpart)
-library(rpart.plot)
-data(spider)
-set.seed(1)
-response <- data.matrix(spider[,1:3, drop=F])
-tree1 <- mvpart(response~herbs+reft+moss+sand+twigs+water, data=spider,
-            legend=F, method="mrt", plot.add=F, xv="min")
-
-old.par <- par(par(mfrow=c(4,4)), mar = c(3, 3, 3, 1), mgp = c(1.5, .5, 0))
-prp1 <- function(tree1, extra, main, type=1, under=T, col=1, yesno=F, tweak=1,
-                 col.main="skyblue4", cex.main=1, ...)
-{
-    prp(tree1, type=type, extra=extra, main=main,
-        under=under, col=col, yesno=yesno, tweak=tweak,
-        col.main=col.main, cex.main=cex.main, ...)
-}
-prp1(tree1, extra=0, main="extra = 0\ndev", tweak=.8)
-prp1(tree1, extra=1, type=3, main="extra = 1 (type=3)\ndev,  n")
-prp1(tree1, extra=2, main="extra = 2\ndev,  frac", tweak=1.2)
-prp1(tree1, extra=3, main="extra = 3\ndev,  frac / sum(frac)")
-prp1(tree1, extra=4, main="extra = 4\nsqrt(dev)")
-prp1(tree1, extra=5, main="extra = 5\nsqrt(dev),  n")
-prp1(tree1, extra=6, main="extra = 6\nsqrt(dev),  frac", tweak=1.2)
-prp1(tree1, extra=7, main="extra = 7\nsqrt(dev),  frac / sum(frac)", tweak=1.1)
-prp1(tree1, extra=8, main="extra = 8\npredom species",   tweak=.8)
-prp1(tree1, extra=9, main="extra = 9\npredom species,  n", tweak=1)
-prp1(tree1, extra=10, main="extra = 10\npredom species,  frac", tweak=1.2)
-prp1(tree1, extra=11, main="extra = 11\npredom spec,  frac / sum(frac)", tweak=1.15)
-par(old.par)
+# TODO mvpart is no longer on CRAN
+#
+# #--- appendix mvpart.R  ---
+#
+# library(mvpart)
+# library(rpart.plot)
+# data(spider)
+# set.seed(1)
+# response <- data.matrix(spider[,1:3, drop=F])
+# tree1 <- mvpart(response~herbs+reft+moss+sand+twigs+water, data=spider,
+#             legend=F, method="mrt", plot.add=F, xv="min")
+#
+# old.par <- par(par(mfrow=c(4,4)), mar = c(3, 3, 3, 1), mgp = c(1.5, .5, 0))
+# prp1 <- function(tree1, extra, main, type=1, under=T, col=1, yesno=F, tweak=1,
+#                  col.main="skyblue4", cex.main=1, ...)
+# {
+#     prp(tree1, type=type, extra=extra, main=main,
+#         under=under, col=col, yesno=yesno, tweak=tweak,
+#         col.main=col.main, cex.main=cex.main, ...)
+# }
+# prp1(tree1, extra=0, main="extra = 0\ndev", tweak=.8)
+# prp1(tree1, extra=1, type=3, main="extra = 1 (type=3)\ndev,  n")
+# prp1(tree1, extra=2, main="extra = 2\ndev,  frac", tweak=1.2)
+# prp1(tree1, extra=3, main="extra = 3\ndev,  frac / sum(frac)")
+# prp1(tree1, extra=4, main="extra = 4\nsqrt(dev)")
+# prp1(tree1, extra=5, main="extra = 5\nsqrt(dev),  n")
+# prp1(tree1, extra=6, main="extra = 6\nsqrt(dev),  frac", tweak=1.2)
+# prp1(tree1, extra=7, main="extra = 7\nsqrt(dev),  frac / sum(frac)", tweak=1.1)
+# prp1(tree1, extra=8, main="extra = 8\npredom species",   tweak=.8)
+# prp1(tree1, extra=9, main="extra = 9\npredom species,  n", tweak=1)
+# prp1(tree1, extra=10, main="extra = 10\npredom species,  frac", tweak=1.2)
+# prp1(tree1, extra=11, main="extra = 11\npredom spec,  frac / sum(frac)", tweak=1.15)
+# par(old.par)
 
 par(mfrow=c(2,2))
 source("webpage-figs.R")
+
+# test rpart.plot version 1.5.3 (deal with situation where user has
+# a variable named text in the current environment).
+# Also test use of FUN argument.
+
+# test that we got an error as expected from a try() call
+expect.err <- function(object, expected.msg="")
+{
+    if(class(object)[1] == "try-error") {
+        msg <- attr(object, "condition")$message[1]
+        if(length(grep(expected.msg, msg)))
+            cat("Got error as expected from ",
+                deparse(substitute(object)), "\n", sep="")
+        else
+            stop(sprintf("Expected \"%s\"\n  but got \"%s...\"",
+                         expected.msg, substr(msg, 1, 120)))
+    } else
+        stop("did not get expected try error")
+}
+cat("\ntest rpart.plot version 1.5.3\n")
+par(mfrow=c(3,3))
+a100 <- rpart(survived ~ ., data=ptitanic, cp=.02)
+title("a100a", cex=.6)
+prp(a100)
+title("a100b", cex=.6)
+text <- "this is not the text function"
+prp(a100) # graph should be identical to the one on its left
+title("a100c", cex=.6)
+expect.err(try(prp(a100, FUN=function(xbad, y1, labels, ...) text(xbad, y1, labels, ...))),
+           "the FUN argument to the prp function needs the following arguments")
+title("a100d", cex=.6)
+# user specified FUN only has to match up to the dots
+prp(a100, FUN=function(x, y1, labels, ...) text(x, y1, labels, ...))
+
+my.text <- function(x, y, labels, ...) text(x, y, labels, ...)
+prp(a100, FUN=my.text)
+title("a100e", cex=.6)
+my.bad.text <- function(xbad, y, labels, ...) text(xbad, y, labels, ...)
+expect.err(try(prp(a100, FUN=my.bad.text)),
+           "the FUN argument to the prp function needs the following arguments")
+title("a100f", cex=.6)
+# define the function text in the global environment and use that
+text <- function(x, y, labels, ...) graphics::text(x, y, paste0("my-", labels), ...)
+# TODO boxes below aren't sized correctly for the user generated text
+prp(a100, FUN=text)
+title("a100g", cex=.6)
+remove(text)
 
 if(!interactive()) {
     dev.off()         # finish postscript plot

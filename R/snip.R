@@ -1,7 +1,7 @@
 # do.snip.R
 
 do.snip <- function(obj, nodes, split.labels, node.xy, branch.xy,
-                    branch.lty, branch.lwd, xlim, ylim, digits, snip.fun)
+                    branch.lwd, xlim, ylim, digits, snip.fun, cex)
 {
     snip.rpart1 <- function(obj, deleted.nodes)
     {
@@ -55,14 +55,26 @@ do.snip <- function(obj, nodes, split.labels, node.xy, branch.xy,
             dnodes <- nodes[deleted.nodes]
             branch.col[match(dnodes[parent(dnodes) %in% dnodes], nodes)] <- "pink"
             # need loop for proper recycling of lwd etc.
-            for(i in 1:length(nodes))
+            # TODO this doesn't redraw the shoulders (e.g. when branch=1)
+            for(i in 1:length(nodes)) {
                 lines(branch.xy$x[,i], branch.xy$y[,i],
-                      col=branch.col[i], lty=branch.lty, lwd=branch.lwd)
+                      col=branch.col[i], lty=1, lwd=branch.lwd)
+            }
+        }
+        display.msg <- function(...) # print message on screen
+        {
+            # delete previous msg, if any
+            usr <- par("usr")
+            rect(xleft=usr[1],  ybottom=usr[4] - 2 * strheight("XXX", cex=cex),
+                 xright=usr[2], ytop=usr[4], col="white", border=NA)
+            text(x=usr[1], y=usr[4] - strheight("XXX", cex=cex),
+                 labels=paste0(...), adj=0, cex=max(cex, .6))
         }
         print.node.info <- function(msg, inode)
         {
             if(nchar(msg)) {
                 msg1 <- sprintf("%s node %d", msg, nodes[inode])
+                display.msg(msg1)
                 printf("%-18s %s\n", msg1,
                     if(is.leaf[inode]) "" else split.labels[inode])
             }
@@ -92,26 +104,34 @@ do.snip <- function(obj, nodes, split.labels, node.xy, branch.xy,
                     deleted.nodes[match(get.children(nodes[inode]), nodes)] <- TRUE
                     if(is.null(snip.fun)) # reduce clutter
                         print.node.info("Delete", inode)
-                    else
+                    else {
+                        display.msg("Delete node ", nodes[inode])
                         snip.fun(snip.rpart1(obj, nodes[deleted.nodes]))
+                    }
                 } else {
                     # Node is currently deleted, so undelete it and its children ---
                     # but not if any of its ancestors are deleted.
                     # [-1] below removes node itself from its path to the root.
                     if(any(nodes[deleted.nodes] %in% get.parents(nodes[inode])[-1])) {
-                        cat("Cannot delete node", nodes[inode],
-                            "because its parent is already deleted\n")
+                        msg <- paste0("Cannot delete node ", nodes[inode],
+                                      " because its parent is already deleted")
+                        display.msg(msg)
+                        cat0(msg, "\n")
+                        flush.console()
                     } else {
                         deleted.nodes[match(get.children(nodes[inode]), nodes)] <- FALSE
                         if(is.null(snip.fun))
                             print.node.info("Undelete", inode)
-                        else
+                        else {
+                            display.msg("Undelete node ", nodes[inode])
                             snip.fun(snip.rpart1(obj, nodes[deleted.nodes]))
+                        }
                     }
                 }
                 show.branches()
             }
         }
+        display.msg("") # delete on-screen message, if any
         draw.quit.button("gray")
         cat("Quit\n")
         nodes[deleted.nodes]

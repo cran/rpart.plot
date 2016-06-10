@@ -48,8 +48,17 @@ rounded.rect <- function(x1, y1, x2, y2, xlim, ylim, r, col, border.col, lty, lw
     border.col <- recycle(border.col, x1)
     lty        <- recycle(lty, x1)
     lwd        <- recycle(lwd, x1)
-    for(i in 1:length(x1))
-        polygon(x[,i], y[,i], col=col[i], border=border.col[i], lty=lty[i], lwd=lwd[i])
+    is.na <- is.na(col)
+    for(i in 1:length(x1)) {
+        if(is.na[i])
+            # draw shading lines to indicate that the color is NA
+            # (used to indicate NA predicted values)
+            polygon(x[,i], y[,i], density=20,
+                    col="darkgray", border=border.col[i], lty=lty[i], lwd=lwd[i])
+        else
+            polygon(x[,i], y[,i],
+                    col=col[i], border=border.col[i], lty=lty[i], lwd=lwd[i])
+    }
 }
 # similar to rounded.rect but blurs the edges of the box
 draw.shadow <- function(x1, y1, x2, y2, xlim, ylim, r,

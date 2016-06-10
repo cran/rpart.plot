@@ -1,6 +1,34 @@
 Changes to rpart.plot
 ---------------------
 
+2.0.0    Jun 10, 2016
+
+  The function rpart.plot now has different defaults, so it
+  automatically creates a colored plot tailored to the type of model.
+  This makes the function non backwards-compatible with earlier versions.
+  The old rpart.plot function is still available under the
+  name "rpart.plot.version1".
+  The defaults for prp haven't changed.
+
+  Added the "auto" option to the "extra" argument.
+
+  Added the box.palette argument, a simpler way of coloring nodes
+  than the box.col argument.
+
+  Using yesno=2 will print "yes" and "no" at all nodes (instead of
+  just at the top).
+
+  Added the yes.text="yes" and no.text="no" arguments (so other
+  languages can be used for the yes/no text.)
+
+  When snipping a tree, status messages are now printed on the screen.
+
+  We now better handle NAs in the fitted values.  Nodes for NA predicted
+  values are printed with cross hatching.
+
+  Merged the library source file lib.R with the earth and
+  plotmo packages's lib.R.
+
 1.5.3    Sep 30, 2015
    We now deal correctly with the situation when the user has
    a variable named "text" in the current environment.

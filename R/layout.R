@@ -1,6 +1,6 @@
 # layout.R
 
-get.layout <- function(obj, type, nn, fallen.leaves, branch,
+get.layout <- function(obj, type, nn, yesno, fallen.leaves, branch,
     uniform, Margin, cex, auto.cex, compress, ycompress,
     trace, main, sub,
     node.labs, node.font, node.family, box.col, border.col,
@@ -90,6 +90,7 @@ get.layout <- function(obj, type, nn, fallen.leaves, branch,
                 node.space + gap/2, node.yspace + ygap/2,
                 ygap, bg,
                 do.init.plot=TRUE)
+
             split.boxes <- get.boxes(
                 # extra space under split if type==TYPE.all.under so can see branch lines
                 if(type == TYPE.all.under) "undersplit" else "default",
@@ -216,7 +217,7 @@ get.layout <- function(obj, type, nn, fallen.leaves, branch,
         both.scales[which] <- pmin(xscales, yscales, na.rm=TRUE)[which]
 
         # TODO fix this, currently yneighbors not included in neighbors, so trace msg can be wrong
-        #       if(trace) {
+        #       if(trace > 0) {
         #           which <- yscales > both.scales
         #           which[is.na(which)] <- FALSE
         #           neighbors[which] <- yneighbors[which]
@@ -478,6 +479,7 @@ get.layout <- function(obj, type, nn, fallen.leaves, branch,
     auto.gap <- is.null(gap)
     if(auto.gap)
         gap <- ygap <- .5
+    # get provisional layout e.g for a stump x=[.5, 0, 1] y=[1, 0, 0]
     node.xy <- get.node.coords(obj, uniform, branch, compress,
                                nspace, minbranch, fallen.leaves, Fallen.yspace)
     if(length(node.xy$x) == 1) {
@@ -490,6 +492,7 @@ get.layout <- function(obj, type, nn, fallen.leaves, branch,
                     node.space=node.space,
                     node.yspace=node.yspace))
     }
+    # adjust the provisonal layout
     x.org <- x <- node.xy$x
     y.org <- y <- node.xy$y
     tree.depth <- tree.depth(nodes)

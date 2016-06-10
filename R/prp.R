@@ -49,23 +49,38 @@ TYPE.fancy.noall <- 3
 TYPE.fancy.all   <- 4
 
 rpart.plot <- function(x=stop("no 'x' arg"),
-    type=0, extra=0, under=FALSE, clip.right.labs=TRUE,
-    fallen.leaves=FALSE, branch=if(fallen.leaves) 1 else .2,
-    uniform=TRUE,
-    digits=2, varlen=-8, faclen=3,
+    type=2, extra="auto", under=FALSE, fallen.leaves=TRUE,
+    digits=2, varlen=0, faclen=0,
     cex=NULL, tweak=1,
-    compress=TRUE, ycompress=uniform,
     snip=FALSE,
+    box.palette="auto", shadow.col=0,
     ...)
 {
     prp(x,
-        type=type, extra=extra, under=under, clip.right.labs=clip.right.labs,
-        fallen.leaves=fallen.leaves, branch=branch,
-        uniform=uniform,
+        type=type, extra=extra,
+        under=under, fallen.leaves=fallen.leaves,
         digits=digits, varlen=varlen, faclen=faclen,
         cex=cex, tweak=tweak,
-        compress=compress, ycompress=ycompress,
         snip=snip,
+        box.palette=box.palette, shadow.col=shadow.col,
+        ...)
+}
+
+rpart.plot.version1 <- function(x=stop("no 'x' arg"),
+    type=0, extra=0, under=FALSE, fallen.leaves=FALSE,
+    digits=2, varlen=-8, faclen=3,
+    cex=NULL, tweak=1,
+    snip=FALSE,
+    box.palette=0, shadow.col=0,
+    ...)
+{
+    prp(x,
+        type=type, extra=extra,
+        under=under, fallen.leaves=fallen.leaves,
+        digits=digits, varlen=varlen, faclen=faclen,
+        cex=cex, tweak=tweak,
+        snip=snip,
+        box.palette=box.palette, shadow.col=shadow.col,
         ...)
 }
 
@@ -79,7 +94,7 @@ prp <- function(x=stop("no 'x' arg"),
     compress=TRUE, ycompress=uniform,
     trace=FALSE, snip=FALSE, snip.fun=NULL,
 
-    box.col=0, border.col=col,
+    box.col=0, box.palette=0, border.col=col,
     round=NULL, leaf.round=NULL,
     shadow.col=0, prefix="", suffix="", xsep=NULL,
 
@@ -101,6 +116,7 @@ prp <- function(x=stop("no 'x' arg"),
     nn.cex=NULL, nn.font=3, nn.family="", nn.col=1,
     nn.box.col=0, nn.border.col=nn.col,
     nn.lty=1, nn.lwd=NULL, nn.round=.3,
+    yes.text="yes", no.text="no",
 
     node.fun=internal.node.labs,
     split.fun=internal.split.labs,
@@ -122,6 +138,7 @@ prp <- function(x=stop("no 'x' arg"),
     shift.amounts=c(1.5, 2),
     Fallen.yspace=.1,
     boxes.include.gap=FALSE,
+    legend.x=NULL, legend.y=NULL, legend.cex=1,
     ...)
 {
     check.dots <- function(dots) # check dots arguments, if any
@@ -264,7 +281,8 @@ prp <- function(x=stop("no 'x' arg"),
             draw.shadows1, draw.shadows, shadow.col, round)
 
         if(yesno && !is.fancy(type) && !snip) # draw "yes" and "no" at root?
-            draw.yes.no(type, draw.shadows1,
+            draw.yes.no(yesno, yes.text, no.text,
+                    type, draw.shadows1,
                     xflip, left, branch, xlim, ylim, node.xy, lwd,
                     yesno.yshift,
                     split.boxes, split.cex * cex, split.box.col, split.border.col,
@@ -298,8 +316,10 @@ prp <- function(x=stop("no 'x' arg"),
         col
     }
     #--- prp starts here ---
+
     if(!inherits(x, "rpart"))
         stop0("the object passed to prp is not an rpart object")
+    obj <- x
 
     # Process dots args.  The call to eval.parent is necessary to evaluate the
     # call to say "c" when user does something like "xlim=c(0,2)". Note
@@ -326,19 +346,58 @@ prp <- function(x=stop("no 'x' arg"),
     xpd      <- eval.parent(dots$xp)
     ylim     <- eval.parent(dots$yl)
 
-    if(is.null(under.col))  under.col  <- col
-    if(is.null(border.col)) border.col <- col
-    if(is.null(branch.lwd)) branch.lwd <- lwd
-    if(is.null(split.lwd))  split.lwd  <- lwd
-    if(is.null(nn.lwd))     nn.lwd     <- lwd
-    if(is.null(split.adj))  split.adj  <- adj
+    if(is.null(under.col))   under.col   <- col
+    if(is.null(border.col))  border.col  <- col
+    if(is.null(box.palette)) box.palette <- col # for consistency
+    if(is.null(branch.lwd))  branch.lwd  <- lwd
+    if(is.null(split.lwd))   split.lwd   <- lwd
+    if(is.null(nn.lwd))      nn.lwd      <- lwd
+    if(is.null(split.adj))   split.adj   <- adj
 
+    if(obj$method == "class" || is.class.response(obj))
+        class.stats <- get.class.stats(obj)
+
+    # handle automatic defaults for extra and box.palette args (which sets box.col)
+    if(is.auto(box.palette)) {
+        # need upper case first letter for convert.predefined.palette
+        if(substr(box.palette[1], 1, 1) == "-")
+            box.palette <- "-AUTO"
+        else
+            box.palette <- "AUTO"
+    }
+    if(is.auto(extra, 1) || is.specified(box.palette)) {
+        defargs <- # the ifelse structure here is similar to the code in internal.node.labs()
+            if(obj$method == "anova")
+                get.default.args.anova(obj, extra=100, box.palette, trace, ..., Fitted=obj$frame$yval)
+            else if(obj$method == "class")
+                get.default.args.class(obj, box.palette, trace, class.stats, ...)
+            else if(obj$method == "poisson" || obj$method == "exp")
+                get.default.args.anova(obj, extra=101, box.palette, trace, ..., Fitted=obj$frame$yval2[,1])
+            else if(is.numeric.response(obj)) # unrecognized rpart object: treat as a numeric response model
+                get.default.args.anova(obj, extra=100, box.palette, trace, ..., Fitted=obj$frame$yval)
+            else if(is.class.response(obj))   # unrecognized rpart object: treat as a class response model
+                get.default.args.class(obj, box.palette, trace, class.stats, ...)
+            else
+                list(extra=100, box.col=0)
+        if(identical(box.palette, 0))
+            box.palette <- "white"
+        if(is.auto(extra, 1))
+            extra <- defargs$extra
+        if(is.specified(box.col))
+            box.palette <- 0 # ignore box.palette if box.col is specified
+        else {
+            box.col     <- defargs$box.col
+            box.palette <- defargs$box.palette
+        }
+    }
     # Set bg to the background color or "white" if transparent.
     # The idea is that we want a color that is opaque but matches background.
     bg <- par("bg") # TODO this incorrectly returns transparent with mfrow
     if(bg[1] == "transparent")
         bg <- "white"
-    box.col          <- do.bg(box.col)
+    is.na.box.col <- is.na(box.col)
+    box.col <- do.bg(box.col)
+    box.col[is.na.box.col] <- NA
     border.col       <- do.bg(border.col)
     shadow.col       <- do.bg(shadow.col)
     under.col        <- do.bg(under.col)
@@ -357,25 +416,34 @@ prp <- function(x=stop("no 'x' arg"),
     if(type < TYPE.default || type > TYPE.fancy.all)
         stop0("type must be ", TYPE.default, "...",
               TYPE.fancy.all, ", you have type=", type)
-    stopifnot.boolean(under)
-    stopifnot.boolean(clip.left.labs[1])
-    stopifnot.boolean(clip.right.labs[1])
-    stopifnot.boolean(nn)
-    stopifnot.boolean(ni)
-    stopifnot.boolean(yesno)
-    stopifnot.boolean(fallen.leaves)
-    stopifnot.boolean(uniform)
-    stopifnot.boolean(left)
-    stopifnot.boolean(xflip)
-    stopifnot.boolean(yflip)
-    stopifnot.boolean(do.par)
-    stopifnot.boolean(snip)
-    stopifnot.boolean(compress)
-    stopifnot.boolean(ycompress)
-    stopifnot.boolean(xcompact)
-    stopifnot.boolean(ycompact)
-    stopifnot.boolean(add.labs)
-    stopifnot.boolean(boxes.include.gap)
+    under <- check.boolean(under)
+    clip.left.labs[1] <- check.boolean(clip.left.labs[1])
+    clip.right.labs[1] <- check.boolean(clip.right.labs[1])
+    nn <- check.boolean(nn)
+    ni <- check.boolean(ni)
+    stopifnot((is.numeric(yesno) || is.logical(yesno)) &&
+              length(yesno) == 1 && floor(yesno) == yesno)
+    if(yesno < 0 || yesno > 2)
+        stop0("yesno must be 0, 1, or 2.  You have yesno=", yesno)
+    stopifnot(is.character(yes.text) && length(yes.text) == 1)
+    stopifnot(is.character(no.text) && length(no.text) == 1)
+    fallen.leaves <- check.boolean(fallen.leaves)
+    uniform <- check.boolean(uniform)
+    left <- check.boolean(left)
+    xflip <- check.boolean(xflip)
+    yflip <- check.boolean(yflip)
+    do.par <- check.boolean(do.par)
+    snip <- check.boolean(snip)
+    if(snip) {
+        branch.col = "black"
+        branch.lty = 1
+    }
+    compress <- check.boolean(compress)
+    ycompress <- check.boolean(ycompress)
+    xcompact <- check.boolean(xcompact)
+    ycompact <- check.boolean(ycompact)
+    add.labs <- check.boolean(add.labs)
+    boxes.include.gap <- check.boolean(boxes.include.gap)
     stopifnot(all(split.round >= 0))
     stopifnot(all(nn.round >= 0))
     stopifnot(tweak > 0 && tweak <= 10) # upper limit is arb
@@ -405,7 +473,6 @@ prp <- function(x=stop("no 'x' arg"),
         split.cex <- 1
     if(fallen.leaves)
         compress <- FALSE
-    obj <- x
     if(!is.null(obj$frame$splits))
         stop0("Old-style rpart object?  (frame$splits is NULL)")
     frame <- obj$frame
@@ -433,9 +500,9 @@ prp <- function(x=stop("no 'x' arg"),
     }
     node.labs <- internal.node.labs(obj, node.fun, deparse(substitute(node.fun)),
                                     type, extra, under, xsep, digits, varlen,
-                                    prefix, suffix)
+                                    prefix, suffix, class.stats)
 
-    split.labs <- split.labs.wrapper(x, split.fun,
+    split.labs <- split.labs.wrapper(obj, split.fun,
                 deparse(substitute(split.fun)),
                 split.prefix, split.suffix,
                 right.split.prefix, right.split.suffix,
@@ -454,7 +521,7 @@ prp <- function(x=stop("no 'x' arg"),
             split.labs <- split.labs[match(2 * nodes+1, nodes)]
     }
     draw.shadows <- !is.invisible(shadow.col, bg)
-    draw.split.shadows <- !is.invisible(shadow.col, bg)
+    draw.split.shadows <- !is.invisible(split.shadow.col, bg)
 
     # Recycle stuff that doesn't get recyled automatically.  It's more efficient
     # to recycle it here once rather than over and over in get.boxes etc.
@@ -464,6 +531,7 @@ prp <- function(x=stop("no 'x' arg"),
     shadow.offset       <- recycle(shadow.offset, nodes)
     under.cex           <- recycle(under.cex, nodes)
     under.ygap          <- recycle(under.ygap, nodes)
+    split.cex           <- recycle(split.cex, nodes)
     split.adj           <- recycle(adj, nodes)
     split.space         <- recycle(split.space, nodes)
     split.yspace        <- recycle(split.yspace, nodes)
@@ -478,7 +546,10 @@ prp <- function(x=stop("no 'x' arg"),
     yshift       <- temp$yshift
     split.yshift <- temp$split.yshift
 
-    layout <- get.layout(obj, type, nn, fallen.leaves, branch,
+    if(yesno == 2 && !is.fancy(type))
+        split.labs <- ifelse(split.labs == "NA",
+                             "NA", paste(yes.text, split.labs, no.text))
+    layout <- get.layout(obj, type, nn, yesno, fallen.leaves, branch,
         uniform, Margin, cex, auto.cex, compress, ycompress,
         trace, main, sub,
         node.labs, font, family, box.col, border.col,
@@ -491,6 +562,11 @@ prp <- function(x=stop("no 'x' arg"),
         max.auto.cex, min.auto.cex, ycompress.cex, accept.cex,
         shift.amounts, Fallen.yspace, bg)
 
+    if(yesno == 2 && !is.fancy(type)) # remove prepended yes.text and no.text?
+        split.labs <-
+            ifelse(split.labs == "NA",
+                     "NA",
+                     substr(split.labs, nchar(yes.text)+1, nchar(split.labs)-nchar(no.text)-1))
     cex <- layout$cex
     gap <- layout$gap
     ygap <- layout$ygap
@@ -504,7 +580,7 @@ prp <- function(x=stop("no 'x' arg"),
         ylim <- layout$ylim
     stopifnot(is.numeric(ylim) && length(ylim) == 2)
     split.yshift <- layout$split.yshift
-    if(trace) {
+    if(trace > 0) {
         tweak.msg <- if(tweak == 1) "" else sprintf(" (before applying tweak %g)", tweak)
         printf("cex %.3g%s   xlim c(%.3g, %.3g)   ylim c(%.3g, %.3g)\n",
                cex[1], tweak.msg, xlim[1], xlim[2], ylim[1], ylim[2])
@@ -562,17 +638,19 @@ prp <- function(x=stop("no 'x' arg"),
     snipped.nodes <- NULL
     if(snip) {
         temp <- do.snip(obj, nodes, split.labs, node.xy, branch.xy,
-                        branch.lty, branch.lwd, xlim, ylim, digits,
-                        snip.fun)
+                        branch.lwd, xlim, ylim, digits, snip.fun, cex)
         obj <- temp$obj
         snipped.nodes <- temp$snipped.nodes
     }
-    invisible(list(obj=obj, snipped.nodes=snipped.nodes,
+    rv <- list(obj=obj, snipped.nodes=snipped.nodes,
               xlim=xlim, ylim=ylim,
               x=node.xy$x, y=node.xy$y,
               branch.x=branch.xy$x, branch.y=branch.xy$y,
               labs=node.labs, cex=cex, boxes=node.boxes,
-              split.labs="", split.cex=split.cex, split.box=split.boxes))
+              split.labs="", split.cex=split.cex, split.box=split.boxes)
+    possible.legend(rv, class.stats, box.col, box.palette,
+                    legend.x, legend.y, legend.cex)
+    invisible(rv)
 }
 init.plot <- function(x, y,
                       Margin, xflip, yflip, main, sub,
@@ -856,6 +934,17 @@ draw.boxes <- function(fancy.style, draw.shadow, labs, xy,
         draw.shadow(new.box$x1, new.box$y1, new.box$x2, new.box$y2,
                     xlim, ylim, r, shadow.col, shadow.offset)
     box
+}
+# true if x == "auto", ignoring case, partial match to n characters
+is.auto <- function(x, n=2)
+{
+    is.character(x) &&
+    length(x) >= 1  &&
+    if(n == 1) # only one character is needed to disambiguate from e.g. extra=1
+        grepl("^a",     substr(x[1], 1, 1), ignore.case=TRUE)
+    else       # two characters needed to disambiguate from e.g. "aliceblue"
+        (grepl("^au",   substr(x[1], 1, 2), ignore.case=TRUE) ||
+         grepl("^\\-a", substr(x[1], 1, 2), ignore.case=TRUE))
 }
 is.fancy <- function(type)
 {

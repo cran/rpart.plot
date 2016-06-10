@@ -16,7 +16,7 @@
 }
 \source{
 The dataset was compiled by Frank Harrell and Robert Dawson:\cr
-\url{http://biostat.mc.vanderbilt.edu/twiki/pub/Main/DataSets/titanic.html}.
+\url{http://biostat.mc.vanderbilt.edu/wiki/pub/Main/DataSets/titanic.html}.
 
 See also:\cr
 \url{http://biostat.mc.vanderbilt.edu/twiki/pub/Main/DataSets/titanic3info.txt}.

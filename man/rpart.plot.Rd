@@ -1,53 +1,70 @@
 \name{rpart.plot}
 \alias{rpart.plot}
-\title{Plot an \code{rpart} model.}
+\title{Plot an \code{rpart} model. A simplified interface to the \code{prp} function.}
 \description{
-Plot an \code{\link{rpart}} model.
-This function combines and extends \code{\link{plot.rpart}} and \code{\link{text.rpart}}
-in the \code{\link{rpart}} package.
-It automatically scales and adjusts the displayed tree for best fit.
-
-This is a front end to \code{\link{prp}},
-with the most useful arguments of that function.
+Plot an \code{\link{rpart}} model, automatically tailoring the plot
+for the model's response type.
 
 For an overview, please see the package vignette
-\dQuote{\href{../doc/prp.pdf}{Plotting rpart trees with prp}}.
+\href{../doc/prp.pdf}{Plotting rpart trees with the rpart.plot package}.
+
+This function is a simplified front-end to \code{\link{prp}},
+with only the most useful arguments of that function, and
+with different defaults for some of the arguments.
+
+The different defaults for the \code{extra} and \code{col.palette}
+arguments mean that this function automatically creates a colored plot
+suitable for the type of model (whereas \code{\link{prp}} by default
+creates a minimal plot).  In detail the different defaults are:
+
+\tabular{llclcr}{
+                     \tab | \tab \code{\link{rpart.plot}} \tab | \tab \code{\link{prp}} and \code{\link{rpart.plot.version1}} \tab | \cr
+                     \tab   \tab               \tab   \tab              \tab   \cr
+\code{type}          \tab | \tab \code{2}      \tab | \tab \code{0}     \tab | \cr
+\code{extra}         \tab | \tab \code{"auto"} \tab | \tab \code{0}     \tab | \cr
+\code{fallen.leaves} \tab | \tab \code{TRUE}   \tab | \tab \code{FALSE} \tab | \cr
+\code{varlen}        \tab | \tab \code{0}      \tab | \tab \code{-8}    \tab | \cr
+\code{faclen}        \tab | \tab \code{0}      \tab | \tab \code{3}     \tab | \cr
+\code{box.palette}   \tab | \tab \code{"auto"} \tab | \tab \code{0}     \tab | \cr
+}
+
+The function \code{\link{rpart.plot.version1}} is compatible with
+old versions of this function.
 }
 \usage{
 rpart.plot(x=stop("no 'x' arg"),
-    type=0, extra=0, under=FALSE, clip.right.labs=TRUE,
-    fallen.leaves=FALSE, branch=if(fallen.leaves) 1 else .2,
-    uniform=TRUE,
-    digits=2, varlen=-8, faclen=3,
+    type=2, extra="auto",
+    under=FALSE, fallen.leaves=TRUE,
+    digits=2, varlen=0, faclen=0,
     cex=NULL, tweak=1,
-    compress=TRUE, ycompress=uniform,
     snip=FALSE,
+    box.palette="auto", shadow.col=0,
     ...)
 }
 \arguments{
 To start off, look at the arguments \code{x}, \code{type} and \code{extra}.
 Just those arguments will suffice for many users.
-For an overview of the other arguments see
-the \href{../doc/prp.pdf}{package vignette}.
+If you don't want a colored plot, use \code{box.palette=0}.
 
   \item{x}{
      An \code{\link{rpart}} object.  The only required argument.
   }
   \item{type}{
-    Type of plot. Five possibilities:
+    Type of plot. Possible values:
 
-     \code{0} The default.  Draw a split label at each split
+     \bold{0} Draw a split label at each split
               and a node label at each leaf.
 
-     \code{1} Label all nodes, not just leaves.
+     \bold{1} Label all nodes, not just leaves.
               Similar to \code{text.rpart}'s \code{all=TRUE}.
 
-     \code{2} Like \code{1} but draw the split labels below the node labels.
+     \bold{2} Default.
+              Like \code{1} but draw the split labels below the node labels.
               Similar to the plots in the CART book.
 
-     \code{3} Draw separate split labels for the left and right directions.
+     \bold{3} Draw separate split labels for the left and right directions.
 
-     \code{4} Like \code{3} but label all nodes, not just leaves.
+     \bold{4} Like \code{3} but label all nodes, not just leaves.
               Similar to \code{text.rpart}'s \code{fancy=TRUE}.
               See also \code{clip.right.labs}.\cr
 
@@ -55,23 +72,29 @@ the \href{../doc/prp.pdf}{package vignette}.
   \item{extra}{
      Display extra information at the nodes. Possible values:
 
-     \code{0} No extra information (the default).
+     \bold{"auto"} (case insensitive)\cr
+Automatically select a value based on the model type, as follows:\cr
+\code{extra=106} class model with a binary response\cr
+\code{extra=104} class model with a response having more than two levels\cr
+\code{extra=100} other models\cr
 
-     \code{1} Display the number of observations that fall in the node
+     \bold{0} No extra information.
+
+     \bold{1} Display the number of observations that fall in the node
               (per class for \code{class} objects;
               prefixed by the number of events for \code{poisson} and \code{exp} models).
               Similar to \code{text.rpart}'s \code{use.n=TRUE}.
 
-     \code{2} Class models: display the classification rate at the node,
+     \bold{2} Class models: display the classification rate at the node,
               expressed as the number of correct classifications and the number
               of observations in the node.\cr
               Poisson and exp models: display the number of events.
 
-     \code{3} Class models: misclassification rate at the node,
+     \bold{3} Class models: misclassification rate at the node,
               expressed as the number of incorrect classifications and the number
               of observations in the node.
 
-     \code{4} Class models:
+     \bold{4} Class models:
               probability per class of observations in the node
               (conditioned on the node, sum across a node is 1).
               % (One could argue that \code{2} should be the default value
@@ -80,25 +103,25 @@ the \href{../doc/prp.pdf}{package vignette}.
               % the first class has a probability of \code{.81}
               % and the second a probability of \code{.19}.
 
-     \code{5} Class models:
+     \bold{5} Class models:
               like \code{4} but do not display the fitted class.
 
-     \code{6} Class models:
+     \bold{6} Class models:
               the probability of the second class only.
               Useful for binary responses.
 
-     \code{7} Class models:
+     \bold{7} Class models:
               like \code{6} but do not display the fitted class.
 
-     \code{8} Class models:
+     \bold{8} Class models:
               the probability of the fitted class.
 
-     \code{9} Class models:
+     \bold{9} Class models:
               the probabilities times the fraction of observations in the node
               (the probability relative to all observations,
               sum across all leaves is 1).
 
-     \code{+100} Add \code{100} to any of the above to also display
+     \bold{+100} Add \code{100} to any of the above to also display
                  the percentage of observations in the node.
                  For example \code{extra=101} displays the number
                  and percentage of observations in the node.
@@ -118,28 +141,10 @@ the \href{../doc/prp.pdf}{package vignette}.
      Default \code{FALSE}, meaning put the extra text \emph{in} the box.
      Use \code{TRUE} to put the text \emph{under} the box.
   }
-  \item{clip.right.labs}{
-     Default is \code{TRUE} meaning ``clip'' the right-hand split labels,
-     i.e. do not print \code{variable=}.
-     Applies only if \code{type=3} or \code{4}.
-  }
   \item{fallen.leaves}{
-     Default \code{FALSE}. If \code{TRUE}, display the leaves at the bottom of the graph.
-  }
-  \item{branch}{
-    Controls the shape of the branch lines.
-     Specify a value between \code{0} (V shaped branches) and
-     \code{1} (square shouldered branches).\cr
-     Default is \code{if(fallen.leaves) 1 else .2}.
-  }
-  \item{uniform}{
-    If \code{TRUE} (the default), the vertical spacing of the nodes is uniform.
-    If \code{FALSE}, the nodes are spaced proportionally to the fit
-    (more precisely, to the difference between a node's deviance and the sum of its two children's deviances).
-    Small vertical spaces are automatically artificially expanded
-    to make room for the labels.
-    Note: \code{uniform=FALSE} with \code{cex=NULL} (the default)
-    can sometimes cause very small text.
+     Default \code{TRUE} to position the leaf nodes at the bottom of the graph.
+     It can be helpful to use \code{FALSE} if the graph is too crowded
+     and the text size is too small.
   }
   \item{digits}{
      The number of significant digits in displayed numbers.
@@ -154,20 +159,22 @@ the \href{../doc/prp.pdf}{package vignette}.
   \item{varlen}{
      Length of variable names in text at the splits
      (and, for class responses, the class in the node label).
-     Default \code{-8}, meaning truncate to eight characters.
+     Default \code{0}, meaning display the full variable names.
      Possible values:\cr
-     =0 use full names.\cr
-     >0 call \code{\link{abbreviate}} with the given \code{varlen}.\cr
-     <0 truncate variable names to the shortest length where they are still unique,
+
+     \bold{0} use full names (default).\cr
+
+     \bold{greater than 0} call \code{\link{abbreviate}} with the given \code{varlen}.\cr
+
+     \bold{less than 0} truncate variable names to the shortest length where they are still unique,
      but never truncate to shorter than \code{abs(varlen)}.
-     % For example, \code{varlen=-1} will give unique names that are as short as possible.
   }
   \item{faclen}{
      Length of factor level names in splits.
-     Default \code{3}, meaning \code{\link{abbreviate}} to three characters.
+     Default \code{0}, meaning display the full factor names.
      Possible values are as \code{varlen} above, except that
-     \code{1} is treated specially, meaning
-     represent the factor levels with alphabetic characters
+     for back-compatibility with \code{\link{text.rpart}} the special value \code{1}
+     means represent the factor levels with alphabetic characters
      (\code{a} for the first level, \code{b} for the second, etc.).
   }
   \item{cex}{
@@ -177,32 +184,43 @@ the \href{../doc/prp.pdf}{package vignette}.
      Adjust the (possibly automatically calculated) \code{cex}.
      Default \code{1}, meaning no adjustment.
      Use say \code{tweak=1.2} to make the text 20\% larger.
-     Note that font sizes are discrete, so the \code{cex} you ask for
-     may not be the \code{cex} you get.
-     And a small tweak may not actually change the type size
+     However, since font sizes are discrete the \code{cex} you ask for
+     may not be exactly the \code{cex} you get.
+     And a small change to tweak may not actually change the type size,
      or change it more than you want.
-  }
-  \item{compress}{
-     If \code{TRUE} (the default), make more space
-     by shifting nodes horizontally where space is available.
-     This often allows larger text.
-     (This is the same as \code{plot.rpart}'s argument of the same name,
-     except that here the default is \code{TRUE}.)
-  }
-  \item{ycompress}{
-     If \code{TRUE} (the default unless \code{uniform=FALSE}),
-     make more space by shifting labels vertically where space is available.
-     Actually, this only kicks in
-     if the initial automatically calculated \code{cex} is less than \code{0.7}.
-     Use \code{ycompress=FALSE} if you feel the resulting display is too messy.
-     In the current implementation, the shifting algorithm
-     works a little better (allowing larger text)
-     with \code{type=1}, \code{2}, or \code{3}. % (i.e. not "fancy").
   }
   \item{snip}{
      Default \code{FALSE}.
      Set \code{TRUE} to interactively trim the tree with the mouse.
      See the \href{../doc/prp.pdf}{package vignette} (or just try it).
+  }
+  \item{box.palette}{
+     Palette for coloring the node boxes based on the fitted value.
+This is a a vector of \code{\link{colors}},
+for example \bold{box.palette=c("Red", "Yellow", "Green")}.
+Small fitted values are displayed with colors at the start of the vector;
+large values with colors at the end.\cr
+
+The special value \bold{box.palette=0} (default) uses the background color (typically white).\cr
+
+The special value \bold{box.palette="auto"} (case insensitive)
+automatically selects a predefined palette based on the type of model.
+
+Otherwise specify a predefined palette
+e.g. \bold{box.palette="Grays"} for the predefined gray palette (a range of grays).
+The predefined palettes are:\cr
+\code{Blues} \code{Browns} \code{Grays} \code{Greys} \code{Greens} \code{Oranges} \code{Reds} \code{Purples} \cr
+\code{Bu} \code{Bn} \code{Gn} \code{Gy} \code{Or} \code{Rd} \code{Pu} (alternative names for the above palettes)\cr
+\code{BuGn} \code{GnRd} \code{BuOr} etc. (two color palettes: any combination of two palettes)\cr
+\code{RdYlGn} \code{GnYlRd} (three color palettes)\cr\cr
+Prefix the palette name with \bold{-} to reverse the order of the colors\cr
+e.g. \code{box.palette="-auto"} or \code{box.palette="-Grays"}.\cr\cr
+The \code{box.palette} argument is ignored if the \code{box.col} palette argument is specified.
+}
+  \item{shadow.col}{
+     Color of the shadow under the boxes.
+     Default \code{0}, no shadow.
+     Try \code{"gray"} or \code{"darkgray"}.
   }
   \item{\dots}{
     Extra arguments passed to \code{\link{prp}} and the plotting routines.
@@ -218,31 +236,45 @@ The returned value is identical to that of \code{\link{prp}}.
   and the R port of that package by Brian Ripley.
 }
 \seealso{
-  The package vignette \dQuote{\href{../doc/prp.pdf}{Plotting rpart trees with prp}}\cr
-  \code{\link{prp}}\cr
-  \code{\link{plot.rpart}}\cr
-  \code{\link{text.rpart}}\cr
+  The package vignette \href{../doc/prp.pdf}{Plotting rpart trees with the rpart.plot package}\cr\cr
+  \code{\link{prp}}\cr\cr
+  \code{\link{rpart.plot.version1}}\cr\cr
+Functions in the \code{rpart} package:
+  \code{\link{plot.rpart}}
+  \code{\link{text.rpart}}
   \code{\link{rpart}}
 }
 \examples{
+old.par <- par(mfrow=c(2,2))                    # put 4 figures on one page
+
 data(ptitanic)
-tree <- rpart(survived ~ ., data=ptitanic, cp=.02)
-                         # cp=.02 because want small tree for demo
 
-old.par <- par(mfrow=c(2,2))
-                         # put 4 figures on one page
+#---------------------------------------------------------------------------
 
-rpart.plot(tree, main="default rpart.plot\n(type = 0, extra = 0)")
+binary.model <- rpart(survived ~ ., data=ptitanic, cp=.02)
+                                        # cp=.02 for small demo tree
 
-prp(tree, main="type = 4, extra = 6", type=4, extra=6, faclen=0)
-                         # faclen=0 to print full factor names
+rpart.plot(binary.model,
+           main="titanic survived\n(binary response)")
 
-rpart.plot(tree, main="extra = 106,  under = TRUE", extra=106, under=TRUE, faclen=0)
+rpart.plot(binary.model,
+           box.palette="Grays",         # override default GnBu palette
+           main="titanic survived\nbox.palette = \"Grays\"")
 
-# the old way for comparison
-plot(tree, uniform=TRUE, compress=TRUE, branch=.2)
-text(tree, use.n=TRUE, cex=.6, xpd=NA) # cex is a guess, depends on your window size
-title("rpart.plot for comparison", cex=.6)
+#---------------------------------------------------------------------------
+
+anova.model <- rpart(Mileage ~ ., data=cu.summary)
+
+rpart.plot(anova.model,
+           shadow.col="gray",           # add shadows just for kicks
+           main="miles per gallon\n(continuous response)\n")
+
+#---------------------------------------------------------------------------
+
+multi.class.model <- rpart(Reliability ~ ., data=cu.summary)
+
+rpart.plot(multi.class.model,
+           main="vehicle reliability\n(multi class response)")
 
 par(old.par)
 }

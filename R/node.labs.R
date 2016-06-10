@@ -1,30 +1,35 @@
 # node.labs.R: functions for generating labels
 
-# call node.fun or x$functions$text, and check its args and returned value
+is.vec <- function(x) {
+    (NROW(x) == 1 || NCOL(x) == 1) && NROW(x) * NCOL(x) > 0
+}
+
+is.numeric.response <- function(obj) {
+    # see if we have the fields necessary for
+    # get.anova.labs (but not get.class.labs)
+    is.vec(obj$frame$yval) && is.null(obj$frame$yval2)
+}
+
+is.class.response <- function(obj) {
+    # check that we have the fields necessary for get.class.labs
+    yval2 <- obj$frame$yval2
+    NCOL(yval2) >= 5 &&
+    colnames(yval2)[length(colnames(yval2))] == "nodeprob" &&
+    is.vec(obj$frame$n) &&
+    is.vec(obj$frame$wt)
+}
+
+# call node.fun or obj$functions$text, and check its args and returned value
 internal.node.labs <- function(x, node.fun, node.fun.name, type, extra,
-                               under, xsep, digits, varlen, prefix, suffix)
+                               under, xsep, digits, varlen, prefix, suffix, class.stats)
 {
-    is.vec <- function(x) {
-        (NROW(x) == 1 || NCOL(x) == 1) && NROW(x) * NCOL(x) > 0
-    }
-    is.numeric.response <- function(x) {
-        # see if we have the fields necessary for
-        # get.anova.labs (but not get.class.labs)
-        is.vec(x$frame$yval) && is.null(x$frame$yval2)
-    }
-    is.class.response <- function(x) {
-        # see if we have the fields necessary for get.class.labs
-        yval2 <- x$frame$yval2
-        NCOL(yval2) >= 5 && is.vec(x$frame$n) && is.vec(x$frame$wt)
-    }
-    #--- internal.node.labs starts here ---
     stopifnot((is.numeric(extra) || (is.logical(extra)) && length(extra) == 1))
     frame <- x$frame
     labs <-
         if(x$method == "anova")
             get.anova.labs(x, extra, under, digits, xsep, varlen)
         else if(x$method == "class")
-            get.class.labs(x, extra, under, digits, xsep, varlen)
+            get.class.labs(x, extra, under, digits, xsep, varlen, class.stats)
         else if(x$method == "poisson" || x$method == "exp")
             get.poisson.labs(x, extra, under, digits, xsep, varlen)
         else if(x$method == "mrt")
@@ -39,7 +44,7 @@ internal.node.labs <- function(x, node.fun, node.fun.name, type, extra,
                 warning0("Unrecognized rpart object: treating as a class response model")
                 if(x$method == "user")
                     x$method = "user.with.class.response" # used only in err msgs
-                get.class.labs(x, extra, under, digits, xsep, varlen)
+                get.class.labs(x, extra, under, digits, xsep, varlen, class.stats)
             } else {
                 warning0("Unrecognized rpart object")
                 check.func.args(x$functions$text, "x$functions$text",
@@ -86,13 +91,10 @@ get.anova.labs <- function(x, extra, under, digits, xsep, varlen)
     }
     labs
 }
-get.class.labs <- function(x, extra, under, digits, xsep, varlen)
+get.class.stats <- function(obj)
 {
-    frame <- x$frame
-    n <- frame$n
-    ntotal <- n[1]
     # columns of yval2 for e.g. a two-level response are: fitted n1 n2 prob1 prob2
-    yval2 <- frame$yval2
+    yval2 <- obj$frame$yval2
     if(NCOL(yval2) < 5)
         stop0("frame$yval2 is not a matrix with five or more columns")
     fitted <- yval2[, 1] # fitted level as an integer
@@ -110,65 +112,77 @@ get.class.labs <- function(x, extra, under, digits, xsep, varlen)
     prob.per.lev <- yval2[, 1 + nlev + (1:nlev), drop=FALSE]
     # dec 2012: loosened following check to allow for numerical error
     stopifnot(abs(sum(prob.per.lev[1,]) - 1) < 1e-8) # sanity check
+    list(yval2=yval2,
+         fitted=fitted,
+         nlev=nlev,
+         n.per.lev=n.per.lev,
+         prob.per.lev=prob.per.lev)
+}
+get.class.labs <- function(obj, extra, under, digits, xsep, varlen, class.stats)
+{
+    frame <- obj$frame
+    n <- obj$frame$n
+    ntotal <- n[1]
     print.all.probs <- TRUE
     ex <- if(extra < 100) extra else extra - 100
     if(ex == 2 || ex == 3) {        # classification rate?
         if(is.null(xsep))
             xsep <- " / "
         ncorrect <- double(nrow(frame))
+        # columns of yval2 for e.g. a two-level response are: fitted n1 n2 prob1 prob2
         for(i in 1:nrow(frame))
-            ncorrect[i] <- yval2[i, yval2[i, 1] + 1]
+            ncorrect[i] <- class.stats$yval2[i, class.stats$yval2[i, 1] + 1]
     } else if(ex == 6 || ex == 7) { # 2nd prob only?
-        if(nlev != 2)
+        if(class.stats$nlev != 2)
             warning0("extra=", extra, " but the response has ",
-                      nlev, " levels (only the 2nd level is displayed)")
-        prob.per.lev <- prob.per.lev[, 2]
+                      class.stats$nlev, " levels (only the 2nd level is displayed)")
+        class.stats$prob.per.lev <- class.stats$prob.per.lev[, 2]
         print.all.probs <- FALSE
     } else if(ex == 8) {            # prob of fitted class?
-        temp <- double(nrow(prob.per.lev))
-        for(i in 1:nrow(prob.per.lev))
-            temp[i] <- prob.per.lev[i, fitted[i]]
-        prob.per.lev <- temp
+        temp <- double(nrow(class.stats$prob.per.lev))
+        for(i in 1:nrow(class.stats$prob.per.lev))
+            temp[i] <- class.stats$prob.per.lev[i, class.stats$fitted[i]]
+        class.stats$prob.per.lev <- temp
         print.all.probs <- FALSE
     } else if(ex == 9) {           # scale probs by proportion of obs in node?
-        scale <- matrix(rep(rowSums(n.per.lev), each=nlev), ncol=nlev, byrow=TRUE)
-        prob.per.lev  <- prob.per.lev * scale / ntotal
+        scale <- matrix(rep(rowSums(class.stats$n.per.lev), each=class.stats$nlev),
+                        ncol=class.stats$nlev, byrow=TRUE)
+        class.stats$prob.per.lev  <- class.stats$prob.per.lev * scale / ntotal
     }
     if(is.null(xsep))
         xsep <- "  " # two spaces
-    n.per.lev <- format0(n.per.lev, digits)
-    n.per.lev <- apply(matrix(n.per.lev, ncol=nlev),
+    n.per.lev <- format0(class.stats$n.per.lev, digits)
+    n.per.lev <- apply(matrix(n.per.lev, ncol=class.stats$nlev),
                        1, paste.with.breaks, collapse=xsep)
-    prob.per.lev <- formatf(prob.per.lev, digits,
+    prob.per.lev <- formatf(class.stats$prob.per.lev, digits,
                             strip.leading.zeros=print.all.probs)
     if(print.all.probs)
-        prob.per.lev <- apply(matrix(prob.per.lev, ncol=nlev),
+        prob.per.lev <- apply(matrix(prob.per.lev, ncol=class.stats$nlev),
                               1, paste.with.breaks, collapse=xsep)
 
-    fitted <- # fitted level as a string
-        if(is.null(ylevel <- attr(x, "ylevel")))
-            as.character(fitted)
-        else
-            ylevel[fitted]
-    fitted <- my.abbreviate(fitted, varlen)
+    ylevel <- attr(obj, "ylevel")
+    # fitted level as a string
+    sfitted <- if(is.null(ylevel)) as.character(class.stats$fitted)
+               else ylevel[class.stats$fitted]
+    sfitted <- my.abbreviate(sfitted, varlen)
 
     newline <- if(under) "\n\n" else "\n"
 
     labs <-
         if(ex == 0)
-            fitted
+            sfitted
         else if(ex == 1)
-            paste0(fitted, newline, n.per.lev)
+            paste0(sfitted, newline, n.per.lev)
         else if(ex == 2)
-            paste0(fitted, newline, ncorrect, xsep, n)
+            paste0(sfitted, newline, ncorrect, xsep, n)
         else if(ex == 3)
-            paste0(fitted, newline, n - ncorrect, xsep, n)
+            paste0(sfitted, newline, n - ncorrect, xsep, n)
         else if(ex == 4 || ex == 6 || ex == 8 || ex == 9)
-            paste0(fitted, newline, prob.per.lev)
+            paste0(sfitted, newline, prob.per.lev)
         else if(ex == 5 || ex == 7)
             prob.per.lev
         else
-            stop0("extra=", extra, " is illegal (for method=\"", x$method, "\")")
+            stop0("extra=", extra, " is illegal (for method=\"", obj$method, "\")")
 
     if(extra >= 100) { # add percent?
         sep <- switch(ex+1,  # figure out where to put percent (same line? below? etc.)
@@ -178,7 +192,7 @@ get.class.labs <- function(x, extra, under, digits, xsep, varlen)
                       "\n",                       # 3
                       "\n",                       # 4
                       newline,                    # 5
-                      "  ",                       # 6
+                      if(under) "  " else "\n",   # 7 # modified march 2016
                       if(under) "\n\n" else "\n", # 7
                       "  ",                       # 8
                       "\n")                       # 9
@@ -188,9 +202,9 @@ get.class.labs <- function(x, extra, under, digits, xsep, varlen)
     }
     labs
 }
-get.poisson.labs <- function(x, extra, under, digits, xsep, varlen)
+get.poisson.labs <- function(obj, extra, under, digits, xsep, varlen)
 {
-    frame <- x$frame
+    frame <- obj$frame
     rate  <- format0(frame$yval2[,1], digits)
     nbr <- format0(frame$yval2[,2], digits)
     newline <- if(under) "\n\n" else "\n"
@@ -206,7 +220,7 @@ get.poisson.labs <- function(x, extra, under, digits, xsep, varlen)
         labs <- sprintf("%s%s%s", rate, newline, nbr, digits)
         newline <- "  "     # want percent, if any, on same line
     } else
-        stop0("extra=", extra, " is illegal (for method=\"", x$method, "\")")
+        stop0("extra=", extra, " is illegal (for method=\"", obj$method, "\")")
 
     if(extra >= 100)        # add percent?
         labs <- sprintf("%s%s%s%%", labs, newline,
@@ -214,7 +228,7 @@ get.poisson.labs <- function(x, extra, under, digits, xsep, varlen)
     labs
 }
 # check returned labs because split.fun or node.fun may be user supplied
-check.returned.labs <- function(x, labs, fun.name)
+check.returned.labs <- function(obj, labs, fun.name)
 {
     print.and.stop <- function(...)
     {
@@ -227,10 +241,10 @@ check.returned.labs <- function(x, labs, fun.name)
         print.and.stop("length(labs) == 0")
     if(!is.character(labs))
         print.and.stop("!is.character(labs)")
-    if(length(labs) != nrow(x$frame))
+    if(length(labs) != nrow(obj$frame))
         print.and.stop("\nthe number ", length(labs),
             " of returned labels is not equal to the number of rows in frame ",
-            nrow(x$frame))
+            nrow(obj$frame))
 }
 # similar to paste but insert \n as necessary to break up long lines
 paste.with.breaks <- function(x, collapse)

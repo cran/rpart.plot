@@ -1,12 +1,30 @@
 \name{prp}
 \alias{prp}
-\title{Plot an \code{rpart} model.  A superset of \code{rpart.plot}.}
+\title{Plot an \code{rpart} model.}
 \description{
 Plot an \code{\link{rpart}} model.
-The arguments of this function are a superset of those of \code{\link{rpart.plot}}.
 
+This function combines and extends \code{\link{plot.rpart}} and
+\code{\link{text.rpart}} in the \code{\link{rpart}} package.
 For an overview, please see the package vignette
-\dQuote{\href{../doc/prp.pdf}{Plotting rpart trees with prp}}.
+\href{../doc/prp.pdf}{Plotting rpart trees with the rpart.plot package}.
+
+The function \code{\link{rpart.plot}} provides a simplified interface
+to this function.
+First-time users should use \code{\link{rpart.plot}} rather than
+this function.
+
+The arguments of this function are a superset of those of
+\code{\link{rpart.plot}} and some of the arguments have different
+defaults.
+See the \code{\link{rpart.plot}} help page for a table showing the
+different defaults.
+
+(The defaults are different for historical reasons: for backwards
+compatibility the defaults of \code{\link{prp}} haven't changed,
+whereas the defaults of \code{\link{rpart.plot}} were changed when
+\code{type="auto"} and \code{box.palette} were introduced
+in version 2.0.0 of this package.)
 }
 \usage{
 prp(x=stop("no 'x' arg"),
@@ -20,7 +38,7 @@ prp(x=stop("no 'x' arg"),
     compress=TRUE, ycompress=uniform,
     trace=FALSE, snip=FALSE, snip.fun=NULL,
 
-    box.col=0, border.col=col,
+    box.col=0, box.palette=0, border.col=col,
     round=NULL, leaf.round=NULL,
     shadow.col=0, prefix="", suffix="", xsep=NULL,
 
@@ -42,10 +60,11 @@ prp(x=stop("no 'x' arg"),
     nn.cex=NULL, nn.font=3, nn.family="", nn.col=1,
     nn.box.col=0, nn.border.col=nn.col,
     nn.lty=1, nn.lwd=NULL, nn.round=.3,
+    yes.text="yes", no.text="no",
 
     node.fun=internal.node.labs,
     split.fun=internal.split.labs,
-    FUN=text,
+    FUN="text",
 
     nspace=branch, minbranch=.3, do.par=TRUE,
     add.labs=TRUE, clip.left.labs=FALSE, fam.main="",
@@ -58,6 +77,7 @@ prp(x=stop("no 'x' arg"),
     max.auto.cex=1, min.auto.cex=.15, ycompress.cex=.7, accept.cex=1.1,
     shift.amounts=c(1.5, 2),
     Fallen.yspace=.1, boxes.include.gap=FALSE,
+    legend.x=NULL, legend.y=NULL, legend.cex=1,
     ...)
 }
 \arguments{
@@ -65,20 +85,20 @@ prp(x=stop("no 'x' arg"),
      An \code{\link{rpart}} object.  The only required argument.
   }
   \item{type}{
-    Type of plot. Five possibilities:
+    Type of plot. Possible values:
 
-     \code{0} The default.  Draw a split label at each split
+     \bold{0} Default. Draw a split label at each split
               and a node label at each leaf.
 
-     \code{1} Label all nodes, not just leaves.
+     \bold{1} Label all nodes, not just leaves.
               Similar to \code{text.rpart}'s \code{all=TRUE}.
 
-     \code{2} Like \code{1} but draw the split labels below the node labels.
+     \bold{2} Like \code{1} but draw the split labels below the node labels.
               Similar to the plots in the CART book.
 
-     \code{3} Draw separate split labels for the left and right directions.
+     \bold{3} Draw separate split labels for the left and right directions.
 
-     \code{4} Like \code{3} but label all nodes, not just leaves.
+     \bold{4} Like \code{3} but label all nodes, not just leaves.
               Similar to \code{text.rpart}'s \code{fancy=TRUE}.
               See also \code{clip.right.labs}.\cr
 
@@ -86,23 +106,29 @@ prp(x=stop("no 'x' arg"),
   \item{extra}{
      Display extra information at the nodes. Possible values:
 
-     \code{0} No extra information (the default).
+     \bold{"auto"} (case insensitive)\cr
+Automatically select a value based on the model type, as follows:\cr
+\code{extra=106} class model with a binary response\cr
+\code{extra=104} class model with a response having more than two levels\cr
+\code{extra=100} other models\cr
 
-     \code{1} Display the number of observations that fall in the node
+     \bold{0} Default. No extra information.
+
+     \bold{1} Display the number of observations that fall in the node
               (per class for \code{class} objects;
               prefixed by the number of events for \code{poisson} and \code{exp} models).
               Similar to \code{text.rpart}'s \code{use.n=TRUE}.
 
-     \code{2} Class models: display the classification rate at the node,
+     \bold{2} Class models: display the classification rate at the node,
               expressed as the number of correct classifications and the number
               of observations in the node.\cr
               Poisson and exp models: display the number of events.
 
-     \code{3} Class models: misclassification rate at the node,
+     \bold{3} Class models: misclassification rate at the node,
               expressed as the number of incorrect classifications and the number
               of observations in the node.
 
-     \code{4} Class models:
+     \bold{4} Class models:
               probability per class of observations in the node
               (conditioned on the node, sum across a node is 1).
               % (One could argue that \code{2} should be the default value
@@ -111,25 +137,25 @@ prp(x=stop("no 'x' arg"),
               % the first class has a probability of \code{.81}
               % and the second a probability of \code{.19}.
 
-     \code{5} Class models:
+     \bold{5} Class models:
               like \code{4} but do not display the fitted class.
 
-     \code{6} Class models:
+     \bold{6} Class models:
               the probability of the second class only.
               Useful for binary responses.
 
-     \code{7} Class models:
+     \bold{7} Class models:
               like \code{6} but do not display the fitted class.
 
-     \code{8} Class models:
+     \bold{8} Class models:
               the probability of the fitted class.
 
-     \code{9} Class models:
+     \bold{9} Class models:
               the probabilities times the fraction of observations in the node
               (the probability relative to all observations,
               sum across all leaves is 1).
 
-     \code{+100} Add \code{100} to any of the above to also display
+     \bold{+100} Add \code{100} to any of the above to also display
                  the percentage of observations in the node.
                  For example \code{extra=101} displays the number
                  and percentage of observations in the node.
@@ -151,7 +177,7 @@ prp(x=stop("no 'x' arg"),
      See also \code{under.cex}.
   }
   \item{clip.right.labs}{
-     Default is \code{TRUE} meaning ``clip'' the right split labels,
+     Default is \code{TRUE} meaning ``clip'' the right-hand split labels,
      i.e. do not print \code{variable=}.
      Applies only if \code{type=3} or \code{4}.
      See also \code{clip.left.labs}.
@@ -168,14 +194,22 @@ prp(x=stop("no 'x' arg"),
      Default \code{FALSE}.
   }
   \item{yesno}{
-     Default \code{TRUE}, meaning write \code{yes} and \code{no} on the appropriate
-     sides of the top split.
-     Ignored if \code{type=3} or \code{4}.
-     (Use \code{nn.col} and the other \code{nn} parameters
-     to change the color etc. of the \code{yesno} text.)
+     One of\cr
+     \bold{0} don't write \code{yes} and \code{no} on the tree
+     \cr
+     \bold{1} (default) write \code{yes} and \code{no} at the top split
+     \cr
+     \bold{2} write \code{yes} and \code{no} at all splits.  Seems to work best with
+              \code{fallen.leaves=TRUE, split.border.col=1}.
+     \cr
+     (The \code{yesno} argument is ignored if \code{type=3} or \code{4}.
+     Use \code{nn.col} and the other \code{nn} parameters
+     to change the color etc. of the \code{yes} and \code{no} text.
+     Use \code{yes.text} and \code{no.text} to change the actual text displayed.)
   }
   \item{fallen.leaves}{
-     Default \code{FALSE}. If \code{TRUE}, display the leaves at the bottom of the graph.
+     Default \code{FALSE}.
+     If \code{TRUE}, position the leaf nodes at the bottom of the graph.
   }
   \item{branch}{
     Controls the shape of the branch lines.
@@ -186,8 +220,9 @@ prp(x=stop("no 'x' arg"),
   \item{uniform}{
     If \code{TRUE} (the default), the vertical spacing of the nodes is uniform.
     If \code{FALSE}, the nodes are spaced proportionally to the fit
-    (more precisely, to the difference between a node's deviance and the sum of its two children's deviances).
-    Small vertical spaces are automatically artificially expanded
+    (more precisely, to the difference between a node's deviance and the
+    sum of its two children's deviances).
+    Very small vertical spaces are automatically artificially expanded
     to make room for the labels, see \code{minbranch}.
     Note: \code{uniform=FALSE} with \code{cex=NULL} (the default)
     can sometimes cause very small text.
@@ -234,18 +269,20 @@ prp(x=stop("no 'x' arg"),
      (and, for class responses, the class in the node label).
      Default \code{-8}, meaning truncate to eight characters.
      Possible values:\cr
-     =0 use full names.\cr
-     >0 call \code{\link{abbreviate}} with the given \code{varlen}.\cr
-     <0 truncate variable names to the shortest length where they are still unique,
+
+     \bold{0} use full names.\cr
+
+     \bold{greater than 0} call \code{\link{abbreviate}} with the given \code{varlen}.\cr
+
+     \bold{less than 0} truncate variable names to the shortest length where they are still unique,
      but never truncate to shorter than \code{abs(varlen)}.
-     % For example, \code{varlen=-1} will give unique names that are as short as possible.
   }
   \item{faclen}{
      Length of factor level names in splits.
      Default \code{3}, meaning \code{\link{abbreviate}} to three characters.
      Possible values are as \code{varlen} above, except that
-     \code{1} is treated specially, meaning
-     represent the factor levels with alphabetic characters
+     for back-compatibility with \code{\link{text.rpart}} the special value \code{1}
+     means represent the factor levels with alphabetic characters
      (\code{a} for the first level, \code{b} for the second, etc.).
   }
   \item{cex}{
@@ -255,9 +292,9 @@ prp(x=stop("no 'x' arg"),
      Adjust the (possibly automatically calculated) \code{cex}.
      Default \code{1}, meaning no adjustment.
      Use say \code{tweak=1.2} to make the text 20\% larger.
-     Note that font sizes are discrete, so the \code{cex} you ask for
-     may not be the \code{cex} you get.
-     And a small tweak may not actually change the type size
+     However, since font sizes are discrete the \code{cex} you ask for
+     may not be exactly the \code{cex} you get.
+     And a small change to tweak may not actually change the type size,
      or change it more than you want.
   }
   \item{compress}{
@@ -299,7 +336,31 @@ prp(x=stop("no 'x' arg"),
   \item{box.col}{
      Color of the boxes around the text.
      Default \code{0}, meaning use the background color.
+     This argument overrides the \code{box.palette} argument.
   }
+  \item{box.palette}{
+     Palette for coloring the node boxes based on the fitted value.
+This is a a vector of \code{\link{colors}},
+for example \bold{box.palette=c("Red", "Yellow", "Green")}.
+Small fitted values are displayed with colors at the start of the vector;
+large values with colors at the end.\cr
+
+The special value \bold{box.palette=0} (default) uses the background color (typically white).\cr
+
+The special value \bold{box.palette="auto"} (case insensitive)
+automatically selects a predefined palette based on the type of model.
+
+Otherwise specify a predefined palette
+e.g. \bold{box.palette="Grays"} for the predefined gray palette (a range of grays).
+The predefined palettes are:\cr
+\code{Blues} \code{Browns} \code{Grays} \code{Greys} \code{Greens} \code{Oranges} \code{Reds} \code{Purples} \cr
+\code{Bu} \code{Bn} \code{Gn} \code{Gy} \code{Or} \code{Rd} \code{Pu} (alternative names for the above palettes)\cr
+\code{BuGn} \code{GnRd} \code{BuOr} etc. (two color palettes: any combination of two palettes)\cr
+\code{RdYlGn} \code{GnYlRd} (three color palettes)\cr\cr
+Prefix the palette name with \bold{-} to reverse the order of the colors\cr
+e.g. \code{box.palette="-auto"} or \code{box.palette="-Grays"}.\cr\cr
+The \code{box.palette} argument is ignored if the \code{box.col} palette argument is specified.
+}
   \item{border.col}{
      Color of the box border around the text.
      Default \code{col}, the color of the text in the box.
@@ -313,8 +374,7 @@ prp(x=stop("no 'x' arg"),
      Else specify \code{0} for sharp edges, and values greater
      than \code{0} for rounded edges.
      Bigger is more round.
-     Values too big for the box get silently reduced.
-     (TODO clarify.)
+     Values too big for the size of the box get silently reduced.
   }
   \item{leaf.round}{
      Controls the rounding of the corners of the leaf node boxes.
@@ -326,7 +386,7 @@ prp(x=stop("no 'x' arg"),
      Default \code{0}, no shadow.
      Try \code{"gray"} or \code{"darkgray"}.
      (Note: overlapping shadows look better on devices that support \code{\link[=rgb]{alpha}} channels.
-     If you get the message "Warning: semi-transparency is not supported" please let me know ---
+     If you get the message "Warning: semi-transparency is not supported" please let me know --
      it means that a fix is needed to the code that determines if the device supports alpha channels.)
   }
   \item{prefix}{
@@ -474,18 +534,18 @@ prp(x=stop("no 'x' arg"),
      If nonzero draw ``wide branches'', with branch widths proportional
      to the parameter selected by \code{branch.type} as follows:
 
-     \code{0} The default.  The branch lines are drawn conventionally.\cr
-     \code{1} deviance\cr
-     \code{2} sqrt(deviance)\cr
-     \code{3} deviance / nobs\cr
-     \code{4} sqrt(deviance / nobs) (the standard deviation when \code{method="anova"})\cr
-     \code{5} weight (\code{frame$wt}).
+     \bold{0} The default.  The branch lines are drawn conventionally.\cr
+     \bold{1} deviance\cr
+     \bold{2} sqrt(deviance)\cr
+     \bold{3} deviance / nobs\cr
+     \bold{4} sqrt(deviance / nobs) (the standard deviation when \code{method="anova"})\cr
+     \bold{5} weight (\code{frame$wt}).
               This is the number of observations at the node,
               unless \code{rpart}'s \code{weight} argument was used.\cr
-     \code{6} complexity\cr
-     \code{7} abs(predicted value)\cr
-     \code{8} predicted value - min(predicted value)\cr
-     \code{9} constant (for checking visual perception of the
+     \bold{6} complexity\cr
+     \bold{7} abs(predicted value)\cr
+     \bold{8} predicted value - min(predicted value)\cr
+     \bold{9} constant (for checking visual perception of the
               relative width of branches).\cr
 
      Otherwise set \code{branch.type} to your own function.
@@ -558,6 +618,10 @@ prp(x=stop("no 'x' arg"),
      Controls the rounding of the corners of the node number boxes.
      Default \code{.3}, meaning small corners.
      Else specify a value greater than or equal to \code{0}.\cr
+  }
+  \item{yes.text, no.text}{
+     Text displayed when \code{yesno=TRUE}.
+     Default \code{yes.text="yes"} and \code{no.text="no"}.
 
      \bold{The following are user definable functions.}
   }
@@ -757,7 +821,7 @@ prp(x=stop("no 'x' arg"),
     Never downscale to less than this when automatically calculating \code{cex},
     even if overplotted labels result.
     (The graph layout algorithm is unstable with \code{cex}'s below \code{0.15}
-    --- meaning that the automatic type size may be smaller than necessary.)
+    -- meaning that the automatic type size may be smaller than necessary.)
   }
   \item{ycompress.cex}{
     Default \code{.7}.
@@ -786,10 +850,28 @@ prp(x=stop("no 'x' arg"),
   }
   \item{boxes.include.gap}{
     Default \code{FALSE}.
-    Draw the boxes to include \code{gap} and \code{ygap}, for debugging.
-    This only affects the way the boxes are drawn, not the graph layout algorithm in any way.
+    Include \code{gap} and \code{ygap} when drawing the boxes, for debugging purposes.
+    (To draw the boxes, see
+    \code{box.col}, \code{border.col}, \code{split.box.col}, and \code{split.border.col}.)
+    This argument only affects the way the boxes are drawn, not the graph layout algorithm in any way.
     With the optimum \code{cex} at least one pair of boxes displayed in this manner will just touch
     (but none will overlap).
+  }
+  \item{legend.x}{
+    Applies only to models with a multilevel class response
+    (not binary or anova models, for which no legend is drawn).
+    Horizontal position of the legend.
+    Typically a value between \code{0} and \code{1}, although values beyond
+    those limits are often useful.
+    Default is \code{NULL} meaning automatically position the legend (assuming
+    there is enough space). Use \code{NA} for no legend.
+  }
+  \item{legend.y}{
+    Like \code{legend.x} but for the vertical position of the legend.
+  }
+  \item{legend.cex}{
+    Like \code{legend.x} but for the relative size of the legend text.
+    Default is \code{1}.
   }
   \item{\dots}{
     Extra \code{\link{par}} arguments.  Only the ``important'' \code{par} arguments are supported.
@@ -799,7 +881,7 @@ prp(x=stop("no 'x' arg"),
 }
 \value{
 A list with the following components.
-With the default args most of these are automatically calculated.
+With the default args most of these are calculated automatically.
 
   \item{obj}{ The \code{rpart} object.
     Identical to the \code{x} argument passed in unless \code{snip} was used.}
@@ -815,10 +897,11 @@ With the default args most of these are automatically calculated.
   \item{split.boxes}{ The coords of the boxes around the splits.}
 }
 \seealso{
-  The package vignette \dQuote{\href{../doc/prp.pdf}{Plotting rpart trees with prp}}\cr
-  \code{\link{rpart.plot}}\cr
-  \code{\link{plot.rpart}}\cr
-  \code{\link{text.rpart}}\cr
+  The package vignette \href{../doc/prp.pdf}{Plotting rpart trees with the rpart.plot package}\cr\cr
+  \code{\link{rpart.plot}}\cr\cr
+Functions in the \code{rpart} package:
+  \code{\link{plot.rpart}}
+  \code{\link{text.rpart}}
   \code{\link{rpart}}
 }
 \examples{
@@ -831,8 +914,10 @@ old.par <- par(mfrow=c(2,2))
 
 prp(tree, main="default prp\n(type = 0, extra = 0)")
 
-prp(tree, main="type = 4,  extra = 6", type=4, extra=6, faclen=0)
-                         # faclen=0 to print full factor names
+prp(tree, main="type = 4,  extra = 6\nbox.palette = \"auto\"",
+    type=4, extra=6,     # label all nodes, show prob of second class
+    box.palette="auto",  # auto color the nodes based on the model type
+    faclen=0)            # faclen=0 to print full factor names
 
 cols <- ifelse(tree$frame$yval == 1, "darkred", "green4")
                          # green if survived
@@ -841,11 +926,11 @@ prp(tree, main="assorted arguments",
     extra=106,           # display prob of survival and percent of obs
     nn=TRUE,             # display the node numbers
     fallen.leaves=TRUE,  # put the leaves on the bottom of the page
-    branch=.5,           # change angle of branch lines
-    faclen=0,            # do not abbreviate factor levels
-    trace=1,             # print the automatically calculated cex
     shadow.col="gray",   # shadows under the leaves
     branch.lty=3,        # draw branches using dotted lines
+    branch=.5,           # change angle of branch lines
+    faclen=0,            # faclen=0 to print full factor names
+    trace=1,             # print the automatically calculated cex
     split.cex=1.2,       # make the split text larger than the node text
     split.prefix="is ",  # put "is " before split text
     split.suffix="?",    # put "?" after split text
@@ -854,10 +939,10 @@ prp(tree, main="assorted arguments",
     split.border.col="darkgray", # darkgray border on split boxes
     split.round=.5)              # round the split box corners a tad
 
-# the old way for comparison
+# compare to the plotting functions in the rpart package
 plot(tree, uniform=TRUE, compress=TRUE, branch=.2)
-text(tree, use.n=TRUE, cex=.6, xpd=NA) # cex is a guess, depends on your window size
-title("plot.rpart for comparison", cex=.6)
+text(tree, use.n=TRUE, cex=.8, xpd=NA) # cex is a guess, depends on your window size
+title("compare to the plotting functions\nin the rpart package", cex.sub=.8)
 
 par(old.par)
 }

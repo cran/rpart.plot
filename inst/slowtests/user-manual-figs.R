@@ -13,47 +13,57 @@ a <- rpart(O3~., data=ozone1, cp=.024)
 y <- a$frame$yval
 cols <- c("#EE8888", "#EEEE88", "#88CC88")
 cols <- ifelse(y > 20, cols[1], ifelse(y < 15, cols[3], cols[2]))
-prp(a, main="[front] An Example",
+prp(a, main="[front] An Example\n(rpart.plot package version 1.x.x)",
     box.col=cols, type=4, fallen=T, branch=.3, round=0, leaf.round=9,
     clip.right.labs=F, under.cex=1,
     prefix="ozone\n", branch.col="gray", branch.lwd=2,
     extra=101, under=T, lt=" < ", ge=" >= ", cex.main=1.5)
 
+prp(a, main="[front] An Example\n(using box.palette)",
+    type=4, fallen=T, branch=.3, round=0, leaf.round=9,
+    clip.right.labs=F, under.cex=1,
+    box.palette=c("palegreen3", "khaki2", "lightcoral"),
+    prefix="ozone\n", branch.col="gray", branch.lwd=2,
+    extra=101, under=T, lt=" < ", ge=" >= ", cex.main=1.5)
+
+prp(a, main="[front] An Example\n(using box.palette GnYlRd)",
+    type=4, fallen=T, branch=.3, round=0, leaf.round=9,
+    clip.right.labs=F, under.cex=1,
+    box.palette="GnYlRd",
+    prefix="ozone\n", branch.col="gray", branch.lwd=2,
+    extra=101, under=T, lt=" < ", ge=" >= ", cex.main=1.5)
+
 #--- example.R ---
 
-tree <- rpart(survived~., data=ptitanic)
+# old.par <- par(mfrow=c(3,1), mar=c(0, 0, 6, 0))
+#---------------------------------------------------------------------------
+binary.model <- rpart(survived ~ ., data=ptitanic, cp=.02)
+                                        # cp=.02 for small demo tree
 
-tree <- rpart(survived~., data=ptitanic, cp=.02)
+rpart.plot(binary.model, tweak=.9, cex.main=.9,
+           main="\ntitanic survived\n(binary response)")
 
-prp(tree, main="[example] default prp\n(type = 0)")
+#---------------------------------------------------------------------------
+anova.model <- rpart(Mileage ~ ., data=cu.summary)
 
-prp(tree, main="type = 4, extra = 6\n", type=4, extra=6, cex.main=1.2)
+rpart.plot(anova.model, tweak=.9, cex.main=.9,
+           main="\n\n\nmiles per gallon\n(continuous response)\n")
 
-cols <- ifelse(tree$frame$yval == 1, "darkred", "green4")
-                         # green if survived
+#---------------------------------------------------------------------------
+multi.class.model <- rpart(Reliability ~ ., data=cu.summary)
 
-prp(tree, main="assorted arguments",
-    branch.lwd=2,        # gyp for user manual
-    extra=106,           # display prob of survival and percent of obs
-    nn=TRUE,             # display the node numbers
-    fallen.leaves=TRUE,  # put the leaves on the bottom of the page
-    branch=.5,           # change angle of branch lines
-    faclen=0,            # do not abbreviate factor levels
-    trace=1,             # print the automatically calculated cex
-    shadow.col="gray",   # shadows under the leaves
-    branch.lty=3,        # draw branches using dotted lines
-    split.cex=1.2,       # make the split text larger than the node text
-    split.prefix="is ",  # put "is " before split text
-    split.suffix="?",    # put "?" after split text
-    col=cols, border.col=cols,   # show proportions greater than .5 in green
-    split.box.col="lightgray",   # lightgray split boxes (default is white)
-    split.border.col="darkgray", # darkgray border on split boxes
-    split.round=.5)              # round the split box corners somewhat
+rpart.plot(multi.class.model, tweak=1, cex.main=.9,
+           legend.cex=1.3, legend.y=1.15,
+           main="\nvehicle reliability\n(multi class response)")
 
-# the old way for comparison
+#--- compare to the plotting functions in the rpart package ---
+tree <- rpart(survived ~ ., data=ptitanic, cp=.02)
+                         # cp=.02 because want small tree for demo
 plot(tree, uniform=TRUE, compress=TRUE, branch=.2)
-text(tree, use.n=TRUE, cex=.9, xpd=NA) # cex is a guess, depends on your window size
-title("plot.rpart for comparison", cex=.9)
+text(tree, use.n=TRUE, cex=.6, xpd=NA) # cex is a guess, depends on your window size
+title("compare to the plotting functions\nin the rpart package", cex.sub=.8)
+
+# par(old.par)
 
 #--- type.R ---
 
@@ -169,7 +179,7 @@ path.to.root <- function(node)
 
 node <- 11          # 11 is our chosen node, arbitrary for this example
 nodes <- as.numeric(row.names(tree$frame))
-cols <- ifelse(nodes %in% path.to.root(node), "black", "darkgray")
+cols <- ifelse(nodes %in% path.to.root(node), "sienna", "gray")
 prp(tree, nn=TRUE, col=cols, branch.col=cols, split.col=cols, nn.col=cols, tweak=1.2, main="[path-to-root]")
 
 #--- gray-background.R ---
@@ -286,8 +296,8 @@ split.fun <- function(x, labs, digits, varlen, faclen)
 {
     gsub(" = ", ":\n", labs)
 }
-prp(tree.split.label12, extra=1, branch=1, split.border.col=1, branch.col=0, split.yspace=1.5, main="split-label12")
-prp(tree.split.label12, extra=1, branch=1, split.border.col=1, branch.col=0, , split.yspace=1.5, split.fun=split.fun)
+prp(tree.split.label12, extra=1, branch=1, split.border.col=1, branch.col="gray", split.yspace=1.5, main="split-label12")
+prp(tree.split.label12, extra=1, branch=1, split.border.col=1, branch.col="gray", , split.yspace=1.5, split.fun=split.fun)
 prp(tree.split.label12, extra=100, under=T, yesno=F, split.fun=split.fun, tweak=.8)
 
 #--- split-label13.R ---
@@ -305,3 +315,66 @@ split.fun <- function(x, labs, digits, varlen, faclen)
 }
 prp(tree, cex=1.05)
 prp(tree.split.label13, split.fun=split.fun, main="split-label13")
+
+#--- fancy-rpart-plot.R --------------------------------
+
+old.par <- par(mfrow=c(3,3), mar=c(5, 4, 2, 2))
+binary.model <- rpart(survived ~ ., data=ptitanic, cp=.02)
+rpart.plot(binary.model, tweak=1.15, cex.main=1.1,
+           main="rpart.plot (default)\n")
+rpart.plot(binary.model, tweak=1, cex.main=1.1,
+           extra=104, box.palette="GnBu", nn=TRUE,
+           branch.lty=3, shadow.col="gray",
+           main="rpart.plot (with args)\n")
+library(rattle, quietly=TRUE)
+fancyRpartPlot(binary.model, tweak=.8, cex.main=.9,
+           main="\nfancyRpartPlot", sub="")
+par(old.par)
+
+#--- plotmo-examples.R ---------
+
+kyphosis1 <- kyphosis
+kyphosis1$Age <- kyphosis1$Age / 12
+tree <- rpart(Kyphosis ~ ., data=kyphosis1)
+old.par <- par(no.readonly=TRUE)
+par(mfrow=c(3, 3))
+par(mar=c(.5, .5, 2, .5)) # mar is b l t r
+par(mgp=c(1.6, 0.6, 0))
+prp(tree, extra=7)
+par(mar=c(.5, 1, 2, .5)) # mar is b l t r
+plotmo(tree, degree1=NA, do.par=F, theta=220-80, expand=.5,
+       type="prob", nresponse="present", main="", ticktype="d", ntick=3)
+par(mar=c(4, 4, 4, .5))
+plotmo(tree, degree1=NA, do.par=F, main="", type2="image",
+       pt.col=ifelse(kyphosis1$Kyphosis=="present", "red", "lightblue"),
+       pt.pch=20, cex.response=1, col.image=grey(10:4/10), ngrid2=300,
+       type="prob", nresponse="present", yflip=T, xflip=T)
+par(old.par)
+
+#--- plotmo-ozone.R ---------
+
+data(ozone1)
+old.par <- par(mfrow=c(3,3),
+               mar=c(.5, 0.5, 2.5, .5), cex=.6, mgp = c(1.6, 0.6, 0))  # mar is b l t r
+a1 <- rpart(O3~., data=ozone1)
+prp(a1, type=1, cex=1, main="ozone level         \n", Mar=-.07)
+col.persp <- rgb(220, 255, 255, maxColorValue=255)
+plotmo(a1, do.par=F, degree1=NA, degree2="temp",
+       expand=1, swapxy=T, border=1,
+       ngrid2=20, col.persp=col.persp)
+
+a <- lm(O3~., data=ozone1)
+plotmo(a, degree1=NA, all2=T, swapxy=T, do.par=F, degree2=18,
+       main="linear model", clip=F, col.persp=col.persp)
+
+a <- earth(O3~., data=ozone1, degree=2)
+plotmo(a, degree1=NA, all2=T, swapxy=T, do.par=F, degree2=18,
+       main="MARS", col.persp=col.persp)
+
+library(randomForest)
+set.seed(552)
+a <- randomForest(O3~., data=ozone1)
+plotmo(a, degree1=NA, swapxy=T, do.par=F, degree2=5,
+       main="random forest", col.persp=col.persp)
+
+par(old.par)

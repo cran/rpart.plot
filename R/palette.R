@@ -6,10 +6,12 @@
 # TODO These were created in a rush and could be refined.
 
 Blues   <- c("#F7FBFF", "#EAF3FB", "#DEEBF7", "#D2E3F3", "#C6DBEF", "#B2D2E8", "#9ECAE1", "#84BCDB", "#6BAED6")
-Browns  <- c("#FEE391", "#FED370", "#FEC44F", "#FEAE3C", "#FE9929", "#F5841E", "#EC7014", "#DC5E0B", "#CC4C02")
+Browns <- c( "#FEE391", "#FEDB80", "#FED370", "#FECB5f", "#FEC44F", "#FEAE3C", "#FE9929", "#F5841E", "#EC7014")
+# old   - c( "#FEE391", "#FED370", "#FEC44F", "#FEAE3C", "#FE9929", "#F5841E", "#EC7014", "#DC5E0B", "#CC4C02")
 Greens  <- c("#F7FCF5", "#EEF8EA", "#E5F5E0", "#D6EFD0", "#C7E9C0", "#B4E1AD", "#A1D99B", "#8ACE88", "#74C476")
 Grays   <- gray(seq(1, .6, length.out=100))
 Greys   <- Grays
+# TODO Oranges are quite close to Browns
 Oranges <- c("#FFF5EB", "#FEEDDC", "#FEE6CE", "#FDDBB8", "#FDD0A2", "#FDBF86", "#FDAE6B", "#FD9D53", "#FD8D3C")
 Reds    <- c("#FFF5F0", "#FEEAE1", "#FEE0D2", "#FDCDB9", "#FCBBA1", "#FCA689", "#FC9272", "#FB7E5E", "#FB6A4A")
 # original purples are too close to grays
@@ -234,14 +236,13 @@ get.default.args.anova <- function(obj, extra, box.palette, trace, ...,
                                    Default.pal="Blues")
 {
     pal <- convert.predefined.palette(box.palette, Default.pal)
-    if(trace >= 2) {
+    if(trace >= 3) {
         printf("expanded box.palette:\n")
         print.palette(pal)
     }
     if(trace >= 2)
         printf("box.col: %s   to   %s\n",
-               describe.col(pal[1]),
-                            describe.col(pal[length(pal)]))
+               describe.col(pal[1]), describe.col(pal[length(pal)]))
     list(extra=extra,
          box.col=if(is.bifurcated.palette(pal))
                     get.col.from.bifurcated.palette(Fitted,
@@ -251,10 +252,8 @@ get.default.args.anova <- function(obj, extra, box.palette, trace, ...,
          box.palette=pal)
 }
 # multiclass response, or two class response with box.palette=list
-get.default.args.multiclass <- function(obj, box.palette, trace, class.stats, ...)
+get.default.args.multiclass <- function(obj, box.palette, trace, ..., class.stats)
 {
-    if(identical(box.palette, 0))
-        return(list(extra=104, box.col=0))
     must.reverse <- FALSE
     used.classes <- unique(sort(class.stats$fitted, na.last=TRUE))
     if(is.auto(box.palette)) {
@@ -269,14 +268,16 @@ get.default.args.multiclass <- function(obj, box.palette, trace, class.stats, ..
                 list(Reds, Oranges, Grays, Blues, Greens),              # 5
                 list(Reds, Oranges, Purples, Grays, Blues, Greens))     # 6 or more
     }
+    if(length(box.palette) == 1) # allow the user to specify a single color
+        box.palette <- as.list(repl(box.palette, length(used.classes)))
     if(!is.list(box.palette))
         stop0(
 "The rpart model has a multiclass response (not a continuous or binary response).\n",
-"Therefore box.palette must be 0 or \"auto\" or a list of palettes.\n",
+"Therefore box.palette must be \"auto\", or a single color, or a list of palettes.\n",
 "e.g. box.palette=list(\"Reds\", \"Oranges\", \"Grays\", \"Blues\", \"Greens\")")
     for(i in 1:length(box.palette))
         box.palette[[i]] <- convert.predefined.palette(box.palette[[i]], "Undefined")
-    if(trace >= 2) {
+    if(trace >= 3) {
         printf("multiclass box.palette:\n")
         for(i in 1:length(box.palette)) {
             printf("box.palette[[%d]]:\n", i)
@@ -295,7 +296,7 @@ get.default.args.multiclass <- function(obj, box.palette, trace, class.stats, ..
 length(box.palette), ".\n",
 "To make this warning go away use box.palette=0 or trace=-1.")
             }
-            return(list(extra=104, box.col=0))
+            return(list(extra=104, box.col=get.bg()))
         } else {
             if(trace >= 0) {
                 NULL
@@ -363,7 +364,7 @@ length(box.palette), ".\n",
 possible.legend <- function(rv, class.stats, box.col, box.palette,
                             legend.x, legend.y, legend.cex)
 {
-    if(!is.specified(box.palette[1]))
+    if(!is.specified(box.palette[1]) || all(box.palette == get.bg()))
         return()
     if(!is.null(legend.x[1]) && is.na(legend.x[1]))
         return()
@@ -401,16 +402,17 @@ possible.legend <- function(rv, class.stats, box.col, box.palette,
         border=0,
         fill=box.palette[1:length(used.classes)])
 }
-get.default.args.class <- function(obj, box.palette, trace, class.stats, ...)
+get.default.args.class <- function(obj, box.palette, trace, ..., class.stats)
 {
     if(class.stats$nlev == 2 && !is.list(box.palette)) {
         # binomial model (two class response)
-        # (note that we use BuGn but rattle::fancyRpartPlot uses GnBu
+        # (note that we use BuGn although rattle::fancyRpartPlot uses GnBu
         # because we want to be compatible with 2-used-class multiclass model,
         # see get.default.args.multiclass)
         get.default.args.anova(obj, extra=106, box.palette, trace, ...,
                                Fitted=class.stats$prob.per.lev[,2],
                                Threshold=.5, Default.pal="BuGn")
     } else # multiclass response, or two class response with box.palette=list
-        get.default.args.multiclass(obj, box.palette, trace, class.stats, ...)
+        get.default.args.multiclass(obj, box.palette, trace, ...,
+                                    class.stats=class.stats)
 }

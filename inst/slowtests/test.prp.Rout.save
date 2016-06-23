@@ -25,7 +25,7 @@ attached base packages:
 
 other attached packages:
 [1] earth_4.4.4        plotmo_3.1.4       TeachingDemos_2.10 plotrix_3.6-2     
-[5] rpart.plot_2.0.0   rpart_4.1-10      
+[5] rpart.plot_2.0.1   rpart_4.1-10      
 
 loaded via a namespace (and not attached):
 [1] tools_3.3.0
@@ -166,13 +166,11 @@ prp> par(old.par)
 > print(citation("rpart.plot"))
 Warning in citation("rpart.plot") :
   no date field in DESCRIPTION file of package 'rpart.plot'
-Warning in citation("rpart.plot") :
-  could not determine year for 'rpart.plot' from package DESCRIPTION file
 
 To cite package 'rpart.plot' in publications use:
 
-  Stephen Milborrow (NA). rpart.plot: Plot 'rpart' Models: An Enhanced
-  Version of 'plot.rpart'. R package version 2.0.0.
+  Stephen Milborrow (2016). rpart.plot: Plot 'rpart' Models: An
+  Enhanced Version of 'plot.rpart'. R package version 2.0.1.
   http://www.milbo.org/rpart-plot
 
 A BibTeX entry for LaTeX users is
@@ -180,7 +178,8 @@ A BibTeX entry for LaTeX users is
   @Manual{,
     title = {rpart.plot: Plot 'rpart' Models: An Enhanced Version of 'plot.rpart'},
     author = {Stephen Milborrow},
-    note = {R package version 2.0.0},
+    year = {2016},
+    note = {R package version 2.0.1},
     url = {http://www.milbo.org/rpart-plot},
   }
 
@@ -544,6 +543,9 @@ cex 1   xlim c(0, 1)   ylim c(0, 1)
 > prp(fit.oz, type=4, clip.right.labs=F, nn=TRUE, trace=3, # some niceties
 +    main=paste("Path to node", node), col.m=3, lwd=lwds, digits=4,
 +    col=cols, branch.col=cols, split.col=cols, nn.col=cols)
+expanded box.palette:
+   #FFFFFF (white)
+box.col: #FFFFFF (white)   to   #FFFFFF (white)
 Initial scale 0.849
 Shifter: cex improvement 1 best.shift.amount 0 best.split.yshift.amount 0 (will not be used)
 cex 0.849   xlim c(0, 1)   ylim c(0, 1)
@@ -707,6 +709,7 @@ cex 0.625   xlim c(0, 1)   ylim c(-0.05, 1.05)
 +     branch=1,
 +     split.prefix=c("", "", "down ", "", "", "", ""),
 +     split.yshift=c(0, -3, 0, 0, 0, 0, 0))
+box.col: #FFFFFF (white)   to   #FFFFFF (white)
 Initial scale 0.688
 Shifter: cex improvement 1 best.shift.amount 0 best.split.yshift.amount 0 (will not be used)
 cex 0.688   xlim c(0, 1)   ylim c(0, 1)
@@ -821,6 +824,7 @@ cex 1   xlim c(0, 1)   ylim c(0, 1)
 +     yshift=c(3, 0, 3, 3, 0, 0, 0),
 +     split.prefix=c("", "", "down\n", "", "", "", ""),
 +     split.yshift=c(0, -1, 0, 0, 0, 0, 0))
+box.col: #FFFFFF (white)   to   #FFFFFF (white)
 Initial scale 1.06
 Shifter: cex improvement 1 best.shift.amount 0 best.split.yshift.amount 0 (will not be used)
 Clipped scale 1.06 to max.auto.cex 1
@@ -844,23 +848,35 @@ cex 1   xlim c(0, 1)   ylim c(0, 1)
 > par(mfrow=c(2,2))
 > fit3 <- rpart(survived~., data=ititanic, control=list(cp=.002))
 > prp(fit3, trace=3, nn=0, faclen=0, prefix="prob ", main="Page 9")
+expanded box.palette:
+   #FFFFFF (white)
+box.col: #FFFFFF (white)   to   #FFFFFF (white)
 Initial scale 0.65
     Node shifter: cex improvement 1     shift.amount 1.5  <new best
     Node shifter: cex improvement 0.538 shift.amount 2.0  
 Shifter: cex improvement 1 best.shift.amount 1.5 best.split.yshift.amount 0 (will not be used)
 cex 0.65   xlim c(0, 1)   ylim c(0, 1)
 > prp(fit3, extra=100, trace=3, nn=TRUE, faclen=0, fallen.leaves=TRUE, main="fallen leaves")
+expanded box.palette:
+   #FFFFFF (white)
+box.col: #FFFFFF (white)   to   #FFFFFF (white)
 Initial scale 0.45
     Node shifter: cex improvement 0.778 shift.amount 1.5  
     Node shifter: cex improvement 0.556 shift.amount 2.0  
 Shifter: cex improvement 1 best.shift.amount 0 best.split.yshift.amount 0 (will not be used)
 cex 0.45   xlim c(0, 1)   ylim c(0, 1)
 > prp(fit3, type=4, trace=3, nn=TRUE, clip.right.labs=0, split.border.col=1, main="type=4 ")
+expanded box.palette:
+   #FFFFFF (white)
+box.col: #FFFFFF (white)   to   #FFFFFF (white)
 Initial scale 0.45
 Shifter: cex improvement 1 best.shift.amount 0 best.split.yshift.amount 0 (will not be used)
 cex 0.45   xlim c(0, 1)   ylim c(0, 1)
 > # use prefix below to force shifting of fallen leaves to test shifter
 > prp(fit3, type=4, branch=.5, extra=1, under=TRUE, trace=3, nn=FALSE, fallen.leaves=1, prefix="probability ", main="type=4, fallen leaves")
+expanded box.palette:
+   #FFFFFF (white)
+box.col: #FFFFFF (white)   to   #FFFFFF (white)
 Initial scale 0.25
     Node shifter: cex improvement 1.35  shift.amount 1.5  <new best
     Node shifter: cex improvement 1.4   shift.amount 2.0  <new best
@@ -872,6 +888,9 @@ cex 0.35   xlim c(0, 1)   ylim c(0, 1)
 > fit7 <- rpart(survived ~ ., data=ptitanic, cp=.01)
 > # this was wrong until I added check that a shift doesn't move nodes above the nodes for the level above
 > prp(fit7, extra=1, branch=1, trace=3, nn=1, main="Page 10")
+expanded box.palette:
+   #FFFFFF (white)
+box.col: #FFFFFF (white)   to   #FFFFFF (white)
 Initial scale 1.03
 Shifter: cex improvement 1 best.shift.amount 0 best.split.yshift.amount 0 (will not be used)
 Clipped scale 1.03 to max.auto.cex 1
@@ -902,6 +921,7 @@ cex 1   xlim c(-0.65, 1.65)   ylim c(-1.05, 2.05)
 > fit4 <- rpart(survived~., data=ititanic, method="class", control=list(cp=.02))
 > prp(fit4, trace=2, cex=.8, tweak=1.1, main="Page 12",
 +        xflip=TRUE, yflip=TRUE, type=1, extra=100,  yesno=FALSE)
+box.col: #FFFFFF (white)   to   #FFFFFF (white)
 Initial scale 1.33
 Shifter: cex improvement 1 best.shift.amount 0 best.split.yshift.amount 0 (will not be used)
 cex 0.8 (before applying tweak 1.1)   xlim c(0, 1)   ylim c(0, 1)
@@ -1098,12 +1118,18 @@ cex 1   xlim c(0, 1)   ylim c(0, 1)
 > text(a2, use.n=TRUE, all=T, digits=3, xpd=NA, pretty=0)
 > prp(a2, extra=0, eq=" eq ", lt=" lt ", ge=" ge ", facsep="|", xsep="/",
 +     type=4, main="extra=0", trace=3, split.border.col=1)
+expanded box.palette:
+   #FFFFFF (white)
+box.col: #FFFFFF (white)   to   #FFFFFF (white)
 Initial scale 0.931
 Shifter: cex improvement 1 best.shift.amount 0 best.split.yshift.amount 0 (will not be used)
 cex 0.931   xlim c(0, 1)   ylim c(0, 1)
 > prp(a2, extra=1, type=1,  xsep=", ", main="extra=1", trace=1)
 cex 1   xlim c(0, 1)   ylim c(0, 1)
 > prp(a2, extra=100, type=3, clip.right.labs=FALSE, main="extra=100", trace=3, split.border.col=1, ycompress.cex=1)
+expanded box.palette:
+   #FFFFFF (white)
+box.col: #FFFFFF (white)   to   #FFFFFF (white)
 Initial scale 0.931
 Shifter: cex improvement 1 best.shift.amount 0 best.split.yshift.amount 0 (will not be used)
 cex 0.931   xlim c(0, 1)   ylim c(0, 1)
@@ -1189,6 +1215,9 @@ cex 1   xlim c(0, 1)   ylim c(-0.3, 1.3)
 +     shadow.offset=c(.4,1,2),
 +     split.shadow.offset=c(.4,.4,1),
 +     nn.font=c(1,3), nn.adj=c(1,0), nn.col=c(1,2), nn.border.col=c(0,1,2))
+expanded box.palette:
+   #FFFFFF (white)
+box.col: #FFFFFF (white)   to   #FFFFFF (white)
 Initial scale 1.06
 Shifter: cex improvement 1 best.shift.amount 0 best.split.yshift.amount 0 (will not be used)
 Clipped scale 1.06 to max.auto.cex 1
@@ -1205,12 +1234,18 @@ cex 1   xlim c(0, 1)   ylim c(0, 1)
 +     right.split.prefix="R[", right.split.suffix="]R",
 +     round=9, leaf.round=0,
 +     ycompress.cex=.8) # force ycompress for testing with type=4
+expanded box.palette:
+   #FFFFFF (white)
+box.col: #FFFFFF (white)   to   #FFFFFF (white)
 Initial scale 0.849
 Shifter: cex improvement 1 best.shift.amount 0 best.split.yshift.amount 0 (will not be used)
 cex 0.849   xlim c(0, 1)   ylim c(0, 1)
 > 
 > prp(a7, type=4, extra=1, under=F, prefix="response:",
 +     suffix="\n\n (probs)", split.suffix="\n\nabc", faclen=0, trace=3)
+expanded box.palette:
+   #FFFFFF (white)
+box.col: #FFFFFF (white)   to   #FFFFFF (white)
 Initial scale 0.738
 Shifter: cex improvement 1 best.shift.amount 0 best.split.yshift.amount 0 (will not be used)
 cex 0.738   xlim c(0, 1)   ylim c(0, 1)
@@ -1237,24 +1272,29 @@ cex 0.738   xlim c(0, 1)   ylim c(0, 1)
 > par(mfrow=c(2, 3))
 > a <- rpart(survived~., data=ptitanic, control=list(cp=.01))
 > prp(a, uniform=T, branch=.4, compress=T, extra=104, trace=2, main="Page 20")
+box.col: #FFFFFF (white)   to   #FFFFFF (white)
 Initial scale 0.931
 Shifter: cex improvement 1 best.shift.amount 0 best.split.yshift.amount 0 (will not be used)
 cex 0.931   xlim c(0, 1)   ylim c(0, 1)
 > prp(a, uniform=T, branch=.4, compress=T, extra=104, mar=c(1,2,3,4), trace=2, main="test mar=c(1,2,3,4)")
+box.col: #FFFFFF (white)   to   #FFFFFF (white)
 Initial scale 0.816
 Shifter: cex improvement 1 best.shift.amount 0 best.split.yshift.amount 0 (will not be used)
 cex 0.816   xlim c(0, 1)   ylim c(0, 1)
 > prp(a, uniform=T, branch=.4, compress=T, extra=104, mar=c(5,2,3,4), trace=2, main="test mar=c(5,2,3,4)")
+box.col: #FFFFFF (white)   to   #FFFFFF (white)
 Initial scale 0.816
 Shifter: cex improvement 1 best.shift.amount 0 best.split.yshift.amount 0 (will not be used)
 cex 0.816   xlim c(0, 1)   ylim c(0, 1)
 > prp(a, uniform=T, branch=.4, compress=T, extra=104, xpd=T, trace=2, prefix="123456789", cex=1, main="test xpd=T, par=1")
+box.col: #FFFFFF (white)   to   #FFFFFF (white)
 Initial scale 0.562
     Node shifter: cex improvement 0.778 shift.amount 1.5  
     Node shifter: skipping invalid      shift.amount 2.0 
 Shifter: cex improvement 1 best.shift.amount 0 best.split.yshift.amount 0 (will not be used)
 cex 1   xlim c(0, 1)   ylim c(0, 1)
 > prp(a, uniform=T, branch=.4, compress=T, extra=104, xpd=F, trace=2, prefix="123456789", cex=1, main="test xpd=F, par=1")
+box.col: #FFFFFF (white)   to   #FFFFFF (white)
 Initial scale 0.562
     Node shifter: cex improvement 0.778 shift.amount 1.5  
     Node shifter: skipping invalid      shift.amount 2.0 
@@ -1281,6 +1321,9 @@ cex 1   xlim c(0, 1)   ylim c(0, 1)
 > par(mfrow=c(3,3))
 > old.par <- par(no.readonly=TRUE)
 > prp(a, trace=2, main="Page 22") # trace=2 so can see the grid
+box.col 1st: #FFFFFF (white)
+box.col 2nd: #FFFFFF (white)
+box.col 3rd: #FFFFFF (white)
 Initial scale 1.06
 Shifter: cex improvement 1 best.shift.amount 0 best.split.yshift.amount 0 (will not be used)
 Clipped scale 1.06 to max.auto.cex 1
@@ -1291,6 +1334,9 @@ cex 1   xlim c(0, 1)   ylim c(0, 1)
 >     par$usr <- par$fig <- par$mfg <- par$xaxp <- par$yaxp <- NULL
 >     stopifnot(isTRUE(all.equal(old.par, par)))
 > prp(a, trace=2, main="do.par=FALSE", do.par=FALSE)
+box.col 1st: #FFFFFF (white)
+box.col 2nd: #FFFFFF (white)
+box.col 3rd: #FFFFFF (white)
 Initial scale 0.816
 Shifter: cex improvement 1 best.shift.amount 0 best.split.yshift.amount 0 (will not be used)
 cex 0.816   xlim c(0, 1)   ylim c(0, 1)
@@ -1426,37 +1472,486 @@ $split.box$y2
 > prp(root, branch.type=5, main="branch.type=5")
 > par(mfrow=c(1,1))
 > 
-> source("user-manual-figs.R")
+> source("user-manual-figs.R", echo=TRUE)
+
+> library(rpart.plot)
+
+> library(earth)
+
+> data(ptitanic)
+
+> data(ozone1)
+
+> par(mfrow = c(3, 3))
+
+> par(mgp = c(1.5, 0.5, 0))
+
+> a <- rpart(O3 ~ ., data = ozone1, cp = 0.024)
+
+> y <- a$frame$yval
+
+> cols <- c("#EE8888", "#EEEE88", "#88CC88")
+
+> cols <- ifelse(y > 20, cols[1], ifelse(y < 15, cols[3], 
++     cols[2]))
+
+> prp(a, main = "[front] An Example\n(rpart.plot package version 1.x.x)", 
++     box.col = cols, type = 4, fallen = T, branch = 0.3, round = 0, 
++     .... [TRUNCATED] 
+
+> prp(a, main = "[front] An Example\n(using box.palette)", 
++     type = 4, fallen = T, branch = 0.3, round = 0, leaf.round = 9, 
++     clip.right.lab .... [TRUNCATED] 
+
+> prp(a, main = "[front] An Example\n(using box.palette GnYlRd)", 
++     type = 4, fallen = T, branch = 0.3, round = 0, leaf.round = 9, 
++     clip.ri .... [TRUNCATED] 
+
+> binary.model <- rpart(survived ~ ., data = ptitanic, 
++     cp = 0.02)
+
+> rpart.plot(binary.model, tweak = 0.9, cex.main = 0.9, 
++     main = "\ntitanic survived\n(binary response)")
+
+> anova.model <- rpart(Mileage ~ ., data = cu.summary)
+
+> rpart.plot(anova.model, tweak = 0.9, cex.main = 0.9, 
++     main = "\n\n\nmiles per gallon\n(continuous response)\n")
+
+> multi.class.model <- rpart(Reliability ~ ., data = cu.summary)
+
+> rpart.plot(multi.class.model, tweak = 1, cex.main = 0.9, 
++     legend.cex = 1.3, legend.y = 1.15, main = "\nvehicle reliability\n(multi class respo ..." ... [TRUNCATED] 
+
+> tree <- rpart(survived ~ ., data = ptitanic, cp = 0.02)
+
+> plot(tree, uniform = TRUE, compress = TRUE, branch = 0.2)
+
+> text(tree, use.n = TRUE, cex = 0.6, xpd = NA)
+
+> title("compare to the plotting functions\nin the rpart package", 
++     cex.sub = 0.8)
+
+> a <- rpart(survived ~ ., data = ptitanic, control = list(cp = 0.02))
+
+> prp(a, faclen = 0, type = 0, main = "[type] type = 0\n(default)\n")
+
+> prp(a, faclen = 0, type = 1, main = "type = 1\nlabel all nodes\n(like text.rpart all=TRUE)")
+
+> prp(a, faclen = 0, type = 2, main = "type = 2\nsplit labels below node labels\n")
+
+> prp(a, faclen = 0, type = 3, main = "type = 3\nleft and right split labels\n")
+
+> prp(a, faclen = 0, type = 4, main = "type = 4\nlike type=3 but with interior labels\n(like text.rpart fancy=TRUE)")
+
+> a <- rpart(Volume ~ ., data = trees, cp = 0.5)
+
+> prp(a, clip.right.labs = F, split.cex = 0.8, tweak = 1.3, 
++     type = 4, extra = 0, yesno = F, faclen = 0, under = T, cex.main = 1.3, 
++     main  .... [TRUNCATED] 
+
+> prp(a, clip.right.labs = F, split.cex = 0.8, tweak = 1.3, 
++     type = 4, extra = 1, yesno = F, faclen = 0, under = T, cex.main = 1.3, 
++     main  .... [TRUNCATED] 
+
+> prp(a, clip.right.labs = F, split.cex = 0.8, tweak = 1.3, 
++     type = 4, extra = 100, yesno = F, faclen = 0, under = T, 
++     cex.main = 1.3, mai .... [TRUNCATED] 
+
+> prp(a, clip.right.labs = F, split.cex = 0.8, tweak = 1.3, 
++     type = 4, extra = 101, yesno = F, faclen = 0, under = T, 
++     cex.main = 1.3, mai .... [TRUNCATED] 
+
+> a <- rpart(survived ~ ., data = ptitanic, cp = 0.03)
+
+> prp(a, under.cex = 1, type = 4, faclen = 0, under = T, 
++     extra = 0, cex.main = 1, main = "[class-extra] extra = 0\ndefault\n")
+
+> prp(a, under.cex = 1, type = 4, faclen = 0, under = T, 
++     extra = 1, cex.main = 1, main = "extra = 1\nnbr of obs per class\n")
+
+> prp(a, under.cex = 1, type = 4, faclen = 0, under = T, 
++     extra = 2, cex.main = 1, main = "extra = 2\nclass rate\n")
+
+> prp(a, under.cex = 1, type = 4, faclen = 0, under = T, 
++     extra = 3, cex.main = 1, main = "extra = 3\nmisclass rate\n")
+
+> prp(a, under.cex = 1, type = 4, faclen = 0, under = T, 
++     extra = 4, cex.main = 1, main = "extra = 4\nprob per class\n(leaf probs sum to 1)")
+
+> prp(a, under.cex = 1, type = 4, faclen = 0, under = T, 
++     extra = 5, cex.main = 1, main = "extra = 5\nprob per class,\nfitted class not displaye ..." ... [TRUNCATED] 
+
+> prp(a, under.cex = 1, type = 4, faclen = 0, under = T, 
++     extra = 6, cex.main = 1, main = "extra = 6\nprob of 2nd class\n(useful for binary resp ..." ... [TRUNCATED] 
+
+> prp(a, under.cex = 1, type = 4, faclen = 0, under = T, 
++     extra = 7, cex.main = 1, main = "extra = 7\nprob of 2nd class,\nfitted class not displ ..." ... [TRUNCATED] 
+
+> prp(a, under.cex = 1, type = 4, faclen = 0, under = T, 
++     extra = 8, cex.main = 1, main = "extra = 8\nprob of fitted class\n")
+
+> prp(a, under.cex = 1, type = 4, faclen = 0, under = T, 
++     extra = 9, cex.main = 1, main = "extra = 9\noverall prob\n(sum over all leaves is 1)")
+
+> prp(a, under.cex = 1, type = 4, faclen = 0, under = T, 
++     extra = 100, cex.main = 1, main = "extra = 100\npercent of obs\n")
+
+> prp(a, under.cex = 1, type = 4, faclen = 0, under = T, 
++     extra = 106, cex.main = 1, main = "extra = 106\nprob of 2nd class and\npercent of obs" .... [TRUNCATED] 
+
+> tree <- rpart(survived ~ ., data = ptitanic, cp = 0.02)
+
+> prp(tree, extra = 7, prefix = "fraction\n", tweak = 1.2, 
++     main = "[fraction]")
+
+> tree <- rpart(survived ~ ., data = ptitanic, cp = 0.02)
+
+> my.node.fun <- function(x, labs, digits, varlen) {
++     paste("dev", x$frame$dev)
++ }
+
+> prp(tree, node.fun = my.node.fun, tweak = 1.2, main = "[dev]")
+
+> tree <- rpart(survived ~ ., data = ptitanic, cp = 0.02)
+
+> my.node.fun2 <- function(x, labs, digits, varlen) {
++     paste(labs, "\ndev", x$frame$dev)
++ }
+
+> prp(tree, extra = 6, node.fun = my.node.fun2, tweak = 1.2, 
++     main = "[standard-plus-dev]")
+
+> tree <- rpart(survived ~ ., data = ptitanic, cp = 0.02)
+
+> my.node.fun3 <- function(x, labs, digits, varlen) {
++     paste(labs, "\n\ndev", x$frame$dev)
++ }
+
+> prp(tree, extra = 6, node.fun = my.node.fun3, tweak = 1.2, 
++     main = "[double-newline-dev]")
+
+> tree <- rpart(survived ~ ., data = ptitanic, cp = 0.02)
+
+> prp(tree, extra = 6, tweak = 1.2, main = "prefix-col", 
++     box.col = ifelse(tree$frame$yval == 2, "palegreen3", "pink"))
+
+> old.par <- par(no.readonly = TRUE)
+
+> par(mfrow = c(4, 5))
+
+> data(ptitanic)
+
+> tree1 <- rpart(survived ~ ., data = ptitanic, cp = 0.012)
+
+> par(mfrow = c(4, 3), mar = c(0, 0, 2, 0))
+
+> for (iframe in 1:nrow(tree1$frame)) {
++     cols <- ifelse(1:nrow(tree1$frame) <= iframe, "black", "gray")
++     dev.hold()
++     prp(tree1, compres .... [TRUNCATED] 
+
+> par(old.par)
+
+> tree <- rpart(survived ~ ., data = ptitanic, cp = 0.02)
+
+> path.to.root <- function(node) {
++     if (node == 1) 
++         node
++     else c(node, path.to.root(node%/%2))
++ }
+
+> node <- 11
+
+> nodes <- as.numeric(row.names(tree$frame))
+
+> cols <- ifelse(nodes %in% path.to.root(node), "sienna", 
++     "gray")
+
+> prp(tree, nn = TRUE, col = cols, branch.col = cols, 
++     split.col = cols, nn.col = cols, tweak = 1.2, main = "[path-to-root]")
+
+> old.bg <- par(bg = "gray50")
+
+> iris.tree <- rpart(Species ~ ., data = iris)
+
+> prp(iris.tree, type = 0, extra = 8, main = "[gray-background]", 
++     under = TRUE, yesno = FALSE, varlen = 0, faclen = 0, tweak = 1.4, 
++     col  .... [TRUNCATED] 
+
+> par(bg = old.bg)
+
+> tree <- rpart(survived ~ ., data = ptitanic, cp = 0.012)
+
+> new.tree <- prp(tree, main = "[snip-part1]")$obj
+
+> prp(new.tree, main = "[snip-part2]")
+
+> par(mfrow = c(2, 2))
+
+> heat.tree <- function(tree, low.is.green = FALSE, 
++     ...) {
++     y <- tree$frame$yval
++     if (low.is.green) 
++         y <- -y
++     max <- m .... [TRUNCATED] 
+
+> data(ptitanic)
+
+> tree <- rpart(age ~ ., data = ptitanic)
+
+> heat.tree(tree, type = 4, varlen = 0, faclen = 0, 
++     fallen.leaves = TRUE)
+
+> heat.tree(tree, low.is.green = TRUE)
+
+> par(mfrow = c(3, 3))
+
+> a <- rpart(survived ~ ., data = ptitanic, cp = 0.01)
+
+> prp(a, compress = FALSE, ycompress = FALSE, main = "[compress]\ncompress=FALSE\nycompress=FALSE", 
++     cex.main = 0.9, trace = 1)
 cex 0.688   xlim c(0, 1)   ylim c(0, 1)
+
+> text(0.2, -0.12, "calculated cex:\n0.44", cex = 1, 
++     xpd = NA, font = 3, col = rgb(0.1, 0.2, 0.4))
+
+> prp(a, compress = TRUE, ycompress = FALSE, main = "\ncompress=TRUE (default)\nycompress=FALSE", 
++     cex.main = 0.9, trace = 1)
 cex 0.931   xlim c(0, 1)   ylim c(0, 1)
+
+> text(0.2, 0.15, "calculated cex:\n0.69", cex = 1, 
++     xpd = NA, font = 3, col = rgb(0.1, 0.2, 0.4))
+
+> prp(a, compress = TRUE, ycompress = TRUE, main = "\ncompress=TRUE (default)\nycompress=TRUE (default)", 
++     cex.main = 0.9, trace = 1)
 cex 0.931   xlim c(0, 1)   ylim c(0, 1)
+
+> text(0.2, 0.2, "calculated cex:\n0.82", cex = 1, xpd = NA, 
++     font = 3, col = rgb(0.1, 0.2, 0.4))
+
+> plot(1, 1, type = "n", xlab = "", ylab = "", xaxt = "n", 
++     yaxt = "n", bty = "n")
+
+> plot(1, 1, type = "n", xlab = "", ylab = "", xaxt = "n", 
++     yaxt = "n", bty = "n")
+
+> plot(1, 1, type = "n", xlab = "", ylab = "", xaxt = "n", 
++     yaxt = "n", bty = "n")
+
+> a <- rpart(survived ~ ., data = ptitanic, cp = 0.1)
+
+> prp(a, ycompact = FALSE, xcompact = FALSE, faclen = 0, 
++     trace = 1, extra = 6, main = "[compact] xcompact=FALSE\nycompact=FALSE", 
++     cex.ma .... [TRUNCATED] 
 cex 1 (before applying tweak 1.2)   xlim c(0, 1)   ylim c(0, 1)
+
+> rect(-0.05, -0.1, 1.05, 1.2, xpd = NA)
+
+> prp(a, faclen = 0, trace = 1, extra = 6, main = "\ndefault:\nxcompact=TRUE\nycompact=TRUE", 
++     cex.main = 1, split.border.col = 0, tweak = 1.2)
 cex 1 (before applying tweak 1.2)   xlim c(-0.65, 1.65)   ylim c(-0.75, 1.75)
+
+> rect(-0.76, -1.96, 1.76, 3.35, xpd = NA)
+
+> fit <- rpart(Kyphosis ~ Age + Number + Start, data = kyphosis)
+
+> oldpar <- par(mfrow = c(1, 2), xpd = NA)
+
+> plot(fit)
+
+> text(fit, use.n = TRUE)
+
+> prp(fit, extra = 1, uniform = F, branch = 1, yesno = F, 
++     border.col = 0, xsep = "/")
+
+> par(oldpar)
+
+> a9 <- rpart(Price/1000 ~ Mileage + Type + Country, 
++     cu.summary)
+
+> split.fun <- function(x, labs, digits, varlen, faclen) {
++     gsub(" = ", ":\n", labs)
++ }
+
+> prp(a9, extra = 100, under = T, yesno = F, split.fun = split.fun, 
++     main = "a9 (split.fun example)")
+
+> tree <- rpart(survived ~ ., data = ptitanic, cp = 0.02)
+
+> print(as.numeric(row.names(tree$frame)))
 [1]  1  2  4  5 10 11  3
+
+> node <- 2
+
+> print(node%/%2)
 [1] 1
+
+> print(inode <- match(node, nodes))
 [1] 2
+
+> print(is.leaf <- tree$frame$var == "<leaf>")
 [1] FALSE FALSE  TRUE FALSE  TRUE  TRUE  TRUE
+
+> print(nodes[is.leaf])
 [1]  4 10 11  3
+
+> print(is.left <- nodes%%2 == 0)
 [1] FALSE  TRUE  TRUE FALSE  TRUE FALSE FALSE
+
+> print(ifelse(is.left, nodes + 1, nodes - 1))
 [1]  0  3  5  4 11 10  2
+
+> get.children <- function(node) if (is.leaf[match(node, 
++     nodes)]) {
++     node
++ } else c(node, get.children(2 * node), get.children(2 * node + .... [TRUNCATED] 
+
+> print(get.children(2))
 [1]  2  4  5 10 11
+
+> tree.split.label12 <- rpart(Price/1000 ~ Mileage + 
++     Type + Country, cu.summary)
+
+> split.fun <- function(x, labs, digits, varlen, faclen) {
++     gsub(" = ", ":\n", labs)
++ }
+
+> prp(tree.split.label12, extra = 1, branch = 1, split.border.col = 1, 
++     branch.col = "gray", split.yspace = 1.5, main = "split-label12")
+
+> prp(tree.split.label12, extra = 1, branch = 1, split.border.col = 1, 
++     branch.col = "gray", , split.yspace = 1.5, split.fun = split.fun)
+
+> prp(tree.split.label12, extra = 100, under = T, yesno = F, 
++     split.fun = split.fun, tweak = 0.8)
+
+> tree.split.label13 <- rpart(Price/1000 ~ Mileage + 
++     Type + Country, cu.summary)
+
+> split.fun <- function(x, labs, digits, varlen, faclen) {
++     labs <- gsub(",", " ", labs)
++     for (i in 1:length(labs)) {
++         labs[i] <- p .... [TRUNCATED] 
+
+> prp(tree, cex = 1.05)
+
+> prp(tree.split.label13, split.fun = split.fun, main = "split-label13")
+
+> old.par <- par(mfrow = c(3, 3), mar = c(5, 4, 2, 2))
+
+> binary.model <- rpart(survived ~ ., data = ptitanic, 
++     cp = 0.02)
+
+> rpart.plot(binary.model, tweak = 1.15, cex.main = 1.1, 
++     main = "rpart.plot (default)\n")
+
+> rpart.plot(binary.model, tweak = 1, cex.main = 1.1, 
++     extra = 104, box.palette = "GnBu", nn = TRUE, branch.lty = 3, 
++     shadow.col = "gray", .... [TRUNCATED] 
+
+> library(rattle, quietly = TRUE)
 Rattle: A free graphical interface for data mining with R.
 Version 4.1.0 Copyright (c) 2006-2015 Togaware Pty Ltd.
 Type 'rattle()' to shake, rattle, and roll your data.
+
+> fancyRpartPlot(binary.model, tweak = 0.8, cex.main = 0.9, 
++     main = "\nfancyRpartPlot", sub = "")
+
+> par(old.par)
+
+> kyphosis1 <- kyphosis
+
+> kyphosis1$Age <- kyphosis1$Age/12
+
+> tree <- rpart(Kyphosis ~ ., data = kyphosis1)
+
+> old.par <- par(no.readonly = TRUE)
+
+> par(mfrow = c(3, 3))
+
+> par(mar = c(0.5, 0.5, 2, 0.5))
+
+> par(mgp = c(1.6, 0.6, 0))
+
+> prp(tree, extra = 7)
+
+> par(mar = c(0.5, 1, 2, 0.5))
+
+> plotmo(tree, degree1 = NA, do.par = F, theta = 220 - 
++     80, expand = 0.5, type = "prob", nresponse = "present", main = "", 
++     ticktype = "d" .... [TRUNCATED] 
+
+> par(mar = c(4, 4, 4, 0.5))
+
+> plotmo(tree, degree1 = NA, do.par = F, main = "", 
++     type2 = "image", pt.col = ifelse(kyphosis1$Kyphosis == "present", 
++         "red", "lightb ..." ... [TRUNCATED] 
+
+> par(old.par)
+
+> data(ozone1)
+
+> old.par <- par(mfrow = c(3, 3), mar = c(0.5, 0.5, 
++     2.5, 0.5), cex = 0.6, mgp = c(1.6, 0.6, 0))
+
+> a1 <- rpart(O3 ~ ., data = ozone1)
+
+> prp(a1, type = 1, cex = 1, main = "ozone level         \n", 
++     Mar = -0.07)
+
+> col.persp <- rgb(220, 255, 255, maxColorValue = 255)
+
+> plotmo(a1, do.par = F, degree1 = NA, degree2 = "temp", 
++     expand = 1, swapxy = T, border = 1, ngrid2 = 20, col.persp = col.persp)
+
+> a <- lm(O3 ~ ., data = ozone1)
+
+> plotmo(a, degree1 = NA, all2 = T, swapxy = T, do.par = F, 
++     degree2 = 18, main = "linear model", clip = F, col.persp = col.persp)
 Warning: too many predictors to plot all pairs,
          so plotting degree2 plots for just the first 7 predictors
+
+> a <- earth(O3 ~ ., data = ozone1, degree = 2)
+
+> plotmo(a, degree1 = NA, all2 = T, swapxy = T, do.par = F, 
++     degree2 = 18, main = "MARS", col.persp = col.persp)
 Warning: too many predictors to plot all pairs,
          so plotting degree2 plots for just the first 7 predictors
+
+> library(randomForest)
 randomForest 4.6-12
 Type rfNews() to see new features/changes/bug fixes.
+
+> set.seed(552)
+
+> a <- randomForest(O3 ~ ., data = ozone1)
+
+> plotmo(a, degree1 = NA, swapxy = T, do.par = F, degree2 = 5, 
++     main = "random forest", col.persp = col.persp)
+
+> par(old.par)
 > par(mfrow=c(1,1))
 > 
 > set.seed(1924)
 > # use.prp <- FALSE
-> # source("code.in.rpart.report.with.prp.R")
+> # source("code.in.rpart.report.with.prp.R", echo=TRUE)
 > use.prp <- TRUE
-> source("code.in.rpart.report.with.prp.R")
+> source("code.in.rpart.report.with.prp.R", echo=TRUE)
+
+> cat("### Section 3\n")
 ### Section 3
+
+> stagec <- read.table("data.stagec", col.names = c("pgtime", 
++     "pgstat", "age", "eet", "g2", "grade", "gleason", "ploidy"))
+
+> progstat <- factor(stagec$pgstat, levels = 0:1, labels = c("No", 
++     "Prog"))
+
+> cfit <- rpart(progstat ~ age + eet + g2 + grade + 
++     gleason + ploidy, data = stagec, method = "class")
+
+> print(cfit)
 n= 146 
 
 node), split, n, loss, yval, (yprob)
@@ -1473,7 +1968,45 @@ node), split, n, loss, yval, (yprob)
      7) g2>=13.2 50 19 Prog (0.3800000 0.6200000)  
       14) g2>=17.91 25  9 No (0.6400000 0.3600000) *
       15) g2< 17.91 25  3 Prog (0.1200000 0.8800000) *
+
+> par(mfrow = c(2, 3))
+
+> if (use.prp) {
++     prp(cfit, main = "Section 3", uniform = F, branch = 1)
++ } else {
++     plot(cfit, main = "Section 3")
++     text(cfit)
++ }
+
+> cat("### Section 4\n")
 ### Section 4
+
+> n <- 200
+
+> temp <- c(1, 1, 1, 0, 1, 1, 1, 0, 0, 1, 0, 0, 1, 0, 
++     1, 0, 1, 1, 1, 0, 1, 1, 0, 1, 1, 0, 1, 1, 0, 1, 1, 1, 0, 
++     1, 0, 1, 1, 0, 1, 0, 1, 1 .... [TRUNCATED] 
+
+> lights <- matrix(temp, 10, 7, byrow = T)
+
+> set.seed(1)
+
+> temp1 <- matrix(rbinom(n * 7, 1, 0.9), n, 7)
+
+> y <- rep(0:9, length = 200)
+
+> temp1 <- ifelse(lights[y + 1, ] == 1, temp1, 1 - temp1)
+
+> temp2 <- matrix(rbinom(n * 17, 1, 0.5), n, 17)
+
+> x <- cbind(temp1, temp2)
+
+> temp3 <- rpart.control(xval = 10, minbucket = 2, minsplit = 4, 
++     cp = 0)
+
+> dfit <- rpart(y ~ x, method = "class", control = temp3)
+
+> printcp(dfit)
 
 Classification tree:
 rpart(formula = y ~ x, method = "class", control = temp3)
@@ -1500,7 +2033,18 @@ n= 200
 12 0.0055556     22   0.18333 0.37778 0.0372181
 13 0.0037037     31   0.13333 0.41111 0.0379327
 14 0.0000000     34   0.12222 0.42222 0.0381356
+
+> fit9 <- prune(dfit, cp = 0.02)
+
+> if (use.prp) {
++     prp(fit9, branch = 0.3, compress = T, main = "Section 4")
++ } else {
++     plot(fit9, branch = 0.3, compress = T, main = "Secti ..." ... [TRUNCATED] 
+
+> cat("### Section 5\n")
 ### Section 5
+
+> printcp(cfit)
 
 Classification tree:
 rpart(formula = progstat ~ age + eet + g2 + grade + gleason + 
@@ -1517,6 +2061,8 @@ n= 146
 1 0.117284      0   1.00000 1.00000 0.10802
 2 0.027778      3   0.64815 0.87037 0.10454
 3 0.010000      5   0.59259 0.85185 0.10395
+
+> summary(cfit, cp = 0.06)
 Call:
 rpart(formula = progstat ~ age + eet + g2 + grade + gleason + 
     ploidy, data = stagec, method = "class")
@@ -1600,8 +2146,71 @@ Node number 15: 25 observations
     class counts:     3    22
    probabilities: 0.120 0.880 
 
+
+> cat("### Section 6\n")
 ### Section 6
+
+> fit1 <- rpart(Reliability ~ Price + Country + Mileage + 
++     Type, data = cu.summary, parms = list(split = "gini"))
+
+> fit2 <- rpart(Reliability ~ Price + Country + Mileage + 
++     Type, data = cu.summary, parms = list(split = "information"))
+
+> par(mfrow = c(1, 2))
+
+> if (use.prp) {
++     prp(fit1, extra = T, main = "Section 6\ngini", uniform = F, 
++         branch = 1, xsep = "/", under = T)
++     prp(fit2, extra .... [TRUNCATED] 
+
+> par(mfrow = c(1, 1))
+
+> lmat <- matrix(c(0, 4, 3, 0), nrow = 2, ncol = 2, 
++     byrow = F)
+
+> fit1 <- rpart(Kyphosis ~ Age + Number + Start, data = kyphosis)
+
+> fit2 <- rpart(Kyphosis ~ Age + Number + Start, data = kyphosis, 
++     parms = list(prior = c(0.65, 0.35)))
+
+> fit3 <- rpart(Kyphosis ~ Age + Number + Start, data = kyphosis, 
++     parms = list(loss = lmat))
+
+> par(mfrow = c(1, 3))
+
+> if (use.prp) {
++     prp(fit1, main = "Section 6a", extra = T, type = 1, uniform = F, 
++         branch = 1)
++     prp(fit2, extra = T, type = 4, un .... [TRUNCATED] 
+
+> par(mfrow = c(1, 1))
+
+> cat("### Section 7\n")
 ### Section 7
+
+> data(car.test.frame)
+
+> cars <- car.test.frame
+
+> fit3 <- rpart(Price ~ ., data = cars)
+
+> fit3
+n= 60 
+
+node), split, n, deviance, yval
+      * denotes terminal node
+
+ 1) root 60 983551500 12615.670  
+   2) Weight< 2980 36 283686500 10442.580  
+     4) Type=Small 13  21804710  7682.385 *
+     5) Type=Compact,Medium,Sporty 23 106857900 12002.700  
+      10) Country=Japan/USA,Korea,USA 15  21272980 11261.200 *
+      11) Country=France,Germany,Japan 8  61874100 13393.000 *
+   3) Weight>=2980 24 274858800 15875.290  
+     6) Country=USA 14  47843040 14185.710 *
+     7) Country=Japan,Sweden 10 131098800 18240.700 *
+
+> printcp(fit3)
 
 Regression tree:
 rpart(formula = Price ~ ., data = cars)
@@ -1619,6 +2228,8 @@ n= 60
 3 0.097521      2   0.41027 0.75347 0.17287
 4 0.024107      3   0.31275 0.67654 0.15105
 5 0.010000      4   0.28864 0.66649 0.14773
+
+> print(fit3, cp = 0.1)
 n= 60 
 
 node), split, n, deviance, yval
@@ -1629,6 +2240,8 @@ node), split, n, deviance, yval
     4) Type=Small 13  21804710  7682.385 *
     5) Type=Compact,Medium,Sporty 23 106857900 12002.700 *
   3) Weight>=2980 24 274858800 15875.290 *
+
+> summary(fit3, cp = 0.1)
 Call:
 rpart(formula = Price ~ ., data = cars)
   n= 60 
@@ -1688,6 +2301,17 @@ Node number 5: 23 observations
   mean=12002.7, MSE=4645995 
 
 
+> if (use.prp) {
++     prp(fit3, extra = T, main = "Section 7", uniform = F, under = T)
++ } else {
++     plot(fit3)
++     text(fit3, use.n = T, main = .... [TRUNCATED] 
+
+> cfit2 <- rpart(pgstat ~ age + eet + g2 + grade + gleason + 
++     ploidy, data = stagec)
+
+> printcp(cfit2)
+
 Regression tree:
 rpart(formula = pgstat ~ age + eet + g2 + grade + gleason + ploidy, 
     data = stagec)
@@ -1706,6 +2330,8 @@ n= 146
 4 0.019350      4   0.68974 0.93745 0.084810
 5 0.017213      5   0.67039 0.97689 0.089218
 6 0.010000      8   0.61875 0.97910 0.090020
+
+> print(cfit2, cp = 0.03)
 n= 146 
 
 node), split, n, deviance, yval
@@ -1718,9 +2344,46 @@ node), split, n, deviance, yval
      7) g2>=13.2 50 11.780000 0.6200000  
       14) g2>=17.91 25  5.760000 0.3600000 *
       15) g2< 17.91 25  2.640000 0.8800000 *
+
+> cat("### Section 8\n")
 ### Section 8
+
+> cat("### Section 9\n")
 ### Section 9
+
+> fit <- rpart(progstat ~ age + eet + g2 + grade + gleason + 
++     ploidy, stagec, control = rpart.control(cp = 0.025))
+
+> if (use.prp) {
++     prp(fit, main = "Section 9", uniform = F, branch = 1)
++     prp(fit, uniform = T, extra = T, type = 1, main = "Section 9a")
++   .... [TRUNCATED] 
+
+> cat("### Section 10\n")
 ### Section 10
+
+> fit <- rpart(pgtime ~ age + eet + g2 + grade + gleason + 
++     ploidy, stagec)
+
+> fit$cptable
+          CP nsplit rel error   xerror      xstd
+1 0.07572983      0 1.0000000 1.010926 0.1320113
+2 0.02825076      2 0.8485403 1.083596 0.1514971
+3 0.02576114      3 0.8202896 1.184928 0.1606846
+4 0.02340241      5 0.7687673 1.184633 0.1583264
+5 0.01789441      7 0.7219625 1.233281 0.1641593
+6 0.01295145      8 0.7040681 1.246396 0.1710559
+7 0.01000000      9 0.6911166 1.236969 0.1717074
+
+> temp <- xpred.rpart(fit)
+
+> err <- (stagec$pgtime - temp)^2
+
+> sum.err <- apply(err, 2, sum)
+
+> sum.err/(fit$frame)$dev[1]
+0.53786491 0.04625392 0.02697724 0.02455346 0.02046393 0.01522362 0.01138044 
+  1.018269   1.026593   1.114942   1.116595   1.090400   1.079545   1.126400 
 > 
 > # clip.left.labs and clip.right.labs
 > par(mfrow=c(3,3))
@@ -1824,7 +2487,57 @@ node), split, n, deviance, yval
 > # par(old.par)
 > 
 > par(mfrow=c(2,2))
-> source("webpage-figs.R")
+> source("webpage-figs.R", echo=TRUE)
+
+> tree <- rpart(survived ~ ., data = ptitanic, cp = 0.012)
+
+> prp(tree, type = 4, extra = 6, faclen = 0, main = "rpart.plot", 
++     cex.main = 3, col.main = "slategray4", col = 1, max.auto.cex = 1.6)
+
+> tree <- rpart(survived ~ ., data = ptitanic, cp = 0.012)
+
+> prp(tree, branch.type = 5, yesno = FALSE, faclen = 0, 
++     main = "rpart.plot:\nbranch width shows number of observations", 
++     cex.main = 2, c .... [TRUNCATED] 
+
+> library(earth)
+
+> data(ozone1)
+
+> path.to.root <- function(node, ancestors = NULL) {
++     if (node == 1) 
++         c(1, ancestors)
++     else c(node, path.to.root(node%/%2, ancesto .... [TRUNCATED] 
+
+> fit.oz <- rpart(O3 ~ ., data = ozone1)
+
+> node <- 22
+
+> path <- path.to.root(node)
+
+> nodes <- as.numeric(row.names(fit.oz$frame))
+
+> cols <- ifelse(nodes %in% path, 1, "slategray4")
+
+> lwds <- ifelse(nodes %in% path, 2, 1)
+
+> lty <- ifelse(nodes %in% path, 1, 2)
+
+> nn.box.cols <- ifelse(nodes %in% path, 1, "slategray4")
+
+> prp(fit.oz, type = 2, clip.right.labs = F, nn = TRUE, 
++     tweak = 1.4, nn.cex = 1.2, nn.border = 0, nn.col = "white", 
++     main = paste("rpart. ..." ... [TRUNCATED] 
+
+> old.bg <- par(bg = "gray20")
+
+> iris.tree <- rpart(Species ~ ., data = iris)
+
+> prp(iris.tree, type = 0, extra = 104, main = "Fisher's Iris Data", 
++     under = TRUE, yesno = FALSE, fallen.leaves = TRUE, branch = 0.2, 
++     lt .... [TRUNCATED] 
+
+> par(bg = old.bg)
 > 
 > # test rpart.plot version 1.5.3 (deal with situation where user has
 > # a variable named text in the current environment).
@@ -1871,23 +2584,435 @@ Got error as expected from try(prp(a100, FUN = my.bad.text))
 > title("a100g", cex=.6)
 > remove(text)
 > 
-> source("test.palette.R")
+> source("test.palette.R", echo=TRUE)
+
+> library(rpart.plot)
+
+> library(rattle, quietly = TRUE)
+
+> data(ptitanic)
+
+> library(earth)
+
+> data(ozone1)
+
+> options(warn = 1)
+
+> expect.err <- function(object, expected.msg = "") {
++     if (class(object)[1] == "try-error") {
++         msg <- attr(object, "condition")$message[ .... [TRUNCATED] 
+
+> cat("== start test.palette.R ==\n")
 == start test.palette.R ==
+
+> data(ptitanic)
+
+> mod.survived <- rpart(survived ~ ., data = ptitanic, 
++     control = list(cp = 0.02))
+
+> par(mfrow = c(4, 2), mar = c(3, 3, 3, 1), mgp = c(1.5, 
++     0.5, 0))
+
+> rpart.plot(mod.survived, type = 2, fallen.leaves = TRUE, 
++     main = "test.palette.R\ntwo class, box.palette=\"auto\"")
+
+> library(rattle, quietly = TRUE)
+
+> fancyRpartPlot(mod.survived, main = "fancyRpartPlot", 
++     sub = "")
+
+> rpart.plot(mod.survived, type = 2, fallen.leaves = TRUE, 
++     main = "Blues", box.palette = "Blues", trace = 1)
 cex 0.964   xlim c(0, 1)   ylim c(0, 1)
-expanded box.palette:
-   #6BAED6 (nearly skyblue3 #6CA6CD)
-   #84BCDB (nearly lightskyblue3 #8DB6CD)
-   #9ECAE1 (nearly lightsteelblue #B0C4DE)
-   #B2D2E8 (nearly lightblue #ADD8E6)
-   #C6DBEF (nearly lightsteelblue2 #BCD2EE)
-   #D2E3F3 (nearly lightcyan2 #D1EEEE)
-   #DEEBF7 (nearly azure2 #E0EEEE)
-   #EAF3FB (nearly aliceblue #F0F8FF)
-   #F7FBFF (nearly ghostwhite #F8F8FF)
+
+> rpart.plot.version1(mod.survived, type = 2, extra = "auto", 
++     fallen.leaves = TRUE, main = "-Blues", box.palette = "-Blues", 
++     trace = 2)
 box.col: #6BAED6 (nearly skyblue3 #6CA6CD)   to   #F7FBFF (nearly ghostwhite #F8F8FF)
 Initial scale 0.964
 Shifter: cex improvement 1 best.shift.amount 0 best.split.yshift.amount 0 (will not be used)
 cex 0.964   xlim c(0, 1)   ylim c(0, 1)
+
+> rpart.plot(mod.survived, type = 2, fallen.leaves = TRUE, 
++     main = "Browns", box.palette = "Browns", trace = 1)
+cex 0.964   xlim c(0, 1)   ylim c(0, 1)
+
+> rpart.plot.version1(mod.survived, type = 2, extra = "auto", 
++     fallen.leaves = TRUE, main = "-Browns", box.palette = "-Browns", 
++     trace = 2 .... [TRUNCATED] 
+box.col: #EC7014 (nearly chocolate2 #EE7621)   to   #FEE391 (nearly lightgoldenrod1 #FFEC8B)
+Initial scale 0.964
+Shifter: cex improvement 1 best.shift.amount 0 best.split.yshift.amount 0 (will not be used)
+cex 0.964   xlim c(0, 1)   ylim c(0, 1)
+
+> rpart.plot(mod.survived, type = 2, fallen.leaves = TRUE, 
++     main = "Grays", box.palette = "Grays")
+
+> rpart.plot.version1(mod.survived, type = 2, extra = "au", 
++     fallen.leaves = TRUE, main = "-Grays", box.pal = "-Grays")
+
+> rpart.plot(mod.survived, type = 2, fallen.leaves = TRUE, 
++     main = "Greys", box.pa = "Greys")
+
+> rpart.plot.version1(mod.survived, type = 2, extra = "AU", 
++     fallen.leaves = TRUE, main = "-Greys", box.p = "-Greys")
+
+> rpart.plot(mod.survived, type = 2, extra = "auto", 
++     fallen.leaves = TRUE, main = "Greens", box.palette = "Greens")
+
+> prp(mod.survived, type = 2, extra = "AUTO", fallen.leaves = TRUE, 
++     main = "-Greens", box.palette = "-Greens")
+
+> rpart.plot(mod.survived, type = 2, extra = "AUTO", 
++     fallen.leaves = TRUE, main = "Oranges", box.palette = "Oranges")
+
+> rpart.plot.version1(mod.survived, type = 2, extra = "Auto", 
++     fallen.leaves = TRUE, main = "-Oranges", box.palette = "-Oranges")
+
+> rpart.plot(mod.survived, type = 2, fallen.leaves = TRUE, 
++     main = "Reds", box.palette = "Reds")
+
+> rpart.plot.version1(mod.survived, type = 2, extra = "aUTO", 
++     fallen.leaves = TRUE, main = "-Reds", box.palette = "-Reds")
+
+> rpart.plot(mod.survived, type = 2, extra = "Auto", 
++     fallen.leaves = TRUE, main = "Purples", box.palette = "Purples")
+
+> prp(mod.survived, type = 2, extra = "autO", fallen.leaves = TRUE, 
++     main = "-Purples", box.palette = "-Purples")
+
+> par(mfrow = c(4, 3), mar = c(3, 3, 3, 1), mgp = c(1.5, 
++     0.5, 0))
+
+> rpart.plot(mod.survived, type = 2, fallen.leaves = TRUE, 
++     main = "Blues", box.palette = "Blues", trace = 1)
+cex 0.688   xlim c(0, 1)   ylim c(0, 1)
+
+> rpart.plot(mod.survived, type = 2, fallen.leaves = TRUE, 
++     main = "Bu", box.palette = "Bu", trace = 1)
+cex 0.688   xlim c(0, 1)   ylim c(0, 1)
+
+> rpart.plot.version1(mod.survived, type = 2, extra = "auto", 
++     fallen.leaves = TRUE, main = "-Bu", box.palette = "-Bu", 
++     trace = 2)
+box.col: #6BAED6 (nearly skyblue3 #6CA6CD)   to   #F7FBFF (nearly ghostwhite #F8F8FF)
+Initial scale 0.688
+    Node shifter: skipping invalid      shift.amount 1.5 
+    Node shifter: skipping invalid      shift.amount 2.0 
+Shifter: cex improvement 1 best.shift.amount 0 best.split.yshift.amount 0 (will not be used)
+cex 0.688   xlim c(0, 1)   ylim c(0, 1)
+
+> rpart.plot(mod.survived, type = 2, fallen.leaves = TRUE, 
++     main = "Browns", box.palette = "Browns", trace = 1)
+cex 0.688   xlim c(0, 1)   ylim c(0, 1)
+
+> rpart.plot(mod.survived, type = 2, fallen.leaves = TRUE, 
++     main = "Br", box.palette = "Br", trace = 1)
+cex 0.688   xlim c(0, 1)   ylim c(0, 1)
+
+> rpart.plot.version1(mod.survived, type = 2, extra = "auto", 
++     fallen.leaves = TRUE, main = "-Br", box.palette = "-Br", 
++     trace = 2)
+box.col: #EC7014 (nearly chocolate2 #EE7621)   to   #FEE391 (nearly lightgoldenrod1 #FFEC8B)
+Initial scale 0.688
+    Node shifter: skipping invalid      shift.amount 1.5 
+    Node shifter: skipping invalid      shift.amount 2.0 
+Shifter: cex improvement 1 best.shift.amount 0 best.split.yshift.amount 0 (will not be used)
+cex 0.688   xlim c(0, 1)   ylim c(0, 1)
+
+> rpart.plot(mod.survived, type = 2, fallen.leaves = TRUE, 
++     main = "Grays", box.palette = "Grays")
+
+> rpart.plot(mod.survived, type = 2, fallen.leaves = TRUE, 
++     main = "Gy", box.palette = "Gy")
+
+> rpart.plot.version1(mod.survived, type = 2, extra = "au", 
++     fallen.leaves = TRUE, main = "-Gy", box.pal = "-Gy")
+
+> rpart.plot(mod.survived, type = 2, fallen.leaves = TRUE, 
++     main = "Greys", box.pa = "Greys")
+
+> rpart.plot(mod.survived, type = 2, fallen.leaves = TRUE, 
++     main = "Gy", box.pa = "Gy")
+
+> rpart.plot.version1(mod.survived, type = 2, extra = "AU", 
++     fallen.leaves = TRUE, main = "-Gy", box.p = "-Gy")
+
+> rpart.plot(mod.survived, type = 2, extra = "auto", 
++     fallen.leaves = TRUE, main = "Greens", box.palette = "Greens")
+
+> rpart.plot(mod.survived, type = 2, extra = "auto", 
++     fallen.leaves = TRUE, main = "Gn", box.palette = "Gn")
+
+> prp(mod.survived, type = 2, extra = "AUTO", fallen.leaves = TRUE, 
++     main = "-Gn", box.palette = "-Gn")
+
+> rpart.plot(mod.survived, type = 2, extra = "AUTO", 
++     fallen.leaves = TRUE, main = "Oranges", box.palette = "Oranges")
+
+> rpart.plot(mod.survived, type = 2, extra = "AUTO", 
++     fallen.leaves = TRUE, main = "Or", box.palette = "Or")
+
+> rpart.plot.version1(mod.survived, type = 2, extra = "Auto", 
++     fallen.leaves = TRUE, main = "-Or", box.palette = "-Or")
+
+> rpart.plot(mod.survived, type = 2, fallen.leaves = TRUE, 
++     main = "Reds", box.palette = "Reds")
+
+> rpart.plot(mod.survived, type = 2, fallen.leaves = TRUE, 
++     main = "Re", box.palette = "Re")
+
+> rpart.plot.version1(mod.survived, type = 2, extra = "aUTO", 
++     fallen.leaves = TRUE, main = "-Re", box.palette = "-Re")
+
+> rpart.plot(mod.survived, type = 2, extra = "Auto", 
++     fallen.leaves = TRUE, main = "Purples", box.palette = "Purples")
+
+> rpart.plot(mod.survived, type = 2, extra = "Auto", 
++     fallen.leaves = TRUE, main = "Pu", box.palette = "Pu")
+
+> prp(mod.survived, type = 2, extra = "autO", fallen.leaves = TRUE, 
++     main = "-Pu", box.palette = "-Pu")
+
+> par(mfrow = c(4, 2), mar = c(3, 3, 3, 1), mgp = c(1.5, 
++     0.5, 0))
+
+> rpart.plot(mod.survived, type = 2, fallen.leaves = TRUE, 
++     main = "RdYlGn", box.palette = "RdYlGn")
+
+> rpart.plot.version1(mod.survived, type = 2, extra = "aU", 
++     fallen.leaves = TRUE, main = "-RdYlGn", box.palette = "-RdYlGn")
+
+> rpart.plot(mod.survived, type = 2, fallen.leaves = TRUE, 
++     main = "BuGn", box.palette = "BuGn")
+
+> rpart.plot.version1(mod.survived, type = 2, extra = "Au", 
++     fallen.leaves = TRUE, main = "-BuGn", box.palette = "-BuGn")
+
+> rpart.plot(mod.survived, type = 2, extra = "aut", 
++     fallen.leaves = TRUE, main = "BuRd", box.palette = "BuRd")
+
+> rpart.plot.version1(mod.survived, type = 2, extra = "AUT", 
++     fallen.leaves = TRUE, main = "-BuRd", box.palette = "-BuRd")
+
+> rpart.plot(mod.survived, type = 2, extra = "auto", 
++     fallen.leaves = TRUE, main = "RdGn", box.palette = "RdGn")
+
+> rpart.plot.version1(mod.survived, type = 2, extra = "auto", 
++     fallen.leaves = TRUE, main = "-RdGn", box.palette = "-RdGn")
+
+> rpart.plot(mod.survived, type = 2, fallen.leaves = TRUE, 
++     main = "BuGn", box.palette = "BuGn")
+
+> rpart.plot.version1(mod.survived, type = 2, extra = "auto", 
++     fallen.leaves = TRUE, main = "GnBu", box.palette = "GnBu")
+
+> rpart.plot(mod.survived, type = 2, extra = "auto", 
++     fallen.leaves = TRUE, main = "BuRd", box.palette = "BuRd")
+
+> rpart.plot.version1(mod.survived, type = 2, extra = "auto", 
++     fallen.leaves = TRUE, main = "RdBu", box.palette = "RdBu")
+
+> rpart.plot(mod.survived, type = 2, extra = "auto", 
++     fallen.leaves = TRUE, main = "RdGn", box.palette = "RdGn")
+
+> rpart.plot.version1(mod.survived, type = 2, extra = "auto", 
++     fallen.leaves = TRUE, main = "GnRd", box.palette = "GnRd")
+
+> rpart.plot(mod.survived, type = 2, extra = "auto", 
++     fallen.leaves = TRUE, main = "BuBu", box.palette = "BuBu")
+
+> rpart.plot(mod.survived, box.palette = 0, main = "mod.survived\nbox.palette=0")
+
+> rpart.plot(mod.survived, box.palette = NA, main = "mod.survived\nbox.palette=NA")
+
+> par(mfrow = c(2, 2))
+
+> rpart.plot(mod.survived, type = 2, fallen.leaves = TRUE, 
++     main = "test list palette for binomial response\nlist(Blues, Greens)", 
++     box.pa .... [TRUNCATED] 
+
+> rpart.plot.version1(mod.survived, type = 2, extra = "auto", 
++     fallen.leaves = TRUE, main = "list(Blues, Purples)", box.palette = list("Blues",  .... [TRUNCATED] 
+
+> rpart.plot(mod.survived, type = 2, extra = "auto", 
++     fallen.leaves = TRUE, main = "BuGn", box.palette = "BuGn")
+
+> par(mfrow = c(2, 2))
+
+> box.palette = gray(seq(0.95, 0.6, length.out = 100))
+
+> rpart.plot.version1(mod.survived, type = 2, extra = "auto", 
++     fallen.leaves = TRUE, main = paste(length(box.palette), " grays\n(custom palette) ..." ... [TRUNCATED] 
+
+> box.palette = gray(seq(0.9, 0.6, length.out = 3))
+
+> rpart.plot(mod.survived, type = 2, extra = "auto", 
++     fallen.leaves = TRUE, main = paste(length(box.palette), " grays"), 
++     box.palette = bo .... [TRUNCATED] 
+
+> box.palette = gray(seq(0.9, 0.6, length.out = 2))
+
+> rpart.plot.version1(mod.survived, type = 2, extra = "auto", 
++     fallen.leaves = TRUE, main = paste(length(box.palette), " grays"), 
++     box.pal .... [TRUNCATED] 
+
+> rpart.plot(mod.survived, type = 2, extra = "auto", 
++     fallen.leaves = TRUE, main = "single pink", box.palette = "pink")
+
+> rpart.plot.version1(mod.survived, type = 2, extra = "auto", 
++     fallen.leaves = TRUE, main = "wheat", box.palette = "wheat")
+
+> box.palette = c("pink", "palegreen")
+
+> rpart.plot(mod.survived, type = 2, extra = "auto", 
++     fallen.leaves = TRUE, main = "pink palegreen", box.palette = box.palette)
+
+> box.palette = c("pink", "wheat", "palegreen")
+
+> rpart.plot.version1(mod.survived, type = 2, extra = "auto", 
++     fallen.leaves = TRUE, main = "pink wheat palegreen", box.palette = box.palette)
+
+> itit <- ptitanic
+
+> itit$survived <- as.integer(itit$survived == "survived")
+
+> mod.continuous.survived <- rpart(survived ~ ., data = itit, 
++     control = list(cp = 0.02))
+
+> par(mfrow = c(4, 2), mar = c(3, 3, 3, 1), mgp = c(1.5, 
++     0.5, 0))
+
+> rpart.plot(mod.continuous.survived, type = 2, extra = "auto", 
++     main = "continuous (survived)")
+
+> fancyRpartPlot(mod.continuous.survived, main = "fancyRpartPlot", 
++     sub = "")
+
+> rpart.plot.version1(mod.continuous.survived, type = 2, 
++     extra = "auto", fallen.leaves = TRUE, main = "-Greens", box.palette = "-Greens")
+
+> rpart.plot(mod.continuous.survived, type = 2, extra = "auto", 
++     fallen.leaves = TRUE, main = "Greens", box.palette = "Greens")
+
+> rpart.plot.version1(mod.continuous.survived, type = 2, 
++     extra = "auto", fallen.leaves = TRUE, main = "Blues", box.palette = "Blues")
+
+> rpart.plot(mod.continuous.survived, type = 2, extra = "auto", 
++     fallen.leaves = TRUE, main = "-Blues", box.palette = "-Blues")
+
+> rpart.plot.version1(mod.continuous.survived, type = 2, 
++     extra = "auto", fallen.leaves = TRUE, main = "Oranges", box.palette = "Oranges")
+
+> rpart.plot(mod.continuous.survived, type = 2, extra = "auto", 
++     fallen.leaves = TRUE, main = "-Oranges", box.palette = "-Oranges")
+
+> rpart.plot.version1(mod.continuous.survived, type = 2, 
++     extra = "auto", fallen.leaves = TRUE, main = "Purples", box.palette = "Purples")
+
+> rpart.plot(mod.continuous.survived, type = 2, extra = "auto", 
++     fallen.leaves = TRUE, main = "-Purples", box.palette = "-Purples")
+
+> rpart.plot.version1(mod.continuous.survived, type = 2, 
++     extra = "auto", fallen.leaves = TRUE, main = "Reds", box.palette = "Reds")
+
+> rpart.plot(mod.continuous.survived, type = 2, extra = "auto", 
++     fallen.leaves = TRUE, main = "-Reds", box.palette = "-Reds")
+
+> rpart.plot.version1(mod.continuous.survived, type = 2, 
++     extra = "auto", fallen.leaves = TRUE, main = "Grays", box.palette = "Grays")
+
+> rpart.plot(mod.continuous.survived, type = 2, extra = "auto", 
++     fallen.leaves = TRUE, main = "-Grays", box.palette = "-Grays")
+
+> rpart.plot.version1(mod.continuous.survived, type = 2, 
++     extra = "auto", fallen.leaves = TRUE, main = "Greys", box.palette = "Greys")
+
+> rpart.plot(mod.continuous.survived, type = 2, extra = "auto", 
++     fallen.leaves = TRUE, main = "-Greys", box.palette = "-Greys")
+
+> rpart.plot.version1(mod.continuous.survived, type = 2, 
++     extra = "auto", fallen.leaves = TRUE, main = "RdYlGn", box.palette = "RdYlGn")
+
+> rpart.plot(mod.continuous.survived, type = 2, extra = "auto", 
++     fallen.leaves = TRUE, main = "-RdYlGn", box.palette = "-RdYlGn")
+
+> rpart.plot.version1(mod.continuous.survived, type = 2, 
++     extra = "auto", fallen.leaves = TRUE, main = "BuGn", box.palette = "BuGn")
+
+> rpart.plot(mod.continuous.survived, type = 2, extra = "auto", 
++     fallen.leaves = TRUE, main = "-BuGn", box.palette = "-BuGn")
+
+> rpart.plot.version1(mod.continuous.survived, type = 2, 
++     extra = "auto", fallen.leaves = TRUE, main = "BuRd", box.palette = "BuRd")
+
+> rpart.plot(mod.continuous.survived, type = 2, extra = "auto", 
++     fallen.leaves = TRUE, main = "-BuRd", box.palette = "-BuRd")
+
+> rpart.plot.version1(mod.continuous.survived, type = 2, 
++     extra = "auto", fallen.leaves = TRUE, main = "RdGn", box.palette = "RdGn")
+
+> rpart.plot(mod.continuous.survived, type = 2, extra = "auto", 
++     fallen.leaves = TRUE, main = "-RdGn", box.palette = "-RdGn")
+
+> rpart.plot.version1(mod.continuous.survived, type = 2, 
++     extra = "auto", fallen.leaves = TRUE, main = "GnBu", box.palette = "GnBu")
+
+> rpart.plot(mod.continuous.survived, type = 2, extra = "auto", 
++     fallen.leaves = TRUE, main = "-BuGn", box.palette = "-BuGn")
+
+> rpart.plot.version1(mod.continuous.survived, type = 2, 
++     extra = "auto", fallen.leaves = TRUE, main = "BuRd", box.palette = "BuRd")
+
+> rpart.plot(mod.continuous.survived, type = 2, extra = "auto", 
++     fallen.leaves = TRUE, main = "-RdBu", box.palette = "-RdBu")
+
+> rpart.plot.version1(mod.continuous.survived, type = 2, 
++     extra = "auto", fallen.leaves = TRUE, main = "RdGn", box.palette = "RdGn")
+
+> rpart.plot(mod.continuous.survived, type = 2, extra = "auto", 
++     fallen.leaves = TRUE, main = "-GnRd", box.palette = "-GnRd")
+
+> rpart.plot.version1(mod.continuous.survived, type = 2, 
++     extra = "auto", fallen.leaves = TRUE, main = "GnYlRd", box.palette = "GnYlRd")
+
+> rpart.plot(mod.continuous.survived, type = 2, extra = "auto", 
++     fallen.leaves = TRUE, main = "-RdYlGn", box.palette = "-RdYlGn")
+
+> rpart.plot(mod.continuous.survived, box.palette = 0, 
++     main = "box.palette=0")
+
+> rpart.plot(mod.continuous.survived, box.palette = NA, 
++     main = "box.palette=NA")
+
+> par(mfrow = c(2, 2), mar = c(3, 3, 3, 1), mgp = c(1.5, 
++     0.5, 0))
+
+> mod.age <- rpart(age ~ ., data = ptitanic)
+
+> rpart.plot.version1(mod.age, type = 2, extra = "auto", 
++     fallen.leaves = TRUE, box.palette = "auto", main = "age\nbox.palette=\"auto\"")
+
+> fancyRpartPlot(mod.age, main = "fancyRpartPlot", sub = "")
+
+> rpart.plot(mod.age, type = 2, extra = "auto", fallen.leaves = TRUE, 
++     box.palette = "Greens", yesno = 2, main = "Greens yesno=2")
+
+> rpart.plot.version1(mod.age, type = 2, extra = "auto", 
++     fallen.leaves = TRUE, box.palette = "RdYlGn", main = "RdYlGn")
+
+> rpart.plot(mod.age, type = 2, extra = "auto", fallen.leaves = TRUE, 
++     box.palette = "Reds", main = "Reds")
+
+> rpart.plot.version1(mod.age, type = 2, extra = "auto", 
++     fallen.leaves = TRUE, box.palette = "BuGn", main = "BuGn")
+
+> rpart.plot(mod.age, type = 2, extra = "auto", fallen.leaves = TRUE, 
++     box.palette = "auto")
+
+> expect.err(try(rpart.plot.version1(mod.age, type = 2, 
++     extra = "auto", fallen.leaves = TRUE, box.palette = "notacolor")), 
++     "box.palette: ..." ... [TRUNCATED] 
 Error in col2rgb(pal[i]) : invalid color name 'notacolor'
 Error : box.palette: "notacolor" is neither a color nor a palette.
 Try something like box.palette="blue" or box.palette="Blues".
@@ -1898,6 +3023,9 @@ The predefined palettes are (with an optional "-" prefix):
     RdYlGn GnYlRd        (three color palettes)
 
 Got error as expected from try(rpart.plot.version1(mod.age, type = 2, extra = "auto", fallen.leaves = TRUE,     box.palette = "notacolor"))
+
+> expect.err(try(rpart.plot(mod.age, type = 2, extra = "auto", 
++     fallen.leaves = TRUE, box.palette = "#1234XX")), "box.palette: \"#1234XX\" is ne ..." ... [TRUNCATED] 
 Error in col2rgb(pal[i]) : invalid hex digit in 'color' or 'lty'
 Error : box.palette: "#1234XX" is neither a color nor a palette.
 Try something like box.palette="blue" or box.palette="Blues".
@@ -1908,6 +3036,10 @@ The predefined palettes are (with an optional "-" prefix):
     RdYlGn GnYlRd        (three color palettes)
 
 Got error as expected from try(rpart.plot(mod.age, type = 2, extra = "auto", fallen.leaves = TRUE,     box.palette = "#1234XX"))
+
+> expect.err(try(rpart.plot.version1(mod.age, type = 2, 
++     extra = "auto", fallen.leaves = TRUE, box.palette = "#1234XX")), 
++     "box.palette: \ ..." ... [TRUNCATED] 
 Error in col2rgb(pal[i]) : invalid hex digit in 'color' or 'lty'
 Error : box.palette: "#1234XX" is neither a color nor a palette.
 Try something like box.palette="blue" or box.palette="Blues".
@@ -1918,6 +3050,10 @@ The predefined palettes are (with an optional "-" prefix):
     RdYlGn GnYlRd        (three color palettes)
 
 Got error as expected from try(rpart.plot.version1(mod.age, type = 2, extra = "auto", fallen.leaves = TRUE,     box.palette = "#1234XX"))
+
+> expect.err(try(rpart.plot.version1(mod.age, type = 2, 
++     extra = "auto", fallen.leaves = TRUE, box.palette = "B")), 
++     "pal=\"B\" is ambiguo ..." ... [TRUNCATED] 
 Error : pal="B" is ambiguous
 Try something like box.palette="blue" or box.palette="Blues".
 The predefined palettes are (with an optional "-" prefix):
@@ -1927,6 +3063,23 @@ The predefined palettes are (with an optional "-" prefix):
     RdYlGn GnYlRd        (three color palettes)
 
 Got error as expected from try(rpart.plot.version1(mod.age, type = 2, extra = "auto", fallen.leaves = TRUE,     box.palette = "B"))
+
+> expect.err(try(rpart.plot.version1(mod.age, type = 2, 
++     extra = "auto", fallen.leaves = TRUE, box.palette = "-B")), 
++     "pal=\"B\" is ambigu ..." ... [TRUNCATED] 
+Error : pal="B" is ambiguous
+Try something like box.palette="blue" or box.palette="Blues".
+The predefined palettes are (with an optional "-" prefix):
+    Blues Browns Grays Greys Greens Oranges Reds Purples
+    Bu Bn Gn Gy Or Rd Pu (alternative names for the above palettes)
+    BuGn BuBn GnRd etc.  (two color palettes: any combination of two palettes)
+    RdYlGn GnYlRd        (three color palettes)
+
+Got error as expected from try(rpart.plot.version1(mod.age, type = 2, extra = "auto", fallen.leaves = TRUE,     box.palette = "-B"))
+
+> expect.err(try(rpart.plot.version1(mod.age, type = 2, 
++     extra = "auto", fallen.leaves = TRUE, box.palette = "NA")), 
++     "pal=\"NA\" is not a ..." ... [TRUNCATED] 
 Error : pal="NA" is not allowed
 Try something like box.palette="blue" or box.palette="Blues".
 The predefined palettes are (with an optional "-" prefix):
@@ -1936,8 +3089,17 @@ The predefined palettes are (with an optional "-" prefix):
     RdYlGn GnYlRd        (three color palettes)
 
 Got error as expected from try(rpart.plot.version1(mod.age, type = 2, extra = "auto", fallen.leaves = TRUE,     box.palette = "NA"))
+
+> expect.err(try(rpart.plot.version1(mod.age, type = 2, 
++     extra = "auto", fallen.leaves = TRUE, box.palette = rpart.plot)), 
++     "object of typ ..." ... [TRUNCATED] 
+Warning in is.na(box.palette) :
+  is.na() applied to non-(list or vector) of type 'closure'
 Error in pal[i] : object of type 'closure' is not subsettable
 Got error as expected from try(rpart.plot.version1(mod.age, type = 2, extra = "auto", fallen.leaves = TRUE,     box.palette = rpart.plot))
+
+> expect.err(try(rpart.plot(mod.age, type = 2, extra = "auto", 
++     fallen.leaves = TRUE, box.palette = c(0, 1, 2), main = "box.palette=c(0,1,2)")), .... [TRUNCATED] 
 Error in col2rgb(pal[i]) : numerical color values must be positive
 Error : box.palette: 0 is neither a color nor a palette.
 Try something like box.palette="blue" or box.palette="Blues".
@@ -1948,62 +3110,338 @@ The predefined palettes are (with an optional "-" prefix):
     RdYlGn GnYlRd        (three color palettes)
 
 Got error as expected from try(rpart.plot(mod.age, type = 2, extra = "auto", fallen.leaves = TRUE,     box.palette = c(0, 1, 2), main = "box.palette=c(0,1,2)"))
+
+> rpart.plot(mod.age, type = 2, extra = "auto", fallen.leaves = TRUE, 
++     box.palette = c(2, 3, 4), main = "box.palette=c(2,3,4)")
+
+> mod.class <- rpart(pclass ~ ., data = ptitanic, control = list(cp = 0.02))
+
+> par(mfrow = c(2, 2), mar = c(3, 3, 3, 1), mgp = c(1.5, 
++     0.5, 0))
+
+> rpart.plot.version1(mod.class, type = 2, extra = "auto", 
++     fallen.leaves = TRUE, box.palette = "auto", main = "multiclass\n(2 of 3 classes pred ..." ... [TRUNCATED] 
 cex 1   xlim c(0, 1)   ylim c(0, 1)
-multiclass box.palette:
-box.palette[[1]]:
-   #F7FBFF (nearly ghostwhite #F8F8FF)
-   #EAF3FB (nearly aliceblue #F0F8FF)
-   #DEEBF7 (nearly azure2 #E0EEEE)
-   #D2E3F3 (nearly lightcyan2 #D1EEEE)
-   #C6DBEF (nearly lightsteelblue2 #BCD2EE)
-   #B2D2E8 (nearly lightblue #ADD8E6)
-   #9ECAE1 (nearly lightsteelblue #B0C4DE)
-   #84BCDB (nearly lightskyblue3 #8DB6CD)
-   #6BAED6 (nearly skyblue3 #6CA6CD)
-box.palette[[2]]:
-   #FFF5F0 (nearly seashell #FFF5EE)
-   #FEEAE1 (nearly mistyrose #FFE4E1)
-   #FEE0D2 (nearly blanchedalmond #FFEBCD)
-   #FDCDB9 (nearly peachpuff #FFDAB9)
-   #FCBBA1 (nearly burlywood1 #FFD39B)
-   #FCA689 (nearly lightsalmon #FFA07A)
-   #FC9272 (nearly lightsalmon2 #EE9572)
-   #FB7E5E (nearly coral #FF7F50)
-   #FB6A4A (nearly tomato #FF6347)
-box.palette[[3]]:
-   #F7FCF5 (nearly gray97 #F7F7F7)
-   #EEF8EA (nearly gray93 #EDEDED)
-   #E5F5E0 (nearly honeydew2 #E0EEE0)
-   #D6EFD0 (nearly lightyellow2 #EEEED1)
-   #C7E9C0 (nearly darkseagreen1 #C1FFC1)
-   #B4E1AD (nearly darkseagreen2 #B4EEB4)
-   #A1D99B (nearly darkseagreen3 #9BCD9B)
-   #8ACE88 (nearly palegreen3 #7CCD7C)
-   #74C476 (nearly palegreen3 #7CCD7C)
+
+> fancyRpartPlot(mod.class, main = "fancyRpartPlot", 
++     sub = "")
+
+> rpart.plot(mod.class, type = 2, extra = "auto", fallen.leaves = TRUE, 
++     box.palette = list("Blues", "Reds", "Greens"), main = "list(Blues, Reds ..." ... [TRUNCATED] 
 box.col 1st: #6BAED6 (nearly skyblue3 #6CA6CD)
 box.col 3rd: #FB6A4A (nearly tomato #FF6347)
 Initial scale 1.01
 Shifter: cex improvement 1 best.shift.amount 0 best.split.yshift.amount 0 (will not be used)
 Clipped scale 1.01 to max.auto.cex 1
 cex 1   xlim c(0, 1)   ylim c(0, 1)
+
+> rpart.plot(mod.class, type = 2, extra = "auto", fallen.leaves = TRUE, 
++     box.palette = list("Blues", "Reds"), main = "list(Blues, Reds)")
+
+> data(iris)
+
+> mod.species <- rpart(Species ~ ., data = iris, cp = 1e-10)
+
+> rpart.plot(mod.species, type = 2, extra = "auto", 
++     fallen.leaves = TRUE, main = "multiclass\n(3 of 4 classes predicted)")
+
+> rpart.plot(mod.species, type = 2, extra = "auto", 
++     fallen.leaves = TRUE, box.palette = "auto", main = "multiclass, tweak=1.1", 
++     tweak =  .... [TRUNCATED] 
+
+> rpart.plot(mod.species, type = 2, extra = "auto", 
++     fallen.leaves = TRUE, box.palette = list("Reds", "Grays"), 
++     main = "list(Reds, Grays) ..." ... [TRUNCATED] 
 Warning: All boxes will be white (the box.palette argument will be ignored) because
 the number of classes predicted by the model 3 is greater than length(box.palette) 2.
 To make this warning go away use box.palette=0 or trace=-1.
+
+> rpart.plot(mod.species, type = 2, extra = "auto", 
++     fallen.leaves = TRUE, box.palette = 0, main = "box.palette=0")
+
+> rpart.plot(mod.species, type = 2, extra = "auto", 
++     fallen.leaves = TRUE, box.col = 2:4, main = "mod.species\nbox.col=2:4")
+
+> rpart.plot(mod.species, type = 2, extra = "auto", 
++     fallen.leaves = TRUE, box.palette = "pink", main = "box.palette=\"pink\"")
+
+> rpart.plot(mod.species, type = 2, extra = "auto", 
++     fallen.leaves = TRUE, box.palette = "Blues", main = "box.palette=\"Blues\"")
+
+> par(mfrow = c(2, 2))
+
+> prp(mod.continuous.survived, type = 2, extra = "auto", 
++     fallen.leaves = TRUE, main = "mod.continuous.survived\nc(\"Red\", \"Yellow\", \"Green\ .... [TRUNCATED] 
+
+> prp(mod.continuous.survived, type = 2, extra = "auto", 
++     fallen.leaves = TRUE, main = "mod.continuous.survived\nc(\"Green\", \"Yellow\", \"Red\ .... [TRUNCATED] 
+
+> expect.err(try(rpart.plot(mod.species, type = 2, extra = "auto", 
++     fallen.leaves = TRUE, box.palette = c("Blues", "Reds"), main = "box.palette= ..." ... [TRUNCATED] 
 Error : The rpart model has a multiclass response (not a continuous or binary response).
-Therefore box.palette must be 0 or "auto" or a list of palettes.
+Therefore box.palette must be "auto", or a single color, or a list of palettes.
 e.g. box.palette=list("Reds", "Oranges", "Grays", "Blues", "Greens")
-Got error as expected from try(rpart.plot(mod.country, type = 2, extra = "auto", fallen.leaves = TRUE,     box.palette = "Blues"))
+Got error as expected from try(rpart.plot(mod.species, type = 2, extra = "auto", fallen.leaves = TRUE,     box.palette = c("Blues", "Reds"), main = "box.palette=c(\"Blues\", \"Reds\")"))
+
+> par(mfrow = c(1, 2))
+
+> mod.country <- rpart(Country ~ ., cu.summary)
+
+> rv <- rpart.plot(mod.country, type = 2, extra = "auto", 
++     fallen.leaves = TRUE, main = "multiclass\n(4 of 10 classes predicted)")
+
+> fancyRpartPlot(mod.country, main = "fancyRpartPlot", 
++     sub = "")
+
+> rv <- rpart.plot(mod.country, type = 2, extra = "auto", 
++     fallen.leaves = TRUE, main = "multiclass\nbox.palette=\"auto\"", 
++     box.palette = .... [TRUNCATED] 
+
+> rpart.plot(mod.country, type = 2, extra = "auto", 
++     fallen.leaves = TRUE, main = "box.palette=\nlist(\"Greens\", \"Reds\", \"Grays\", \"Purples .... [TRUNCATED] 
+
+> rv <- rpart.plot(mod.country, type = 2, extra = "auto", 
++     fallen.leaves = TRUE, main = "multiclass, trace=-1", box.palette = "auto", 
++     tra .... [TRUNCATED] 
+
+> rv <- rpart.plot(mod.country, type = 2, extra = "auto", 
++     fallen.leaves = TRUE, main = "multiclass, box.palette=0", 
++     box.palette = 0)
+
+> rv <- rpart.plot(mod.country, type = 2, extra = "auto", 
++     fallen.leaves = FALSE, box.palette = "auto", main = "multiclass, fallen.leaves=FALSE" .... [TRUNCATED] 
+
+> expect.err(try(rpart.plot(mod.country, type = 2, extra = "auto", 
++     fallen.leaves = TRUE, box.palette = c("blue", "pink"))), 
++     "The rpart m ..." ... [TRUNCATED] 
+Error : The rpart model has a multiclass response (not a continuous or binary response).
+Therefore box.palette must be "auto", or a single color, or a list of palettes.
+e.g. box.palette=list("Reds", "Oranges", "Grays", "Blues", "Greens")
+Got error as expected from try(rpart.plot(mod.country, type = 2, extra = "auto", fallen.leaves = TRUE,     box.palette = c("blue", "pink")))
+
+> library(earth)
+
+> data(ozone1)
+
+> ozone2 <- ozone1
+
+> set.seed(8)
+
+> ozone2$O3a <- round(runif(330, 1, 10))
+
+> y <- cbind(ozone2$O3, ozone2$O3a)
+
+> mod.poisson <- rpart(y ~ . - O3 - O3a, data = ozone2, 
++     control = list(cp = 0.04))
+
+> par(mfrow = c(2, 2))
+
+> rpart.plot(mod.poisson, type = 2, extra = "auto", 
++     fallen.leaves = TRUE, main = "poisson\ndefault args", box.palette = "auto")
+
+> fancyRpartPlot(mod.poisson, main = "fancyRpartPlot", 
++     sub = "")
+
+> rpart.plot(mod.poisson, type = 2, extra = "auto", 
++     fallen.leaves = TRUE, main = "poisson\nbox.palette=RdYlGn", 
++     box.palette = "RdYlGn")
+
+> rpart.plot(mod.poisson, type = 2, extra = "auto", 
++     fallen.leaves = TRUE, main = "poisson\nbox.palette=BuGn", 
++     box.palette = "BuGn")
+
+> par(mfrow = c(2, 2))
+
+> rpart.plot(mod.continuous.survived, type = 2, extra = "auto", 
++     main = "auto\nmod.continuous.survived", box.palette = "auto")
+
+> rpart.plot(mod.continuous.survived, type = 2, extra = "auto", 
++     main = "-auto\nmod.continuous.survived", box.palette = "-auto")
+
+> rpart.plot(mod.age, type = 2, extra = "a", main = "auto\nmod.age", 
++     box.palette = "auto")
+
+> rpart.plot(mod.age, type = 2, extra = "a", main = "-auto\nmod.age", 
++     box.palette = "-auto")
+
+> par(mfrow = c(2, 2))
+
+> rpart.plot(mod.class, type = 2, extra = "au", main = "auto\nmod.class", 
++     box.palette = "auto")
+
+> rpart.plot(mod.class, type = 2, extra = "au", main = "-auto\nmod.class", 
++     box.palette = "-auto")
+
+> rpart.plot(mod.poisson, type = 2, extra = "AUTO", 
++     main = "auto\nmod.poisson", box.palette = "auto")
+
+> rpart.plot(mod.poisson, type = 2, extra = "AUTO", 
++     main = "-auto\nmod.poisson", box.palette = "-auto")
+
+> par(mfrow = c(2, 2))
+
+> rpart.plot(mod.species, type = 2, extra = "A", main = "auto\nmod.species", 
++     box.palette = "auto")
+
+> rpart.plot(mod.species, type = 2, extra = "A", main = "-auto\nmod.species", 
++     box.palette = "-auto")
+
+> rpart.plot(mod.country, type = 2, extra = "axxx", 
++     main = "auto\nmod.country", box.palette = "auto")
+
+> rpart.plot(mod.country, type = 2, extra = "axxx", 
++     main = "-auto\nmod.country", box.palette = "-auto")
+
+> par(mfrow = c(2, 2))
+
+> rpart.plot(multi.class.model, legend.x = NULL, main = "legend.x=NULL (default)")
+
+> rpart.plot(multi.class.model, legend.x = NA, main = "legend.x=NA (no legend)")
+
+> rpart.plot(multi.class.model, fallen.leaves = TRUE, 
++     legend.x = 0.8, main = "legend.x=.8")
+
+> rpart.plot(multi.class.model, legend.x = -0.1, legend.cex = 1.4, 
++     main = "legend.x=-.1, legend.cex=1.4")
+
+> par(mfrow = c(2, 2))
+
+> rpart.plot(multi.class.model, legend.y = NULL, main = "legend.y=NULL (default)")
+
+> rpart.plot(multi.class.model, fallen.leaves = FALSE, 
++     legend.y = NA, main = "legend.y=NA (no legend)")
+
+> rpart.plot(multi.class.model, fallen.leaves = FALSE, 
++     legend.y = 0.16, main = "legend.y=.16")
+
+> rpart.plot(multi.class.model, legend.x = 0, legend.y = 1.1, 
++     legend.cex = 0.8, main = "legend.x=0 legend.y=1.1 legend.cex=.8")
+
+> cat("== done test.palette.R ==\n")
 == done test.palette.R ==
 > 
-> source("test.na.R")
+> source("test.na.R", echo=TRUE)
+
+> library(rpart.plot)
+
+> data(ptitanic)
+
+> library(earth)
+
+> data(ozone1)
+
+> sessionInfo()
+R version 3.3.0 (2016-05-03)
+Platform: x86_64-w64-mingw32/x64 (64-bit)
+Running under: Windows 7 x64 (build 7601) Service Pack 1
+
+locale:
+[1] LC_COLLATE=English_United States.1252 
+[2] LC_CTYPE=English_United States.1252   
+[3] LC_MONETARY=English_United States.1252
+[4] LC_NUMERIC=C                          
+[5] LC_TIME=English_United States.1252    
+
+attached base packages:
+[1] stats     graphics  grDevices utils     datasets  methods   base     
+
+other attached packages:
+[1] randomForest_4.6-12 rattle_4.1.0        earth_4.4.4        
+[4] plotmo_3.1.4        TeachingDemos_2.10  plotrix_3.6-2      
+[7] rpart.plot_2.0.1    rpart_4.1-10       
+
+loaded via a namespace (and not attached):
+[1] magrittr_1.5       tools_3.3.0        RColorBrewer_1.1-2 stringi_1.1.1     
+[5] RGtk2_2.20.31     
+
+> ititanic <- ptitanic
+
+> ititanic$survived <- as.integer(ititanic$survived == 
++     "survived")
+
+> options(warn = 1)
+
+> expect.err <- function(object, expected.msg = "") {
++     if (class(object)[1] == "try-error") {
++         msg <- attr(object, "condition")$message[ .... [TRUNCATED] 
+
+> par(mfrow = c(2, 2))
+
+> a.age <- rpart(age ~ ., data = ptitanic, cp = 0.02)
+
+> a.age$frame$yval[6] <- NA
+
+> rpart.plot(a.age, nn = 1, main = "age with na")
 Warning: NA in fitted values (fitted[6] is NA)
+
+> a <- rpart(survived ~ ., data = ptitanic, control = list(cp = 0.02))
+
+> a$frame$yval[3] <- a$frame$yval2[3, 1] <- a$frame$yval2[3, 
++     5] <- NA
+
+> a$frame$yval[4] <- a$frame$yval2[4, 1] <- a$frame$yval2[4, 
++     5] <- NA
+
+> expect.err(try(rpart.plot(a, nn = 1, type = 1, fallen.leaves = FALSE, 
++     main = "survived with na")), "Bifurcated palettes like box.palette=\"Bu .... [TRUNCATED] 
 Error : Bifurcated palettes like box.palette="BuGn" cannot be used for this model
        because there are NAs in the fitted values.
        Try something like box.palette="Blues"
 Got error as expected from try(rpart.plot(a, nn = 1, type = 1, fallen.leaves = FALSE, main = "survived with na"))
+
+> rpart.plot(a, nn = 1, type = 1, fallen.leaves = FALSE, 
++     box.palette = "Blues", main = "survived with na")
 Warning: NA in fitted values (fitted[3] is NA)
+
+> a.pclass <- rpart(pclass ~ ., data = ptitanic, control = rpart.control(cp = 0.01))
+
+> a.pclass$frame$yval[3] <- a.pclass$frame$yval2[3, 
++     1] <- NA
+
+> rpart.plot(a.pclass, nn = 1, main = "pclass with na")
 > 
-> source("test.imports.R")
+> source("test.imports.R", echo=TRUE)
+
+> library(rpart.plot)
+
+> data(ptitanic)
+
+> library(earth)
+
+> data(ozone1)
+
+> sessionInfo()
+R version 3.3.0 (2016-05-03)
+Platform: x86_64-w64-mingw32/x64 (64-bit)
+Running under: Windows 7 x64 (build 7601) Service Pack 1
+
+locale:
+[1] LC_COLLATE=English_United States.1252 
+[2] LC_CTYPE=English_United States.1252   
+[3] LC_MONETARY=English_United States.1252
+[4] LC_NUMERIC=C                          
+[5] LC_TIME=English_United States.1252    
+
+attached base packages:
+[1] stats     graphics  grDevices utils     datasets  methods   base     
+
+other attached packages:
+[1] randomForest_4.6-12 rattle_4.1.0        earth_4.4.4        
+[4] plotmo_3.1.4        TeachingDemos_2.10  plotrix_3.6-2      
+[7] rpart.plot_2.0.1    rpart_4.1-10       
+
+loaded via a namespace (and not attached):
+[1] magrittr_1.5       tools_3.3.0        RColorBrewer_1.1-2 stringi_1.1.1     
+[5] RGtk2_2.20.31     
+
+> ititanic <- ptitanic
+
+> ititanic$survived <- as.integer(ititanic$survived == 
++     "survived")
+
+> options(warn = 1)
+
+> library(DStree)
 Loading required package: pec
 Loading required package: prodlim
 Loading required package: Ecdat
@@ -2023,6 +3461,10 @@ The following object is masked from 'package:datasets':
     Orange
 
 
+> par(mfrow = c(3, 3))
+
+> example(plot.DStree)
+
 plt.DS> data(cost)
 
 plt.DS> # Discretize observed days to years
@@ -2038,7 +3480,12 @@ plt.DS> #survival probabilities are in the first plot
 plt.DS> 
 plt.DS> #Plot tree and hazard probabilities for terminal leaves 4 and 15
 plt.DS> plot(fit,prob="haz",select=c("2","7"))
+
+> plot(fit, prob = "surv", box.palette = "auto", main = "DStree\nbox.palette=\"auto\"")
 Warning: NA in fitted values (fitted[5] is NA)
+
+> plot(fit, prob = "surv", type = 1, nn = TRUE, yesno = 2, 
++     box.palette = "Oranges", main = "DStree\ntype=1, nn=TRUE, yesno=2\nbox.palette=\"Ora .... [TRUNCATED] 
 Warning: NA in fitted values (fitted[5] is NA)
 > 
 > if(!interactive()) {

@@ -34,18 +34,48 @@ library(rattle, quietly=TRUE)
 fancyRpartPlot(mod.survived, main="fancyRpartPlot", sub="")
 rpart.plot         (mod.survived, type=2,               fallen.leaves=TRUE, main="Blues",    box.palette="Blues", trace=1)
 rpart.plot.version1(mod.survived, type=2, extra="auto", fallen.leaves=TRUE, main="-Blues",   box.palette="-Blues", trace=2)
-rpart.plot         (mod.survived, type=2, extra="auto", fallen.leaves=TRUE, main="Greens",   box.palette="Greens")
-prp                (mod.survived, type=2, extra="AUTO", fallen.leaves=TRUE, main="-Greens",  box.palette="-Greens")
-rpart.plot         (mod.survived, type=2, extra="AUTO", fallen.leaves=TRUE, main="Oranges",  box.palette="Oranges")
-rpart.plot.version1(mod.survived, type=2, extra="Auto", fallen.leaves=TRUE, main="-Oranges", box.palette="-Oranges")
-rpart.plot         (mod.survived, type=2, extra="Auto", fallen.leaves=TRUE, main="Purples",  box.palette="Purples")
-prp                (mod.survived, type=2, extra="autO", fallen.leaves=TRUE, main="-Purples", box.palette="-Purples")
-rpart.plot         (mod.survived, type=2,               fallen.leaves=TRUE, main="Reds",     box.palette="Reds")
-rpart.plot.version1(mod.survived, type=2, extra="aUTO", fallen.leaves=TRUE, main="-Reds",    box.palette="-Reds")
+rpart.plot         (mod.survived, type=2,               fallen.leaves=TRUE, main="Browns",   box.palette="Browns", trace=1)
+rpart.plot.version1(mod.survived, type=2, extra="auto", fallen.leaves=TRUE, main="-Browns",  box.palette="-Browns", trace=2)
 rpart.plot         (mod.survived, type=2,               fallen.leaves=TRUE, main="Grays",    box.palette="Grays")
 rpart.plot.version1(mod.survived, type=2, extra="au",   fallen.leaves=TRUE, main="-Grays",   box.pal="-Grays")
 rpart.plot         (mod.survived, type=2,               fallen.leaves=TRUE, main="Greys",    box.pa="Greys")
 rpart.plot.version1(mod.survived, type=2, extra="AU",   fallen.leaves=TRUE, main="-Greys",   box.p="-Greys")
+rpart.plot         (mod.survived, type=2, extra="auto", fallen.leaves=TRUE, main="Greens",   box.palette="Greens")
+prp                (mod.survived, type=2, extra="AUTO", fallen.leaves=TRUE, main="-Greens",  box.palette="-Greens")
+rpart.plot         (mod.survived, type=2, extra="AUTO", fallen.leaves=TRUE, main="Oranges",  box.palette="Oranges")
+rpart.plot.version1(mod.survived, type=2, extra="Auto", fallen.leaves=TRUE, main="-Oranges", box.palette="-Oranges")
+rpart.plot         (mod.survived, type=2,               fallen.leaves=TRUE, main="Reds",     box.palette="Reds")
+rpart.plot.version1(mod.survived, type=2, extra="aUTO", fallen.leaves=TRUE, main="-Reds",    box.palette="-Reds")
+rpart.plot         (mod.survived, type=2, extra="Auto", fallen.leaves=TRUE, main="Purples",  box.palette="Purples")
+prp                (mod.survived, type=2, extra="autO", fallen.leaves=TRUE, main="-Purples", box.palette="-Purples")
+
+par(mfrow = c(4, 3), mar = c(3, 3, 3, 1), mgp = c(1.5, 0.5, 0))
+rpart.plot         (mod.survived, type=2,               fallen.leaves=TRUE, main="Blues",    box.palette="Blues", trace=1)
+rpart.plot         (mod.survived, type=2,               fallen.leaves=TRUE, main="Bu",       box.palette="Bu", trace=1)
+rpart.plot.version1(mod.survived, type=2, extra="auto", fallen.leaves=TRUE, main="-Bu",      box.palette="-Bu", trace=2)
+rpart.plot         (mod.survived, type=2,               fallen.leaves=TRUE, main="Browns",   box.palette="Browns", trace=1)
+rpart.plot         (mod.survived, type=2,               fallen.leaves=TRUE, main="Br",       box.palette="Br", trace=1)
+rpart.plot.version1(mod.survived, type=2, extra="auto", fallen.leaves=TRUE, main="-Br",      box.palette="-Br", trace=2)
+rpart.plot         (mod.survived, type=2,               fallen.leaves=TRUE, main="Grays",    box.palette="Grays")
+rpart.plot         (mod.survived, type=2,               fallen.leaves=TRUE, main="Gy",       box.palette="Gy")
+rpart.plot.version1(mod.survived, type=2, extra="au",   fallen.leaves=TRUE, main="-Gy",      box.pal="-Gy")
+rpart.plot         (mod.survived, type=2,               fallen.leaves=TRUE, main="Greys",    box.pa="Greys")
+rpart.plot         (mod.survived, type=2,               fallen.leaves=TRUE, main="Gy",       box.pa="Gy")
+rpart.plot.version1(mod.survived, type=2, extra="AU",   fallen.leaves=TRUE, main="-Gy",      box.p="-Gy")
+rpart.plot         (mod.survived, type=2, extra="auto", fallen.leaves=TRUE, main="Greens",   box.palette="Greens")
+rpart.plot         (mod.survived, type=2, extra="auto", fallen.leaves=TRUE, main="Gn",       box.palette="Gn")
+prp                (mod.survived, type=2, extra="AUTO", fallen.leaves=TRUE, main="-Gn",      box.palette="-Gn")
+rpart.plot         (mod.survived, type=2, extra="AUTO", fallen.leaves=TRUE, main="Oranges",  box.palette="Oranges")
+rpart.plot         (mod.survived, type=2, extra="AUTO", fallen.leaves=TRUE, main="Or",       box.palette="Or")
+rpart.plot.version1(mod.survived, type=2, extra="Auto", fallen.leaves=TRUE, main="-Or",      box.palette="-Or")
+rpart.plot         (mod.survived, type=2,               fallen.leaves=TRUE, main="Reds",     box.palette="Reds")
+rpart.plot         (mod.survived, type=2,               fallen.leaves=TRUE, main="Re",       box.palette="Re")
+rpart.plot.version1(mod.survived, type=2, extra="aUTO", fallen.leaves=TRUE, main="-Re",      box.palette="-Re")
+rpart.plot         (mod.survived, type=2, extra="Auto", fallen.leaves=TRUE, main="Purples",  box.palette="Purples")
+rpart.plot         (mod.survived, type=2, extra="Auto", fallen.leaves=TRUE, main="Pu",       box.palette="Pu")
+prp                (mod.survived, type=2, extra="autO", fallen.leaves=TRUE, main="-Pu",      box.palette="-Pu")
+
+par(mfrow = c(4, 2), mar = c(3, 3, 3, 1), mgp = c(1.5, 0.5, 0))
 rpart.plot         (mod.survived, type=2,               fallen.leaves=TRUE, main="RdYlGn",   box.palette="RdYlGn")
 rpart.plot.version1(mod.survived, type=2, extra="aU",   fallen.leaves=TRUE, main="-RdYlGn",  box.palette="-RdYlGn")
 rpart.plot         (mod.survived, type=2,               fallen.leaves=TRUE, main="BuGn",     box.palette="BuGn")
@@ -62,8 +92,9 @@ rpart.plot         (mod.survived, type=2, extra="auto", fallen.leaves=TRUE, main
 rpart.plot.version1(mod.survived, type=2, extra="auto", fallen.leaves=TRUE, main="RdBu",     box.palette="RdBu")
 rpart.plot         (mod.survived, type=2, extra="auto", fallen.leaves=TRUE, main="RdGn",     box.palette="RdGn")
 rpart.plot.version1(mod.survived, type=2, extra="auto", fallen.leaves=TRUE, main="GnRd",     box.palette="GnRd")
-rpart.plot         (mod.survived, type=2, extra="auto", fallen.leaves=TRUE, main="Browns",   box.palette="Browns")
 rpart.plot         (mod.survived, type=2, extra="auto", fallen.leaves=TRUE, main="BuBu",     box.palette="BuBu")
+rpart.plot(mod.survived, box.palette=0, main="mod.survived\nbox.palette=0")
+rpart.plot(mod.survived, box.palette=NA, main="mod.survived\nbox.palette=NA")
 
 # test list palette for binomial response
 par(mfrow = c(2, 2))
@@ -131,6 +162,9 @@ rpart.plot         (mod.continuous.survived, type=2, extra="auto", fallen.leaves
 rpart.plot.version1(mod.continuous.survived, type=2, extra="auto", fallen.leaves=TRUE, main="GnYlRd",   box.palette="GnYlRd")
 rpart.plot         (mod.continuous.survived, type=2, extra="auto", fallen.leaves=TRUE, main="-RdYlGn",  box.palette="-RdYlGn")
 
+rpart.plot(mod.continuous.survived, box.palette=0,  main="box.palette=0")
+rpart.plot(mod.continuous.survived, box.palette=NA, main="box.palette=NA")
+
 par(mfrow = c(2, 2), mar = c(3, 3, 3, 1), mgp = c(1.5, 0.5, 0))
 mod.age <- rpart(age ~ ., data=ptitanic)
 rpart.plot.version1(mod.age, type=2, extra="auto", fallen.leaves=TRUE, box.palette="auto", main="age\nbox.palette=\"auto\"")
@@ -151,6 +185,10 @@ expect.err(try(rpart.plot.version1(mod.age, type=2, extra="auto", fallen.leaves=
            "box.palette: \"#1234XX\" is neither a color nor a palette")
 
 expect.err(try(rpart.plot.version1(mod.age, type=2, extra="auto", fallen.leaves=TRUE, box.palette="B")),
+           "pal=\"B\" is ambiguous")
+
+# TODO the error message below could be improved to say pal="-B" is ambiguous (note the minus)
+expect.err(try(rpart.plot.version1(mod.age, type=2, extra="auto", fallen.leaves=TRUE, box.palette="-B")),
            "pal=\"B\" is ambiguous")
 
 expect.err(try(rpart.plot.version1(mod.age, type=2, extra="auto", fallen.leaves=TRUE, box.palette="NA")),
@@ -184,8 +222,13 @@ rpart.plot(mod.species, type=2, extra="auto", fallen.leaves=TRUE, box.palette="a
 rpart.plot(mod.species, type=2, extra="auto", fallen.leaves=TRUE, box.palette=list("Reds", "Grays"), main="list(Reds, Grays)\nall boxes white")
 rpart.plot(mod.species, type=2, extra="auto", fallen.leaves=TRUE, box.palette=0, main="box.palette=0")
 rpart.plot(mod.species, type=2, extra="auto", fallen.leaves=TRUE, box.col=2:4, main="mod.species\nbox.col=2:4")
+rpart.plot(mod.species, type=2, extra="auto", fallen.leaves=TRUE, box.palette="pink", main="box.palette=\"pink\"")
+rpart.plot(mod.species, type=2, extra="auto", fallen.leaves=TRUE, box.palette="Blues", main="box.palette=\"Blues\"")
+par(mfrow = c(2, 2))
 prp(mod.continuous.survived, type=2, extra="auto", fallen.leaves=TRUE, main="mod.continuous.survived\nc(\"Red\", \"Yellow\", \"Green\")",  box.palette=c("Red", "Yellow", "Green"))
 prp(mod.continuous.survived, type=2, extra="auto", fallen.leaves=TRUE, main="mod.continuous.survived\nc(\"Green\", \"Yellow\", \"Red\")",  box.palette=c("Green", "Yellow", "Red"))
+expect.err(try(rpart.plot(mod.species, type=2, extra="auto", fallen.leaves=TRUE, box.palette=c("Blues", "Reds"), main="box.palette=c(\"Blues\", \"Reds\")")),
+               "The rpart model has a multiclass response ")
 
 par(mfrow = c(1, 2))
 mod.country <- rpart(Country ~ ., cu.summary)
@@ -203,7 +246,8 @@ rv <- rpart.plot(mod.country, type=2, extra="auto", fallen.leaves=TRUE, main="mu
 rv <- rpart.plot(mod.country, type=2, extra="auto", fallen.leaves=TRUE, main="multiclass, box.palette=0", box.palette=0)
 rv <- rpart.plot(mod.country, type=2, extra="auto", fallen.leaves=FALSE, box.palette="auto", main="multiclass, fallen.leaves=FALSE", trace=-1)
 # expect error: box.palette must be 0 or "auto" or a list of palettes like ...
-expect.err(try(rpart.plot(mod.country, type=2, extra="auto", fallen.leaves=TRUE, box.palette="Blues")),
+expect.err(try(rpart.plot(mod.country, type=2, extra="auto", fallen.leaves=TRUE,
+                          box.palette=c("blue", "pink"))),
            "The rpart model has a multiclass response")
 
 # poisson model

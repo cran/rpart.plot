@@ -664,14 +664,14 @@ prp(root, type=4, extra=3, main="type=4, extra=4",
 prp(root, branch.type=5, main="branch.type=5")
 par(mfrow=c(1,1))
 
-source("user-manual-figs.R")
+source("user-manual-figs.R", echo=TRUE)
 par(mfrow=c(1,1))
 
 set.seed(1924)
 # use.prp <- FALSE
-# source("code.in.rpart.report.with.prp.R")
+# source("code.in.rpart.report.with.prp.R", echo=TRUE)
 use.prp <- TRUE
-source("code.in.rpart.report.with.prp.R")
+source("code.in.rpart.report.with.prp.R", echo=TRUE)
 
 # clip.left.labs and clip.right.labs
 par(mfrow=c(3,3))
@@ -775,7 +775,7 @@ par(mfrow=c(1,1))
 # par(old.par)
 
 par(mfrow=c(2,2))
-source("webpage-figs.R")
+source("webpage-figs.R", echo=TRUE)
 
 # test rpart.plot version 1.5.3 (deal with situation where user has
 # a variable named text in the current environment).
@@ -810,11 +810,11 @@ prp(a100, FUN=text)
 title("a100g", cex=.6)
 remove(text)
 
-source("test.palette.R")
+source("test.palette.R", echo=TRUE)
 
-source("test.na.R")
+source("test.na.R", echo=TRUE)
 
-source("test.imports.R")
+source("test.imports.R", echo=TRUE)
 
 if(!interactive()) {
     dev.off()         # finish postscript plot

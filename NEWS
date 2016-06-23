@@ -1,6 +1,10 @@
 Changes to rpart.plot
 ---------------------
 
+2.0.1    Jun 22, 2016
+
+  Using box.palette=0 now works more consistently.
+
 2.0.0    Jun 10, 2016
 
   The function rpart.plot now has different defaults, so it

@@ -307,14 +307,6 @@ prp <- function(x=stop("no 'x' arg"),
 
         list(node.boxes=node.boxes, split.boxes=split.boxes)
     }
-    do.bg <- function(col) # set elems of col that are 0 etc. to bg
-    {
-        if(is.null(col))
-            col <- bg
-        else
-            col[which(col == 0) | is.na(col)] <- bg
-        col
-    }
     #--- prp starts here ---
 
     if(!inherits(x, "rpart"))
@@ -357,6 +349,7 @@ prp <- function(x=stop("no 'x' arg"),
     if(obj$method == "class" || is.class.response(obj))
         class.stats <- get.class.stats(obj)
 
+    bg <- get.bg() # never returns NA or 0
     # handle automatic defaults for extra and box.palette args (which sets box.col)
     if(is.auto(box.palette)) {
         # need upper case first letter for convert.predefined.palette
@@ -365,22 +358,22 @@ prp <- function(x=stop("no 'x' arg"),
         else
             box.palette <- "AUTO"
     }
+    if(identical(box.palette, 0) || is.na(box.palette))
+        box.palette <- bg
     if(is.auto(extra, 1) || is.specified(box.palette)) {
         defargs <- # the ifelse structure here is similar to the code in internal.node.labs()
             if(obj$method == "anova")
                 get.default.args.anova(obj, extra=100, box.palette, trace, ..., Fitted=obj$frame$yval)
             else if(obj$method == "class")
-                get.default.args.class(obj, box.palette, trace, class.stats, ...)
+                get.default.args.class(obj, box.palette, trace, ..., class.stats=class.stats)
             else if(obj$method == "poisson" || obj$method == "exp")
                 get.default.args.anova(obj, extra=101, box.palette, trace, ..., Fitted=obj$frame$yval2[,1])
             else if(is.numeric.response(obj)) # unrecognized rpart object: treat as a numeric response model
                 get.default.args.anova(obj, extra=100, box.palette, trace, ..., Fitted=obj$frame$yval)
             else if(is.class.response(obj))   # unrecognized rpart object: treat as a class response model
-                get.default.args.class(obj, box.palette, trace, class.stats, ...)
+                get.default.args.class(obj, box.palette, trace, ..., class.stats=class.stats)
             else
                 list(extra=100, box.col=0)
-        if(identical(box.palette, 0))
-            box.palette <- "white"
         if(is.auto(extra, 1))
             extra <- defargs$extra
         if(is.specified(box.col))
@@ -390,23 +383,18 @@ prp <- function(x=stop("no 'x' arg"),
             box.palette <- defargs$box.palette
         }
     }
-    # Set bg to the background color or "white" if transparent.
-    # The idea is that we want a color that is opaque but matches background.
-    bg <- par("bg") # TODO this incorrectly returns transparent with mfrow
-    if(bg[1] == "transparent")
-        bg <- "white"
     is.na.box.col <- is.na(box.col)
-    box.col <- do.bg(box.col)
+    box.col <- set.zero.to.bg(box.col, bg)
     box.col[is.na.box.col] <- NA
-    border.col       <- do.bg(border.col)
-    shadow.col       <- do.bg(shadow.col)
-    under.col        <- do.bg(under.col)
-    split.col        <- do.bg(split.col)
-    split.box.col    <- do.bg(split.box.col)
-    split.shadow.col <- do.bg(split.shadow.col)
-    nn.col           <- do.bg(nn.col)
-    nn.box.col       <- do.bg(nn.box.col)
-    nn.border.col    <- do.bg(nn.border.col)
+    border.col       <- set.zero.to.bg(border.col,       bg)
+    shadow.col       <- set.zero.to.bg(shadow.col,       bg)
+    under.col        <- set.zero.to.bg(under.col,        bg)
+    split.col        <- set.zero.to.bg(split.col,        bg)
+    split.box.col    <- set.zero.to.bg(split.box.col,    bg)
+    split.shadow.col <- set.zero.to.bg(split.shadow.col, bg)
+    nn.col           <- set.zero.to.bg(nn.col,           bg)
+    nn.box.col       <- set.zero.to.bg(nn.box.col,       bg)
+    nn.border.col    <- set.zero.to.bg(nn.border.col,    bg)
 
     # The idea with the following  argument checking is to catch user
     # errors here where possible before they cause an obscure message
@@ -934,6 +922,25 @@ draw.boxes <- function(fancy.style, draw.shadow, labs, xy,
         draw.shadow(new.box$x1, new.box$y1, new.box$x2, new.box$y2,
                     xlim, ylim, r, shadow.col, shadow.offset)
     box
+}
+# Set bg to the background color or "white" if transparent.
+# The idea is that we want a color that is opaque but matches background.
+get.bg <- function()
+{
+    bg <- par("bg")
+    if(bg[1] == "transparent" || # TODO par("bg") incorrectly(?) returns transparent with mfrow
+       bg[1] == 0 || is.na(bg[1])) { # probably unnecessary
+        bg <- "white"
+    }
+    bg
+}
+set.zero.to.bg <- function(col, bg) # set elems of col that are 0 or NA to bg
+{
+    if(is.null(col))
+        col <- bg
+    else
+        col[which(col == 0) | is.na(col)] <- bg
+    col
 }
 # true if x == "auto", ignoring case, partial match to n characters
 is.auto <- function(x, n=2)

@@ -165,7 +165,7 @@ Automatically select a value based on the model type, as follows:\cr
     Note 1: Unlike \code{text.rpart},
     by default \code{prp} uses its own routine for
     generating node  labels (not the function attached to the object).
-    See \code{node.fun}.\cr
+    See the \code{node.fun} argument.\cr
     Note 2: The \code{extra} argument has special meaning
     for \code{mvpart} objects.
     See the Appendix to this package's vignette.
@@ -340,12 +340,13 @@ Automatically select a value based on the model type, as follows:\cr
   }
   \item{box.palette}{
      Palette for coloring the node boxes based on the fitted value.
-This is a a vector of \code{\link{colors}},
+This is a vector of \code{\link{colors}},
 for example \bold{box.palette=c("Red", "Yellow", "Green")}.
 Small fitted values are displayed with colors at the start of the vector;
 large values with colors at the end.\cr
 
-The special value \bold{box.palette=0} (default) uses the background color (typically white).\cr
+The special value \bold{box.palette=0} (default) uses the background
+color (typically white).\cr
 
 The special value \bold{box.palette="auto"} (case insensitive)
 automatically selects a predefined palette based on the type of model.

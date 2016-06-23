@@ -1,5 +1,5 @@
 Package: rpart.plot
-Version: 2.0.0
+Version: 2.0.1
 Title: Plot 'rpart' Models: An Enhanced Version of 'plot.rpart'
 Author: Stephen Milborrow
 Maintainer: Stephen Milborrow <milbo@sonic.net>
@@ -10,6 +10,6 @@ Description: Plot 'rpart' models. Extends plot.rpart() and text.rpart()
 License: GPL-3
 URL: http://www.milbo.org/rpart-plot
 NeedsCompilation: no
-Packaged: 2016-06-10 15:17:36 UTC; milbo
+Packaged: 2016-06-22 13:13:42 UTC; milbo
 Repository: CRAN
-Date/Publication: 2016-06-10 23:29:59
+Date/Publication: 2016-06-23 01:13:26

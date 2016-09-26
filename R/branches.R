@@ -117,9 +117,9 @@ draw.branches <- function(obj, branch.type, branch.col,
         } else if(type == TYPE.all.under) {
             y[1,] <- node.boxes$y2
             y[2,] <- y[3,] <- ((split.boxes$y1 + split.boxes$y2) / 2)[parent]
-        } else if (type == TYPE.fancy.noall) {
+        } else if(type == TYPE.fancy.noall) {
             y[1, is.leaf] <- node.boxes$y2[is.leaf]
-        } else if (type == TYPE.fancy.all) {
+        } else if(type == TYPE.fancy.all) {
             y[1,] <- node.boxes$y2
             y[2,] <- y[3,] <- ((node.boxes$y1 + node.boxes$y2) / 2)[parent]
         } else

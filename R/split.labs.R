@@ -11,7 +11,7 @@ split.labs.wrapper <- function(x, split.fun, split.fun.name,
                                 split.prefix, right.split.prefix,
                                 split.suffix, right.split.suffix)
 
-    if(!identical(split.fun.name, "internal.split.labs")) { # call user's split.fun?
+    if(!is.null(split.fun)) { # call user's split.fun?
         check.func.args(split.fun, "split.fun",
                         function(x, labs, digits, varlen, faclen) NA)
         labs <- split.fun(x, labs, digits, varlen, faclen)

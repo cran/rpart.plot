@@ -298,7 +298,7 @@ get.layout <- function(obj, type, nn, yesno, fallen.leaves, branch,
                 if(best.scale.after.shifting / scale >= accept.cex)
                     " (will be used)"
                 else
-                    " (will not be used)")
+                    " (won't be used)")
 
             if(best.scale.after.shifting / scale >= accept.cex) {
                 improvement <- best.scale.after.shifting / scale

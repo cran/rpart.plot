@@ -18,7 +18,7 @@ suitable for the type of model (whereas \code{\link{prp}} by default
 creates a minimal plot).  In detail the different defaults are:
 
 \tabular{llclcr}{
-                     \tab | \tab \code{\link{rpart.plot}} \tab | \tab \code{\link{prp}} and \code{\link{rpart.plot.version1}} \tab | \cr
+                     \tab | \tab \code{\link{rpart.plot}} \tab | \tab \code{\link{prp}} \tab | \cr
                      \tab   \tab               \tab   \tab              \tab   \cr
 \code{type}          \tab | \tab \code{2}      \tab | \tab \code{0}     \tab | \cr
 \code{extra}         \tab | \tab \code{"auto"} \tab | \tab \code{0}     \tab | \cr
@@ -29,7 +29,7 @@ creates a minimal plot).  In detail the different defaults are:
 }
 
 The function \code{\link{rpart.plot.version1}} is compatible with
-old versions of this function.
+old versions of this function and has the same defaults as \code{\link{prp}}.
 }
 \usage{
 rpart.plot(x=stop("no 'x' arg"),
@@ -131,7 +131,7 @@ Automatically select a value based on the model type, as follows:\cr
     Note 1: Unlike \code{text.rpart},
     by default \code{prp} uses its own routine for
     generating node  labels (not the function attached to the object).
-    See the \code{node.fun} argument.\cr
+    See the \code{node.fun} argument of \code{prp}.\cr
     Note 2: The \code{extra} argument has special meaning
     for \code{mvpart} objects.
     See the Appendix to this package's vignette.
@@ -195,27 +195,29 @@ Automatically select a value based on the model type, as follows:\cr
      See the \href{../doc/prp.pdf}{package vignette} (or just try it).
   }
   \item{box.palette}{
-     Palette for coloring the node boxes based on the fitted value.
+Palette for coloring the node boxes based on the fitted value.
 This is a vector of \code{\link{colors}},
-for example \bold{box.palette=c("Red", "Yellow", "Green")}.
+for example \bold{box.palette=c("green", "green2", "green4")}.
 Small fitted values are displayed with colors at the start of the vector;
-large values with colors at the end.\cr
+large values with colors at the end.
 
-The special value \bold{box.palette=0} (default) uses the background color (typically white).\cr
+The special value \bold{box.palette=0} (default for \code{prp}) uses
+the background color (typically white).
 
-The special value \bold{box.palette="auto"} (case insensitive)
-automatically selects a predefined palette based on the type of model.
+The special value \bold{box.palette="auto"} (default for
+\code{rpart.plot}, case insensitive) automatically selects a
+predefined palette based on the type of model.
 
 Otherwise specify a predefined palette
 e.g. \bold{box.palette="Grays"} for the predefined gray palette (a range of grays).
-The predefined palettes are:\cr
-\code{Blues} \code{Browns} \code{Grays} \code{Greys} \code{Greens} \code{Oranges} \code{Reds} \code{Purples} \cr
-\code{Bu} \code{Bn} \code{Gn} \code{Gy} \code{Or} \code{Rd} \code{Pu} (alternative names for the above palettes)\cr
-\code{BuGn} \code{GnRd} \code{BuOr} etc. (two color palettes: any combination of two palettes)\cr
-\code{RdYlGn} \code{GnYlRd} (three color palettes)\cr\cr
-Prefix the palette name with \bold{-} to reverse the order of the colors\cr
-e.g. \code{box.palette="-auto"} or \code{box.palette="-Grays"}.\cr\cr
-The \code{box.palette} argument is ignored if the \code{box.col} palette argument is specified.
+The predefined palettes are (see the \code{\link{show.prp.palettes}} function):\cr
+\code{Grays} \code{Greys} \code{Greens} \code{Blues} \code{Browns} \code{Oranges} \code{Reds} \code{Purples} \cr
+\code{Gy} \code{Gn} \code{Bu} \code{Bn} \code{Or} \code{Rd} \code{Pu} (alternative names for the above palettes)\cr
+\code{BuGn} \code{GnRd} \code{BuOr} etc. (two-color diverging palettes: any combination of two of the above palettes)\cr
+\code{RdYlGn} \code{GnYlRd} (three color palettes)
+
+Prefix the palette name with \code{"-"} to reverse the order of the colors\cr
+e.g. \code{box.palette="-auto"} or \code{box.palette="-Grays"}.
 }
   \item{shadow.col}{
      Color of the shadow under the boxes.

@@ -48,7 +48,7 @@ my.rpartco <- function(tree, uniform, nspace, minbranch)
     for(i in rev(temp))
         x[i] <- 0.5 * (x[left.child[i]] + x[right.child[i]])
 
-    if (nspace < 0) return(list(x=x, y=y))
+    if(nspace < 0) return(list(x=x, y=y))
 
     #
     # Now we get fancy, and try to do overlapping
@@ -77,16 +77,16 @@ my.rpartco <- function(tree, uniform, nspace, minbranch)
     compress <- function(x, me, depth)
     {
         lson <- me + 1L
-        if (is.leaf[lson]) left <- list(left=x[lson], right=x[lson],
-                                        depth=depth+1L, sons=lson)
+        if(is.leaf[lson]) left <- list(left=x[lson], right=x[lson],
+                                       depth=depth+1L, sons=lson)
         else {
             left <- compress(x, me+1L, depth+1L)
             x <- left$x
         }
 
         rson <- me + 1L + length(left$sons)
-        if (is.leaf[rson]) right <- list(left=x[rson], right=x[rson],
-                                         depth=depth+1L, sons=rson)
+        if(is.leaf[rson]) right <- list(left=x[rson], right=x[rson],
+                                        depth=depth+1L, sons=rson)
         else {
             right <- compress(x, rson, depth+1L)
             x <- right$x
@@ -99,13 +99,13 @@ my.rpartco <- function(tree, uniform, nspace, minbranch)
         #   But only over depths that they have in common
         # 1 is a minimum distance allowed
         slide <- min(right$left[1L:mind] - left$right[1L:mind]) - 1L
-        if (slide > 0) { # slide the right hand node to the left
+        if(slide > 0) { # slide the right hand node to the left
             x[right$sons] <- x[right$sons] - slide;
             x[me] <- (x[right$sons[1L]] + x[left$sons[1L]])/2
         } else slide <- 0
 
         # report back
-        if (left$depth > right$depth) {
+        if(left$depth > right$depth) {
             templ <- left$left
             tempr <- left$right
             tempr[1L:mind] <- pmax(tempr[1L:mind], right$right - slide)

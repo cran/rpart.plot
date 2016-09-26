@@ -6,13 +6,13 @@
 #  This routine "throws away" branches
 #
 my.snip.rpart <- function(x, toss) {
-    if (!inherits(x, 'rpart')) stop("Not an rpart object")
+    if(!inherits(x, 'rpart')) stop("Not an rpart object")
 
     # mouse snipping is not supported in this version of this function
     stopifnot(!missing(toss) && length(toss))
-    # if (missing(toss) || length(toss)==0L) {
+    # if(missing(toss) || length(toss)==0L) {
     #     toss <- snip.rpart.mouse(x)
-    #     if (length(toss)==0L) return(x)
+    #     if(length(toss)==0L) return(x)
     # }
 
     ff   <- x$frame
@@ -21,13 +21,13 @@ my.snip.rpart <- function(x, toss) {
 
     toss <- unique(toss)
     toss.idx <- match(toss, id, nomatch=0) #the rows of the named nodes
-    if (any(toss.idx ==0L)) {
+    if(any(toss.idx ==0L)) {
         warning("Nodes ", toss[toss.idx==0L], " are not in this tree")
         toss <- toss[toss.idx>0L]
         toss.idx <- toss.idx[toss.idx>0L]
     }
 
-#    if (any(toss==1))  {
+#    if(any(toss==1))  {
 #   # a special case that causes grief later
 #   warning("Can't prune away the root node and still have a tree!")
 #        return(NULL)
@@ -56,7 +56,7 @@ my.snip.rpart <- function(x, toss) {
     n.split <- rep((1L:ff.n), ff$ncompete + ff$nsurrogate+ 1*(ff$var!='<leaf>'))
     split <- x$splits[match(n.split, keepit, nomatch=0) >0, ,drop=FALSE]
     temp <- split[,2L] >1      #which rows point to categoricals?
-    if (any(temp)) {
+    if(any(temp)) {
         x$csplit <- x$csplit[split[temp,4L], , drop=FALSE]
         split[temp,4] <- 1
         if(is.matrix(x$csplit)) split[temp,4L] <- 1L:nrow(x$csplit)

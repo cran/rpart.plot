@@ -3,7 +3,7 @@
 
 COL.TAB <- NULL # global to describe.col, and used only by describe.col
 
-describe.col <- function(col, check.palette.index=FALSE)
+describe.col <- function(col, check.palette.index=FALSE, show.hex=TRUE)
 {
     if(is.null(COL.TAB)) { # first time? if so, must prepare COL.TAB
         colors <- colors()
@@ -17,11 +17,11 @@ describe.col <- function(col, check.palette.index=FALSE)
     #--- describe.col starts here ---
     must.convert <- TRUE
     if(is.numeric(col)) {
-        if(!all.equal(floor(col), col))
+        if(!isTRUE(all.equal(floor(col), col)))
             stop0("non-integer \"col\" is illegal")
         # june 2014: changes needed for changes to col2rgb
         if(is.matrix(col)) {
-            if (length(col) == 3)
+            if(length(col) == 3)
                 must.convert <- FALSE
             else
                 stop0("bad format col")
@@ -53,10 +53,10 @@ describe.col <- function(col, check.palette.index=FALSE)
     match.col.name <- colors()[imin]
     paste0(rgb(col[1], col[2], col[3], maxColorValue=255),
            " (",
-           ifelse(min != 0, "nearly ", ""),
+           ifelse(min != 0, "near ", ""),
            match.col.name,
-           ifelse(min != 0, " ", ""),
-           ifelse(min != 0,
+           ifelse(show.hex && min != 0, " ", ""),
+           ifelse(show.hex && min != 0,
                rgb(COL.TAB[imin,1], COL.TAB[imin,2], COL.TAB[imin,3],
                    maxColorValue=255),
                ""),

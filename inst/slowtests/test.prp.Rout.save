@@ -9,7 +9,7 @@ Loading required package: plotrix
 Loading required package: TeachingDemos
 > data(ozone1)
 > sessionInfo()
-R version 3.3.0 (2016-05-03)
+R version 3.3.1 (2016-06-21)
 Platform: x86_64-w64-mingw32/x64 (64-bit)
 Running under: Windows 7 x64 (build 7601) Service Pack 1
 
@@ -24,11 +24,11 @@ attached base packages:
 [1] stats     graphics  grDevices utils     datasets  methods   base     
 
 other attached packages:
-[1] earth_4.4.4        plotmo_3.1.4       TeachingDemos_2.10 plotrix_3.6-2     
-[5] rpart.plot_2.0.1   rpart_4.1-10      
+[1] earth_4.4.6        plotmo_3.2.0       TeachingDemos_2.10 plotrix_3.6-3     
+[5] rpart.plot_2.1.0   rpart_4.1-10      
 
 loaded via a namespace (and not attached):
-[1] tools_3.3.0
+[1] tools_3.3.1
 > ititanic <- ptitanic
 > ititanic$survived <- as.integer(ititanic$survived == "survived")
 > options(warn=1) # print warnings as they occur
@@ -170,7 +170,7 @@ Warning in citation("rpart.plot") :
 To cite package 'rpart.plot' in publications use:
 
   Stephen Milborrow (2016). rpart.plot: Plot 'rpart' Models: An
-  Enhanced Version of 'plot.rpart'. R package version 2.0.1.
+  Enhanced Version of 'plot.rpart'. R package version 2.1.0.
   http://www.milbo.org/rpart-plot
 
 A BibTeX entry for LaTeX users is
@@ -179,7 +179,7 @@ A BibTeX entry for LaTeX users is
     title = {rpart.plot: Plot 'rpart' Models: An Enhanced Version of 'plot.rpart'},
     author = {Stephen Milborrow},
     year = {2016},
-    note = {R package version 2.0.1},
+    note = {R package version 2.1.0},
     url = {http://www.milbo.org/rpart-plot},
   }
 
@@ -543,11 +543,8 @@ cex 1   xlim c(0, 1)   ylim c(0, 1)
 > prp(fit.oz, type=4, clip.right.labs=F, nn=TRUE, trace=3, # some niceties
 +    main=paste("Path to node", node), col.m=3, lwd=lwds, digits=4,
 +    col=cols, branch.col=cols, split.col=cols, nn.col=cols)
-expanded box.palette:
-   #FFFFFF (white)
-box.col: #FFFFFF (white)   to   #FFFFFF (white)
 Initial scale 0.849
-Shifter: cex improvement 1 best.shift.amount 0 best.split.yshift.amount 0 (will not be used)
+Shifter: cex improvement 1 best.shift.amount 0 best.split.yshift.amount 0 (won't be used)
 cex 0.849   xlim c(0, 1)   ylim c(0, 1)
 > 
 > my.labs <- function(x, labs, digits, varlen)
@@ -709,9 +706,8 @@ cex 0.625   xlim c(0, 1)   ylim c(-0.05, 1.05)
 +     branch=1,
 +     split.prefix=c("", "", "down ", "", "", "", ""),
 +     split.yshift=c(0, -3, 0, 0, 0, 0, 0))
-box.col: #FFFFFF (white)   to   #FFFFFF (white)
 Initial scale 0.688
-Shifter: cex improvement 1 best.shift.amount 0 best.split.yshift.amount 0 (will not be used)
+Shifter: cex improvement 1 best.shift.amount 0 best.split.yshift.amount 0 (won't be used)
 cex 0.688   xlim c(0, 1)   ylim c(0, 1)
 > 
 > 
@@ -824,9 +820,8 @@ cex 1   xlim c(0, 1)   ylim c(0, 1)
 +     yshift=c(3, 0, 3, 3, 0, 0, 0),
 +     split.prefix=c("", "", "down\n", "", "", "", ""),
 +     split.yshift=c(0, -1, 0, 0, 0, 0, 0))
-box.col: #FFFFFF (white)   to   #FFFFFF (white)
 Initial scale 1.06
-Shifter: cex improvement 1 best.shift.amount 0 best.split.yshift.amount 0 (will not be used)
+Shifter: cex improvement 1 best.shift.amount 0 best.split.yshift.amount 0 (won't be used)
 Clipped scale 1.06 to max.auto.cex 1
 cex 1   xlim c(0, 1)   ylim c(0, 1)
 > 
@@ -848,35 +843,23 @@ cex 1   xlim c(0, 1)   ylim c(0, 1)
 > par(mfrow=c(2,2))
 > fit3 <- rpart(survived~., data=ititanic, control=list(cp=.002))
 > prp(fit3, trace=3, nn=0, faclen=0, prefix="prob ", main="Page 9")
-expanded box.palette:
-   #FFFFFF (white)
-box.col: #FFFFFF (white)   to   #FFFFFF (white)
 Initial scale 0.65
     Node shifter: cex improvement 1     shift.amount 1.5  <new best
     Node shifter: cex improvement 0.538 shift.amount 2.0  
-Shifter: cex improvement 1 best.shift.amount 1.5 best.split.yshift.amount 0 (will not be used)
+Shifter: cex improvement 1 best.shift.amount 1.5 best.split.yshift.amount 0 (won't be used)
 cex 0.65   xlim c(0, 1)   ylim c(0, 1)
 > prp(fit3, extra=100, trace=3, nn=TRUE, faclen=0, fallen.leaves=TRUE, main="fallen leaves")
-expanded box.palette:
-   #FFFFFF (white)
-box.col: #FFFFFF (white)   to   #FFFFFF (white)
 Initial scale 0.45
     Node shifter: cex improvement 0.778 shift.amount 1.5  
     Node shifter: cex improvement 0.556 shift.amount 2.0  
-Shifter: cex improvement 1 best.shift.amount 0 best.split.yshift.amount 0 (will not be used)
+Shifter: cex improvement 1 best.shift.amount 0 best.split.yshift.amount 0 (won't be used)
 cex 0.45   xlim c(0, 1)   ylim c(0, 1)
 > prp(fit3, type=4, trace=3, nn=TRUE, clip.right.labs=0, split.border.col=1, main="type=4 ")
-expanded box.palette:
-   #FFFFFF (white)
-box.col: #FFFFFF (white)   to   #FFFFFF (white)
 Initial scale 0.45
-Shifter: cex improvement 1 best.shift.amount 0 best.split.yshift.amount 0 (will not be used)
+Shifter: cex improvement 1 best.shift.amount 0 best.split.yshift.amount 0 (won't be used)
 cex 0.45   xlim c(0, 1)   ylim c(0, 1)
 > # use prefix below to force shifting of fallen leaves to test shifter
 > prp(fit3, type=4, branch=.5, extra=1, under=TRUE, trace=3, nn=FALSE, fallen.leaves=1, prefix="probability ", main="type=4, fallen leaves")
-expanded box.palette:
-   #FFFFFF (white)
-box.col: #FFFFFF (white)   to   #FFFFFF (white)
 Initial scale 0.25
     Node shifter: cex improvement 1.35  shift.amount 1.5  <new best
     Node shifter: cex improvement 1.4   shift.amount 2.0  <new best
@@ -888,11 +871,8 @@ cex 0.35   xlim c(0, 1)   ylim c(0, 1)
 > fit7 <- rpart(survived ~ ., data=ptitanic, cp=.01)
 > # this was wrong until I added check that a shift doesn't move nodes above the nodes for the level above
 > prp(fit7, extra=1, branch=1, trace=3, nn=1, main="Page 10")
-expanded box.palette:
-   #FFFFFF (white)
-box.col: #FFFFFF (white)   to   #FFFFFF (white)
 Initial scale 1.03
-Shifter: cex improvement 1 best.shift.amount 0 best.split.yshift.amount 0 (will not be used)
+Shifter: cex improvement 1 best.shift.amount 0 best.split.yshift.amount 0 (won't be used)
 Clipped scale 1.03 to max.auto.cex 1
 cex 1   xlim c(0, 1)   ylim c(0, 1)
 > 
@@ -921,9 +901,8 @@ cex 1   xlim c(-0.65, 1.65)   ylim c(-1.05, 2.05)
 > fit4 <- rpart(survived~., data=ititanic, method="class", control=list(cp=.02))
 > prp(fit4, trace=2, cex=.8, tweak=1.1, main="Page 12",
 +        xflip=TRUE, yflip=TRUE, type=1, extra=100,  yesno=FALSE)
-box.col: #FFFFFF (white)   to   #FFFFFF (white)
 Initial scale 1.33
-Shifter: cex improvement 1 best.shift.amount 0 best.split.yshift.amount 0 (will not be used)
+Shifter: cex improvement 1 best.shift.amount 0 best.split.yshift.amount 0 (won't be used)
 cex 0.8 (before applying tweak 1.1)   xlim c(0, 1)   ylim c(0, 1)
 Warning: cex and tweak both specified, applying both
 > # TODO wanna include family below, but postscript giving me grief
@@ -1118,20 +1097,14 @@ cex 1   xlim c(0, 1)   ylim c(0, 1)
 > text(a2, use.n=TRUE, all=T, digits=3, xpd=NA, pretty=0)
 > prp(a2, extra=0, eq=" eq ", lt=" lt ", ge=" ge ", facsep="|", xsep="/",
 +     type=4, main="extra=0", trace=3, split.border.col=1)
-expanded box.palette:
-   #FFFFFF (white)
-box.col: #FFFFFF (white)   to   #FFFFFF (white)
 Initial scale 0.931
-Shifter: cex improvement 1 best.shift.amount 0 best.split.yshift.amount 0 (will not be used)
+Shifter: cex improvement 1 best.shift.amount 0 best.split.yshift.amount 0 (won't be used)
 cex 0.931   xlim c(0, 1)   ylim c(0, 1)
 > prp(a2, extra=1, type=1,  xsep=", ", main="extra=1", trace=1)
 cex 1   xlim c(0, 1)   ylim c(0, 1)
 > prp(a2, extra=100, type=3, clip.right.labs=FALSE, main="extra=100", trace=3, split.border.col=1, ycompress.cex=1)
-expanded box.palette:
-   #FFFFFF (white)
-box.col: #FFFFFF (white)   to   #FFFFFF (white)
 Initial scale 0.931
-Shifter: cex improvement 1 best.shift.amount 0 best.split.yshift.amount 0 (will not be used)
+Shifter: cex improvement 1 best.shift.amount 0 best.split.yshift.amount 0 (won't be used)
 cex 0.931   xlim c(0, 1)   ylim c(0, 1)
 > prp(a2, extra=4, type=0, main="extra=4", faclen=0, trace=1, under=TRUE, col=2)
 cex 1   xlim c(-0.2, 1.2)   ylim c(0, 1)
@@ -1215,11 +1188,8 @@ cex 1   xlim c(0, 1)   ylim c(-0.3, 1.3)
 +     shadow.offset=c(.4,1,2),
 +     split.shadow.offset=c(.4,.4,1),
 +     nn.font=c(1,3), nn.adj=c(1,0), nn.col=c(1,2), nn.border.col=c(0,1,2))
-expanded box.palette:
-   #FFFFFF (white)
-box.col: #FFFFFF (white)   to   #FFFFFF (white)
 Initial scale 1.06
-Shifter: cex improvement 1 best.shift.amount 0 best.split.yshift.amount 0 (will not be used)
+Shifter: cex improvement 1 best.shift.amount 0 best.split.yshift.amount 0 (won't be used)
 Clipped scale 1.06 to max.auto.cex 1
 cex 1   xlim c(0, 1)   ylim c(0, 1)
 > 
@@ -1234,20 +1204,14 @@ cex 1   xlim c(0, 1)   ylim c(0, 1)
 +     right.split.prefix="R[", right.split.suffix="]R",
 +     round=9, leaf.round=0,
 +     ycompress.cex=.8) # force ycompress for testing with type=4
-expanded box.palette:
-   #FFFFFF (white)
-box.col: #FFFFFF (white)   to   #FFFFFF (white)
 Initial scale 0.849
-Shifter: cex improvement 1 best.shift.amount 0 best.split.yshift.amount 0 (will not be used)
+Shifter: cex improvement 1 best.shift.amount 0 best.split.yshift.amount 0 (won't be used)
 cex 0.849   xlim c(0, 1)   ylim c(0, 1)
 > 
 > prp(a7, type=4, extra=1, under=F, prefix="response:",
 +     suffix="\n\n (probs)", split.suffix="\n\nabc", faclen=0, trace=3)
-expanded box.palette:
-   #FFFFFF (white)
-box.col: #FFFFFF (white)   to   #FFFFFF (white)
 Initial scale 0.738
-Shifter: cex improvement 1 best.shift.amount 0 best.split.yshift.amount 0 (will not be used)
+Shifter: cex improvement 1 best.shift.amount 0 best.split.yshift.amount 0 (won't be used)
 cex 0.738   xlim c(0, 1)   ylim c(0, 1)
 > par(mfrow=c(1, 1))
 > 
@@ -1272,33 +1236,28 @@ cex 0.738   xlim c(0, 1)   ylim c(0, 1)
 > par(mfrow=c(2, 3))
 > a <- rpart(survived~., data=ptitanic, control=list(cp=.01))
 > prp(a, uniform=T, branch=.4, compress=T, extra=104, trace=2, main="Page 20")
-box.col: #FFFFFF (white)   to   #FFFFFF (white)
 Initial scale 0.931
-Shifter: cex improvement 1 best.shift.amount 0 best.split.yshift.amount 0 (will not be used)
+Shifter: cex improvement 1 best.shift.amount 0 best.split.yshift.amount 0 (won't be used)
 cex 0.931   xlim c(0, 1)   ylim c(0, 1)
 > prp(a, uniform=T, branch=.4, compress=T, extra=104, mar=c(1,2,3,4), trace=2, main="test mar=c(1,2,3,4)")
-box.col: #FFFFFF (white)   to   #FFFFFF (white)
 Initial scale 0.816
-Shifter: cex improvement 1 best.shift.amount 0 best.split.yshift.amount 0 (will not be used)
+Shifter: cex improvement 1 best.shift.amount 0 best.split.yshift.amount 0 (won't be used)
 cex 0.816   xlim c(0, 1)   ylim c(0, 1)
 > prp(a, uniform=T, branch=.4, compress=T, extra=104, mar=c(5,2,3,4), trace=2, main="test mar=c(5,2,3,4)")
-box.col: #FFFFFF (white)   to   #FFFFFF (white)
 Initial scale 0.816
-Shifter: cex improvement 1 best.shift.amount 0 best.split.yshift.amount 0 (will not be used)
+Shifter: cex improvement 1 best.shift.amount 0 best.split.yshift.amount 0 (won't be used)
 cex 0.816   xlim c(0, 1)   ylim c(0, 1)
 > prp(a, uniform=T, branch=.4, compress=T, extra=104, xpd=T, trace=2, prefix="123456789", cex=1, main="test xpd=T, par=1")
-box.col: #FFFFFF (white)   to   #FFFFFF (white)
 Initial scale 0.562
     Node shifter: cex improvement 0.778 shift.amount 1.5  
     Node shifter: skipping invalid      shift.amount 2.0 
-Shifter: cex improvement 1 best.shift.amount 0 best.split.yshift.amount 0 (will not be used)
+Shifter: cex improvement 1 best.shift.amount 0 best.split.yshift.amount 0 (won't be used)
 cex 1   xlim c(0, 1)   ylim c(0, 1)
 > prp(a, uniform=T, branch=.4, compress=T, extra=104, xpd=F, trace=2, prefix="123456789", cex=1, main="test xpd=F, par=1")
-box.col: #FFFFFF (white)   to   #FFFFFF (white)
 Initial scale 0.562
     Node shifter: cex improvement 0.778 shift.amount 1.5  
     Node shifter: skipping invalid      shift.amount 2.0 
-Shifter: cex improvement 1 best.shift.amount 0 best.split.yshift.amount 0 (will not be used)
+Shifter: cex improvement 1 best.shift.amount 0 best.split.yshift.amount 0 (won't be used)
 cex 1   xlim c(0, 1)   ylim c(0, 1)
 > par(mfrow=c(1, 1))
 > 
@@ -1321,11 +1280,8 @@ cex 1   xlim c(0, 1)   ylim c(0, 1)
 > par(mfrow=c(3,3))
 > old.par <- par(no.readonly=TRUE)
 > prp(a, trace=2, main="Page 22") # trace=2 so can see the grid
-box.col 1st: #FFFFFF (white)
-box.col 2nd: #FFFFFF (white)
-box.col 3rd: #FFFFFF (white)
 Initial scale 1.06
-Shifter: cex improvement 1 best.shift.amount 0 best.split.yshift.amount 0 (will not be used)
+Shifter: cex improvement 1 best.shift.amount 0 best.split.yshift.amount 0 (won't be used)
 Clipped scale 1.06 to max.auto.cex 1
 cex 1   xlim c(0, 1)   ylim c(0, 1)
 >     # set par settings that can legally change to NULL for comparison
@@ -1334,11 +1290,8 @@ cex 1   xlim c(0, 1)   ylim c(0, 1)
 >     par$usr <- par$fig <- par$mfg <- par$xaxp <- par$yaxp <- NULL
 >     stopifnot(isTRUE(all.equal(old.par, par)))
 > prp(a, trace=2, main="do.par=FALSE", do.par=FALSE)
-box.col 1st: #FFFFFF (white)
-box.col 2nd: #FFFFFF (white)
-box.col 3rd: #FFFFFF (white)
 Initial scale 0.816
-Shifter: cex improvement 1 best.shift.amount 0 best.split.yshift.amount 0 (will not be used)
+Shifter: cex improvement 1 best.shift.amount 0 best.split.yshift.amount 0 (won't be used)
 cex 0.816   xlim c(0, 1)   ylim c(0, 1)
 >     par <- par(no.readonly=TRUE)
 >     par$usr <- par$fig <- par$mfg <- par$xaxp <- par$yaxp <- NULL
@@ -1490,22 +1443,20 @@ $split.box$y2
 
 > y <- a$frame$yval
 
-> cols <- c("#EE8888", "#EEEE88", "#88CC88")
+> cols <- c("lightcoral", "khaki2", "palegreen2")
 
 > cols <- ifelse(y > 20, cols[1], ifelse(y < 15, cols[3], 
 +     cols[2]))
 
-> prp(a, main = "[front] An Example\n(rpart.plot package version 1.x.x)", 
-+     box.col = cols, type = 4, fallen = T, branch = 0.3, round = 0, 
-+     .... [TRUNCATED] 
+> prp(a, main = "[front] An Example\nmanual palette=\nc(\"lightcoral\", \"khaki2\", \"palegreen2\")", 
++     box.col = cols, type = 4, fallen = T, bra .... [TRUNCATED] 
 
-> prp(a, main = "[front] An Example\n(using box.palette)", 
-+     type = 4, fallen = T, branch = 0.3, round = 0, leaf.round = 9, 
-+     clip.right.lab .... [TRUNCATED] 
+> prp(a, main = "[front] An Example\nbox.palette=\nc(\"palegreen3\", \"khaki2\", \"lightcoral\")", 
++     type = 4, fallen = T, branch = 0.3, round =  .... [TRUNCATED] 
 
-> prp(a, main = "[front] An Example\n(using box.palette GnYlRd)", 
+> prp(a, main = "[front] An Example\nbox.palette=\"GnYlRd\"", 
 +     type = 4, fallen = T, branch = 0.3, round = 0, leaf.round = 9, 
-+     clip.ri .... [TRUNCATED] 
++     clip.right. .... [TRUNCATED] 
 
 > binary.model <- rpart(survived ~ ., data = ptitanic, 
 +     cp = 0.02)
@@ -1878,11 +1829,15 @@ Type 'rattle()' to shake, rattle, and roll your data.
 
 > par(mar = c(0.5, 1, 2, 0.5))
 
+> set.seed(2016)
+
 > plotmo(tree, degree1 = NA, do.par = F, theta = 220 - 
 +     80, expand = 0.5, type = "prob", nresponse = "present", main = "", 
 +     ticktype = "d" .... [TRUNCATED] 
 
 > par(mar = c(4, 4, 4, 0.5))
+
+> set.seed(2016)
 
 > plotmo(tree, degree1 = NA, do.par = F, main = "", 
 +     type2 = "image", pt.col = ifelse(kyphosis1$Kyphosis == "present", 
@@ -1902,10 +1857,14 @@ Type 'rattle()' to shake, rattle, and roll your data.
 
 > col.persp <- rgb(220, 255, 255, maxColorValue = 255)
 
+> set.seed(2016)
+
 > plotmo(a1, do.par = F, degree1 = NA, degree2 = "temp", 
 +     expand = 1, swapxy = T, border = 1, ngrid2 = 20, col.persp = col.persp)
 
 > a <- lm(O3 ~ ., data = ozone1)
+
+> set.seed(2016)
 
 > plotmo(a, degree1 = NA, all2 = T, swapxy = T, do.par = F, 
 +     degree2 = 18, main = "linear model", clip = F, col.persp = col.persp)
@@ -1913,6 +1872,8 @@ Warning: too many predictors to plot all pairs,
          so plotting degree2 plots for just the first 7 predictors
 
 > a <- earth(O3 ~ ., data = ozone1, degree = 2)
+
+> set.seed(2016)
 
 > plotmo(a, degree1 = NA, all2 = T, swapxy = T, do.par = F, 
 +     degree2 = 18, main = "MARS", col.persp = col.persp)
@@ -1926,6 +1887,8 @@ Type rfNews() to see new features/changes/bug fixes.
 > set.seed(552)
 
 > a <- randomForest(O3 ~ ., data = ozone1)
+
+> set.seed(2016)
 
 > plotmo(a, degree1 = NA, swapxy = T, do.par = F, degree2 = 5, 
 +     main = "random forest", col.persp = col.persp)
@@ -2602,6 +2565,10 @@ Got error as expected from try(prp(a100, FUN = my.bad.text))
 +     if (class(object)[1] == "try-error") {
 +         msg <- attr(object, "condition")$message[ .... [TRUNCATED] 
 
+> par(mfrow = c(1, 1))
+
+> show.prp.palettes()
+
 > cat("== start test.palette.R ==\n")
 == start test.palette.R ==
 
@@ -2623,26 +2590,30 @@ Got error as expected from try(prp(a100, FUN = my.bad.text))
 
 > rpart.plot(mod.survived, type = 2, fallen.leaves = TRUE, 
 +     main = "Blues", box.palette = "Blues", trace = 1)
+box.palette "Blues" (not diverging): #F7FBFF (near ghostwhite) to #6BAED6 (near skyblue3)
 cex 0.964   xlim c(0, 1)   ylim c(0, 1)
 
 > rpart.plot.version1(mod.survived, type = 2, extra = "auto", 
 +     fallen.leaves = TRUE, main = "-Blues", box.palette = "-Blues", 
 +     trace = 2)
-box.col: #6BAED6 (nearly skyblue3 #6CA6CD)   to   #F7FBFF (nearly ghostwhite #F8F8FF)
+handle.box.palette for class response invokes handle.anova.palette
+box.palette "-Blues" (not diverging): #6BAED6 (near skyblue3) to #F7FBFF (near ghostwhite)
 Initial scale 0.964
-Shifter: cex improvement 1 best.shift.amount 0 best.split.yshift.amount 0 (will not be used)
+Shifter: cex improvement 1 best.shift.amount 0 best.split.yshift.amount 0 (won't be used)
 cex 0.964   xlim c(0, 1)   ylim c(0, 1)
 
 > rpart.plot(mod.survived, type = 2, fallen.leaves = TRUE, 
 +     main = "Browns", box.palette = "Browns", trace = 1)
+box.palette "Browns" (not diverging): #FFFFFF (white) to #D98657 (near lightsalmon3)
 cex 0.964   xlim c(0, 1)   ylim c(0, 1)
 
 > rpart.plot.version1(mod.survived, type = 2, extra = "auto", 
 +     fallen.leaves = TRUE, main = "-Browns", box.palette = "-Browns", 
 +     trace = 2 .... [TRUNCATED] 
-box.col: #EC7014 (nearly chocolate2 #EE7621)   to   #FEE391 (nearly lightgoldenrod1 #FFEC8B)
+handle.box.palette for class response invokes handle.anova.palette
+box.palette "-Browns" (not diverging): #D98657 (near lightsalmon3) to #FFFFFF (white)
 Initial scale 0.964
-Shifter: cex improvement 1 best.shift.amount 0 best.split.yshift.amount 0 (will not be used)
+Shifter: cex improvement 1 best.shift.amount 0 best.split.yshift.amount 0 (won't be used)
 cex 0.964   xlim c(0, 1)   ylim c(0, 1)
 
 > rpart.plot(mod.survived, type = 2, fallen.leaves = TRUE, 
@@ -2686,38 +2657,44 @@ cex 0.964   xlim c(0, 1)   ylim c(0, 1)
 
 > rpart.plot(mod.survived, type = 2, fallen.leaves = TRUE, 
 +     main = "Blues", box.palette = "Blues", trace = 1)
+box.palette "Blues" (not diverging): #F7FBFF (near ghostwhite) to #6BAED6 (near skyblue3)
 cex 0.688   xlim c(0, 1)   ylim c(0, 1)
 
 > rpart.plot(mod.survived, type = 2, fallen.leaves = TRUE, 
 +     main = "Bu", box.palette = "Bu", trace = 1)
+box.palette "Bu" (not diverging): #F7FBFF (near ghostwhite) to #6BAED6 (near skyblue3)
 cex 0.688   xlim c(0, 1)   ylim c(0, 1)
 
 > rpart.plot.version1(mod.survived, type = 2, extra = "auto", 
 +     fallen.leaves = TRUE, main = "-Bu", box.palette = "-Bu", 
 +     trace = 2)
-box.col: #6BAED6 (nearly skyblue3 #6CA6CD)   to   #F7FBFF (nearly ghostwhite #F8F8FF)
+handle.box.palette for class response invokes handle.anova.palette
+box.palette "-Bu" (not diverging): #6BAED6 (near skyblue3) to #F7FBFF (near ghostwhite)
 Initial scale 0.688
     Node shifter: skipping invalid      shift.amount 1.5 
     Node shifter: skipping invalid      shift.amount 2.0 
-Shifter: cex improvement 1 best.shift.amount 0 best.split.yshift.amount 0 (will not be used)
+Shifter: cex improvement 1 best.shift.amount 0 best.split.yshift.amount 0 (won't be used)
 cex 0.688   xlim c(0, 1)   ylim c(0, 1)
 
 > rpart.plot(mod.survived, type = 2, fallen.leaves = TRUE, 
 +     main = "Browns", box.palette = "Browns", trace = 1)
+box.palette "Browns" (not diverging): #FFFFFF (white) to #D98657 (near lightsalmon3)
 cex 0.688   xlim c(0, 1)   ylim c(0, 1)
 
 > rpart.plot(mod.survived, type = 2, fallen.leaves = TRUE, 
 +     main = "Br", box.palette = "Br", trace = 1)
+box.palette "Br" (not diverging): #FFFFFF (white) to #D98657 (near lightsalmon3)
 cex 0.688   xlim c(0, 1)   ylim c(0, 1)
 
 > rpart.plot.version1(mod.survived, type = 2, extra = "auto", 
 +     fallen.leaves = TRUE, main = "-Br", box.palette = "-Br", 
 +     trace = 2)
-box.col: #EC7014 (nearly chocolate2 #EE7621)   to   #FEE391 (nearly lightgoldenrod1 #FFEC8B)
+handle.box.palette for class response invokes handle.anova.palette
+box.palette "-Br" (not diverging): #D98657 (near lightsalmon3) to #FFFFFF (white)
 Initial scale 0.688
     Node shifter: skipping invalid      shift.amount 1.5 
     Node shifter: skipping invalid      shift.amount 2.0 
-Shifter: cex improvement 1 best.shift.amount 0 best.split.yshift.amount 0 (will not be used)
+Shifter: cex improvement 1 best.shift.amount 0 best.split.yshift.amount 0 (won't be used)
 cex 0.688   xlim c(0, 1)   ylim c(0, 1)
 
 > rpart.plot(mod.survived, type = 2, fallen.leaves = TRUE, 
@@ -2811,13 +2788,13 @@ cex 0.688   xlim c(0, 1)   ylim c(0, 1)
 +     fallen.leaves = TRUE, main = "BuRd", box.palette = "BuRd")
 
 > rpart.plot.version1(mod.survived, type = 2, extra = "auto", 
-+     fallen.leaves = TRUE, main = "RdBu", box.palette = "RdBu")
++     fallen.leaves = TRUE, main = "RdGy", box.palette = "RdGy")
 
 > rpart.plot(mod.survived, type = 2, extra = "auto", 
 +     fallen.leaves = TRUE, main = "RdGn", box.palette = "RdGn")
 
 > rpart.plot.version1(mod.survived, type = 2, extra = "auto", 
-+     fallen.leaves = TRUE, main = "GnRd", box.palette = "GnRd")
++     fallen.leaves = TRUE, main = "GyRd", box.palette = "GyRd")
 
 > rpart.plot(mod.survived, type = 2, extra = "auto", 
 +     fallen.leaves = TRUE, main = "BuBu", box.palette = "BuBu")
@@ -3013,26 +2990,26 @@ cex 0.688   xlim c(0, 1)   ylim c(0, 1)
 > expect.err(try(rpart.plot.version1(mod.age, type = 2, 
 +     extra = "auto", fallen.leaves = TRUE, box.palette = "notacolor")), 
 +     "box.palette: ..." ... [TRUNCATED] 
-Error in col2rgb(pal[i]) : invalid color name 'notacolor'
+Error in col2rgb(pal_i) : invalid color name 'notacolor'
 Error : box.palette: "notacolor" is neither a color nor a palette.
 Try something like box.palette="blue" or box.palette="Blues".
 The predefined palettes are (with an optional "-" prefix):
-    Blues Browns Grays Greys Greens Oranges Reds Purples
-    Bu Bn Gn Gy Or Rd Pu (alternative names for the above palettes)
-    BuGn BuBn GnRd etc.  (two color palettes: any combination of two palettes)
+    Grays Greys Greens Blues Browns Oranges Reds Purples
+    Gy Gn Bu Bn Or Rd Pu (alternative names for the above palettes)
+    BuGn BuBn GnRd etc.  (two-color diverging palettes: any combination of two palettes)
     RdYlGn GnYlRd        (three color palettes)
 
 Got error as expected from try(rpart.plot.version1(mod.age, type = 2, extra = "auto", fallen.leaves = TRUE,     box.palette = "notacolor"))
 
 > expect.err(try(rpart.plot(mod.age, type = 2, extra = "auto", 
 +     fallen.leaves = TRUE, box.palette = "#1234XX")), "box.palette: \"#1234XX\" is ne ..." ... [TRUNCATED] 
-Error in col2rgb(pal[i]) : invalid hex digit in 'color' or 'lty'
+Error in col2rgb(pal_i) : invalid hex digit in 'color' or 'lty'
 Error : box.palette: "#1234XX" is neither a color nor a palette.
 Try something like box.palette="blue" or box.palette="Blues".
 The predefined palettes are (with an optional "-" prefix):
-    Blues Browns Grays Greys Greens Oranges Reds Purples
-    Bu Bn Gn Gy Or Rd Pu (alternative names for the above palettes)
-    BuGn BuBn GnRd etc.  (two color palettes: any combination of two palettes)
+    Grays Greys Greens Blues Browns Oranges Reds Purples
+    Gy Gn Bu Bn Or Rd Pu (alternative names for the above palettes)
+    BuGn BuBn GnRd etc.  (two-color diverging palettes: any combination of two palettes)
     RdYlGn GnYlRd        (three color palettes)
 
 Got error as expected from try(rpart.plot(mod.age, type = 2, extra = "auto", fallen.leaves = TRUE,     box.palette = "#1234XX"))
@@ -3040,73 +3017,58 @@ Got error as expected from try(rpart.plot(mod.age, type = 2, extra = "auto", fal
 > expect.err(try(rpart.plot.version1(mod.age, type = 2, 
 +     extra = "auto", fallen.leaves = TRUE, box.palette = "#1234XX")), 
 +     "box.palette: \ ..." ... [TRUNCATED] 
-Error in col2rgb(pal[i]) : invalid hex digit in 'color' or 'lty'
+Error in col2rgb(pal_i) : invalid hex digit in 'color' or 'lty'
 Error : box.palette: "#1234XX" is neither a color nor a palette.
 Try something like box.palette="blue" or box.palette="Blues".
 The predefined palettes are (with an optional "-" prefix):
-    Blues Browns Grays Greys Greens Oranges Reds Purples
-    Bu Bn Gn Gy Or Rd Pu (alternative names for the above palettes)
-    BuGn BuBn GnRd etc.  (two color palettes: any combination of two palettes)
+    Grays Greys Greens Blues Browns Oranges Reds Purples
+    Gy Gn Bu Bn Or Rd Pu (alternative names for the above palettes)
+    BuGn BuBn GnRd etc.  (two-color diverging palettes: any combination of two palettes)
     RdYlGn GnYlRd        (three color palettes)
 
 Got error as expected from try(rpart.plot.version1(mod.age, type = 2, extra = "auto", fallen.leaves = TRUE,     box.palette = "#1234XX"))
 
 > expect.err(try(rpart.plot.version1(mod.age, type = 2, 
 +     extra = "auto", fallen.leaves = TRUE, box.palette = "B")), 
-+     "pal=\"B\" is ambiguo ..." ... [TRUNCATED] 
-Error : pal="B" is ambiguous
++     "box.palette=\"B\" is ..." ... [TRUNCATED] 
+Error : box.palette="B" is ambiguous
 Try something like box.palette="blue" or box.palette="Blues".
 The predefined palettes are (with an optional "-" prefix):
-    Blues Browns Grays Greys Greens Oranges Reds Purples
-    Bu Bn Gn Gy Or Rd Pu (alternative names for the above palettes)
-    BuGn BuBn GnRd etc.  (two color palettes: any combination of two palettes)
+    Grays Greys Greens Blues Browns Oranges Reds Purples
+    Gy Gn Bu Bn Or Rd Pu (alternative names for the above palettes)
+    BuGn BuBn GnRd etc.  (two-color diverging palettes: any combination of two palettes)
     RdYlGn GnYlRd        (three color palettes)
 
 Got error as expected from try(rpart.plot.version1(mod.age, type = 2, extra = "auto", fallen.leaves = TRUE,     box.palette = "B"))
 
 > expect.err(try(rpart.plot.version1(mod.age, type = 2, 
 +     extra = "auto", fallen.leaves = TRUE, box.palette = "-B")), 
-+     "pal=\"B\" is ambigu ..." ... [TRUNCATED] 
-Error : pal="B" is ambiguous
++     "box.palette=\"B\" i ..." ... [TRUNCATED] 
+Error : box.palette="B" is ambiguous
 Try something like box.palette="blue" or box.palette="Blues".
 The predefined palettes are (with an optional "-" prefix):
-    Blues Browns Grays Greys Greens Oranges Reds Purples
-    Bu Bn Gn Gy Or Rd Pu (alternative names for the above palettes)
-    BuGn BuBn GnRd etc.  (two color palettes: any combination of two palettes)
+    Grays Greys Greens Blues Browns Oranges Reds Purples
+    Gy Gn Bu Bn Or Rd Pu (alternative names for the above palettes)
+    BuGn BuBn GnRd etc.  (two-color diverging palettes: any combination of two palettes)
     RdYlGn GnYlRd        (three color palettes)
 
 Got error as expected from try(rpart.plot.version1(mod.age, type = 2, extra = "auto", fallen.leaves = TRUE,     box.palette = "-B"))
 
 > expect.err(try(rpart.plot.version1(mod.age, type = 2, 
-+     extra = "auto", fallen.leaves = TRUE, box.palette = "NA")), 
-+     "pal=\"NA\" is not a ..." ... [TRUNCATED] 
-Error : pal="NA" is not allowed
-Try something like box.palette="blue" or box.palette="Blues".
-The predefined palettes are (with an optional "-" prefix):
-    Blues Browns Grays Greys Greens Oranges Reds Purples
-    Bu Bn Gn Gy Or Rd Pu (alternative names for the above palettes)
-    BuGn BuBn GnRd etc.  (two color palettes: any combination of two palettes)
-    RdYlGn GnYlRd        (three color palettes)
-
-Got error as expected from try(rpart.plot.version1(mod.age, type = 2, extra = "auto", fallen.leaves = TRUE,     box.palette = "NA"))
-
-> expect.err(try(rpart.plot.version1(mod.age, type = 2, 
 +     extra = "auto", fallen.leaves = TRUE, box.palette = rpart.plot)), 
-+     "object of typ ..." ... [TRUNCATED] 
-Warning in is.na(box.palette) :
-  is.na() applied to non-(list or vector) of type 'closure'
-Error in pal[i] : object of type 'closure' is not subsettable
++     "box.palette:  ..." ... [TRUNCATED] 
+Error : box.palette: illegal value
 Got error as expected from try(rpart.plot.version1(mod.age, type = 2, extra = "auto", fallen.leaves = TRUE,     box.palette = rpart.plot))
 
 > expect.err(try(rpart.plot(mod.age, type = 2, extra = "auto", 
 +     fallen.leaves = TRUE, box.palette = c(0, 1, 2), main = "box.palette=c(0,1,2)")), .... [TRUNCATED] 
-Error in col2rgb(pal[i]) : numerical color values must be positive
+Error in col2rgb(pal_i) : numerical color values must be positive
 Error : box.palette: 0 is neither a color nor a palette.
 Try something like box.palette="blue" or box.palette="Blues".
 The predefined palettes are (with an optional "-" prefix):
-    Blues Browns Grays Greys Greens Oranges Reds Purples
-    Bu Bn Gn Gy Or Rd Pu (alternative names for the above palettes)
-    BuGn BuBn GnRd etc.  (two color palettes: any combination of two palettes)
+    Grays Greys Greens Blues Browns Oranges Reds Purples
+    Gy Gn Bu Bn Or Rd Pu (alternative names for the above palettes)
+    BuGn BuBn GnRd etc.  (two-color diverging palettes: any combination of two palettes)
     RdYlGn GnYlRd        (three color palettes)
 
 Got error as expected from try(rpart.plot(mod.age, type = 2, extra = "auto", fallen.leaves = TRUE,     box.palette = c(0, 1, 2), main = "box.palette=c(0,1,2)"))
@@ -3121,6 +3083,7 @@ Got error as expected from try(rpart.plot(mod.age, type = 2, extra = "auto", fal
 
 > rpart.plot.version1(mod.class, type = 2, extra = "auto", 
 +     fallen.leaves = TRUE, box.palette = "auto", main = "multiclass\n(2 of 3 classes pred ..." ... [TRUNCATED] 
+multiclass auto box.palette: list(Blues, Greens)
 cex 1   xlim c(0, 1)   ylim c(0, 1)
 
 > fancyRpartPlot(mod.class, main = "fancyRpartPlot", 
@@ -3128,10 +3091,11 @@ cex 1   xlim c(0, 1)   ylim c(0, 1)
 
 > rpart.plot(mod.class, type = 2, extra = "auto", fallen.leaves = TRUE, 
 +     box.palette = list("Blues", "Reds", "Greens"), main = "list(Blues, Reds ..." ... [TRUNCATED] 
-box.col 1st: #6BAED6 (nearly skyblue3 #6CA6CD)
-box.col 3rd: #FB6A4A (nearly tomato #FF6347)
+handle.box.palette for class response invokes handle.multiclass.palette
+box.col 1st: #6BAED6 (near skyblue3 #6CA6CD)
+box.col 3rd: #FB6A4A (near tomato #FF6347)
 Initial scale 1.01
-Shifter: cex improvement 1 best.shift.amount 0 best.split.yshift.amount 0 (will not be used)
+Shifter: cex improvement 1 best.shift.amount 0 best.split.yshift.amount 0 (won't be used)
 Clipped scale 1.01 to max.auto.cex 1
 cex 1   xlim c(0, 1)   ylim c(0, 1)
 
@@ -3179,7 +3143,7 @@ To make this warning go away use box.palette=0 or trace=-1.
 > expect.err(try(rpart.plot(mod.species, type = 2, extra = "auto", 
 +     fallen.leaves = TRUE, box.palette = c("Blues", "Reds"), main = "box.palette= ..." ... [TRUNCATED] 
 Error : The rpart model has a multiclass response (not a continuous or binary response).
-Therefore box.palette must be "auto", or a single color, or a list of palettes.
+Therefore box.palette must be "auto", or a list of palettes, or a single color or palette.
 e.g. box.palette=list("Reds", "Oranges", "Grays", "Blues", "Greens")
 Got error as expected from try(rpart.plot(mod.species, type = 2, extra = "auto", fallen.leaves = TRUE,     box.palette = c("Blues", "Reds"), main = "box.palette=c(\"Blues\", \"Reds\")"))
 
@@ -3212,12 +3176,12 @@ Got error as expected from try(rpart.plot(mod.species, type = 2, extra = "auto",
 +     fallen.leaves = FALSE, box.palette = "auto", main = "multiclass, fallen.leaves=FALSE" .... [TRUNCATED] 
 
 > expect.err(try(rpart.plot(mod.country, type = 2, extra = "auto", 
-+     fallen.leaves = TRUE, box.palette = c("blue", "pink"))), 
-+     "The rpart m ..." ... [TRUNCATED] 
++     fallen.leaves = TRUE, box.palette = c("lightblue2", "pink"))), 
++     "The r ..." ... [TRUNCATED] 
 Error : The rpart model has a multiclass response (not a continuous or binary response).
-Therefore box.palette must be "auto", or a single color, or a list of palettes.
+Therefore box.palette must be "auto", or a list of palettes, or a single color or palette.
 e.g. box.palette=list("Reds", "Oranges", "Grays", "Blues", "Greens")
-Got error as expected from try(rpart.plot(mod.country, type = 2, extra = "auto", fallen.leaves = TRUE,     box.palette = c("blue", "pink")))
+Got error as expected from try(rpart.plot(mod.country, type = 2, extra = "auto", fallen.leaves = TRUE,     box.palette = c("lightblue2", "pink")))
 
 > library(earth)
 
@@ -3294,6 +3258,8 @@ Got error as expected from try(rpart.plot(mod.country, type = 2, extra = "auto",
 
 > par(mfrow = c(2, 2))
 
+> multi.class.model <- rpart(Reliability ~ ., data = cu.summary)
+
 > rpart.plot(multi.class.model, legend.x = NULL, main = "legend.x=NULL (default)")
 
 > rpart.plot(multi.class.model, legend.x = NA, main = "legend.x=NA (no legend)")
@@ -3317,6 +3283,405 @@ Got error as expected from try(rpart.plot(mod.country, type = 2, extra = "auto",
 > rpart.plot(multi.class.model, legend.x = 0, legend.y = 1.1, 
 +     legend.cex = 0.8, main = "legend.x=0 legend.y=1.1 legend.cex=.8")
 
+> cat("palette handling for node.fun, pal.thresh, and pal.node.fun\n")
+palette handling for node.fun, pal.thresh, and pal.node.fun
+
+> get.class.stats <- rpart.plot:::get.class.stats
+
+> internal.node.labs <- rpart.plot:::internal.node.labs
+
+> paste.trunc <- rpart.plot:::paste.trunc
+
+> is.try.err <- rpart.plot:::is.try.err
+
+> plot1 <- function(object, node.fun = NULL, pal.node.fun = FALSE, 
++     optional.msg = "", ...) {
++     rpart.plot(object, node.fun = node.fun, pal. .... [TRUNCATED] 
+
+> plot2 <- function(object, node.fun = NULL, optional.msg = "", 
++     ...) {
++     try <- try(plot1(object, node.fun = node.fun, pal.node.fun = FALSE .... [TRUNCATED] 
+
+> data(ptitanic)
+
+> ptitanic.numeric.survived <- ptitanic
+
+> ptitanic.numeric.survived$survived <- as.numeric(ptitanic$survived)
+
+> anova.mod <- rpart(survived ~ ., data = ptitanic.numeric.survived, 
++     cp = 0.02)
+
+> old.par <- par(no.readonly = TRUE)
+
+> par(mfrow = c(3, 2))
+
+> par(mar = c(0, 0, 4, 0))
+
+> rpart.plot(anova.mod, main = "no node.fun")
+
+> title("node.fun (anova model)\n\n")
+
+> plot(c(0, 1), c(0, 1), col = 0, bty = "n", xlab = "", 
++     xaxt = "n", ylab = "", yaxt = "n")
+
+> plot2(anova.mod, node.fun = function(x, labs, digits, 
++     varlen) paste(labs))
+
+> plot2(anova.mod, node.fun = function(x, labs, digits, 
++     varlen) paste("surv=\n", labs))
+
+> plot2(anova.mod, extra = 0, node.fun = function(x, 
++     labs, digits, varlen) paste("surv=\n", -10 * as.numeric(labs)))
+
+> plot2(anova.mod, extra = 0, node.fun = function(x, 
++     labs, digits, varlen) paste("surv=\n", -1e+08 * as.numeric(labs)))
+
+> plot2(anova.mod, box.palette = "Gy")
+
+> par(mfrow = c(4, 2))
+
+> par(mar = c(0, 0, 3, 0))
+
+> plot2(anova.mod, box.palette = "RdGy")
+
+> plot2(anova.mod, node.fun = function(x, labs, digits, 
++     varlen) c(1, 2, 3, 4, "nonesuch", 6, 7, 8, 9))
+
+node labs generated by node.fun:
+[1] "1"        "2"        "3"        "4"        "nonesuch" "6"        "7"       
+[8] "8"        "9"       
+
+Error : Cannot convert node labs to numeric
+To make this error go away, change node.fun or use pal.node.fun=FALSE
+
+> plot2(anova.mod, node.fun = function(x, labs, digits, 
++     varlen) 1:nrow(x$frame))
+
+> plot2(anova.mod, node.fun = function(x, labs, digits, 
++     varlen) paste("prefix", 1:nrow(x$frame), "suffix"))
+
+> par(mfrow = c(3, 2))
+
+> par(oma = c(0, 0, 3, 0))
+
+> par(mar = c(0, 0, 3, 0))
+
+> rpart.plot(anova.mod, extra = 0, box.palette = "RdGn", 
++     main = "pal.thresh=default", trace = 0)
+
+> title("pal.thresh (anova model)\n\n\n\n", xpd = NA)
+
+> rpart.plot(anova.mod, extra = 0, box.palette = "RdGn", 
++     main = "pal.thresh=1.2", pal.thresh = 1.2)
+
+> rpart.plot(anova.mod, extra = 0, box.palette = "RdGn", 
++     main = "pal.thresh=100", pal.thresh = 100)
+
+> rpart.plot(anova.mod, extra = 0, box.palette = "RdGn", 
++     main = "pal.thresh=-100", pal.thresh = -100)
+
+> par(mfrow = c(3, 2))
+
+> par(mar = c(0, 0, 4, 0))
+
+> plot2(anova.mod, node.fun = function(x, labs, digits, 
++     varlen) paste(x$frame$yval * x$frame$n), optional.msg = "box.palette=default\n")
+
+> plot2(anova.mod, node.fun = function(x, labs, digits, 
++     varlen) paste(x$frame$yval * x$frame$n), pal.thresh = 80, 
++     box.palette = "OrGy",  .... [TRUNCATED] 
+
+> rpart.plot(anova.mod, box.palette = "BuGn", pal.thresh = 1.8, 
++     main = "box.palette=\"BuGn\", pal.thresh=1.8")
+
+> rpart.plot(anova.mod, box.palette = c("lightblue", 
++     "lightgreen"), pal.thresh = 1.8, main = "box.palette=c(\"lightblue\", \"lightgreen\"), pal ..." ... [TRUNCATED] 
+
+> paste.c <- rpart.plot:::paste.c
+
+> test.expand.palette <- function(box.palette) {
++     cat(paste0("\nbox.palette=", paste.c(box.palette)), "\n")
++     rpart.plot(anova.mod, trace = 1 .... [TRUNCATED] 
+
+> par(mfrow = c(3, 2))
+
+> test.expand.palette("auto")
+
+box.palette=auto 
+box.palette (not diverging): #F7FBFF (near ghostwhite) to #6BAED6 (near skyblue3)
+cex 1   xlim c(0, 1)   ylim c(0, 1)
+
+> test.expand.palette("Reds")
+
+box.palette=Reds 
+box.palette "Reds" (not diverging): #FFF5F0 (near seashell) to #FB6A4A (near tomato)
+cex 1   xlim c(0, 1)   ylim c(0, 1)
+
+> test.expand.palette(c("-Reds", "Blues"))
+
+box.palette=c(-Reds,Blues) 
+box.palette (pal.thresh 1.49074): #FB6A4A (near tomato) to #6BAED6 (near skyblue3)
+cex 1   xlim c(0, 1)   ylim c(0, 1)
+
+> test.expand.palette(c("tan", "tan2", "tan4"))
+
+box.palette=c(tan,tan2,tan4) 
+box.palette (not diverging): #D2B48C (tan) to #8B5A2B (tan4)
+cex 1   xlim c(0, 1)   ylim c(0, 1)
+
+> test.expand.palette(c("tan2", "tan", "Blues"))
+
+box.palette=c(tan2,tan,Blues) 
+box.palette (not diverging): #EE9A49 (tan2) to #6BAED6 (near skyblue3)
+cex 1   xlim c(0, 1)   ylim c(0, 1)
+
+> test.expand.palette(c("auto", "-Reds"))
+
+box.palette=c(auto,-Reds) 
+box.palette (pal.thresh 1.49074): #F7FBFF (near ghostwhite) to #FFF5F0 (near seashell)
+cex 1   xlim c(0, 1)   ylim c(0, 1)
+
+> expect.err(try(test.expand.palette("")), "box.palette: \"\" is neither a color nor a palette")
+
+box.palette= 
+Error in col2rgb(pal_i) : invalid color name ''
+Error : box.palette: "" is neither a color nor a palette.
+Try something like box.palette="blue" or box.palette="Blues".
+The predefined palettes are (with an optional "-" prefix):
+    Grays Greys Greens Blues Browns Oranges Reds Purples
+    Gy Gn Bu Bn Or Rd Pu (alternative names for the above palettes)
+    BuGn BuBn GnRd etc.  (two-color diverging palettes: any combination of two palettes)
+    RdYlGn GnYlRd        (three color palettes)
+
+Got error as expected from try(test.expand.palette(""))
+
+> expect.err(try(test.expand.palette("nonesuch")), "box.palette: \"nonesuch\" is neither a color nor a palette")
+
+box.palette=nonesuch 
+Error in col2rgb(pal_i) : invalid color name 'nonesuch'
+Error : box.palette: "nonesuch" is neither a color nor a palette.
+Try something like box.palette="blue" or box.palette="Blues".
+The predefined palettes are (with an optional "-" prefix):
+    Grays Greys Greens Blues Browns Oranges Reds Purples
+    Gy Gn Bu Bn Or Rd Pu (alternative names for the above palettes)
+    BuGn BuBn GnRd etc.  (two-color diverging palettes: any combination of two palettes)
+    RdYlGn GnYlRd        (three color palettes)
+
+Got error as expected from try(test.expand.palette("nonesuch"))
+
+> expect.err(try(test.expand.palette("Nonesuch")), "box.palette=\"Nonesuch\" is not allowed")
+
+box.palette=Nonesuch 
+Error : box.palette="Nonesuch" is not allowed
+Try something like box.palette="blue" or box.palette="Blues".
+The predefined palettes are (with an optional "-" prefix):
+    Grays Greys Greens Blues Browns Oranges Reds Purples
+    Gy Gn Bu Bn Or Rd Pu (alternative names for the above palettes)
+    BuGn BuBn GnRd etc.  (two-color diverging palettes: any combination of two palettes)
+    RdYlGn GnYlRd        (three color palettes)
+
+Got error as expected from try(test.expand.palette("Nonesuch"))
+
+> expect.err(try(test.expand.palette(c("tan1", "huh?"))), 
++     "box.palette: \"huh.\" is neither a color nor a palette")
+
+box.palette=c(tan1,huh?) 
+Error in col2rgb(pal_i) : invalid color name 'huh?'
+Error : box.palette: "huh?" is neither a color nor a palette.
+Try something like box.palette="blue" or box.palette="Blues".
+The predefined palettes are (with an optional "-" prefix):
+    Grays Greys Greens Blues Browns Oranges Reds Purples
+    Gy Gn Bu Bn Or Rd Pu (alternative names for the above palettes)
+    BuGn BuBn GnRd etc.  (two-color diverging palettes: any combination of two palettes)
+    RdYlGn GnYlRd        (three color palettes)
+
+Got error as expected from try(test.expand.palette(c("tan1", "huh?")))
+
+> cat("\n")
+
+
+> binom.mod <- rpart(survived ~ ., data = ptitanic, 
++     cp = 0.02)
+
+> par(mfrow = c(3, 2))
+
+> par(mar = c(0, 0, 4, 0))
+
+> rpart.plot(binom.mod, main = "no node.fun")
+
+> title("node.fun (binomial model)\n\n")
+
+> plot(c(0, 1), c(0, 1), col = 0, bty = "n", xlab = "", 
++     xaxt = "n", ylab = "", yaxt = "n")
+
+> plot2(binom.mod, node.fun = function(x, labs, digits, 
++     varlen) paste(labs))
+
+> plot2(binom.mod, node.fun = function(x, labs, digits, 
++     varlen) round(get.class.stats(x)$prob.per.lev[, 2], 3))
+
+> par(mfrow = c(4, 2))
+
+> par(mar = c(0, 0, 4, 0))
+
+> plot2(binom.mod, node.fun = function(x, labs, digits, 
++     varlen) letters[1:nrow(x$frame)])
+
+node labs generated by node.fun:
+[1] "a" "b" "c" "d" "e" "f" "g"
+
+Error : Cannot convert node labs to numeric
+To make this error go away, change node.fun or use pal.node.fun=FALSE
+
+> plot2(binom.mod, node.fun = function(x, labs, digits, 
++     varlen) c(1, 2, 3, 4, "nonesuch", 6, 7))
+
+node labs generated by node.fun:
+[1] "1"        "2"        "3"        "4"        "nonesuch" "6"        "7"       
+
+Error : Cannot convert node labs to numeric
+To make this error go away, change node.fun or use pal.node.fun=FALSE
+
+> plot2(binom.mod, node.fun = function(x, labs, digits, 
++     varlen) 1:nrow(x$frame))
+
+> plot2(binom.mod, node.fun = function(x, labs, digits, 
++     varlen) paste("prefix", 1:nrow(x$frame), "suffix"))
+
+> par(mfrow = c(4, 2))
+
+> par(oma = c(0, 0, 3, 0))
+
+> par(mar = c(0, 0, 3, 0))
+
+> rpart.plot(binom.mod)
+
+> title("pal.thresh (binom mod)\n\n\n\n", xpd = NA)
+
+> rpart.plot(binom.mod, main = "pal.thresh=.5", pal.thresh = 0.5, 
++     trace = 0)
+
+> rpart.plot(binom.mod, main = "pal.thresh=0", pal.thresh = 0, 
++     trace = 0)
+
+> rpart.plot(binom.mod, main = "pal.thresh=1", pal.thresh = 1, 
++     trace = 0)
+
+> rpart.plot(binom.mod, main = "pal.thresh=-10", pal.thresh = -10, 
++     trace = 0)
+
+> rpart.plot(binom.mod, main = "pal.thresh=10", pal.thresh = 10, 
++     trace = 0)
+
+> rpart.plot(binom.mod, main = "pal.thresh=.2", pal.thresh = 0.2, 
++     trace = 0)
+
+> par(mfrow = c(4, 2))
+
+> par(mar = c(0, 0, 3, 0))
+
+> rpart.plot(binom.mod)
+
+> title("pal.thresh with node.fun (binom mod)\n\n")
+
+> plot(c(0, 1), c(0, 1), col = 0, bty = "n", xlab = "", 
++     xaxt = "n", ylab = "", yaxt = "n")
+
+> plot2(binom.mod, node.fun = function(x, labs, digits, 
++     varlen) round(2 * (get.class.stats(x)$prob.per.lev[, 2] - 
++     0.5), 2))
+
+> plot2(binom.mod, node.fun = function(x, labs, digits, 
++     varlen) round(2 * (get.class.stats(x)$prob.per.lev[, 2] - 
++     0.5), 2), pal.thresh = .... [TRUNCATED] 
+
+> mod.survived <- rpart(survived ~ ., data = ptitanic, 
++     control = list(cp = 0.02))
+
+> rpart.plot(mod.survived, type = 2, fallen.leaves = TRUE, 
++     main = "test list palette for binomial response\nlist(Blues, Greens)", 
++     box.pa .... [TRUNCATED] 
+
+> library(earth)
+
+> data(ozone1)
+
+> ozone2 <- ozone1
+
+> set.seed(8)
+
+> ozone2$O3a <- round(runif(330, 1, 10))
+
+> y <- cbind(ozone2$O3, ozone2$O3a)
+
+> mod.poisson <- rpart(y ~ . - O3 - O3a, data = ozone2, 
++     control = list(cp = 0.04))
+
+> par(mfrow = c(2, 2))
+
+> rpart.plot(mod.poisson, extra = "auto", fallen.leaves = TRUE, 
++     box.palette = "BnGn", main = "mod.poisson\nbox.palette=\"BnGn\"")
+
+> rpart.plot(mod.poisson, extra = 0, fallen.leaves = TRUE, 
++     main = "box.palette=\"BnGn\"\npal.thresh=.35", box.palette = "BnGn", 
++     pal.thre .... [TRUNCATED] 
+
+> rpart.plot(mod.poisson, extra = 0, fallen.leaves = TRUE, 
++     main = "box.palette=\"BnGn\"\npal.thresh=.7\nnode.fun", box.palette = "BnGn", 
++     .... [TRUNCATED] 
+
+> rpart.plot(mod.poisson, extra = 0, fallen.leaves = TRUE, 
++     main = "box.palette=\"BnGn\"\npal.thresh=-1\nnode.fun\npal.node.fun=TRUE", 
++     bo .... [TRUNCATED] 
+
+> mod.multiclass <- rpart(pclass ~ ., data = ptitanic, 
++     control = list(cp = 0.02))
+
+> par(mfrow = c(5, 2))
+
+> plot2(mod.multiclass, optional.msg = "mod.multiclass\n", 
++     trace = 1, node.fun = function(x, labs, digits, varlen) substring(labs, 
++         1 .... [TRUNCATED] 
+multiclass auto box.palette: list(Blues, Greens)
+cex 1   xlim c(0, 1)   ylim c(0, 1)
+multiclass auto box.palette: list(Blues, Greens)
+cex 1   xlim c(0, 1)   ylim c(0, 1)
+
+> plot2(mod.multiclass, box.palette = list("Bu", "Or", 
++     "Gy"), trace = 1, optional.msg = "box.palette=list(\"Bu\",\"Or\",\"Gy\")\n", 
++     node .... [TRUNCATED] 
+cex 1   xlim c(0, 1)   ylim c(0, 1)
+cex 1   xlim c(0, 1)   ylim c(0, 1)
+
+> plot2(mod.multiclass, box.palette = "BuOr", trace = 1, 
++     optional.msg = "box.palette=\"BuOr\"\n", node.fun = function(x, 
++         labs, digit .... [TRUNCATED] 
+cex 1   xlim c(0, 1)   ylim c(0, 1)
+cex 1   xlim c(0, 1)   ylim c(0, 1)
+
+> plot2(mod.multiclass, box.palette = "BuOr", trace = 1, 
++     optional.msg = "box.palette=\"BuOr\"\n", node.fun = function(x, 
++         labs, digit .... [TRUNCATED] 
+cex 1   xlim c(0, 1)   ylim c(0, 1)
+cex 1   xlim c(0, 1)   ylim c(0, 1)
+
+> plot2(mod.multiclass, box.palette = "OrGn", pal.thresh = 20, 
++     trace = 1, optional.msg = "box.palette=\"BuOr\" pal.thresh=20\n", 
++     node.fu .... [TRUNCATED] 
+cex 1   xlim c(0, 1)   ylim c(0, 1)
+cex 1   xlim c(0, 1)   ylim c(0, 1)
+
+> expect.err(try(rpart.plot(mod.multiclass, type = 2, 
++     extra = "auto", trace = 2, fallen.leaves = TRUE, box.palette = c("blues", 
++         "red ..." ... [TRUNCATED] 
+handle.box.palette for class response invokes handle.multiclass.palette
+Error : The rpart model has a multiclass response (not a continuous or binary response).
+Therefore box.palette must be "auto", or a list of palettes, or a single color or palette.
+e.g. box.palette=list("Reds", "Oranges", "Grays", "Blues", "Greens")
+Got error as expected from try(rpart.plot(mod.multiclass, type = 2, extra = "auto", trace = 2,     fallen.leaves = TRUE, box.palette = c("blues", "reds"), main = "box.palette=c(\"blues\", \"reds\")"))
+
+> par(old.par)
+
 > cat("== done test.palette.R ==\n")
 == done test.palette.R ==
 > 
@@ -3331,7 +3696,7 @@ Got error as expected from try(rpart.plot(mod.country, type = 2, extra = "auto",
 > data(ozone1)
 
 > sessionInfo()
-R version 3.3.0 (2016-05-03)
+R version 3.3.1 (2016-06-21)
 Platform: x86_64-w64-mingw32/x64 (64-bit)
 Running under: Windows 7 x64 (build 7601) Service Pack 1
 
@@ -3346,12 +3711,12 @@ attached base packages:
 [1] stats     graphics  grDevices utils     datasets  methods   base     
 
 other attached packages:
-[1] randomForest_4.6-12 rattle_4.1.0        earth_4.4.4        
-[4] plotmo_3.1.4        TeachingDemos_2.10  plotrix_3.6-2      
-[7] rpart.plot_2.0.1    rpart_4.1-10       
+[1] randomForest_4.6-12 rattle_4.1.0        earth_4.4.6        
+[4] plotmo_3.2.0        TeachingDemos_2.10  plotrix_3.6-3      
+[7] rpart.plot_2.1.0    rpart_4.1-10       
 
 loaded via a namespace (and not attached):
-[1] magrittr_1.5       tools_3.3.0        RColorBrewer_1.1-2 stringi_1.1.1     
+[1] magrittr_1.5       tools_3.3.1        RColorBrewer_1.1-2 stringi_1.1.1     
 [5] RGtk2_2.20.31     
 
 > ititanic <- ptitanic
@@ -3383,8 +3748,8 @@ Warning: NA in fitted values (fitted[6] is NA)
 +     5] <- NA
 
 > expect.err(try(rpart.plot(a, nn = 1, type = 1, fallen.leaves = FALSE, 
-+     main = "survived with na")), "Bifurcated palettes like box.palette=\"Bu .... [TRUNCATED] 
-Error : Bifurcated palettes like box.palette="BuGn" cannot be used for this model
++     main = "survived with na")), "Diverging palettes like box.palette=\"BuG .... [TRUNCATED] 
+Error : Diverging palettes like box.palette="BuGn" cannot be used for this model
        because there are NAs in the fitted values.
        Try something like box.palette="Blues"
 Got error as expected from try(rpart.plot(a, nn = 1, type = 1, fallen.leaves = FALSE, main = "survived with na"))
@@ -3411,7 +3776,7 @@ Warning: NA in fitted values (fitted[3] is NA)
 > data(ozone1)
 
 > sessionInfo()
-R version 3.3.0 (2016-05-03)
+R version 3.3.1 (2016-06-21)
 Platform: x86_64-w64-mingw32/x64 (64-bit)
 Running under: Windows 7 x64 (build 7601) Service Pack 1
 
@@ -3426,12 +3791,12 @@ attached base packages:
 [1] stats     graphics  grDevices utils     datasets  methods   base     
 
 other attached packages:
-[1] randomForest_4.6-12 rattle_4.1.0        earth_4.4.4        
-[4] plotmo_3.1.4        TeachingDemos_2.10  plotrix_3.6-2      
-[7] rpart.plot_2.0.1    rpart_4.1-10       
+[1] randomForest_4.6-12 rattle_4.1.0        earth_4.4.6        
+[4] plotmo_3.2.0        TeachingDemos_2.10  plotrix_3.6-3      
+[7] rpart.plot_2.1.0    rpart_4.1-10       
 
 loaded via a namespace (and not attached):
-[1] magrittr_1.5       tools_3.3.0        RColorBrewer_1.1-2 stringi_1.1.1     
+[1] magrittr_1.5       tools_3.3.1        RColorBrewer_1.1-2 stringi_1.1.1     
 [5] RGtk2_2.20.31     
 
 > ititanic <- ptitanic

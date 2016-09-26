@@ -64,19 +64,6 @@ rpart.plot.version1(x=stop("no 'x' arg"),
 \value{
 The returned value is identical to that of \code{\link{prp}}.
 }
-\author{
-  Stephen Milborrow, borrowing heavily from the \code{\link{rpart}}
-  package by Terry M. Therneau and Beth Atkinson,
-  and the R port of that package by Brian Ripley.
-}
-\seealso{
-  The package vignette \href{../doc/prp.pdf}{Plotting rpart trees with the rpart.plot package}\cr\cr
-  \code{\link{rpart.plot}}\cr\cr
-Functions in the \code{rpart} package:
-  \code{\link{plot.rpart}}
-  \code{\link{text.rpart}}
-  \code{\link{rpart}}
-}
 \examples{
 data(ptitanic)
 tree <- rpart(survived ~ ., data=ptitanic, cp=.02)

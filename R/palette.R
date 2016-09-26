@@ -1,27 +1,24 @@
-# palette.R: functions for handling "box.palette" and default "extra" args
+# palette.R: functions for handling "box.palette" and related arguments.
 
 # Predefined palettes.  The Color Brewer palettes were used as a
 # starting point for these palettes, with manual interpolation to bring
 # the number of colors per palette to nine.
-# TODO These were created in a rush and could be refined.
+# The darkest color in each palette is still fairly light
+# so black text on it can be easily read.
 
-Blues   <- c("#F7FBFF", "#EAF3FB", "#DEEBF7", "#D2E3F3", "#C6DBEF", "#B2D2E8", "#9ECAE1", "#84BCDB", "#6BAED6")
-Browns <- c( "#FEE391", "#FEDB80", "#FED370", "#FECB5f", "#FEC44F", "#FEAE3C", "#FE9929", "#F5841E", "#EC7014")
-# old   - c( "#FEE391", "#FED370", "#FEC44F", "#FEAE3C", "#FE9929", "#F5841E", "#EC7014", "#DC5E0B", "#CC4C02")
+Grays   <- gray(seq(1, .6, length.out=9))
+Greys   <- Grays # british spelling
 Greens  <- c("#F7FCF5", "#EEF8EA", "#E5F5E0", "#D6EFD0", "#C7E9C0", "#B4E1AD", "#A1D99B", "#8ACE88", "#74C476")
-Grays   <- gray(seq(1, .6, length.out=100))
-Greys   <- Grays
-# TODO Oranges are quite close to Browns
+Blues   <- c("#F7FBFF", "#EAF3FB", "#DEEBF7", "#D2E3F3", "#C6DBEF", "#B2D2E8", "#9ECAE1", "#84BCDB", "#6BAED6")
+Browns  <- hsv(h=0.06, s=seq(from=0, to=.6, length.out=9), v=seq(from=1, to=.85, length.out=9))
 Oranges <- c("#FFF5EB", "#FEEDDC", "#FEE6CE", "#FDDBB8", "#FDD0A2", "#FDBF86", "#FDAE6B", "#FD9D53", "#FD8D3C")
 Reds    <- c("#FFF5F0", "#FEEAE1", "#FEE0D2", "#FDCDB9", "#FCBBA1", "#FCA689", "#FC9272", "#FB7E5E", "#FB6A4A")
-# original purples are too close to grays
-# Purples <- c("#FCFBFD", "#F5F4F9", "#EFEDF5", "#E4E3F0", "#DADAEB", "#CBCBE3", "#BCBDDC", "#ADABD2", "#9E9AC8")
 Purples <- c("#FFFBFF", "#FFF4FF", "#FFEDFF", "#FFE3FF", "#FFDAFF", "#FFCBFF", "#FFBDFF", "#FFABFF", "#FF9AFF")
 
-Bu <- Blues  # alternative names for the above palettes
-Bn <- Browns
+Gy <- Grays # alternate names for the above palettes
 Gn <- Greens
-Gy <- Grays
+Bu <- Blues
+Bn <- Browns
 Or <- Oranges
 Rd <- Reds
 Pu <- Purples
@@ -29,143 +26,174 @@ Pu <- Purples
 RdYlGn  <- lighten(rainbow(100, end=.36), .2) # three color palettes
 GnYlRd  <- rev(RdYlGn)
 
-# "bifurcated" palettes
-# TODO these could formed automatically rather than explicitly like below
+# two-color diverging palettes
 
-ICOL    <- seq(from=4, to=length(Blues), by=1) # start at 4 so no near-whites
+ICOL <- seq(from=3, to=length(Blues), by=1) # start at 3 to avoid near-whites
+RICOL <- rev(ICOL)
 
-BuBu   <- c(Bu[rev(ICOL)], Bu[ICOL])
-BuBn   <- c(Bu[rev(ICOL)], Bn[ICOL])
-BuGn   <- c(Bu[rev(ICOL)], Gn[ICOL])
-BuGy   <- c(Bu[rev(ICOL)], Gy[ICOL])
-BuOr   <- c(Bu[rev(ICOL)], Or[ICOL])
-BuRd   <- c(Bu[rev(ICOL)], Rd[ICOL])
-BuPu   <- c(Bu[rev(ICOL)], Pu[ICOL])
+GyGy <- c(Gy[RICOL], Gy[ICOL])
+GyGn <- c(Gy[RICOL], Gn[ICOL])
+GyBu <- c(Gy[RICOL], Bu[ICOL])
+GyBn <- c(Gy[RICOL], Bn[ICOL])
+GyOr <- c(Gy[RICOL], Or[ICOL])
+GyRd <- c(Gy[RICOL], Rd[ICOL])
+GyPu <- c(Gy[RICOL], Pu[ICOL])
 
-BnBu   <- c(Bn[rev(ICOL)], Bu[ICOL])
-BnBn   <- c(Bn[rev(ICOL)], Bn[ICOL])
-BnGn   <- c(Bn[rev(ICOL)], Gn[ICOL])
-BnGy   <- c(Bn[rev(ICOL)], Gy[ICOL])
-BnOr   <- c(Bn[rev(ICOL)], Or[ICOL])
-BnRd   <- c(Bn[rev(ICOL)], Rd[ICOL])
-BnPu   <- c(Bn[rev(ICOL)], Pu[ICOL])
+BuGy <- c(Bu[RICOL], Gy[ICOL])
+BuGn <- c(Bu[RICOL], Gn[ICOL])
+BuBu <- c(Bu[RICOL], Bu[ICOL])
+BuBn <- c(Bu[RICOL], Bn[ICOL])
+BuOr <- c(Bu[RICOL], Or[ICOL])
+BuRd <- c(Bu[RICOL], Rd[ICOL])
+BuPu <- c(Bu[RICOL], Pu[ICOL])
 
-GnBu   <- c(Gn[rev(ICOL)], Bu[ICOL])
-GnBn   <- c(Gn[rev(ICOL)], Bn[ICOL])
-GnGy   <- c(Gn[rev(ICOL)], Gn[ICOL])
-GnGy   <- c(Gn[rev(ICOL)], Gy[ICOL])
-GnOr   <- c(Gn[rev(ICOL)], Or[ICOL])
-GnRd   <- c(Gn[rev(ICOL)], Rd[ICOL])
-GnPu   <- c(Gn[rev(ICOL)], Pu[ICOL])
+BnGy <- c(Bn[RICOL], Gy[ICOL])
+BnGn <- c(Bn[RICOL], Gn[ICOL])
+BnBu <- c(Bn[RICOL], Bu[ICOL])
+BnBn <- c(Bn[RICOL], Bn[ICOL])
+BnOr <- c(Bn[RICOL], Or[ICOL])
+BnRd <- c(Bn[RICOL], Rd[ICOL])
+BnPu <- c(Bn[RICOL], Pu[ICOL])
 
-GyBu   <- c(Gy[rev(ICOL)], Bu[ICOL])
-GyBn   <- c(Gy[rev(ICOL)], Bn[ICOL])
-GyGn   <- c(Gy[rev(ICOL)], Gn[ICOL])
-GyGy   <- c(Gy[rev(ICOL)], Gy[ICOL])
-GyOr   <- c(Gy[rev(ICOL)], Or[ICOL])
-GyRd   <- c(Gy[rev(ICOL)], Rd[ICOL])
-GyPu   <- c(Gy[rev(ICOL)], Gy[ICOL])
+GnGy <- c(Gn[RICOL], Gy[ICOL])
+GnGn <- c(Gn[RICOL], Gn[ICOL])
+GnBu <- c(Gn[RICOL], Bu[ICOL])
+GnBn <- c(Gn[RICOL], Bn[ICOL])
+GnOr <- c(Gn[RICOL], Or[ICOL])
+GnRd <- c(Gn[RICOL], Rd[ICOL])
+GnPu <- c(Gn[RICOL], Pu[ICOL])
 
-OrBu   <- c(Or[rev(ICOL)], Bu[ICOL])
-OrBn   <- c(Or[rev(ICOL)], Bn[ICOL])
-OrGn   <- c(Or[rev(ICOL)], Gn[ICOL])
-OrGy   <- c(Or[rev(ICOL)], Gy[ICOL])
-OrOr   <- c(Or[rev(ICOL)], Or[ICOL])
-OrRd   <- c(Or[rev(ICOL)], Rd[ICOL])
-OrPu   <- c(Or[rev(ICOL)], Pu[ICOL])
+OrGy <- c(Or[RICOL], Gy[ICOL])
+OrGn <- c(Or[RICOL], Gn[ICOL])
+OrBu <- c(Or[RICOL], Bu[ICOL])
+OrBn <- c(Or[RICOL], Bn[ICOL])
+OrOr <- c(Or[RICOL], Or[ICOL])
+OrRd <- c(Or[RICOL], Rd[ICOL])
+OrPu <- c(Or[RICOL], Pu[ICOL])
 
-PuBu   <- c(Pu[rev(ICOL)], Bu[ICOL])
-PuBn   <- c(Pu[rev(ICOL)], Bn[ICOL])
-PuGn   <- c(Pu[rev(ICOL)], Gn[ICOL])
-PuGy   <- c(Pu[rev(ICOL)], Gy[ICOL])
-PuOr   <- c(Pu[rev(ICOL)], Or[ICOL])
-PuRd   <- c(Pu[rev(ICOL)], Rd[ICOL])
-PuPu   <- c(Pu[rev(ICOL)], Gy[ICOL])
+PuGy <- c(Pu[RICOL], Gy[ICOL])
+PuGn <- c(Pu[RICOL], Gn[ICOL])
+PuBu <- c(Pu[RICOL], Bu[ICOL])
+PuBn <- c(Pu[RICOL], Bn[ICOL])
+PuOr <- c(Pu[RICOL], Or[ICOL])
+PuRd <- c(Pu[RICOL], Rd[ICOL])
+PuPu <- c(Pu[RICOL], Pu[ICOL])
 
-RdBu   <- c(Rd[rev(ICOL)], Bu[ICOL])
-RdBn   <- c(Rd[rev(ICOL)], Bn[ICOL])
-RdGn   <- c(Rd[rev(ICOL)], Gn[ICOL])
-RdGy   <- c(Rd[rev(ICOL)], Gy[ICOL])
-RdOr   <- c(Rd[rev(ICOL)], Or[ICOL])
-RdRd   <- c(Rd[rev(ICOL)], Rd[ICOL])
-RdPu   <- c(Rd[rev(ICOL)], Pu[ICOL])
+RdGy <- c(Rd[RICOL], Gy[ICOL])
+RdGn <- c(Rd[RICOL], Gn[ICOL])
+RdBu <- c(Rd[RICOL], Bu[ICOL])
+RdBn <- c(Rd[RICOL], Bn[ICOL])
+RdOr <- c(Rd[RICOL], Or[ICOL])
+RdRd <- c(Rd[RICOL], Rd[ICOL])
+RdPu <- c(Rd[RICOL], Pu[ICOL])
+
+remove(ICOL)
+remove(RICOL)
 
 predefined.palette.names <- c("AUTO",
-    "Blues", "Browns", "Grays", "Greys", "Greens", "Oranges", "Reds", "Purples",
-    "Bu", "Bn", "Gn", "Gy", "Or", "Rd", "Pu",
+    "Grays", "Greys", "Greens", "Blues", "Browns", "Oranges", "Reds", "Purples",
+    "Gy", "Gn", "Bu", "Bn", "Or", "Rd", "Pu",
     "RdYlGn", "GnYlRd",
-    "BuBu", "BuBn", "BuGn", "BuGy", "BuOr", "BuRd", "BuPu",
-    "BnBu", "BnBn", "BnGn", "BnGy", "BnOr", "BnRd", "BnPu",
-    "GnBu", "GnBn", "GnGy", "GnGy", "GnOr", "GnRd", "GnPu",
-    "GyBu", "GyBn", "GyGn", "GyGy", "GyOr", "GyRd", "GyPu",
-    "OrBu", "OrBn", "OrGn", "OrGy", "OrOr", "OrRd", "OrPu",
-    "PuBu", "PuBn", "PuGn", "PuGy", "PuOr", "PuRd", "PuPu",
-    "RdBu", "RdBn", "RdGn", "RdGy", "RdOr", "RdRd", "RdPu")
+    "GyGy", "GyGn", "GyBu", "GyBn", "GyOr", "GyRd", "GyPu",
+    "GnGy", "GnGn", "GnBu", "GnBn", "GnOr", "GnRd", "GnPu",
+    "BuGy", "BuGn", "BuBu", "BuBn", "BuOr", "BuRd", "BuPu",
+    "BnGy", "BnGn", "BnBu", "BnBn", "BnOr", "BnRd", "BnPu",
+    "OrGy", "OrGn", "OrBu", "OrBn", "OrOr", "OrRd", "OrPu",
+    "PuGy", "PuGn", "PuBu", "PuBn", "PuOr", "PuRd", "PuPu",
+    "RdGy", "RdGn", "RdBu", "RdBn", "RdOr", "RdRd", "RdPu")
 
 predefined.palettes.msg <- paste0(
     "Try something like box.palette=\"blue\" or box.palette=\"Blues\".\n",
     "The predefined palettes are (with an optional \"-\" prefix):\n",
-    "    Blues Browns Grays Greys Greens Oranges Reds Purples\n",
-    "    Bu Bn Gn Gy Or Rd Pu (alternative names for the above palettes)\n",
-    "    BuGn BuBn GnRd etc.  (two color palettes: any combination of two palettes)\n",
+    "    Grays Greys Greens Blues Browns Oranges Reds Purples\n",
+    "    Gy Gn Bu Bn Or Rd Pu (alternative names for the above palettes)\n",
+    "    BuGn BuBn GnRd etc.  (two-color diverging palettes: any combination of two palettes)\n",
     "    RdYlGn GnYlRd        (three color palettes)\n")
 
-convert.predefined.palette <- function(pal, default.pal)
+is.predefined.palette <- function(pal)
 {
-    # is pal a predefined palette?
-    if(is.character(pal) && length(pal) == 1 && nzchar(pal) &&
-       (grepl("[A-Z]", substr(pal, 1, 1), ignore.case=FALSE) || # upper case?
-        substr(pal, 1, 1) == "-")) {                            # prefix is "-"?
-        # pal is a predefined palette, does it begin with "-"?
-        rev <- FALSE
-        if(substr(pal, 1, 1) == "-") {
-            rev <- TRUE
-            pal = substring(pal, 2) # discard "-"
+    is.character(pal) &&
+    length(pal) == 1  &&
+    nzchar(pal)       &&
+    (grepl("[A-Z]", substr(pal, 1, 1), ignore.case=FALSE) || # upper case first letter
+        substr(pal, 1, 1) == "-")                            # or first letter is "-"
+}
+# This can deal with the following examples:
+#   pal = "auto"                    (becomes default.pal)
+#   pal = "Reds"                    (becomes the vector of colors defined by Reds)
+#   pal = c("tan1", "tan2", "tan3") (no change)
+#   pal = c("-Reds", "Blues")
+#   pal = c("tan3", "tan2", "tan1", "Blues")
+#   pal = c("auto", "-Reds")
+
+expand.palette <- function(pal, default.pal)
+{
+    argname <- deparse(substitute(pal))
+    original.pal <- pal
+    pal <- NULL
+    for(i in seq_along(original.pal)) {
+        pal_i <- original.pal[i]
+        if(is.auto(pal_i)) # need upper case first letter for is.predefined.palette
+            pal_i <- if(substr(pal_i, 1, 1) == "-") "-AUTO" else "AUTO"
+        if(is.predefined.palette(pal_i)) {
+            # pal_i is a predefined palette, does it begin with "-"?
+            rev <- FALSE
+            if(substr(pal_i, 1, 1) == "-") {
+                rev <- TRUE
+                pal_i = substring(pal_i, 2) # discard "-"
+            }
+            pal_i <- match.choices(pal_i, predefined.palette.names,
+                                   argname="box.palette",
+                                   err.msg=predefined.palettes.msg)
+            if(is.auto(pal_i))
+                pal_i <- default.pal
+            pal_i <- getFromNamespace(pal_i, "rpart.plot")
+            if(rev)
+                pal_i <- rev(pal_i)
         }
-        pal <- match.choices(pal, predefined.palette.names,
-                             err.msg=predefined.palettes.msg)
-        if(is.auto(pal))
-            pal <- default.pal
-        pal <- getFromNamespace(pal, "rpart.plot")
-        if(rev)
-            pal <- rev(pal)
+        pal <- c(pal, pal_i)
     }
     # check that all elements of pal are in fact colors
-    argname <- deparse(substitute(pal))
     if(length(pal) == 0)
         stop0(argname, ": palette length is zero")
-    for(i in 1:length(pal)) {
-        n <- length(predefined.palette.names)
-        if(is.null(pal[i]))
+    for(i in seq_along(pal)) {
+        pal_i <- pal[i]
+        if(is.null(pal_i))
             stop0(argname,
                 ": NULL is neither a color nor a palette.\n",
                 predefined.palettes.msg)
-        try <- try(col2rgb(pal[i]))
+        try <- try(col2rgb(pal_i))
         if(is.try.err(try))
             stop0(argname, ": ",
-                if(is.character(pal[i][1])) quotify(pal[i])
-                else pal[i],
+                if(is.character(pal_i[1])) quotify(pal_i)
+                else pal_i,
                 " is neither a color nor a palette.\n",
                 predefined.palettes.msg)
     }
     pal
 }
-# TRUE if pal is a "bifurcated" palette like GnBu.
-# Not completely reliable, but works for the predefined palettes.
-# Assume bifurcated if both the following are true:
-#  1. the first set of hues is different from the second set of hues
-#  2. the first and last hue in the first set are similar
+# TRUE if pal is a two-color diverging palette like GnBu.
+#
+# Not completely reliable, but works for the predefined
+# palettes (except for BnOr and BnRd)
+#
+# Assume diverging if both the following are true:
+#  1. the hues in the first half are quite different from the second half
+#  2. the first and last hue in the first half are similar
+# where "first half" means the colors in the first half of the pal vector.
 
-is.bifurcated.palette <- function(pal)
+is.diverging <- function(pal)
 {
     if(length(pal) == 1)
         return(FALSE)
+    if(length(pal) == 2) # two color palettes are always considered as diverging
+        return(TRUE)
     hue <- rgb2hsv(col2rgb(pal))[1,] # extract hue
-    med <- median(hue)
     n2 <- floor(length(hue) / 2)
     mean1 <- mean(hue[1:n2])
     mean2 <- mean(hue[(n2+1):length(hue)])
-    abs(mean1 - mean2) > .2 && abs(hue[1] - hue[n2]) < .1
+    # max(sd) below is necessary for grays where sd(hue)==0
+    abs(mean1 - mean2) / max(.02, sd(hue)) > 1.5 && abs(hue[1] - hue[n2]) < .1
 }
 # Return an index vector with elements with values in the  range 1 to nquantiles.
 # Each element indicates the quantile of the corresponding element in fitted.
@@ -173,8 +201,8 @@ is.bifurcated.palette <- function(pal)
 
 quantile.index <- function(fitted, pal.halflen)
 {
-    # length(fitted)==0 if called from get.col.from.bifurcated.palette
-    # and no fitted >  Threshold
+    # length(fitted)==0 if called from get.col.from.diverging.palette
+    # and no fitted > pal.thresh
     if(length(fitted) == 0 || pal.halflen == 1)
         return(1)
     fitted.nona <- fitted
@@ -198,27 +226,25 @@ quantile.index <- function(fitted, pal.halflen)
     quantile.index
 }
 # Returns box colors (like palette[quantile.index]) but values in fitted
-# below Threshold take colors in the first part of palette; values above
-# Threshold take colors in the second part of palette.
-# For example, with palette=BuGn, fitted values below Threshold=.5
+# below pal.thresh take colors in the first half of palette; values above
+# pal.thresh take colors in the second half of palette.
+# For example, with palette=BuGn, fitted values below pal.thresh=.5
 # will be blue and values above .5 will be green.
 
-get.col.from.bifurcated.palette <- function(fitted, pal, trace, Threshold, box.palette)
+get.col.from.diverging.palette <- function(fitted, pal, trace, box.palette, pal.thresh)
 {
-    if(trace >= 2)
-        printf("box.col threshold %g\n", Threshold)
-    # TODO fix this
-    if(anyNA(fitted))
-        stop0("Bifurcated palettes like box.palette=\"",
-              if(box.palette == "AUTO") "BuGn" else box.palette,
+    if(anyNA(fitted)) # TODO fix this
+        stop0("Diverging palettes like box.palette=\"",
+              if(box.palette == "auto" || box.palette == "-auto") "BuGn"
+              else box.palette,
               "\" cannot be used for this model\n",
               "       because there are NAs in the fitted values.\n",
               "       Try something like box.palette=\"Blues\"")
-    quantile.index1 <- quantile.index(fitted[fitted <= Threshold], length(pal)/2)
-    quantile.index2 <- quantile.index(fitted[fitted >  Threshold], length(pal)/2)
+    quantile.index1 <- quantile.index(fitted[fitted <= pal.thresh], length(pal)/2)
+    quantile.index2 <- quantile.index(fitted[fitted >  pal.thresh], length(pal)/2)
     quantile.index <- rep(NA, times=length(fitted))
-    quantile.index[fitted <= Threshold] <- quantile.index1
-    quantile.index[fitted >  Threshold] <- quantile.index2 + length(pal) / 2
+    quantile.index[fitted <= pal.thresh] <- quantile.index1
+    quantile.index[fitted >  pal.thresh] <- quantile.index2 + length(pal) / 2
     quantile.index[is.na(fitted)] <- NA
     pal[quantile.index]
 }
@@ -230,29 +256,40 @@ print.palette <- function(pal)
     else for(i in 1:length(pal))
         printf("   %s\n", describe.col(pal[i]))
 }
-get.default.args.anova <- function(obj, extra, box.palette, trace, ...,
-                                   Fitted,
-                                   Threshold=median(Fitted, na.rm=TRUE),
-                                   Default.pal="Blues")
+handle.anova.palette <- function(obj, box.palette, trace,
+                                 fitted, pal.thresh,
+                                 default.pal="Blues")
 {
-    pal <- convert.predefined.palette(box.palette, Default.pal)
+    original.pal <- box.palette
+    pal <- expand.palette(box.palette, default.pal)
+    diverging <- is.diverging(pal)
+    if(trace >= 2)
+        printf("handle.anova.palette\n")
+    if(trace >= 1)
+        printf("box.palette %s(%s): %s to %s\n",
+               if(is.predefined.palette(original.pal))
+                    sprintf("\"%s\" ", original.pal)
+               else
+                    "",
+               if(diverging)
+                    sprintf("pal.thresh %g", pal.thresh)
+                else
+                    "not diverging",
+               describe.col(pal[1], show.hex=FALSE),
+               describe.col(pal[length(pal)], show.hex=FALSE))
     if(trace >= 3) {
         printf("expanded box.palette:\n")
         print.palette(pal)
     }
-    if(trace >= 2)
-        printf("box.col: %s   to   %s\n",
-               describe.col(pal[1]), describe.col(pal[length(pal)]))
-    list(extra=extra,
-         box.col=if(is.bifurcated.palette(pal))
-                    get.col.from.bifurcated.palette(Fitted,
-                        pal, trace, Threshold, box.palette)
+    list(box.col=if(diverging)
+                    get.col.from.diverging.palette(fitted,
+                        pal, trace, box.palette, pal.thresh)
                  else
-                    pal[quantile.index(Fitted, length(pal))],
+                    pal[quantile.index(fitted, length(pal))],
          box.palette=pal)
 }
 # multiclass response, or two class response with box.palette=list
-get.default.args.multiclass <- function(obj, box.palette, trace, ..., class.stats)
+handle.multiclass.palette <- function(obj, box.palette, trace, class.stats)
 {
     must.reverse <- FALSE
     used.classes <- unique(sort(class.stats$fitted, na.last=TRUE))
@@ -267,16 +304,25 @@ get.default.args.multiclass <- function(obj, box.palette, trace, ..., class.stat
                 list(Reds, Oranges, Grays, Greens),                     # 4
                 list(Reds, Oranges, Grays, Blues, Greens),              # 5
                 list(Reds, Oranges, Purples, Grays, Blues, Greens))     # 6 or more
+        if(trace >= 1)
+            printf("multiclass auto box.palette: %s\n",
+                switch(min(length(used.classes), 6),
+                    "list(Greens)",                                        # 1
+                    "list(Blues, Greens)",                                 # 2
+                    "list(Reds, Grays, Greens)",                           # 3
+                    "list(Reds, Oranges, Grays, Greens)",                  # 4
+                    "list(Reds, Oranges, Grays, Blues, Greens)",           # 5
+                    "list(Reds, Oranges, Purples, Grays, Blues, Greens)")) # 6 or more
     }
-    if(length(box.palette) == 1) # allow the user to specify a single color
+    if(length(box.palette) == 1) # allow the user to specify a single color or palette
         box.palette <- as.list(repl(box.palette, length(used.classes)))
     if(!is.list(box.palette))
         stop0(
 "The rpart model has a multiclass response (not a continuous or binary response).\n",
-"Therefore box.palette must be \"auto\", or a single color, or a list of palettes.\n",
+"Therefore box.palette must be \"auto\", or a list of palettes, or a single color or palette.\n",
 "e.g. box.palette=list(\"Reds\", \"Oranges\", \"Grays\", \"Blues\", \"Greens\")")
     for(i in 1:length(box.palette))
-        box.palette[[i]] <- convert.predefined.palette(box.palette[[i]], "Undefined")
+        box.palette[[i]] <- expand.palette(box.palette[[i]], "Undefined")
     if(trace >= 3) {
         printf("multiclass box.palette:\n")
         for(i in 1:length(box.palette)) {
@@ -296,7 +342,7 @@ get.default.args.multiclass <- function(obj, box.palette, trace, ..., class.stat
 length(box.palette), ".\n",
 "To make this warning go away use box.palette=0 or trace=-1.")
             }
-            return(list(extra=104, box.col=get.bg()))
+            return(list(box.col=get.bg()))
         } else {
             if(trace >= 0) {
                 NULL
@@ -352,17 +398,17 @@ length(box.palette), ".\n",
                             max.prob.for.class[class.stats$fitted[i]]
             # highest prob is a fraction from 0 to 1
             # convert to an index from 1 to length(pal)
-            box.col[i] <- pal[1 +
-                                highest.prob * (length(pal)-1)]
+            box.col[i] <- pal[1 + highest.prob * (length(pal)-1)]
         }
     }
-    list(extra=104, box.col=box.col, box.palette=box.palette)
+    list(box.col=box.col, box.palette=box.palette)
 }
 # Possibly add a legend (only for multi-level-response models)
 # TODO For classes that are never predicted, include them in the
 #      legend but with a color of white (right now we simply drop them)
-possible.legend <- function(rv, class.stats, box.col, box.palette,
-                            legend.x, legend.y, legend.cex)
+
+possible.palette.legend <- function(rv, class.stats, box.col, box.palette,
+                                    legend.x, legend.y, legend.cex)
 {
     if(!is.specified(box.palette[1]) || all(box.palette == get.bg()))
         return()
@@ -373,11 +419,10 @@ possible.legend <- function(rv, class.stats, box.col, box.palette,
     obj <- rv$obj
     if(obj$method != "class")
         return()
-    class.stats <- get.class.stats(obj)
     if(class.stats$nlev <= 2)
         return()
-    # get here if multi-level-response model with a box.palette
-    used.classes <- 1:class.stats$nlev # same as code in get.default.args.multiclass
+    # get here if multi-level-response model with a list box.palette
+    used.classes <- 1:class.stats$nlev # same as code in handle.multiclass.palette
     if(class.stats$nlev > length(box.palette))
         used.classes <- unique(sort(class.stats$fitted, na.last=TRUE))
     last.elem <- function(x) x[length(x)]
@@ -402,17 +447,130 @@ possible.legend <- function(rv, class.stats, box.col, box.palette,
         border=0,
         fill=box.palette[1:length(used.classes)])
 }
-get.default.args.class <- function(obj, box.palette, trace, ..., class.stats)
+get.palette.fitted <- function(default.fitted, node.labs, pal.node.fun, trace)
 {
-    if(class.stats$nlev == 2 && !is.list(box.palette)) {
-        # binomial model (two class response)
-        # (note that we use BuGn although rattle::fancyRpartPlot uses GnBu
-        # because we want to be compatible with 2-used-class multiclass model,
-        # see get.default.args.multiclass)
-        get.default.args.anova(obj, extra=106, box.palette, trace, ...,
-                               Fitted=class.stats$prob.per.lev[,2],
-                               Threshold=.5, Default.pal="BuGn")
-    } else # multiclass response, or two class response with box.palette=list
-        get.default.args.multiclass(obj, box.palette, trace, ...,
-                                    class.stats=class.stats)
+    fitted <- default.fitted
+    if(pal.node.fun) {
+        # convert warning to errors (because silent=TRUE doesn't work for warnings)
+        old.warn <- getOption("warn")
+        on.exit(options(warn=old.warn))
+        options(warn=2)
+        # extract first number in each label, if possible
+        # two regexs separated by | below, first handles numbers with digits before
+        # the point (if any), second handle numbers without digits before the point
+        regex <- "-?[0-9]+\\.?[0-9]*e?-?[0-9]*|-?\\.[0-9]+e?-?[0-9]*"
+        m <- regexpr(regex, node.labs)
+        labs <- regmatches(node.labs, m)
+        labs[m == -1] <- NA # m==-1 for entries in node.labs which don't match regex
+        fitted <- try(as.numeric(labs), silent=TRUE)
+        if(trace >= 2)
+            cat("as.numeric(node.labs):", fitted, "\n")
+        if(is.try.err(fitted) || anyNA(fitted)) {
+            cat("\nnode labs generated by node.fun:\n")
+            print(node.labs)
+            cat("\n")
+            stop0("Cannot convert node labs to numeric\n",
+"To make this error go away, change node.fun or use pal.node.fun=FALSE")
+        }
+    }
+    fitted
+}
+# like median but if median is largest or smallest value in x then adjust it
+# (so e.g. for diverging palettes we use at least one divergent color)
+smart.median <- function(x)
+{
+    median <- median(x, na.rm=TRUE)
+    sort <- sort.unique(x)
+    len <- length(sort)
+    if(len >= 2) {
+        if(median == sort[1])
+            median <- (sort[1] + sort[2]) / 2
+        else if(median == sort[len])
+            median <- (sort[len] + sort[len-1]) / 2
+    }
+    median
+}
+# invoked if box.palette is specified (including when box.palette="auto")
+handle.box.palette <- function(obj, box.palette, trace, class.stats, node.labs,
+                               pal.thresh, # if not specified then auto
+                               node.fun.name, pal.node.fun)
+{
+    get.pal.thresh <- function(default.pal.thresh)
+    {
+        check.numeric.scalar(pal.thresh, na.ok=TRUE, null.ok=TRUE)
+        if(is.null(pal.thresh) || is.na(pal.thresh))
+            default.pal.thresh
+        else
+            pal.thresh
+    }
+    #--- handle.box.palette starts here ---
+    # return list(box.col, box.palette) where box.palette is the expanded box.palette
+    # if statements below matches code in internal.node.labs() in node.labs.R
+    pal.node.fun <-
+        pal.node.fun && !identical(node.fun.name, "NULL")
+    if(obj$method %in% c("poisson", "exp")) {
+        fitted <- get.palette.fitted(obj$frame$yval2[,1], # rate
+                                     node.labs, pal.node.fun, trace)
+        handle.anova.palette(obj, box.palette, trace, fitted,
+            get.pal.thresh(smart.median(fitted)))
+    } else if(obj$method == "mrt") {
+        fitted <- get.palette.fitted(apply(obj$frame$yval2, 1, which.max),
+                                     node.labs, pal.node.fun, trace)
+        handle.anova.palette(obj, box.palette, trace, fitted,
+            get.pal.thresh(smart.median(fitted)))
+    } else if(obj$method == "anova" || is.numeric.response(obj)) {
+        fitted <- get.palette.fitted(obj$frame$yval,
+                                     node.labs, pal.node.fun, trace)
+        handle.anova.palette(obj, box.palette, trace, fitted,
+            get.pal.thresh(smart.median(fitted)))
+    } else if(obj$method == "class" || is.class.response(obj)) {
+        if(class.stats$nlev != 2 || is.list(box.palette)) {
+            if(trace >= 2)
+                printf("handle.box.palette for class response invokes handle.multiclass.palette\n")
+            # multiclass response, or two class response with box.palette=list
+            # (here we ignore pal.thresh and pal.node.fun)
+            handle.multiclass.palette(obj, box.palette, trace, class.stats)
+        } else {
+            # binomial model (two class response)
+            # (note that we use BuGn although rattle::fancyRpartPlot uses GnBu
+            # because we want to be compatible with 2-used-class multiclass model,
+            # see handle.multiclass.palette)
+            fitted <- get.palette.fitted(class.stats$fitted,
+                                         node.labs, pal.node.fun, trace)
+            pal.thresh <-
+                get.pal.thresh(
+                    if(pal.node.fun) smart.median(fitted) else .5)
+            if(trace >= 2)
+                printf("handle.box.palette for class response invokes ")
+            handle.anova.palette(obj, box.palette, trace,
+                              fitted=get.palette.fitted(class.stats$prob.per.lev[,2],
+                                                node.labs, pal.node.fun, trace),
+                              pal.thresh, default.pal="BuGn")
+        }
+    } else # unrecognized response, can probably never get here
+        list(box.col=get.bg(), box.palette=get.bg())
+}
+# handle the box.col and box.palette arguments possibly specified by the user
+handle.box.palette.args <- function(obj, trace, box.col, box.palette,
+    pal.thresh, # if not specified then auto
+    pal.node.fun,
+    node.fun.name, class.stats, node.labs)
+{
+    retval <- list(box.col=box.col, box.palette=box.palette)
+
+    bg <- get.bg() # never returns NA or 0
+
+    # ignore box.palette if box.col is specified
+    if(is.specified(box.col) || !is.specified(box.palette))
+        retval$box.palette <- bg
+    else # convert box.palette to box.col and expand box.palette
+        retval <- handle.box.palette(obj, box.palette, trace, class.stats, node.labs,
+                    pal.thresh, node.fun.name, pal.node.fun)
+
+    # convert zeroes in box.col to bg, but retain NAs
+    is.na.box.col <- is.na(box.col)
+    retval$box.col <- set.zero.to.bg(retval$box.col, bg)
+    retval$box.col[is.na.box.col] <- NA
+
+    retval # return list(box.col, box.palette)
 }

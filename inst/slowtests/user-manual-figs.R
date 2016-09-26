@@ -11,22 +11,24 @@ par(mgp = c(1.5, .5, 0))
 
 a <- rpart(O3~., data=ozone1, cp=.024)
 y <- a$frame$yval
-cols <- c("#EE8888", "#EEEE88", "#88CC88")
+cols <- c("lightcoral", "khaki2", "palegreen2")
 cols <- ifelse(y > 20, cols[1], ifelse(y < 15, cols[3], cols[2]))
-prp(a, main="[front] An Example\n(rpart.plot package version 1.x.x)",
+prp(a,
+main="[front] An Example\nmanual palette=\nc(\"lightcoral\", \"khaki2\", \"palegreen2\")",
     box.col=cols, type=4, fallen=T, branch=.3, round=0, leaf.round=9,
     clip.right.labs=F, under.cex=1,
     prefix="ozone\n", branch.col="gray", branch.lwd=2,
     extra=101, under=T, lt=" < ", ge=" >= ", cex.main=1.5)
 
-prp(a, main="[front] An Example\n(using box.palette)",
+prp(a,
+main="[front] An Example\nbox.palette=\nc(\"palegreen3\", \"khaki2\", \"lightcoral\")",
     type=4, fallen=T, branch=.3, round=0, leaf.round=9,
     clip.right.labs=F, under.cex=1,
     box.palette=c("palegreen3", "khaki2", "lightcoral"),
     prefix="ozone\n", branch.col="gray", branch.lwd=2,
     extra=101, under=T, lt=" < ", ge=" >= ", cex.main=1.5)
 
-prp(a, main="[front] An Example\n(using box.palette GnYlRd)",
+prp(a, main="[front] An Example\nbox.palette=\"GnYlRd\"",
     type=4, fallen=T, branch=.3, round=0, leaf.round=9,
     clip.right.labs=F, under.cex=1,
     box.palette="GnYlRd",
@@ -342,9 +344,11 @@ par(mar=c(.5, .5, 2, .5)) # mar is b l t r
 par(mgp=c(1.6, 0.6, 0))
 prp(tree, extra=7)
 par(mar=c(.5, 1, 2, .5)) # mar is b l t r
+set.seed(2016)
 plotmo(tree, degree1=NA, do.par=F, theta=220-80, expand=.5,
        type="prob", nresponse="present", main="", ticktype="d", ntick=3)
 par(mar=c(4, 4, 4, .5))
+set.seed(2016)
 plotmo(tree, degree1=NA, do.par=F, main="", type2="image",
        pt.col=ifelse(kyphosis1$Kyphosis=="present", "red", "lightblue"),
        pt.pch=20, cex.response=1, col.image=grey(10:4/10), ngrid2=300,
@@ -359,21 +363,25 @@ old.par <- par(mfrow=c(3,3),
 a1 <- rpart(O3~., data=ozone1)
 prp(a1, type=1, cex=1, main="ozone level         \n", Mar=-.07)
 col.persp <- rgb(220, 255, 255, maxColorValue=255)
+set.seed(2016)
 plotmo(a1, do.par=F, degree1=NA, degree2="temp",
        expand=1, swapxy=T, border=1,
        ngrid2=20, col.persp=col.persp)
 
 a <- lm(O3~., data=ozone1)
+set.seed(2016)
 plotmo(a, degree1=NA, all2=T, swapxy=T, do.par=F, degree2=18,
        main="linear model", clip=F, col.persp=col.persp)
 
 a <- earth(O3~., data=ozone1, degree=2)
+set.seed(2016)
 plotmo(a, degree1=NA, all2=T, swapxy=T, do.par=F, degree2=18,
        main="MARS", col.persp=col.persp)
 
 library(randomForest)
 set.seed(552)
 a <- randomForest(O3~., data=ozone1)
+set.seed(2016)
 plotmo(a, degree1=NA, swapxy=T, do.par=F, degree2=5,
        main="random forest", col.persp=col.persp)
 

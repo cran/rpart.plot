@@ -38,7 +38,9 @@ prp(x=stop("no 'x' arg"),
     compress=TRUE, ycompress=uniform,
     trace=FALSE, snip=FALSE, snip.fun=NULL,
 
-    box.col=0, box.palette=0, border.col=col,
+    box.col=0, box.palette=0,
+    pal.thresh=NULL, pal.node.fun=FALSE,
+    border.col=col,
     round=NULL, leaf.round=NULL,
     shadow.col=0, prefix="", suffix="", xsep=NULL,
 
@@ -62,8 +64,8 @@ prp(x=stop("no 'x' arg"),
     nn.lty=1, nn.lwd=NULL, nn.round=.3,
     yes.text="yes", no.text="no",
 
-    node.fun=internal.node.labs,
-    split.fun=internal.split.labs,
+    node.fun=NULL,
+    split.fun=NULL,
     FUN="text",
 
     nspace=branch, minbranch=.3, do.par=TRUE,
@@ -336,32 +338,77 @@ Automatically select a value based on the model type, as follows:\cr
   \item{box.col}{
      Color of the boxes around the text.
      Default \code{0}, meaning use the background color.
-     This argument overrides the \code{box.palette} argument.
+     If this argument is used, the \code{box.palette} argument is ignored.
   }
   \item{box.palette}{
-     Palette for coloring the node boxes based on the fitted value.
+Palette for coloring the node boxes based on the fitted value.
 This is a vector of \code{\link{colors}},
-for example \bold{box.palette=c("Red", "Yellow", "Green")}.
+for example \bold{box.palette=c("green", "green2", "green4")}.
 Small fitted values are displayed with colors at the start of the vector;
-large values with colors at the end.\cr
+large values with colors at the end.
 
-The special value \bold{box.palette=0} (default) uses the background
-color (typically white).\cr
+The special value \bold{box.palette=0} (default for \code{prp}) uses
+the background color (typically white).
 
-The special value \bold{box.palette="auto"} (case insensitive)
-automatically selects a predefined palette based on the type of model.
+The special value \bold{box.palette="auto"} (default for
+\code{rpart.plot}, case insensitive) automatically selects a
+predefined palette based on the type of model.
 
 Otherwise specify a predefined palette
 e.g. \bold{box.palette="Grays"} for the predefined gray palette (a range of grays).
-The predefined palettes are:\cr
-\code{Blues} \code{Browns} \code{Grays} \code{Greys} \code{Greens} \code{Oranges} \code{Reds} \code{Purples} \cr
-\code{Bu} \code{Bn} \code{Gn} \code{Gy} \code{Or} \code{Rd} \code{Pu} (alternative names for the above palettes)\cr
-\code{BuGn} \code{GnRd} \code{BuOr} etc. (two color palettes: any combination of two palettes)\cr
-\code{RdYlGn} \code{GnYlRd} (three color palettes)\cr\cr
-Prefix the palette name with \bold{-} to reverse the order of the colors\cr
-e.g. \code{box.palette="-auto"} or \code{box.palette="-Grays"}.\cr\cr
+The predefined palettes are (see the \code{\link{show.prp.palettes}} function):\cr
+\code{Grays} \code{Greys} \code{Greens} \code{Blues} \code{Browns} \code{Oranges} \code{Reds} \code{Purples} \cr
+\code{Gy} \code{Gn} \code{Bu} \code{Bn} \code{Or} \code{Rd} \code{Pu} (alternative names for the above palettes)\cr
+\code{BuGn} \code{GnRd} \code{BuOr} etc. (two-color diverging palettes: any combination of two of the above palettes)\cr
+\code{RdYlGn} \code{GnYlRd} (three color palettes)
+
+Prefix the palette name with \code{"-"} to reverse the order of the colors\cr
+e.g. \code{box.palette="-auto"} or \code{box.palette="-Grays"}.
+
 The \code{box.palette} argument is ignored if the \code{box.col} palette argument is specified.
 }
+  \item{pal.thresh}{
+Applies when \code{box.palette} is a
+two-color diverging palette (such as \code{BuGn}).
+Specifies the response threshold to split the two sub-palettes (such as
+\code{Bu} and \code{Gn}).
+\cr
+For example, to display fitted values less than 90 in shades of blue
+and values greater than 90 in shades of green, use
+\code{pal.thresh=90} with \code{box.palette="BuGn"}.
+\cr
+By default \code{pal.thresh} is calculated automatically.
+(For a two-class response the default threshold is \code{0.5}; for
+a continuous response the default is the median fitted value.)
+\cr
+% (To display fitted values less than 90 all as lightblue
+% and values greater than 90 all as lightgreen, use
+% \code{box.palette=c("lightblue", "lightgreen"} and \code{pal.thresh=90}.)
+Node boxes for fitted values less than the threshold are displayed using
+colors from the first sub-palette;
+boxes for fitted values greater than the threshold are displayed using
+colors from the second sub-palette.
+\cr
+This argument is ignored if \code{box.palette} isn't a two-color diverging palette,
+and is ignored for models with multiple-class responses (more than two classes).
+  }
+  \item{pal.node.fun}{
+Specifies how the \code{box.palette} argument is handled when
+the \code{node.fun} argument is specified.
+\cr
+Default is \code{FALSE}, meaning ignore \code{node.fun} and  use
+the fitted value to select the node color from \code{box.palette} as usual.
+\cr
+If \code{TRUE}, use the label returned by the node
+function (instead of the fitted value) to select the color.
+The first number in each label returned by the node function is used,
+skipping over any non-numeric initial text in the label.
+An error message will be issued if a label doesn't include a number.
+\cr
+This argument is ignored if \code{node.fun} isn't specified,
+and is ignored for models with multiple-class responses (more than two
+classes).
+  }
   \item{border.col}{
      Color of the box border around the text.
      Default \code{col}, the color of the text in the box.
@@ -628,19 +675,20 @@ The \code{box.palette} argument is ignored if the \code{box.col} palette argumen
   }
   \item{node.fun}{
      The function that generates the text at the node labels.
-     The default is \code{internal.node.labs},
-     which specifies a function internal to \code{prp}.
-     This is necessary for full support of \code{extra} as described
-     in the section on \code{extra} above.\cr
+     The default is \code{NULL},
+     which means use a default function internal to \code{prp}.
+     (This is necessary for full support of \code{extra} as described
+     in the section on \code{extra} above.)\cr
      Otherwise set \code{node.fun} to your own function
      with the prototype\cr
      \code{function(x, labs, digits, varlen)}\cr
      See the \href{../doc/prp.pdf}{package vignette} for details.
+     See also the \code{pal.node.fun} argument.
   }
   \item{split.fun}{
      The function that generates the text at the splits.
-     Default \code{internal.split.labs},
-     which specifies a function internal to \code{prp}.
+     The default is \code{NULL},
+     which means use a default function internal to \code{prp}.
      Otherwise set \code{split.fun} to your own function with the
      prototype \code{function(x, labs, digits, varlen, faclen)}
   }

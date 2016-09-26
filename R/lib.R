@@ -73,13 +73,16 @@ check.boolean <- function(b) # b==0 or b==1 is also ok
 }
 check.classname <- function(object, substituted.object, expected.classname)
 {
+    err.msg <- quotify(expected.classname)
+    if(length(expected.classname) > 1)
+        err.msg <- sprintf("one of\n%s", err.msg)
     if(is.null(object))
-        stopf("object is NULL (expected an object of class \"%s\")",
-              expected.classname)
+        stopf("object is NULL but expected an object of class of %s",
+              err.msg)
     if(!inherits(object, expected.classname)) {
-        stopf("the class of '%s' is \"%s\" but expected the class to be \"%s\"",
+        stopf("the class of '%s' is \"%s\" but expected the class to be %s",
               paste.trunc(substituted.object, maxlen=30),
-              class(object)[1], expected.classname)
+              class(object)[1], err.msg)
     }
 }
 check.integer.scalar <- function(object, min=NULL, max=NULL, null.ok=FALSE,
@@ -289,9 +292,11 @@ eval.trace <- function(
 
     eval(expr, envir, enclos)
 }
-# This function is used for xlim and ylim.
-# If xlim[1] == xlim[2], then plot() issues a message.  We don't want that,
-# so use this function to make sure xlim[2] is different to xlim[1].
+# This function is used for checking both xlim and ylim.
+# This checks that lim is is a 2 element numeric vector.
+# Also, if xlim[1] == xlim[2], then plot() issues a confusing message.
+# We don't want that, so use this function to make sure xlim[2]
+# is different to xlim[1].
 
 fix.lim <- function(lim)
 {
@@ -441,6 +446,15 @@ grepany <- function(pattern, x, ignore.case=FALSE, ...)
 {
     any(grepl(pattern, x, ignore.case=ignore.case, ...))
 }
+# scalar form of ifelse, with short name :-)
+# only evaluates no argument if necessary
+ife <- function(ife.test, ife.yes, ife.no)
+{
+    ife.test <- check.boolean(ife.test)
+    stopifnot(!missing(ife.yes))
+    stopifnot(!missing(ife.no))
+    if(ife.test) ife.yes else ife.no
+}
 # returns an index, choices is a vector of strings
 imatch.choices <- function(arg, choices,
             argname=short.deparse(substitute(arg), "function"),
@@ -484,7 +498,15 @@ is.integral <- function(object)
 
 is.specified <- function(object)
 {
-    !is.null(object) && !anyNA(object) && !identical(object, 0)
+    try <-
+      try(!is.null(object) && !anyNA(object) && !identical(object, 0) &&
+          # following needed for e.g. col=c("red", 0) because 0 is converted to string
+          !identical(object, "0") && !identical(object, "NA"), silent=TRUE)
+    if(is.try.err(try)) {
+        # this occurs if object is say a closure and anyNA fails
+        stop0(deparse(substitute(object)), ": illegal value")
+    }
+    try
 }
 is.try.err <- function(object)
 {
@@ -505,6 +527,8 @@ lighten <- function(col, lighten.amount, alpha=1)
             rgb + lighten.amount2 * (c(1,1,1) - rgb) # move each r,g,b towards 1
         else # darken
             rgb - lighten.amount2 * rgb              # move each r,g,b towards 0
+    rgb[rgb < 0] <- 0 # clamp
+    rgb[rgb > 1] <- 1
     if(alpha == 1)
         rgb(rgb[1,], rgb[2,], rgb[3,])
     else
@@ -564,7 +588,7 @@ my.data.frame <- function(x, trace, stringsAsFactors=TRUE)
         # come here for sparse matrices from the Matrix package
         df <- try(as.matrix(x))
         if(is.try.err(df))
-            stopf("Could not convert '%s' object to a data.frame or matrix",
+            stopf("Cannot convert '%s' object to a data.frame or matrix",
                   class(x)[1])
         df <- as.data.frame(df, stringsAsFactors=stringsAsFactors)
         trace2(trace, "converted %s object to data.frame\n", class(x)[1])
@@ -588,6 +612,8 @@ my.fixed.point <- function(x, digits)
 nlines <- function(s)
 {
     if(!nzchar(s[1])) # special case, caption="" is not printed
+        0
+    else if(anyNA(s))
         0
     else
         length(strsplit(s, "\n")[[1]])
@@ -776,6 +802,12 @@ short.deparse <- function(object, alternative="object")
     else
         s
 }
+# Remove duplicates in x, then sort (smallest first).
+# Following is faster than sort(unique(x)) because it requires only one sort.
+sort.unique <- function(x)
+{
+    rle(sort(x, na.last=NA))[["values"]]  # rle() is in base, na.last=NA drops NAs
+}
 stop0 <- function(...)
 {
     stop(..., call.=FALSE)
@@ -810,7 +842,7 @@ strip.deparse <- function(object) # deparse, collapse, remove most white space
 }
 strip.space <- function(s)
 {
-    gsub("[ \t\n]", "", s)
+    gsub("[ \t\n]", "", paste(s, collapse="")) # paste converts vec to single
 }
 # like text, but with a white background
 # TODO sign of adj is backwards?
@@ -826,11 +858,12 @@ text.on.white <- function(x, y, label,
     height      <- strheight(label, cex=cex, font=font)
     char.height <- strheight("X",   cex=cex, font=font)
     if(srt == 0) {
-        rect(x - adj[1]     * width  - xmar * char.width,
-             y - adj[2]     * height - .3   * char.height, # .3 for extra space at bottom
-             x + (1-adj[1]) * width  + xmar * char.width,
-             y + (1-adj[2]) * height + .1   * char.height,
-             col=white, border=NA)
+        if(is.specified(label))
+            rect(x - adj[1]     * width  - xmar * char.width,
+                 y - adj[2]     * height - .3   * char.height, # .3 for extra space at bottom
+                 x + (1-adj[1]) * width  + xmar * char.width,
+                 y + (1-adj[2]) * height + .1   * char.height,
+                 col=white, border=NA)
         text(x=x, y=y, labels=label, cex=cex, adj=adj, font=font, ...)
     } else if(srt == 90 || srt == -90) {
         # width and height are in usr coords, adjust these for flip of coords
@@ -841,11 +874,12 @@ text.on.white <- function(x, y, label,
         width  <- yrange / xrange * width
         char.height <- xrange / yrange * char.height
         char.width  <- yrange / xrange * char.width
-        rect(x + (1-adj[1]) * height,                    # left
-             y + (1-adj[2]) * width + xmar * char.width, # bottom
-             x - adj[1]     * height,                    # right
-             y - adj[2]     * width - xmar * char.width, # top
-             col=white, border=NA)
+        if(is.specified(label))
+            rect(x + (1-adj[1]) * height,                    # left
+                 y + (1-adj[2]) * width + xmar * char.width, # bottom
+                 x - adj[1]     * height,                    # right
+                 y - adj[2]     * width - xmar * char.width, # top
+                 col=white, border=NA)
         text(x=x, y=y, labels=label, cex=cex, adj=adj, font=font, srt=srt, ...)
     }
     else

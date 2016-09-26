@@ -42,7 +42,7 @@ a$frame$yval[4] <- a$frame$yval2[4,1] <- a$frame$yval2[4,5] <- NA
 
 expect.err(try(rpart.plot(a, nn=1, type=1, fallen.leaves=FALSE,
                main="survived with na")),
- "Bifurcated palettes like box.palette=\"BuGn\" cannot be used for this model")
+ "Diverging palettes like box.palette=\"BuGn\" cannot be used for this model")
 
 rpart.plot(a, nn=1, type=1, fallen.leaves=FALSE, box.palette="Blues",
            main="survived with na")

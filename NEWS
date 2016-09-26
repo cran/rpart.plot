@@ -1,6 +1,19 @@
 Changes to rpart.plot
 ---------------------
 
+2.1.0    Sep 26, 2016
+
+  Added the pal.thresh and pal.node.fun arguments, and the
+  show.prp.palettes function.  Tweaked the colors in the
+  palettes (among other issues, grays were too light in
+  diverging palettes like RdGy).  Box palettes specifying
+  a vector of palettes like c("-Reds", "Blues") are
+  now accepted.
+
+  The default for node.fun and split.labs is now NULL (instead
+  of internal.node.labs and internal.split.labs). The default
+  behaviour hasn't changed.
+
 2.0.1    Jun 22, 2016
 
   Using box.palette=0 now works more consistently.

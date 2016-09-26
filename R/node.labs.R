@@ -59,7 +59,8 @@ internal.node.labs <- function(x, node.fun, node.fun.name, type, extra,
                 labs
             }
         }
-    if(!identical(node.fun.name, "internal.node.labs")) { # call user's node.fun?
+    if(!is.null(node.fun)) {
+        # call user's node.fun
         node.fun <- check.func.args(node.fun, "node.fun",
                         function(x, labs, digits, varlen) NA)
         labs <- node.fun(x, labs, digits, varlen)
@@ -96,7 +97,8 @@ get.class.stats <- function(obj)
     # columns of yval2 for e.g. a two-level response are: fitted n1 n2 prob1 prob2
     yval2 <- obj$frame$yval2
     if(NCOL(yval2) < 5)
-        stop0("frame$yval2 is not a matrix with five or more columns")
+        stop0("is.class.response(obj) yet frame$yval2 is not ",
+              "a matrix with five or more columns")
     fitted <- yval2[, 1] # fitted level as an integer
     if(NCOL(yval2) %% 2 == 0) { # new style yval2?
         stopifnot(colnames(yval2)[length(colnames(yval2))] == "nodeprob")
@@ -227,22 +229,25 @@ get.poisson.labs <- function(obj, extra, under, digits, xsep, varlen)
                         formatf(100 * frame$wt / frame$wt[1], digits=max(0, digits-2)))
     labs
 }
+print.node.labs.and.stop <- function(labs, fun.name, ...)
+{
+    cat("\nnode labs:\n")
+    print(labs)
+    cat("\n")
+    stop0("the call to ", fun.name, " returned a bad result: ", ...)
+}
 # check returned labs because split.fun or node.fun may be user supplied
 check.returned.labs <- function(obj, labs, fun.name)
 {
-    print.and.stop <- function(...)
-    {
-        cat("labs:\n")
-        print(labs)
-        cat("\n")
-        stop0("the call to ", fun.name, " returned a bad result: ", ...)
-    }
     if(length(labs) == 0)
-        print.and.stop("length(labs) == 0")
-    if(!is.character(labs))
-        print.and.stop("!is.character(labs)")
+        print.node.labs.and.stop(labs, fun.name, "length(labs) == 0")
+    if(!is.character(labs)) {
+        labs <- as.character(labs)
+        if(anyNA(labs))
+            print.node.labs.and.stop(labs, fun.name, "NA in labs")
+    }
     if(length(labs) != nrow(obj$frame))
-        print.and.stop("\nthe number ", length(labs),
+        print.node.labs.and.stop(labs, fun.name, "\nthe number ", length(labs),
             " of returned labels is not equal to the number of rows in frame ",
             nrow(obj$frame))
 }

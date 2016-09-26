@@ -3,7 +3,7 @@
 
 @echo === test.prp ===============================================
 time /T
-@"C:\PROGRA~1\R\R-3.3.0\bin\R.exe" CMD BATCH --quiet --vanilla test.prp.R
+@"C:\PROGRA~1\R\R-3.3.1\bin\R.exe" CMD BATCH --quiet --vanilla test.prp.R
 @if %errorlevel% equ 0 goto good1:
 @echo error: R returned errorlevel %errorlevel%, see test.prp.Rout:
 @echo.

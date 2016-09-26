@@ -22,6 +22,9 @@ expect.err <- function(object, expected.msg="")
         stop("did not get expected try error")
 }
 
+par(mfrow=c(1,1))
+show.prp.palettes()
+
 # binomial model
 
 cat("== start test.palette.R ==\n")
@@ -89,9 +92,9 @@ rpart.plot.version1(mod.survived, type=2, extra="auto", fallen.leaves=TRUE, main
 rpart.plot         (mod.survived, type=2,               fallen.leaves=TRUE, main="BuGn",     box.palette="BuGn")
 rpart.plot.version1(mod.survived, type=2, extra="auto", fallen.leaves=TRUE, main="GnBu",     box.palette="GnBu")
 rpart.plot         (mod.survived, type=2, extra="auto", fallen.leaves=TRUE, main="BuRd",     box.palette="BuRd")
-rpart.plot.version1(mod.survived, type=2, extra="auto", fallen.leaves=TRUE, main="RdBu",     box.palette="RdBu")
+rpart.plot.version1(mod.survived, type=2, extra="auto", fallen.leaves=TRUE, main="RdGy",     box.palette="RdGy")
 rpart.plot         (mod.survived, type=2, extra="auto", fallen.leaves=TRUE, main="RdGn",     box.palette="RdGn")
-rpart.plot.version1(mod.survived, type=2, extra="auto", fallen.leaves=TRUE, main="GnRd",     box.palette="GnRd")
+rpart.plot.version1(mod.survived, type=2, extra="auto", fallen.leaves=TRUE, main="GyRd",     box.palette="GyRd")
 rpart.plot         (mod.survived, type=2, extra="auto", fallen.leaves=TRUE, main="BuBu",     box.palette="BuBu")
 rpart.plot(mod.survived, box.palette=0, main="mod.survived\nbox.palette=0")
 rpart.plot(mod.survived, box.palette=NA, main="mod.survived\nbox.palette=NA")
@@ -185,17 +188,17 @@ expect.err(try(rpart.plot.version1(mod.age, type=2, extra="auto", fallen.leaves=
            "box.palette: \"#1234XX\" is neither a color nor a palette")
 
 expect.err(try(rpart.plot.version1(mod.age, type=2, extra="auto", fallen.leaves=TRUE, box.palette="B")),
-           "pal=\"B\" is ambiguous")
+           "box.palette=\"B\" is ambiguous")
 
 # TODO the error message below could be improved to say pal="-B" is ambiguous (note the minus)
 expect.err(try(rpart.plot.version1(mod.age, type=2, extra="auto", fallen.leaves=TRUE, box.palette="-B")),
-           "pal=\"B\" is ambiguous")
+           "box.palette=\"B\" is ambiguous")
 
-expect.err(try(rpart.plot.version1(mod.age, type=2, extra="auto", fallen.leaves=TRUE, box.palette="NA")),
-           "pal=\"NA\" is not allowed")
+# expect.err(try(rpart.plot.version1(mod.age, type=2, extra="auto", fallen.leaves=TRUE, box.palette="NA")),
+#            "box.palette=\"NA\" is not allowed")
 
 expect.err(try(rpart.plot.version1(mod.age, type=2, extra="auto", fallen.leaves=TRUE, box.palette=rpart.plot)),
-           "object of type 'closure' is not subsettable")
+           "box.palette: illegal value")
 
 expect.err(try(rpart.plot(mod.age, type=2, extra="auto", fallen.leaves=TRUE, box.palette=c(0, 1, 2), main="box.palette=c(0,1,2)")),
            "box.palette: 0 is neither a color nor a palette")
@@ -225,10 +228,10 @@ rpart.plot(mod.species, type=2, extra="auto", fallen.leaves=TRUE, box.col=2:4, m
 rpart.plot(mod.species, type=2, extra="auto", fallen.leaves=TRUE, box.palette="pink", main="box.palette=\"pink\"")
 rpart.plot(mod.species, type=2, extra="auto", fallen.leaves=TRUE, box.palette="Blues", main="box.palette=\"Blues\"")
 par(mfrow = c(2, 2))
-prp(mod.continuous.survived, type=2, extra="auto", fallen.leaves=TRUE, main="mod.continuous.survived\nc(\"Red\", \"Yellow\", \"Green\")",  box.palette=c("Red", "Yellow", "Green"))
-prp(mod.continuous.survived, type=2, extra="auto", fallen.leaves=TRUE, main="mod.continuous.survived\nc(\"Green\", \"Yellow\", \"Red\")",  box.palette=c("Green", "Yellow", "Red"))
+prp(mod.continuous.survived, type=2, extra="auto", fallen.leaves=TRUE, main="mod.continuous.survived\nc(\"Red\", \"Yellow\", \"Green\")",  box.palette=c("red", "yellow", "green"))
+prp(mod.continuous.survived, type=2, extra="auto", fallen.leaves=TRUE, main="mod.continuous.survived\nc(\"Green\", \"Yellow\", \"Red\")",  box.palette=c("green", "yellow", "red"))
 expect.err(try(rpart.plot(mod.species, type=2, extra="auto", fallen.leaves=TRUE, box.palette=c("Blues", "Reds"), main="box.palette=c(\"Blues\", \"Reds\")")),
-               "The rpart model has a multiclass response ")
+           "The rpart model has a multiclass response .not a continuous or binary response.")
 
 par(mfrow = c(1, 2))
 mod.country <- rpart(Country ~ ., cu.summary)
@@ -245,10 +248,9 @@ rpart.plot(mod.country,
 rv <- rpart.plot(mod.country, type=2, extra="auto", fallen.leaves=TRUE, main="multiclass, trace=-1", box.palette="auto", trace=-1)
 rv <- rpart.plot(mod.country, type=2, extra="auto", fallen.leaves=TRUE, main="multiclass, box.palette=0", box.palette=0)
 rv <- rpart.plot(mod.country, type=2, extra="auto", fallen.leaves=FALSE, box.palette="auto", main="multiclass, fallen.leaves=FALSE", trace=-1)
-# expect error: box.palette must be 0 or "auto" or a list of palettes like ...
 expect.err(try(rpart.plot(mod.country, type=2, extra="auto", fallen.leaves=TRUE,
-                          box.palette=c("blue", "pink"))),
-           "The rpart model has a multiclass response")
+               box.palette=c("lightblue2", "pink"))),
+               "The rpart model has a multiclass response .not a continuous or binary response.")
 
 # poisson model
 library(earth)
@@ -291,6 +293,7 @@ rpart.plot(mod.country, type=2, extra="axxx", main="-auto\nmod.country", box.pal
 
 # test legend.x and legend.y and legend.cex
 par(mfrow=c(2,2))
+multi.class.model <- rpart(Reliability ~ ., data=cu.summary)
 rpart.plot(multi.class.model, legend.x=NULL, main="legend.x=NULL (default)")
 rpart.plot(multi.class.model, legend.x=NA, main="legend.x=NA (no legend)")
 rpart.plot(multi.class.model, fallen.leaves=TRUE, legend.x=.8, main="legend.x=.8")
@@ -302,5 +305,248 @@ rpart.plot(multi.class.model, fallen.leaves=FALSE, legend.y=NA, main="legend.y=N
 rpart.plot(multi.class.model, fallen.leaves=FALSE, legend.y=.16, main="legend.y=.16")
 rpart.plot(multi.class.model, legend.x=0, legend.y=1.1, legend.cex=.8,
            main="legend.x=0 legend.y=1.1 legend.cex=.8")
+
+cat("palette handling for node.fun, pal.thresh, and pal.node.fun\n")
+
+get.class.stats    <- rpart.plot:::get.class.stats
+internal.node.labs <- rpart.plot:::internal.node.labs
+paste.trunc        <- rpart.plot:::paste.trunc
+is.try.err         <- rpart.plot:::is.try.err
+
+plot1 <- function(object, node.fun=NULL, pal.node.fun=FALSE, optional.msg="", ...)
+{
+    rpart.plot(object,
+               node.fun=node.fun,
+               pal.node.fun=pal.node.fun,
+                 main=paste.trunc(optional.msg,
+                        "pal.node.fun=", pal.node.fun,
+                        "\nnode.fun=",
+                        paste(strwrap(deparse(body(node.fun)), width=40), collapse="\n"),
+                        sep="", maxlen=100),
+               cex.main=.9, ...)
+}
+plot2 <- function(object, node.fun=NULL,  optional.msg="", ...)
+{
+    try <- try(plot1(object, node.fun=node.fun, pal.node.fun=FALSE, optional.msg=optional.msg, ...))
+    if(is.try.err(try)) {
+        plot(c(0,1), c(0,1), col=0,
+             bty="n", xlab="", xaxt="n", ylab="", yaxt="n",
+             main=paste.trunc(optional.msg, "pal.node.fun=FALSE",
+                    "\nnode.fun=",
+                    paste(strwrap(deparse(body(node.fun)), width=40), collapse="\n"),
+                    maxlen=100),
+             cex.main=.9)
+        text(.5, .3,
+             paste.trunc(paste(strwrap(attr(try,"condition"), width=40), collapse="\n"), maxlen=150),
+             cex=.9, xpd=NA)
+    }
+    try <- try(plot1(object, node.fun=node.fun, pal.node.fun=TRUE, optional.msg=optional.msg, ...))
+    if(is.try.err(try)) {
+        plot(c(0,1), c(0,1), col=0,
+             bty="n", xlab="", xaxt="n", ylab="", yaxt="n",
+             main=paste.trunc(optional.msg, "pal.node.fun=TRUE",
+                    "\nnode.fun=",
+                    paste(strwrap(deparse(body(node.fun)), width=40), collapse="\n"),
+                    maxlen=100),
+             cex.main=.9)
+        text(.5, .3,
+             paste.trunc(paste(strwrap(attr(try,"condition"), width=40), collapse="\n"), maxlen=150),
+             cex=.9, xpd=NA)
+    }
+}
+#--- anova model ---
+
+data(ptitanic)
+ptitanic.numeric.survived <- ptitanic
+ptitanic.numeric.survived$survived <- as.numeric(ptitanic$survived)
+anova.mod <- rpart(survived~., data=ptitanic.numeric.survived, cp=.02)
+
+old.par <- par(no.readonly=TRUE)
+par(mfrow=c(3, 2))
+par(mar=c(0, 0, 4, 0))
+rpart.plot(anova.mod, main="no node.fun")
+title("node.fun (anova model)\n\n")
+
+plot(c(0,1), c(0,1), col=0, bty="n", xlab="", xaxt="n", ylab="", yaxt="n")
+
+# test that we can extract the numeric values of the node labels from the labels
+plot2(anova.mod, node.fun=function(x, labs, digits, varlen) paste(labs))
+plot2(anova.mod, node.fun=function(x, labs, digits, varlen) paste("surv=\n", labs))
+plot2(anova.mod, extra=0, node.fun=function(x, labs, digits, varlen) paste("surv=\n", -10 * as.numeric(labs)))
+plot2(anova.mod, extra=0, node.fun=function(x, labs, digits, varlen) paste("surv=\n", -1e8 * as.numeric(labs)))
+plot2(anova.mod, box.palette="Gy")
+par(mfrow=c(4, 2))
+par(mar=c(0, 0, 3, 0))
+plot2(anova.mod, box.palette="RdGy")
+plot2(anova.mod, node.fun=function(x, labs, digits, varlen) c(1,2,3,4,"nonesuch",6,7,8,9)) # expect try error
+plot2(anova.mod, node.fun=function(x, labs, digits, varlen) 1:nrow(x$frame))
+plot2(anova.mod, node.fun=function(x, labs, digits, varlen) paste("prefix", 1:nrow(x$frame), "suffix"))
+
+# test pal.thresh
+par(mfrow=c(3, 2))
+par(oma=c(0, 0, 3, 0))
+par(mar=c(0, 0, 3, 0))
+rpart.plot(anova.mod, extra=0, box.palette="RdGn", main="pal.thresh=default", trace=0)
+title("pal.thresh (anova model)\n\n\n\n", xpd=NA)
+rpart.plot(anova.mod, extra=0, box.palette="RdGn", main="pal.thresh=1.2",  pal.thresh=1.2)
+rpart.plot(anova.mod, extra=0, box.palette="RdGn", main="pal.thresh=100",  pal.thresh=100)
+rpart.plot(anova.mod, extra=0, box.palette="RdGn", main="pal.thresh=-100",  pal.thresh=-100)
+# test James Hedge's example
+par(mfrow=c(3, 2))
+par(mar=c(0, 0, 4, 0))
+plot2(anova.mod, node.fun=function(x, labs, digits, varlen) paste(x$frame$yval * x$frame$n),
+      optional.msg="box.palette=default\n")
+plot2(anova.mod, node.fun=function(x, labs, digits, varlen) paste(x$frame$yval * x$frame$n),
+      pal.thresh=80, box.palette="OrGy",
+      optional.msg="pal.thresh=80, box.palette=\"OrGy\"\n")
+rpart.plot(anova.mod, box.palette="BuGn", pal.thresh=1.8,
+           main="box.palette=\"BuGn\", pal.thresh=1.8")
+rpart.plot(anova.mod, box.palette=c("lightblue", "lightgreen"), pal.thresh=1.8,
+           main="box.palette=c(\"lightblue\", \"lightgreen\"), pal.thresh=1.8")
+
+# test expand.palette
+paste.c <- rpart.plot:::paste.c
+test.expand.palette <- function(box.palette)
+{
+    cat(paste0("\nbox.palette=", paste.c(box.palette)), "\n")
+    rpart.plot(anova.mod, trace=1, box.palette=box.palette,
+               main=paste0("box.palette=", paste.c(box.palette)))
+}
+par(mfrow=c(3,2))
+test.expand.palette("auto")
+test.expand.palette("Reds")
+test.expand.palette(c("-Reds", "Blues"))
+test.expand.palette(c("tan", "tan2", "tan4"))
+test.expand.palette(c("tan2", "tan", "Blues"))
+test.expand.palette(c("auto", "-Reds"))
+expect.err(try(test.expand.palette("")), "box.palette: \"\" is neither a color nor a palette")
+expect.err(try(test.expand.palette("nonesuch")), "box.palette: \"nonesuch\" is neither a color nor a palette")
+expect.err(try(test.expand.palette("Nonesuch")), "box.palette=\"Nonesuch\" is not allowed")
+expect.err(try(test.expand.palette(c("tan1", "huh?"))), "box.palette: \"huh.\" is neither a color nor a palette")
+cat("\n")
+
+#--- binomial model ---
+
+binom.mod <- rpart(survived~., data=ptitanic, cp=.02)
+
+par(mfrow=c(3, 2))
+par(mar=c(0, 0, 4, 0))
+rpart.plot(binom.mod, main="no node.fun")
+title("node.fun (binomial model)\n\n")
+
+plot(c(0,1), c(0,1), col=0, bty="n", xlab="", xaxt="n", ylab="", yaxt="n")
+
+# test that we can extract the numeric values of the node labels from the labels
+plot2(binom.mod, node.fun=function(x, labs, digits, varlen) paste(labs))
+
+plot2(binom.mod, node.fun=function(x, labs, digits, varlen) round(get.class.stats(x)$prob.per.lev[,2], 3))
+
+par(mfrow=c(4, 2))
+par(mar=c(0, 0, 4, 0))
+
+plot2(binom.mod, node.fun=function(x, labs, digits, varlen) letters[1:nrow(x$frame)]) # expect try error
+
+plot2(binom.mod, node.fun=function(x, labs, digits, varlen) c(1,2,3,4,"nonesuch",6,7)) # expect try error
+
+plot2(binom.mod, node.fun=function(x, labs, digits, varlen) 1:nrow(x$frame))
+
+plot2(binom.mod, node.fun=function(x, labs, digits, varlen) paste("prefix", 1:nrow(x$frame), "suffix"))
+
+# test pal.thresh
+par(mfrow=c(4, 2))
+par(oma=c(0, 0, 3, 0))
+par(mar=c(0, 0, 3, 0))
+rpart.plot(binom.mod)
+title("pal.thresh (binom mod)\n\n\n\n", xpd=NA)
+rpart.plot(binom.mod, main="pal.thresh=.5",  pal.thresh=.5, trace=0)
+
+rpart.plot(binom.mod, main="pal.thresh=0",   pal.thresh=0, trace=0)
+rpart.plot(binom.mod, main="pal.thresh=1",   pal.thresh=1, trace=0)
+
+rpart.plot(binom.mod, main="pal.thresh=-10", pal.thresh=-10, trace=0)
+rpart.plot(binom.mod, main="pal.thresh=10",  pal.thresh=10, trace=0)
+
+rpart.plot(binom.mod, main="pal.thresh=.2",  pal.thresh=.2, trace=0)
+
+# test pal.thresh with node.fun
+par(mfrow=c(4, 2))
+par(mar=c(0, 0, 3, 0))
+rpart.plot(binom.mod)
+title("pal.thresh with node.fun (binom mod)\n\n")
+plot(c(0,1), c(0,1), col=0, bty="n", xlab="", xaxt="n", ylab="", yaxt="n")
+
+plot2(binom.mod, node.fun=function(x, labs, digits, varlen)
+                   round(2*(get.class.stats(x)$prob.per.lev[,2] - .5), 2))
+
+plot2(binom.mod, node.fun=function(x, labs, digits, varlen)
+                   round(2*(get.class.stats(x)$prob.per.lev[,2] - .5), 2),
+         pal.thresh=.45,
+         optional.msg="pal.thresh=.45\n")
+
+# binomial response, list palette
+
+mod.survived <- rpart(survived~., data=ptitanic, control=list(cp=.02))
+
+rpart.plot(mod.survived, type=2, fallen.leaves=TRUE,
+main="test list palette for binomial response\nlist(Blues, Greens)",
+box.palette=list("Blues", "Greens"))
+
+#--- poisson model ---
+
+library(earth)
+data(ozone1)
+ozone2 <- ozone1
+set.seed(8)
+ozone2$O3a <- round(runif(330, 1, 10))
+y <- cbind(ozone2$O3, ozone2$O3a)
+mod.poisson <- rpart(y~.-O3-O3a, data=ozone2, control=list(cp=.04))
+par(mfrow=c(2, 2))
+
+rpart.plot(mod.poisson, extra="auto", fallen.leaves=TRUE,
+           box.palette="BnGn",
+           main="mod.poisson\nbox.palette=\"BnGn\"")
+
+rpart.plot(mod.poisson, extra=0, fallen.leaves=TRUE,
+           main="box.palette=\"BnGn\"\npal.thresh=.35",
+           box.palette="BnGn", pal.thresh=.35)
+
+rpart.plot(mod.poisson, extra=0, fallen.leaves=TRUE,
+           main="box.palette=\"BnGn\"\npal.thresh=.7\nnode.fun",
+           box.palette="BnGn", pal.thresh=.7,
+           node.fun=function(x, labs, digits, varlen)
+                    sprintf("now %.2f\nwas %.2f", 10*as.numeric(labs)-5, as.numeric(labs)))
+
+rpart.plot(mod.poisson, extra=0, fallen.leaves=TRUE,
+           main="box.palette=\"BnGn\"\npal.thresh=-1\nnode.fun\npal.node.fun=TRUE",
+           box.palette="BnGn", pal.thresh=-1,
+           pal.node.fun=TRUE,
+           node.fun=function(x, labs, digits, varlen)
+                    sprintf("now %.2f\nwas %.2f", 10*as.numeric(labs)-5, as.numeric(labs)))
+
+#--- multiclass model ---
+
+mod.multiclass <- rpart(pclass~., data=ptitanic, control=list(cp=.02))
+par(mfrow=c(5, 2))
+plot2(mod.multiclass, optional.msg="mod.multiclass\n", trace=1,
+      node.fun=function(x, labs, digits, varlen) substring(labs, 1, 1))
+plot2(mod.multiclass, box.palette=list("Bu","Or","Gy"), trace=1,
+      optional.msg="box.palette=list(\"Bu\",\"Or\",\"Gy\")\n",
+      node.fun=function(x, labs, digits, varlen) substring(labs, 1, 1))
+plot2(mod.multiclass, box.palette="BuOr", trace=1,
+      optional.msg="box.palette=\"BuOr\"\n",
+      node.fun=function(x, labs, digits, varlen) substring(labs, 1, 1))
+plot2(mod.multiclass, box.palette="BuOr", trace=1,
+      optional.msg="box.palette=\"BuOr\"\n",
+      node.fun=function(x, labs, digits, varlen) -as.numeric(substring(labs, 1, 1)))
+plot2(mod.multiclass, box.palette="OrGn", pal.thresh=20, trace=1,
+      optional.msg="box.palette=\"BuOr\" pal.thresh=20\n",
+      node.fun=function(x, labs, digits, varlen) 10 * as.numeric(substring(labs, 1, 1)))
+
+expect.err(try(rpart.plot(mod.multiclass, type=2, extra="auto", trace=2,
+               fallen.leaves=TRUE, box.palette=c("blues", "reds"),
+               main="box.palette=c(\"blues\", \"reds\")")),
+           "The rpart model has a multiclass response .not a continuous or binary response.")
+
+par(old.par)
 
 cat("== done test.palette.R ==\n")

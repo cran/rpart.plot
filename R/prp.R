@@ -94,7 +94,9 @@ prp <- function(x=stop("no 'x' arg"),
     compress=TRUE, ycompress=uniform,
     trace=FALSE, snip=FALSE, snip.fun=NULL,
 
-    box.col=0, box.palette=0, border.col=col,
+    box.col=0, box.palette=0,
+    pal.thresh=NULL, pal.node.fun=FALSE,
+    border.col=col,
     round=NULL, leaf.round=NULL,
     shadow.col=0, prefix="", suffix="", xsep=NULL,
 
@@ -118,8 +120,8 @@ prp <- function(x=stop("no 'x' arg"),
     nn.lty=1, nn.lwd=NULL, nn.round=.3,
     yes.text="yes", no.text="no",
 
-    node.fun=internal.node.labs,
-    split.fun=internal.split.labs,
+    node.fun=NULL,
+    split.fun=NULL,
     FUN="text",
 
     nspace=branch, minbranch=.3, do.par=TRUE,
@@ -340,52 +342,16 @@ prp <- function(x=stop("no 'x' arg"),
 
     if(is.null(under.col))   under.col   <- col
     if(is.null(border.col))  border.col  <- col
-    if(is.null(box.palette)) box.palette <- col # for consistency
     if(is.null(branch.lwd))  branch.lwd  <- lwd
     if(is.null(split.lwd))   split.lwd   <- lwd
     if(is.null(nn.lwd))      nn.lwd      <- lwd
     if(is.null(split.adj))   split.adj   <- adj
 
+    class.stats <- NULL
     if(obj$method == "class" || is.class.response(obj))
         class.stats <- get.class.stats(obj)
 
     bg <- get.bg() # never returns NA or 0
-    # handle automatic defaults for extra and box.palette args (which sets box.col)
-    if(is.auto(box.palette)) {
-        # need upper case first letter for convert.predefined.palette
-        if(substr(box.palette[1], 1, 1) == "-")
-            box.palette <- "-AUTO"
-        else
-            box.palette <- "AUTO"
-    }
-    if(identical(box.palette, 0) || is.na(box.palette))
-        box.palette <- bg
-    if(is.auto(extra, 1) || is.specified(box.palette)) {
-        defargs <- # the ifelse structure here is similar to the code in internal.node.labs()
-            if(obj$method == "anova")
-                get.default.args.anova(obj, extra=100, box.palette, trace, ..., Fitted=obj$frame$yval)
-            else if(obj$method == "class")
-                get.default.args.class(obj, box.palette, trace, ..., class.stats=class.stats)
-            else if(obj$method == "poisson" || obj$method == "exp")
-                get.default.args.anova(obj, extra=101, box.palette, trace, ..., Fitted=obj$frame$yval2[,1])
-            else if(is.numeric.response(obj)) # unrecognized rpart object: treat as a numeric response model
-                get.default.args.anova(obj, extra=100, box.palette, trace, ..., Fitted=obj$frame$yval)
-            else if(is.class.response(obj))   # unrecognized rpart object: treat as a class response model
-                get.default.args.class(obj, box.palette, trace, ..., class.stats=class.stats)
-            else
-                list(extra=100, box.col=0)
-        if(is.auto(extra, 1))
-            extra <- defargs$extra
-        if(is.specified(box.col))
-            box.palette <- 0 # ignore box.palette if box.col is specified
-        else {
-            box.col     <- defargs$box.col
-            box.palette <- defargs$box.palette
-        }
-    }
-    is.na.box.col <- is.na(box.col)
-    box.col <- set.zero.to.bg(box.col, bg)
-    box.col[is.na.box.col] <- NA
     border.col       <- set.zero.to.bg(border.col,       bg)
     shadow.col       <- set.zero.to.bg(shadow.col,       bg)
     under.col        <- set.zero.to.bg(under.col,        bg)
@@ -466,6 +432,29 @@ prp <- function(x=stop("no 'x' arg"),
     frame <- obj$frame
     is.leaf <- is.leaf(frame)
     nodes <- as.numeric(row.names(frame))
+
+    if(is.auto(extra, n=1))
+        extra <- get.default.extra(obj, class.stats)
+
+    node.fun.name <- deparse(substitute(node.fun))
+    node.labs <- internal.node.labs(obj, node.fun, node.fun.name,
+                                    type, extra, under, xsep, digits, varlen,
+                                    prefix, suffix, class.stats)
+
+    # handle the box.col and box.palette arguments possibly specified by the user
+    temp <- handle.box.palette.args(obj, trace, box.col, box.palette,
+                                    pal.thresh, pal.node.fun,
+                                    node.fun.name, class.stats, node.labs)
+    box.col     <- temp$box.col     # box.palette (if specified) converted to box.col
+    box.palette <- temp$box.palette # expanded box.palette
+
+    split.labs <- split.labs.wrapper(obj, split.fun,
+                deparse(substitute(split.fun)),
+                split.prefix, split.suffix,
+                right.split.prefix, right.split.suffix,
+                type, clip.left.labs, clip.right.labs, xflip, digits,
+                varlen, faclen, facsep, eq, lt, ge)
+
     if(do.par) {
         # Make the side margins small.
         # Retain the top edge for the main title but only if necessary.
@@ -486,17 +475,6 @@ prp <- function(x=stop("no 'x' arg"),
         par(mar=mar, xpd=xpd)
         par(new=TRUE) # done par for now, start next plot on the same page
     }
-    node.labs <- internal.node.labs(obj, node.fun, deparse(substitute(node.fun)),
-                                    type, extra, under, xsep, digits, varlen,
-                                    prefix, suffix, class.stats)
-
-    split.labs <- split.labs.wrapper(obj, split.fun,
-                deparse(substitute(split.fun)),
-                split.prefix, split.suffix,
-                right.split.prefix, right.split.suffix,
-                type, clip.left.labs, clip.right.labs, xflip, digits,
-                varlen, faclen, facsep, eq, lt, ge)
-
     if(is.fancy(type)) {
         right.split.labs <- split.labs[match(2 * nodes+1, nodes)]
         split.labs <- split.labs[match(2 * nodes, nodes)]
@@ -636,8 +614,9 @@ prp <- function(x=stop("no 'x' arg"),
               branch.x=branch.xy$x, branch.y=branch.xy$y,
               labs=node.labs, cex=cex, boxes=node.boxes,
               split.labs="", split.cex=split.cex, split.box=split.boxes)
-    possible.legend(rv, class.stats, box.col, box.palette,
-                    legend.x, legend.y, legend.cex)
+
+    possible.palette.legend(rv, class.stats, box.col, box.palette,
+                            legend.x, legend.y, legend.cex)
     invisible(rv)
 }
 init.plot <- function(x, y,
@@ -689,6 +668,18 @@ init.plot <- function(x, y,
         rect(usr[1], usr[3], usr[2], usr[4], col=NA, border=col, lty=1, lwd=cex)
         text((usr[1] + usr[2]) / 2, usr[4], "usr", col=col, xpd=NA)
     }
+}
+get.default.extra <- function(obj, class.stats)
+{
+    if(obj$method == "class" || is.class.response(obj)) {
+        if(class.stats$nlev > 2)
+            104 # multiclass response
+        else
+            106 # binomial model (two class response)
+    } else if(obj$method == "poisson" || obj$method == "exp")
+        101
+    else
+        100
 }
 get.yshift <- function(type, nodes, is.leaf,
                        cex, node.labs, yshift, yspace, under.cex,
@@ -942,7 +933,7 @@ set.zero.to.bg <- function(col, bg) # set elems of col that are 0 or NA to bg
         col[which(col == 0) | is.na(col)] <- bg
     col
 }
-# true if x == "auto", ignoring case, partial match to n characters
+# true if x == "auto" or "-auto", ignoring case, partial match to n characters
 is.auto <- function(x, n=2)
 {
     is.character(x) &&

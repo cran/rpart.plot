@@ -136,7 +136,7 @@ print_summary <- function(x, xname=trunc.deparse(substitute(x)),
     }
     df <- try(my.data.frame(x, trace, stringsAsFactors=FALSE), silent=TRUE)
     if(is.try.err(df)) { # be robust for whatever gets passed to this function
-        printf("print_summary: could not convert class \"%s\" to a data.frame\n",
+        printf("print_summary: cannot convert class \"%s\" to a data.frame\n",
                class(x)[1])
         printf("%s%s%s:\n", prefix, xname, msg)
         if(length(dim(x)) == 2) { # it's a matrix or other 2D object?

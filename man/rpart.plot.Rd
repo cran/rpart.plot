@@ -214,7 +214,7 @@ The predefined palettes are (see the \code{\link{show.prp.palettes}} function):\
 \code{Grays} \code{Greys} \code{Greens} \code{Blues} \code{Browns} \code{Oranges} \code{Reds} \code{Purples} \cr
 \code{Gy} \code{Gn} \code{Bu} \code{Bn} \code{Or} \code{Rd} \code{Pu} (alternative names for the above palettes)\cr
 \code{BuGn} \code{GnRd} \code{BuOr} etc. (two-color diverging palettes: any combination of two of the above palettes)\cr
-\code{RdYlGn} \code{GnYlRd} (three color palettes)
+\code{RdYlGn} \code{GnYlRd} \code{BlGnYl} \code{YlGnBl} (three color palettes)
 
 Prefix the palette name with \code{"-"} to reverse the order of the colors\cr
 e.g. \code{box.palette="-auto"} or \code{box.palette="-Grays"}.

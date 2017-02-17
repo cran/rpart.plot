@@ -25,6 +25,9 @@ Pu <- Purples
 
 RdYlGn  <- lighten(rainbow(100, end=.36), .2) # three color palettes
 GnYlRd  <- rev(RdYlGn)
+# got by library(viridis); viridis(16) and dropping the seven darkest colors
+BlGnYl <- c("#23888E", "#1F988B", "#22A884", "#35B779", "#54C568", "#7AD151", "#A5DB36", "#D2E21B", "#FDE725")
+YlGnBl <- rev(BlGnYl)
 
 # two-color diverging palettes
 
@@ -93,7 +96,7 @@ remove(RICOL)
 predefined.palette.names <- c("AUTO",
     "Grays", "Greys", "Greens", "Blues", "Browns", "Oranges", "Reds", "Purples",
     "Gy", "Gn", "Bu", "Bn", "Or", "Rd", "Pu",
-    "RdYlGn", "GnYlRd",
+    "RdYlGn", "GnYlRd", "BlGnYl","YlGnBl",
     "GyGy", "GyGn", "GyBu", "GyBn", "GyOr", "GyRd", "GyPu",
     "GnGy", "GnGn", "GnBu", "GnBn", "GnOr", "GnRd", "GnPu",
     "BuGy", "BuGn", "BuBu", "BuBn", "BuOr", "BuRd", "BuPu",
@@ -105,10 +108,10 @@ predefined.palette.names <- c("AUTO",
 predefined.palettes.msg <- paste0(
     "Try something like box.palette=\"blue\" or box.palette=\"Blues\".\n",
     "The predefined palettes are (with an optional \"-\" prefix):\n",
-    "    Grays Greys Greens Blues Browns Oranges Reds Purples\n",
-    "    Gy Gn Bu Bn Or Rd Pu (alternative names for the above palettes)\n",
-    "    BuGn BuBn GnRd etc.  (two-color diverging palettes: any combination of two palettes)\n",
-    "    RdYlGn GnYlRd        (three color palettes)\n")
+    "  Grays Greys Greens Blues Browns Oranges Reds Purples\n",
+    "  Gy Gn Bu Bn Or Rd Pu (alternative names for the above palettes)\n",
+    "  BuGn BuBn GnRd etc.  (two-color diverging palettes: any combination of two palettes)\n",
+    "  RdYlGn GnYlRd BlGnYl YlGnBl (three color palettes)\n")
 
 is.predefined.palette <- function(pal)
 {
@@ -182,7 +185,7 @@ expand.palette <- function(pal, default.pal)
 #  2. the first and last hue in the first half are similar
 # where "first half" means the colors in the first half of the pal vector.
 
-is.diverging <- function(pal)
+is.diverging <- function(pal, trace)
 {
     if(length(pal) == 1)
         return(FALSE)
@@ -193,7 +196,15 @@ is.diverging <- function(pal)
     mean1 <- mean(hue[1:n2])
     mean2 <- mean(hue[(n2+1):length(hue)])
     # max(sd) below is necessary for grays where sd(hue)==0
-    abs(mean1 - mean2) / max(.02, sd(hue)) > 1.5 && abs(hue[1] - hue[n2]) < .1
+    crit1 <- abs(mean1 - mean2) / max(.02, sd(hue))
+    crit2 <- abs(hue[1] - hue[n2])
+    if(trace >= 3)
+        printf("is.diverging: mean1 %g mean2 %g sd(hue) %g crit1 %g (%s) crit2 %g (%s)\n",
+            mean1, mean2, sd(hue),
+            crit1, if(crit1 > 1.5) "diverging" else "not diverging",
+            crit2, if(crit2 < .1)  "diverging" else "not diverging")
+
+    crit1 > 1.5 && crit2 < .1
 }
 # Return an index vector with elements with values in the  range 1 to nquantiles.
 # Each element indicates the quantile of the corresponding element in fitted.
@@ -262,9 +273,9 @@ handle.anova.palette <- function(obj, box.palette, trace,
 {
     original.pal <- box.palette
     pal <- expand.palette(box.palette, default.pal)
-    diverging <- is.diverging(pal)
     if(trace >= 2)
         printf("handle.anova.palette\n")
+    diverging <- is.diverging(pal, trace)
     if(trace >= 1)
         printf("box.palette %s(%s): %s to %s\n",
                if(is.predefined.palette(original.pal))
@@ -272,7 +283,7 @@ handle.anova.palette <- function(obj, box.palette, trace,
                else
                     "",
                if(diverging)
-                    sprintf("pal.thresh %g", pal.thresh)
+                    sprintf("diverging pal.thresh %g", pal.thresh)
                 else
                     "not diverging",
                describe.col(pal[1], show.hex=FALSE),

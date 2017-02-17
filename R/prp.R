@@ -320,6 +320,7 @@ prp <- function(x=stop("no 'x' arg"),
     # also that we allow abbreviations by using say "dots$fo" instead of "dots$font".
     # TODO Is there a better way? This approach is fragile, we have to be
     #       extremely careful that abbreviation doesn't alias with other args.
+    # TODO If you specify col.main=2 it affects both main and the color of the nodes.
 
     dots <- match.call(expand.dots=FALSE)$...
     check.dots(dots)

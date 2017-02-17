@@ -9,7 +9,7 @@ Loading required package: plotrix
 Loading required package: TeachingDemos
 > data(ozone1)
 > sessionInfo()
-R version 3.3.1 (2016-06-21)
+R version 3.3.2 (2016-10-31)
 Platform: x86_64-w64-mingw32/x64 (64-bit)
 Running under: Windows 7 x64 (build 7601) Service Pack 1
 
@@ -24,11 +24,11 @@ attached base packages:
 [1] stats     graphics  grDevices utils     datasets  methods   base     
 
 other attached packages:
-[1] earth_4.4.6        plotmo_3.2.0       TeachingDemos_2.10 plotrix_3.6-3     
-[5] rpart.plot_2.1.0   rpart_4.1-10      
+[1] earth_4.4.8        plotmo_3.3.2       TeachingDemos_2.10 plotrix_3.6-3     
+[5] rpart.plot_2.1.1   rpart_4.1-10      
 
 loaded via a namespace (and not attached):
-[1] tools_3.3.1
+[1] tools_3.3.2
 > ititanic <- ptitanic
 > ititanic$survived <- as.integer(ititanic$survived == "survived")
 > options(warn=1) # print warnings as they occur
@@ -169,8 +169,8 @@ Warning in citation("rpart.plot") :
 
 To cite package 'rpart.plot' in publications use:
 
-  Stephen Milborrow (2016). rpart.plot: Plot 'rpart' Models: An
-  Enhanced Version of 'plot.rpart'. R package version 2.1.0.
+  Stephen Milborrow (2017). rpart.plot: Plot 'rpart' Models: An
+  Enhanced Version of 'plot.rpart'. R package version 2.1.1.
   http://www.milbo.org/rpart-plot
 
 A BibTeX entry for LaTeX users is
@@ -178,8 +178,8 @@ A BibTeX entry for LaTeX users is
   @Manual{,
     title = {rpart.plot: Plot 'rpart' Models: An Enhanced Version of 'plot.rpart'},
     author = {Stephen Milborrow},
-    year = {2016},
-    note = {R package version 2.1.0},
+    year = {2017},
+    note = {R package version 2.1.1},
     url = {http://www.milbo.org/rpart-plot},
   }
 
@@ -1869,7 +1869,8 @@ Type 'rattle()' to shake, rattle, and roll your data.
 > plotmo(a, degree1 = NA, all2 = T, swapxy = T, do.par = F, 
 +     degree2 = 18, main = "linear model", clip = F, col.persp = col.persp)
 Warning: too many predictors to plot all pairs,
-         so plotting degree2 plots for just the first 7 predictors
+         so plotting degree2 plots for just the first 7 predictors.
+         Call plotmo with all2=2 to plot degree2 plots for up to 20 predictors.
 
 > a <- earth(O3 ~ ., data = ozone1, degree = 2)
 
@@ -1878,7 +1879,8 @@ Warning: too many predictors to plot all pairs,
 > plotmo(a, degree1 = NA, all2 = T, swapxy = T, do.par = F, 
 +     degree2 = 18, main = "MARS", col.persp = col.persp)
 Warning: too many predictors to plot all pairs,
-         so plotting degree2 plots for just the first 7 predictors
+         so plotting degree2 plots for just the first 7 predictors.
+         Call plotmo with all2=2 to plot degree2 plots for up to 20 predictors.
 
 > library(randomForest)
 randomForest 4.6-12
@@ -2994,10 +2996,10 @@ Error in col2rgb(pal_i) : invalid color name 'notacolor'
 Error : box.palette: "notacolor" is neither a color nor a palette.
 Try something like box.palette="blue" or box.palette="Blues".
 The predefined palettes are (with an optional "-" prefix):
-    Grays Greys Greens Blues Browns Oranges Reds Purples
-    Gy Gn Bu Bn Or Rd Pu (alternative names for the above palettes)
-    BuGn BuBn GnRd etc.  (two-color diverging palettes: any combination of two palettes)
-    RdYlGn GnYlRd        (three color palettes)
+  Grays Greys Greens Blues Browns Oranges Reds Purples
+  Gy Gn Bu Bn Or Rd Pu (alternative names for the above palettes)
+  BuGn BuBn GnRd etc.  (two-color diverging palettes: any combination of two palettes)
+  RdYlGn GnYlRd BlGnYl YlGnBl (three color palettes)
 
 Got error as expected from try(rpart.plot.version1(mod.age, type = 2, extra = "auto", fallen.leaves = TRUE,     box.palette = "notacolor"))
 
@@ -3007,10 +3009,10 @@ Error in col2rgb(pal_i) : invalid hex digit in 'color' or 'lty'
 Error : box.palette: "#1234XX" is neither a color nor a palette.
 Try something like box.palette="blue" or box.palette="Blues".
 The predefined palettes are (with an optional "-" prefix):
-    Grays Greys Greens Blues Browns Oranges Reds Purples
-    Gy Gn Bu Bn Or Rd Pu (alternative names for the above palettes)
-    BuGn BuBn GnRd etc.  (two-color diverging palettes: any combination of two palettes)
-    RdYlGn GnYlRd        (three color palettes)
+  Grays Greys Greens Blues Browns Oranges Reds Purples
+  Gy Gn Bu Bn Or Rd Pu (alternative names for the above palettes)
+  BuGn BuBn GnRd etc.  (two-color diverging palettes: any combination of two palettes)
+  RdYlGn GnYlRd BlGnYl YlGnBl (three color palettes)
 
 Got error as expected from try(rpart.plot(mod.age, type = 2, extra = "auto", fallen.leaves = TRUE,     box.palette = "#1234XX"))
 
@@ -3021,10 +3023,10 @@ Error in col2rgb(pal_i) : invalid hex digit in 'color' or 'lty'
 Error : box.palette: "#1234XX" is neither a color nor a palette.
 Try something like box.palette="blue" or box.palette="Blues".
 The predefined palettes are (with an optional "-" prefix):
-    Grays Greys Greens Blues Browns Oranges Reds Purples
-    Gy Gn Bu Bn Or Rd Pu (alternative names for the above palettes)
-    BuGn BuBn GnRd etc.  (two-color diverging palettes: any combination of two palettes)
-    RdYlGn GnYlRd        (three color palettes)
+  Grays Greys Greens Blues Browns Oranges Reds Purples
+  Gy Gn Bu Bn Or Rd Pu (alternative names for the above palettes)
+  BuGn BuBn GnRd etc.  (two-color diverging palettes: any combination of two palettes)
+  RdYlGn GnYlRd BlGnYl YlGnBl (three color palettes)
 
 Got error as expected from try(rpart.plot.version1(mod.age, type = 2, extra = "auto", fallen.leaves = TRUE,     box.palette = "#1234XX"))
 
@@ -3034,10 +3036,10 @@ Got error as expected from try(rpart.plot.version1(mod.age, type = 2, extra = "a
 Error : box.palette="B" is ambiguous
 Try something like box.palette="blue" or box.palette="Blues".
 The predefined palettes are (with an optional "-" prefix):
-    Grays Greys Greens Blues Browns Oranges Reds Purples
-    Gy Gn Bu Bn Or Rd Pu (alternative names for the above palettes)
-    BuGn BuBn GnRd etc.  (two-color diverging palettes: any combination of two palettes)
-    RdYlGn GnYlRd        (three color palettes)
+  Grays Greys Greens Blues Browns Oranges Reds Purples
+  Gy Gn Bu Bn Or Rd Pu (alternative names for the above palettes)
+  BuGn BuBn GnRd etc.  (two-color diverging palettes: any combination of two palettes)
+  RdYlGn GnYlRd BlGnYl YlGnBl (three color palettes)
 
 Got error as expected from try(rpart.plot.version1(mod.age, type = 2, extra = "auto", fallen.leaves = TRUE,     box.palette = "B"))
 
@@ -3047,10 +3049,10 @@ Got error as expected from try(rpart.plot.version1(mod.age, type = 2, extra = "a
 Error : box.palette="B" is ambiguous
 Try something like box.palette="blue" or box.palette="Blues".
 The predefined palettes are (with an optional "-" prefix):
-    Grays Greys Greens Blues Browns Oranges Reds Purples
-    Gy Gn Bu Bn Or Rd Pu (alternative names for the above palettes)
-    BuGn BuBn GnRd etc.  (two-color diverging palettes: any combination of two palettes)
-    RdYlGn GnYlRd        (three color palettes)
+  Grays Greys Greens Blues Browns Oranges Reds Purples
+  Gy Gn Bu Bn Or Rd Pu (alternative names for the above palettes)
+  BuGn BuBn GnRd etc.  (two-color diverging palettes: any combination of two palettes)
+  RdYlGn GnYlRd BlGnYl YlGnBl (three color palettes)
 
 Got error as expected from try(rpart.plot.version1(mod.age, type = 2, extra = "auto", fallen.leaves = TRUE,     box.palette = "-B"))
 
@@ -3066,10 +3068,10 @@ Error in col2rgb(pal_i) : numerical color values must be positive
 Error : box.palette: 0 is neither a color nor a palette.
 Try something like box.palette="blue" or box.palette="Blues".
 The predefined palettes are (with an optional "-" prefix):
-    Grays Greys Greens Blues Browns Oranges Reds Purples
-    Gy Gn Bu Bn Or Rd Pu (alternative names for the above palettes)
-    BuGn BuBn GnRd etc.  (two-color diverging palettes: any combination of two palettes)
-    RdYlGn GnYlRd        (three color palettes)
+  Grays Greys Greens Blues Browns Oranges Reds Purples
+  Gy Gn Bu Bn Or Rd Pu (alternative names for the above palettes)
+  BuGn BuBn GnRd etc.  (two-color diverging palettes: any combination of two palettes)
+  RdYlGn GnYlRd BlGnYl YlGnBl (three color palettes)
 
 Got error as expected from try(rpart.plot(mod.age, type = 2, extra = "auto", fallen.leaves = TRUE,     box.palette = c(0, 1, 2), main = "box.palette=c(0,1,2)"))
 
@@ -3420,7 +3422,7 @@ cex 1   xlim c(0, 1)   ylim c(0, 1)
 > test.expand.palette(c("-Reds", "Blues"))
 
 box.palette=c(-Reds,Blues) 
-box.palette (pal.thresh 1.49074): #FB6A4A (near tomato) to #6BAED6 (near skyblue3)
+box.palette (diverging pal.thresh 1.49074): #FB6A4A (near tomato) to #6BAED6 (near skyblue3)
 cex 1   xlim c(0, 1)   ylim c(0, 1)
 
 > test.expand.palette(c("tan", "tan2", "tan4"))
@@ -3438,7 +3440,7 @@ cex 1   xlim c(0, 1)   ylim c(0, 1)
 > test.expand.palette(c("auto", "-Reds"))
 
 box.palette=c(auto,-Reds) 
-box.palette (pal.thresh 1.49074): #F7FBFF (near ghostwhite) to #FFF5F0 (near seashell)
+box.palette (diverging pal.thresh 1.49074): #F7FBFF (near ghostwhite) to #FFF5F0 (near seashell)
 cex 1   xlim c(0, 1)   ylim c(0, 1)
 
 > expect.err(try(test.expand.palette("")), "box.palette: \"\" is neither a color nor a palette")
@@ -3448,10 +3450,10 @@ Error in col2rgb(pal_i) : invalid color name ''
 Error : box.palette: "" is neither a color nor a palette.
 Try something like box.palette="blue" or box.palette="Blues".
 The predefined palettes are (with an optional "-" prefix):
-    Grays Greys Greens Blues Browns Oranges Reds Purples
-    Gy Gn Bu Bn Or Rd Pu (alternative names for the above palettes)
-    BuGn BuBn GnRd etc.  (two-color diverging palettes: any combination of two palettes)
-    RdYlGn GnYlRd        (three color palettes)
+  Grays Greys Greens Blues Browns Oranges Reds Purples
+  Gy Gn Bu Bn Or Rd Pu (alternative names for the above palettes)
+  BuGn BuBn GnRd etc.  (two-color diverging palettes: any combination of two palettes)
+  RdYlGn GnYlRd BlGnYl YlGnBl (three color palettes)
 
 Got error as expected from try(test.expand.palette(""))
 
@@ -3462,10 +3464,10 @@ Error in col2rgb(pal_i) : invalid color name 'nonesuch'
 Error : box.palette: "nonesuch" is neither a color nor a palette.
 Try something like box.palette="blue" or box.palette="Blues".
 The predefined palettes are (with an optional "-" prefix):
-    Grays Greys Greens Blues Browns Oranges Reds Purples
-    Gy Gn Bu Bn Or Rd Pu (alternative names for the above palettes)
-    BuGn BuBn GnRd etc.  (two-color diverging palettes: any combination of two palettes)
-    RdYlGn GnYlRd        (three color palettes)
+  Grays Greys Greens Blues Browns Oranges Reds Purples
+  Gy Gn Bu Bn Or Rd Pu (alternative names for the above palettes)
+  BuGn BuBn GnRd etc.  (two-color diverging palettes: any combination of two palettes)
+  RdYlGn GnYlRd BlGnYl YlGnBl (three color palettes)
 
 Got error as expected from try(test.expand.palette("nonesuch"))
 
@@ -3475,10 +3477,10 @@ box.palette=Nonesuch
 Error : box.palette="Nonesuch" is not allowed
 Try something like box.palette="blue" or box.palette="Blues".
 The predefined palettes are (with an optional "-" prefix):
-    Grays Greys Greens Blues Browns Oranges Reds Purples
-    Gy Gn Bu Bn Or Rd Pu (alternative names for the above palettes)
-    BuGn BuBn GnRd etc.  (two-color diverging palettes: any combination of two palettes)
-    RdYlGn GnYlRd        (three color palettes)
+  Grays Greys Greens Blues Browns Oranges Reds Purples
+  Gy Gn Bu Bn Or Rd Pu (alternative names for the above palettes)
+  BuGn BuBn GnRd etc.  (two-color diverging palettes: any combination of two palettes)
+  RdYlGn GnYlRd BlGnYl YlGnBl (three color palettes)
 
 Got error as expected from try(test.expand.palette("Nonesuch"))
 
@@ -3490,10 +3492,10 @@ Error in col2rgb(pal_i) : invalid color name 'huh?'
 Error : box.palette: "huh?" is neither a color nor a palette.
 Try something like box.palette="blue" or box.palette="Blues".
 The predefined palettes are (with an optional "-" prefix):
-    Grays Greys Greens Blues Browns Oranges Reds Purples
-    Gy Gn Bu Bn Or Rd Pu (alternative names for the above palettes)
-    BuGn BuBn GnRd etc.  (two-color diverging palettes: any combination of two palettes)
-    RdYlGn GnYlRd        (three color palettes)
+  Grays Greys Greens Blues Browns Oranges Reds Purples
+  Gy Gn Bu Bn Or Rd Pu (alternative names for the above palettes)
+  BuGn BuBn GnRd etc.  (two-color diverging palettes: any combination of two palettes)
+  RdYlGn GnYlRd BlGnYl YlGnBl (three color palettes)
 
 Got error as expected from try(test.expand.palette(c("tan1", "huh?")))
 
@@ -3696,7 +3698,7 @@ Got error as expected from try(rpart.plot(mod.multiclass, type = 2, extra = "aut
 > data(ozone1)
 
 > sessionInfo()
-R version 3.3.1 (2016-06-21)
+R version 3.3.2 (2016-10-31)
 Platform: x86_64-w64-mingw32/x64 (64-bit)
 Running under: Windows 7 x64 (build 7601) Service Pack 1
 
@@ -3711,12 +3713,12 @@ attached base packages:
 [1] stats     graphics  grDevices utils     datasets  methods   base     
 
 other attached packages:
-[1] randomForest_4.6-12 rattle_4.1.0        earth_4.4.6        
-[4] plotmo_3.2.0        TeachingDemos_2.10  plotrix_3.6-3      
-[7] rpart.plot_2.1.0    rpart_4.1-10       
+[1] randomForest_4.6-12 rattle_4.1.0        earth_4.4.8        
+[4] plotmo_3.3.2        TeachingDemos_2.10  plotrix_3.6-3      
+[7] rpart.plot_2.1.1    rpart_4.1-10       
 
 loaded via a namespace (and not attached):
-[1] magrittr_1.5       tools_3.3.1        RColorBrewer_1.1-2 stringi_1.1.1     
+[1] magrittr_1.5       tools_3.3.2        RColorBrewer_1.1-2 stringi_1.1.2     
 [5] RGtk2_2.20.31     
 
 > ititanic <- ptitanic
@@ -3776,7 +3778,7 @@ Warning: NA in fitted values (fitted[3] is NA)
 > data(ozone1)
 
 > sessionInfo()
-R version 3.3.1 (2016-06-21)
+R version 3.3.2 (2016-10-31)
 Platform: x86_64-w64-mingw32/x64 (64-bit)
 Running under: Windows 7 x64 (build 7601) Service Pack 1
 
@@ -3791,12 +3793,12 @@ attached base packages:
 [1] stats     graphics  grDevices utils     datasets  methods   base     
 
 other attached packages:
-[1] randomForest_4.6-12 rattle_4.1.0        earth_4.4.6        
-[4] plotmo_3.2.0        TeachingDemos_2.10  plotrix_3.6-3      
-[7] rpart.plot_2.1.0    rpart_4.1-10       
+[1] randomForest_4.6-12 rattle_4.1.0        earth_4.4.8        
+[4] plotmo_3.3.2        TeachingDemos_2.10  plotrix_3.6-3      
+[7] rpart.plot_2.1.1    rpart_4.1-10       
 
 loaded via a namespace (and not attached):
-[1] magrittr_1.5       tools_3.3.1        RColorBrewer_1.1-2 stringi_1.1.1     
+[1] magrittr_1.5       tools_3.3.2        RColorBrewer_1.1-2 stringi_1.1.2     
 [5] RGtk2_2.20.31     
 
 > ititanic <- ptitanic

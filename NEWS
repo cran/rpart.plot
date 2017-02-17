@@ -1,6 +1,10 @@
 Changes to rpart.plot
 ---------------------
 
+2.1.1    Feb 17, 2016
+
+  Added the BlGnYl palette.
+
 2.1.0    Sep 26, 2016
 
   Added the pal.thresh and pal.node.fun arguments, and the

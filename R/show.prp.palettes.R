@@ -12,12 +12,12 @@ show.palette <- function(pal.name, y, left, right, width, strheight)
 }
 show.how.prefix.works <- function(y, left, right, width, strheight)
 {
-    text(0, y + 16 * strheight,
+    text(0, y + 14 * strheight,
         "Prefix the palette name with \"-\" to reverse the colors. Examples:",
         adj=0)
     left <- .05 + left
     right <- .05 + right
-    y <- y + 16.5 * strheight
+    y <- y + 14.5 * strheight
     yoffset <- function(yoffset) y + yoffset * 1.2 * strheight
     show.palette("Grays",  yoffset(1), left, right, width, strheight)
     show.palette("-Grays", yoffset(2), left, right, width, strheight)
@@ -49,7 +49,7 @@ show.prp.palettes <- function()
         y <- y + strheight
         if(pal.name %in% c("Purples", "Pu", "GyPu", "GnPu", "BuPu", "PuPu", "OrPu"))
             y <- y + 2 * strheight # extra vertical space
-        if(pal.name == "GnYlRd") {
+        if(pal.name == "YlGnBl") {
             show.how.prefix.works(y, left, right, width, strheight)
             # move to middle of page
             left <- .33

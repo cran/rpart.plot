@@ -15,7 +15,7 @@ as.char <- function(object, maxlen=20)
         environment.as.char(object)
 
     else if(is.call(object)) { # e.g. x is a call object in foo(x=1:3)
-        s <- strip.space(paste(format(object), collapse=""))
+        s <- strip.space.collapse(format(object))
         if(nchar(s) > maxlen)
             s <- paste0(substr(s, 1, maxlen), "...)")
         s

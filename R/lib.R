@@ -71,21 +71,21 @@ check.boolean <- function(b) # b==0 or b==1 is also ok
             " but it should be FALSE, TRUE, 0, or 1")
     b != 0 # convert to logical
 }
-check.classname <- function(object, substituted.object, expected.classname)
+check.classname <- function(object, substituted.object, allowed.classnames)
 {
-    err.msg <- quotify(expected.classname)
-    if(length(expected.classname) > 1)
+    err.msg <- quotify(allowed.classnames)
+    if(length(allowed.classnames) > 1)
         err.msg <- sprintf("one of\n%s", err.msg)
     if(is.null(object))
         stopf("object is NULL but expected an object of class of %s",
               err.msg)
-    if(!inherits(object, expected.classname)) {
+    if(!inherits(object, allowed.classnames)) {
         stopf("the class of '%s' is \"%s\" but expected the class to be %s",
               paste.trunc(substituted.object, maxlen=30),
               class(object)[1], err.msg)
     }
 }
-check.integer.scalar <- function(object, min=NULL, max=NULL, null.ok=FALSE,
+check.integer.scalar <- function(object, min=NA, max=NA, null.ok=FALSE,
                                  na.ok=FALSE, logical.ok=TRUE,
                                  char.ok=FALSE,
                                  object.name=short.deparse(substitute(object)))
@@ -103,24 +103,10 @@ check.integer.scalar <- function(object, min=NULL, max=NULL, null.ok=FALSE,
         if(!char.ok || length(object) != 1)
             stop.msg()
     } else {
-        check.numeric.scalar(object, null.ok, na.ok, logical.ok,
+        check.numeric.scalar(object, min, max, null.ok, na.ok, logical.ok,
                              char.ok.msg=char.ok, object.name=object.name)
-        if(!is.null(object) && !is.na(object)) {
-            if(object != floor(object))
+        if(!is.null(object) && !is.na(object) && object != floor(object))
                 stop.msg()
-            if(!is.null(min) && !is.null(max) && (object < min || object > max)) {
-                stop0(object.name, "=", object,
-                      " but it should be between ", min, " and ", max)
-            }
-            if(!is.null(min) && object < min) {
-                stop0(object.name, "=", object,
-                      " but it should be at least ", min)
-            }
-            if(!is.null(max) && object > max) {
-                stop0(object.name, "=", object,
-                      " but it should not be greater than ", max)
-            }
-        }
     }
     object
 }
@@ -167,7 +153,7 @@ check.df.numeric.or.logical <- function(x, xname=trunc.deparse(substitute(x)))
             stopf("%s[%g] is Inf", colname(x, icol, xname), which(is.infinite)[1])
     }
 }
-check.numeric.scalar <- function(object, null.ok=FALSE,
+check.numeric.scalar <- function(object, min=NA, max=NA, null.ok=FALSE,
                                  na.ok=FALSE, logical.ok=FALSE,
                                  char.ok.msg=FALSE, # only affects error msg
                                  object.name=short.deparse(substitute(object)))
@@ -187,10 +173,22 @@ check.numeric.scalar <- function(object, null.ok=FALSE,
         s.char <- if(char.ok.msg) ", or a string" else ""
         stopf("'%s' must be numeric%s%s%s%s (whereas its current class is \"%s\")",
               object.name, s.null, s.na, s.char, s.logical, class(object)[1])
-    }
-    else if(length(object) != 1) {
+    } else if(length(object) != 1)
         stopf("the length of '%s' must be 1 (whereas its current length is %d)",
               object.name, length(object))
+    if(!is.null(object) && !is.na(object)) {
+        if(!is.na(min) && !is.na(max) && (object < min || object > max)) {
+            stop0(object.name, "=", object,
+                  " but it should be between ", min, " and ", max)
+        }
+        if(!is.na(min) && object < min) {
+            stop0(object.name, "=", object,
+                  " but it should be at least ", min)
+        }
+        if(!is.na(max) && object > max) {
+            stop0(object.name, "=", object,
+                  " but it should not be greater than ", max)
+        }
     }
     object
 }
@@ -837,10 +835,14 @@ stopifnot.string <- function(s, name=short.deparse(substitute(s)),
 }
 strip.deparse <- function(object) # deparse, collapse, remove most white space
 {
-    s <- strip.space(paste0(deparse(object), collapse=""))
+    s <- strip.space.collapse(deparse(object))
     gsub(",", ", ", s) # put back space after commas
 }
 strip.space <- function(s)
+{
+    gsub("[ \t\n]", "", s)
+}
+strip.space.collapse <- function(s) # returns a single string
 {
     gsub("[ \t\n]", "", paste(s, collapse="")) # paste converts vec to single
 }

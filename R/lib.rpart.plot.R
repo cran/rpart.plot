@@ -157,6 +157,7 @@ formate <- function(x, digits=2, smallest=.001, largest=9999, strip.leading.zero
             formate1(x)
     }
     # formate starts here
+    digits <- abs(digits) # TODO correct?
     stopifnot(is.numeric(digits) && length(digits) == 1 && digits > 0)
     stopifnot(is.numeric(x) && length(x) >= 1)
     stopifnot(is.numeric(smallest) && length(smallest) == 1 && smallest <= .1)
@@ -184,12 +185,12 @@ formate <- function(x, digits=2, smallest=.001, largest=9999, strip.leading.zero
 
 format0 <- function(x, digits=2)
 {
-    stopifnot(is.numeric(digits) && length(digits) == 1)
+    check.integer.scalar(digits)
     if(digits == 0)
         digits <- getOption("digits")
     if(digits >= 0)
         formate(x, digits, smallest=.001, largest=9999)
-    else # digits < 0 TODO not documented on prp man page
+    else # digits < 0
         sapply(x, format, digits=-digits)
 }
 # formatf converts the given number (could also be a vector of

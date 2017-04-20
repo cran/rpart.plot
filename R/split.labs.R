@@ -14,7 +14,7 @@ split.labs.wrapper <- function(x, split.fun, split.fun.name,
     if(!is.null(split.fun)) { # call user's split.fun?
         check.func.args(split.fun, "split.fun",
                         function(x, labs, digits, varlen, faclen) NA)
-        labs <- split.fun(x, labs, digits, varlen, faclen)
+        labs <- split.fun(x, labs, abs(digits), varlen, faclen)
     }
     # check returned labs because split.fun may be user supplied
     check.returned.labs(x, labs, split.fun.name)

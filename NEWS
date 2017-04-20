@@ -1,7 +1,14 @@
 Changes to rpart.plot
 ---------------------
 
-2.1.1    Feb 17, 2016
+2.1.2    Apr 20, 2017
+
+  Added dependency on R version 3.2.0 (necessary for use of anyNA).
+
+  The digits argument can now be negative, meaning use the standard 
+  R "format" function (with the absolute value of digits).
+
+2.1.1    Feb 17, 2017
 
   Added the BlGnYl palette.
 

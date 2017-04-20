@@ -83,7 +83,7 @@ do.snip <- function(obj, nodes, split.labels, node.xy, branch.xy,
             flush.console()
         }
         #--- do.mouse.snip starts here ---
-        old.options <- options(width=1000, digits=digits) # so no wrap in print.node.info
+        old.options <- options(width=1000, digits=abs(digits)) # so no wrap in print.node.info
         on.exit(options(width=old.options$width, digits=old.options$digits))
         cat("Click to snip ...\n")
         if(!is.null(snip.fun))

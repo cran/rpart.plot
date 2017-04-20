@@ -412,7 +412,7 @@ prp <- function(x=stop("no 'x' arg"),
     if(length(family) != 1 || length(split.family) != 1 || length(nn.family) != 1)
         stop0("prp: family argument must be length 1 (family cannot be vectorized)")
     stopifnot(is.numeric(digits) && length(digits) == 1 &&
-              floor(digits) == digits && digits >= 0)
+              floor(digits) == digits) #$$$ && digits >= 0)
     if(digits == 0)
         digits <- getOption("digits")
     if(!is.na.or.zero(branch.type)) {

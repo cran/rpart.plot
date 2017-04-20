@@ -71,7 +71,8 @@ get.mvpart.labs <- function(x, extra, under, digits, xsep, varlen)
                       "\n")     # 11
 
         labs <- sprintf("%s%s%s%%", labs, sep,
-                        formatf(100 * frame$wt / frame$wt[1], digits=max(0, digits-2)))
+                        formatf(100 * frame$wt / frame$wt[1],
+                        digits=max(0, abs(digits)-2)))
     }
     labs
 }

@@ -52,7 +52,7 @@ internal.node.labs <- function(x, node.fun, node.fun.name, type, extra,
                 labs <- x$functions$text(
                           yval=if(is.null(frame$yval2)) frame$yval else frame$yval2,
                           dev=frame$dev, wt=frame$wt, ylevel=attr(x, "ylevels"),
-                          digits=digits, n=frame$n, use.n=extra)
+                          digits=abs(digits), n=frame$n, use.n=extra)
                 check.returned.labs(x, labs, "x$functions$text()")
                 if(under)
                     labs <- sub("\n", "\n\n", labs) # replace \n with \n\n
@@ -63,7 +63,7 @@ internal.node.labs <- function(x, node.fun, node.fun.name, type, extra,
         # call user's node.fun
         node.fun <- check.func.args(node.fun, "node.fun",
                         function(x, labs, digits, varlen) NA)
-        labs <- node.fun(x, labs, digits, varlen)
+        labs <- node.fun(x, labs, abs(digits), varlen)
         check.returned.labs(x, labs, node.fun.name)
     }
     labs <- paste0(prefix, labs, suffix)
@@ -88,7 +88,8 @@ get.anova.labs <- function(x, extra, under, digits, xsep, varlen)
     if(extra >= 100) {   # add percent?
         sep <- if(extra == 100) newline else "  "
         labs <- sprintf("%s%s%s%%", labs, sep,
-                        formatf(100 * frame$wt / frame$wt[1], digits=max(0, digits-2)))
+                        formatf(100 * frame$wt / frame$wt[1],
+                                digits=max(0, abs(digits)-2)))
     }
     labs
 }
@@ -156,7 +157,7 @@ get.class.labs <- function(obj, extra, under, digits, xsep, varlen, class.stats)
     n.per.lev <- format0(class.stats$n.per.lev, digits)
     n.per.lev <- apply(matrix(n.per.lev, ncol=class.stats$nlev),
                        1, paste.with.breaks, collapse=xsep)
-    prob.per.lev <- formatf(class.stats$prob.per.lev, digits,
+    prob.per.lev <- formatf(class.stats$prob.per.lev, abs(digits),
                             strip.leading.zeros=print.all.probs)
     if(print.all.probs)
         prob.per.lev <- apply(matrix(prob.per.lev, ncol=class.stats$nlev),
@@ -200,7 +201,8 @@ get.class.labs <- function(obj, extra, under, digits, xsep, varlen, class.stats)
                       "\n")                       # 9
 
         labs <- sprintf("%s%s%s%%", labs, sep,
-                        formatf(100 * frame$wt / frame$wt[1], digits=max(0, digits-2)))
+                        formatf(100 * frame$wt / frame$wt[1],
+                                digits=max(0, abs(digits)-2)))
     }
     labs
 }
@@ -219,14 +221,15 @@ get.poisson.labs <- function(obj, extra, under, digits, xsep, varlen)
         labs <- sprintf("%s%s%s%s%s",
             rate, newline, nbr, xsep, format0(frame$n, digits))
     } else if(ex == 2) {    # add number of events?
-        labs <- sprintf("%s%s%s", rate, newline, nbr, digits)
+        labs <- sprintf("%s%s%s", rate, newline, nbr)
         newline <- "  "     # want percent, if any, on same line
     } else
         stop0("extra=", extra, " is illegal (for method=\"", obj$method, "\")")
 
     if(extra >= 100)        # add percent?
         labs <- sprintf("%s%s%s%%", labs, newline,
-                        formatf(100 * frame$wt / frame$wt[1], digits=max(0, digits-2)))
+                        formatf(100 * frame$wt / frame$wt[1],
+                                digits=max(0, abs(digits)-2)))
     labs
 }
 print.node.labs.and.stop <- function(labs, fun.name, ...)

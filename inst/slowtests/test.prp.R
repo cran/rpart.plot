@@ -412,6 +412,10 @@ prp(fit2, faclen=0, digits=4, trace=1,
 fit.small <- rpart(survived~., data=ptitanic1, , control=list(cp=.1))
 prp(fit.small, extra=100, faclen=0, main="small tree", trace=1)
 
+# test negative digits
+prp(fit2, faclen=0, digits=-4,
+    border.col=NA, split.border.col="steelblue3", split.round=1)
+
 par(mfrow=c(2,3))
 fit4 <- rpart(survived~., data=ititanic, method="class", control=list(cp=.02))
 prp(fit4, trace=2, cex=.8, tweak=1.1, main="Page 12",

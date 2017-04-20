@@ -9,7 +9,7 @@ Loading required package: plotrix
 Loading required package: TeachingDemos
 > data(ozone1)
 > sessionInfo()
-R version 3.3.2 (2016-10-31)
+R version 3.3.3 (2017-03-06)
 Platform: x86_64-w64-mingw32/x64 (64-bit)
 Running under: Windows 7 x64 (build 7601) Service Pack 1
 
@@ -24,11 +24,11 @@ attached base packages:
 [1] stats     graphics  grDevices utils     datasets  methods   base     
 
 other attached packages:
-[1] earth_4.4.8        plotmo_3.3.2       TeachingDemos_2.10 plotrix_3.6-3     
-[5] rpart.plot_2.1.1   rpart_4.1-10      
+[1] earth_4.4.10       plotmo_3.3.2       TeachingDemos_2.10 plotrix_3.6-4     
+[5] rpart.plot_2.1.2   rpart_4.1-10      
 
 loaded via a namespace (and not attached):
-[1] tools_3.3.2
+[1] tools_3.3.3
 > ititanic <- ptitanic
 > ititanic$survived <- as.integer(ititanic$survived == "survived")
 > options(warn=1) # print warnings as they occur
@@ -170,7 +170,7 @@ Warning in citation("rpart.plot") :
 To cite package 'rpart.plot' in publications use:
 
   Stephen Milborrow (2017). rpart.plot: Plot 'rpart' Models: An
-  Enhanced Version of 'plot.rpart'. R package version 2.1.1.
+  Enhanced Version of 'plot.rpart'. R package version 2.1.2.
   http://www.milbo.org/rpart-plot
 
 A BibTeX entry for LaTeX users is
@@ -179,7 +179,7 @@ A BibTeX entry for LaTeX users is
     title = {rpart.plot: Plot 'rpart' Models: An Enhanced Version of 'plot.rpart'},
     author = {Stephen Milborrow},
     year = {2017},
-    note = {R package version 2.1.1},
+    note = {R package version 2.1.2},
     url = {http://www.milbo.org/rpart-plot},
   }
 
@@ -896,6 +896,10 @@ cex 0.948   xlim c(0, 1)   ylim c(0, 1)
 > fit.small <- rpart(survived~., data=ptitanic1, , control=list(cp=.1))
 > prp(fit.small, extra=100, faclen=0, main="small tree", trace=1)
 cex 1   xlim c(-0.65, 1.65)   ylim c(-1.05, 2.05)
+> 
+> # test negative digits
+> prp(fit2, faclen=0, digits=-4,
++     border.col=NA, split.border.col="steelblue3", split.round=1)
 > 
 > par(mfrow=c(2,3))
 > fit4 <- rpart(survived~., data=ititanic, method="class", control=list(cp=.02))
@@ -2266,11 +2270,18 @@ Node number 5: 23 observations
   mean=12002.7, MSE=4645995 
 
 
+> par(mfrow = c(1, 2))
+
 > if (use.prp) {
 +     prp(fit3, extra = T, main = "Section 7", uniform = F, under = T)
 + } else {
 +     plot(fit3)
 +     text(fit3, use.n = T, main = .... [TRUNCATED] 
+
+> prp(fit3, extra = T, main = "Section 7 (negative digits)", 
++     uniform = F, under = T, digits = -6)
+
+> par(mfrow = c(1, 1))
 
 > cfit2 <- rpart(pgstat ~ age + eet + g2 + grade + gleason + 
 +     ploidy, data = stagec)
@@ -3059,6 +3070,9 @@ Got error as expected from try(rpart.plot.version1(mod.age, type = 2, extra = "a
 > expect.err(try(rpart.plot.version1(mod.age, type = 2, 
 +     extra = "auto", fallen.leaves = TRUE, box.palette = rpart.plot)), 
 +     "box.palette:  ..." ... [TRUNCATED] 
+Error in try(!is.null(object) && !anyNA(object) && !identical(object,  : 
+  anyNA() applied to non-(list or vector) of type 'closure'
+
 Error : box.palette: illegal value
 Got error as expected from try(rpart.plot.version1(mod.age, type = 2, extra = "auto", fallen.leaves = TRUE,     box.palette = rpart.plot))
 
@@ -3698,7 +3712,7 @@ Got error as expected from try(rpart.plot(mod.multiclass, type = 2, extra = "aut
 > data(ozone1)
 
 > sessionInfo()
-R version 3.3.2 (2016-10-31)
+R version 3.3.3 (2017-03-06)
 Platform: x86_64-w64-mingw32/x64 (64-bit)
 Running under: Windows 7 x64 (build 7601) Service Pack 1
 
@@ -3713,12 +3727,12 @@ attached base packages:
 [1] stats     graphics  grDevices utils     datasets  methods   base     
 
 other attached packages:
-[1] randomForest_4.6-12 rattle_4.1.0        earth_4.4.8        
-[4] plotmo_3.3.2        TeachingDemos_2.10  plotrix_3.6-3      
-[7] rpart.plot_2.1.1    rpart_4.1-10       
+[1] randomForest_4.6-12 rattle_4.1.0        earth_4.4.10       
+[4] plotmo_3.3.2        TeachingDemos_2.10  plotrix_3.6-4      
+[7] rpart.plot_2.1.2    rpart_4.1-10       
 
 loaded via a namespace (and not attached):
-[1] magrittr_1.5       tools_3.3.2        RColorBrewer_1.1-2 stringi_1.1.2     
+[1] magrittr_1.5       tools_3.3.3        RColorBrewer_1.1-2 stringi_1.1.5     
 [5] RGtk2_2.20.31     
 
 > ititanic <- ptitanic
@@ -3778,7 +3792,7 @@ Warning: NA in fitted values (fitted[3] is NA)
 > data(ozone1)
 
 > sessionInfo()
-R version 3.3.2 (2016-10-31)
+R version 3.3.3 (2017-03-06)
 Platform: x86_64-w64-mingw32/x64 (64-bit)
 Running under: Windows 7 x64 (build 7601) Service Pack 1
 
@@ -3793,12 +3807,12 @@ attached base packages:
 [1] stats     graphics  grDevices utils     datasets  methods   base     
 
 other attached packages:
-[1] randomForest_4.6-12 rattle_4.1.0        earth_4.4.8        
-[4] plotmo_3.3.2        TeachingDemos_2.10  plotrix_3.6-3      
-[7] rpart.plot_2.1.1    rpart_4.1-10       
+[1] randomForest_4.6-12 rattle_4.1.0        earth_4.4.10       
+[4] plotmo_3.3.2        TeachingDemos_2.10  plotrix_3.6-4      
+[7] rpart.plot_2.1.2    rpart_4.1-10       
 
 loaded via a namespace (and not attached):
-[1] magrittr_1.5       tools_3.3.2        RColorBrewer_1.1-2 stringi_1.1.2     
+[1] magrittr_1.5       tools_3.3.3        RColorBrewer_1.1-2 stringi_1.1.5     
 [5] RGtk2_2.20.31     
 
 > ititanic <- ptitanic

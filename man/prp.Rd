@@ -258,13 +258,15 @@ Automatically select a value based on the model type, as follows:\cr
   }
   \item{digits}{
      The number of significant digits in displayed numbers.
-     Default \code{2}.
+     Default \code{2}.\cr
      If \code{0}, use \code{\link{getOption}("digits")}.\cr
-     Details:
+     If negative, use the standard \code{\link{format}} function
+     (with the absolute value of \code{digits}).\cr\cr
+     When \code{digits} is positive, the following details apply:\cr
      Numbers from \code{0.001} to \code{9999} are printed without an exponent
      (and the number of digits is actually only a suggestion,
      see \code{\link{format}} for details).
-     Numbers out that range are printed with an ``engineering'' exponent (a multiple of 3).
+     Numbers out that range are printed with an ``engineering'' exponent (a multiple of 3).\cr
   }
   \item{varlen}{
      Length of variable names in text at the splits

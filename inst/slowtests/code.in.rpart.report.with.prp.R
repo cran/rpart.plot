@@ -114,12 +114,16 @@ print(fit3, cp=.10)
 
 summary(fit3, cp=.10)
 
+par(mfrow=c(1,2))
 if (use.prp) {
     prp(fit3, extra=T, main="Section 7", uniform=F, under=T)
 } else {
     plot(fit3)
     text(fit3, use.n=T, main="Section 7", xpd=NA)
 }
+# test negative digits (so will use standard format function)
+prp(fit3, extra=T, main="Section 7 (negative digits)", uniform=F, under=T, digits=-6)
+par(mfrow=c(1,1))
 
 # plot(predict(fit3), resid(fit3))
 # axis(3, at=fit3$frame$yval[fit3$frame$var=='<leaf>'],

@@ -68,6 +68,8 @@ If you don't want a colored plot, use \code{box.palette=0}.
               Similar to \code{text.rpart}'s \code{fancy=TRUE}.
               See also \code{clip.right.labs}.\cr
 
+     \bold{5} \bold{New in version 2.2.0.}
+              Show the split variable name in the interior nodes.\cr
   }
   \item{extra}{
      Display extra information at the nodes. Possible values:
@@ -104,22 +106,33 @@ Automatically select a value based on the model type, as follows:\cr
               % and the second a probability of \code{.19}.
 
      \bold{5} Class models:
-              like \code{4} but do not display the fitted class.
+              like \code{4} but don't display the fitted class.
 
      \bold{6} Class models:
               the probability of the second class only.
               Useful for binary responses.
 
      \bold{7} Class models:
-              like \code{6} but do not display the fitted class.
+              like \code{6} but don't display the fitted class.
 
      \bold{8} Class models:
               the probability of the fitted class.
 
      \bold{9} Class models:
-              the probabilities times the fraction of observations in the node
-              (the probability relative to all observations,
-              sum across all leaves is 1).
+              The probability relative to \emph{all} observations --
+              the sum of these probabilities across all leaves is 1.
+              This is in contrast to the options above, which give the probability
+              relative to observations falling \emph{in the node} --
+              the sum of the probabilities across the node is 1.
+
+     \bold{10} \bold{New in version 2.2.0.}
+              Class models:
+              Like \code{9} but display the probability of the second class only.
+              Useful for binary responses.\cr
+
+     \bold{11} \bold{New in version 2.2.0.}
+              Class models:
+              Like \code{10} but don't display the fitted class.\cr
 
      \bold{+100} Add \code{100} to any of the above to also display
                  the percentage of observations in the node.
@@ -128,13 +141,10 @@ Automatically select a value based on the model type, as follows:\cr
                  Actually, it's a weighted percentage
                  using the \code{weights} passed to \code{rpart}.\cr
 
-    Note 1: Unlike \code{text.rpart},
+    Note: Unlike \code{text.rpart},
     by default \code{prp} uses its own routine for
     generating node  labels (not the function attached to the object).
     See the \code{node.fun} argument of \code{prp}.\cr
-    Note 2: The \code{extra} argument has special meaning
-    for \code{mvpart} objects.
-    See the Appendix to this package's vignette.
   }
   \item{under}{
      Applies only if \code{extra > 0}.
@@ -202,6 +212,7 @@ This is a vector of \code{\link{colors}},
 for example \bold{box.palette=c("green", "green2", "green4")}.
 Small fitted values are displayed with colors at the start of the vector;
 large values with colors at the end.
+Quantiles are used to partition the fitted values.
 
 The special value \bold{box.palette=0} (default for \code{prp}) uses
 the background color (typically white).

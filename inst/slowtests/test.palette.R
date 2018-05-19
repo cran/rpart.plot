@@ -225,8 +225,11 @@ rpart.plot(mod.species, type=2, extra="auto", fallen.leaves=TRUE, box.palette="a
 rpart.plot(mod.species, type=2, extra="auto", fallen.leaves=TRUE, box.palette=list("Reds", "Grays"), main="list(Reds, Grays)\nall boxes white")
 rpart.plot(mod.species, type=2, extra="auto", fallen.leaves=TRUE, box.palette=0, main="box.palette=0")
 rpart.plot(mod.species, type=2, extra="auto", fallen.leaves=TRUE, box.col=2:4, main="mod.species\nbox.col=2:4")
-rpart.plot(mod.species, type=2, extra="auto", fallen.leaves=TRUE, box.palette="pink", main="box.palette=\"pink\"")
+rpart.plot(mod.species, type=2, extra="auto", fallen.leaves=TRUE, trace=1,
+           box.palette=list("Reds", "Blues", "Grays"),
+           main='mod.species\nbox.palette=list("Reds", "Blues", "Grays")')
 rpart.plot(mod.species, type=2, extra="auto", fallen.leaves=TRUE, box.palette="Blues", main="box.palette=\"Blues\"")
+rpart.plot(mod.species, type=2, extra="auto", fallen.leaves=TRUE, box.palette="lightpink", main="box.palette=\"lightpink\"")
 par(mfrow = c(2, 2))
 prp(mod.continuous.survived, type=2, extra="auto", fallen.leaves=TRUE, main="mod.continuous.survived\nc(\"Red\", \"Yellow\", \"Green\")",  box.palette=c("red", "yellow", "green"))
 prp(mod.continuous.survived, type=2, extra="auto", fallen.leaves=TRUE, main="mod.continuous.survived\nc(\"Green\", \"Yellow\", \"Red\")",  box.palette=c("green", "yellow", "red"))
@@ -321,7 +324,10 @@ plot1 <- function(object, node.fun=NULL, pal.node.fun=FALSE, optional.msg="", ..
                  main=paste.trunc(optional.msg,
                         "pal.node.fun=", pal.node.fun,
                         "\nnode.fun=",
-                        paste(strwrap(deparse(body(node.fun)), width=40), collapse="\n"),
+                        if(is.null(node.fun))
+                            "NULL"
+                        else
+                            paste(strwrap(deparse(body(node.fun)), width=40), collapse="\n"),
                         sep="", maxlen=100),
                cex.main=.9, ...)
 }

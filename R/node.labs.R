@@ -1,5 +1,38 @@
 # node.labs.R: functions for generating labels
 
+EX0.DEFAULT                         <- 0
+EX1.NOBS                            <- 1
+EX2.CLASS.RATE                      <- 2
+EX3.MISCLASS.RATE                   <- 3
+EX4.PROB.PER.CLASS                  <- 4
+EX5.PROB.PER.CLASS.DONT             <- 5
+EX6.PROB.2ND.CLASS                  <- 6
+EX7.PROB.2ND.CLASS.DONT             <- 7
+EX8.PROB.FITTED.CLASS               <- 8
+EX9.PROB.ACROSS.ALL                 <- 9
+EX10.PROB.ACROSS.ALL.2ND.CLASS      <- 10
+EX11.PROB.ACROSS.ALL.2ND.CLASS.DONT <- 11
+
+extra.help <- function()
+{
+    cat0(
+"\n",
+"The 'extra' argument:\n",
+"    0  No extra information\n",
+"    1  Number of observations in the node\n",
+"    2  Class models: Classification rate (ncorrect/nobservations)\n",
+"       Poisson and exp models: number of events\n",
+"    3  Class models: Misclassification rate\n",
+"    4  Class models: Probability per class\n",
+"    5  Class models: Like 4 but don't display the fitted class\n",
+"    6  Class models: Probability of second class only\n",
+"    7  Class models: Like 6 but don't display the fitted class\n",
+"    8  Class models: Probability of the fitted class\n",
+"    9  Class models: Probability relative to all observations\n",
+"    10 Class models: like 9 but display the probability of the second class only\n",
+"    11 Class models: Like 10 but don't display the fitted class\n",
+"\n")
+}
 is.vec <- function(x) {
     (NROW(x) == 1 || NCOL(x) == 1) && NROW(x) * NCOL(x) > 0
 }
@@ -23,7 +56,14 @@ is.class.response <- function(obj) {
 internal.node.labs <- function(x, node.fun, node.fun.name, type, extra,
                                under, xsep, digits, varlen, prefix, suffix, class.stats)
 {
-    stopifnot((is.numeric(extra) || (is.logical(extra)) && length(extra) == 1))
+    stopifnot(is.numeric(extra) || is.logical(extra))
+    stopifnot(length(extra) == 1)
+    if(extra < 0 || floor(extra) != extra) {
+        extra.help()
+        stop0("extra=", extra, " is illegal")
+    }
+    stopifnot(extra >= 0)
+    stopifnot(is.character(x$method) && length(x$method) == 1) # sanity check
     frame <- x$frame
     labs <-
         if(x$method == "anova")
@@ -67,8 +107,14 @@ internal.node.labs <- function(x, node.fun, node.fun.name, type, extra,
         check.returned.labs(x, labs, node.fun.name)
     }
     labs <- paste0(prefix, labs, suffix)
-    if(type == TYPE.default || type == TYPE.fancy.noall)
-        labs[!is.leaf(frame)] <- NA # no labels for internal nodes
+    is.leaf <- is.leaf(frame)
+    if(type == TYPE.0default || type == TYPE.3fancy.no.all)
+        labs[!is.leaf] <- NA # no labels for internal nodes
+    else if(type == TYPE.5.varname.in.node) { # use split variable in interior nodes
+        splits <- as.character(frame$var[!is.leaf])
+        splits <- my.abbreviate(splits, varlen)
+        labs[!is.leaf] <- splits
+    }
     labs
 }
 get.anova.labs <- function(x, extra, under, digits, xsep, varlen)
@@ -78,12 +124,23 @@ get.anova.labs <- function(x, extra, under, digits, xsep, varlen)
     newline <- if(under) "\n\n" else "\n"
     ex <- if(extra < 100) extra else extra - 100
     labs <-
-        if(ex == 0)
+        if(ex == EX0.DEFAULT)
             fitted
-        else if(ex == 1) # add n?
+        else if(ex == EX1.NOBS) # add n?
             sprintf("%s%sn=%s", fitted, newline, format0(frame$n, digits))
-        else
-            stop0("extra=", extra, " is illegal (for method=\"", x$method, "\")")
+        else if (ex == EX2.CLASS.RATE) {
+            extra.help()
+            stop0("extra=", extra,
+' is legal only for "class", "poisson" and "exp" models (you have an "anova" model)')
+        }
+        else if (ex > EX11.PROB.ACROSS.ALL.2ND.CLASS.DONT) {
+            extra.help()
+            stop0("extra=", extra, " is illegal")
+        } else { # ex >= EX3.MISCLASS.RATE && ex <= EX11.PROB.ACROSS.ALL.2ND.CLASS.DONT
+            extra.help()
+            stop0("extra=", extra,
+' is legal only for "class" models (you have an "anova" model)')
+        }
 
     if(extra >= 100) {   # add percent?
         sep <- if(extra == 100) newline else "  "
@@ -121,6 +178,12 @@ get.class.stats <- function(obj)
          n.per.lev=n.per.lev,
          prob.per.lev=prob.per.lev)
 }
+rescale.prob.across.all <- function(class.stats, scale, ntotal)
+{
+    scale <- matrix(rep(rowSums(class.stats$n.per.lev), each=class.stats$nlev),
+                    ncol=class.stats$nlev, byrow=TRUE)
+    class.stats$prob.per.lev * scale / ntotal
+}
 get.class.labs <- function(obj, extra, under, digits, xsep, varlen, class.stats)
 {
     frame <- obj$frame
@@ -128,29 +191,35 @@ get.class.labs <- function(obj, extra, under, digits, xsep, varlen, class.stats)
     ntotal <- n[1]
     print.all.probs <- TRUE
     ex <- if(extra < 100) extra else extra - 100
-    if(ex == 2 || ex == 3) {        # classification rate?
+    if(ex == EX2.CLASS.RATE || ex == EX3.MISCLASS.RATE) { # classification rate?
         if(is.null(xsep))
             xsep <- " / "
         ncorrect <- double(nrow(frame))
         # columns of yval2 for e.g. a two-level response are: fitted n1 n2 prob1 prob2
         for(i in 1:nrow(frame))
             ncorrect[i] <- class.stats$yval2[i, class.stats$yval2[i, 1] + 1]
-    } else if(ex == 6 || ex == 7) { # 2nd prob only?
+    } else if(ex == EX6.PROB.2ND.CLASS || ex == EX7.PROB.2ND.CLASS.DONT) { # 2nd prob only?
         if(class.stats$nlev != 2)
             warning0("extra=", extra, " but the response has ",
                       class.stats$nlev, " levels (only the 2nd level is displayed)")
         class.stats$prob.per.lev <- class.stats$prob.per.lev[, 2]
         print.all.probs <- FALSE
-    } else if(ex == 8) {            # prob of fitted class?
+    } else if(ex == EX8.PROB.FITTED.CLASS) { # prob of fitted class?
         temp <- double(nrow(class.stats$prob.per.lev))
         for(i in 1:nrow(class.stats$prob.per.lev))
             temp[i] <- class.stats$prob.per.lev[i, class.stats$fitted[i]]
         class.stats$prob.per.lev <- temp
         print.all.probs <- FALSE
-    } else if(ex == 9) {           # scale probs by proportion of obs in node?
-        scale <- matrix(rep(rowSums(class.stats$n.per.lev), each=class.stats$nlev),
-                        ncol=class.stats$nlev, byrow=TRUE)
-        class.stats$prob.per.lev  <- class.stats$prob.per.lev * scale / ntotal
+    } else if(ex == EX9.PROB.ACROSS.ALL) { # probability across all nodes
+        class.stats$prob.per.lev  <- rescale.prob.across.all(class.stats, scale, ntotal)
+    } else if(ex == EX10.PROB.ACROSS.ALL.2ND.CLASS || # prob of 2nd class only, all nodes?
+              ex == EX11.PROB.ACROSS.ALL.2ND.CLASS.DONT) {
+        if(class.stats$nlev != 2)
+            warning0("extra=", extra, " but the response has ",
+                      class.stats$nlev, " levels (only the 2nd level is displayed)")
+        class.stats$prob.per.lev  <- rescale.prob.across.all(class.stats, scale, ntotal)
+        class.stats$prob.per.lev <- class.stats$prob.per.lev[, 2]
+        print.all.probs <- FALSE
     }
     if(is.null(xsep))
         xsep <- "  " # two spaces
@@ -165,40 +234,50 @@ get.class.labs <- function(obj, extra, under, digits, xsep, varlen, class.stats)
 
     ylevel <- attr(obj, "ylevel")
     # fitted level as a string
-    sfitted <- if(is.null(ylevel)) as.character(class.stats$fitted)
-               else ylevel[class.stats$fitted]
+    # (as.character below converts factor levels to character)
+    sfitted <-
+        if(is.null(ylevel)) as.character(class.stats$fitted)
+        else ylevel[class.stats$fitted]
     sfitted <- my.abbreviate(sfitted, varlen)
-
     newline <- if(under) "\n\n" else "\n"
 
     labs <-
-        if(ex == 0)
+        if(ex == EX0.DEFAULT)
             sfitted
-        else if(ex == 1)
+        else if(ex == EX1.NOBS)
             paste0(sfitted, newline, n.per.lev)
-        else if(ex == 2)
+        else if(ex == EX2.CLASS.RATE)
             paste0(sfitted, newline, ncorrect, xsep, n)
-        else if(ex == 3)
+        else if(ex == EX3.MISCLASS.RATE)
             paste0(sfitted, newline, n - ncorrect, xsep, n)
-        else if(ex == 4 || ex == 6 || ex == 8 || ex == 9)
+        else if(ex == EX4.PROB.PER.CLASS    ||
+                ex == EX6.PROB.2ND.CLASS    ||
+                ex == EX8.PROB.FITTED.CLASS ||
+                ex == EX9.PROB.ACROSS.ALL   ||
+                ex == EX10.PROB.ACROSS.ALL.2ND.CLASS) {
             paste0(sfitted, newline, prob.per.lev)
-        else if(ex == 5 || ex == 7)
+        } else if(ex == EX5.PROB.PER.CLASS.DONT ||
+                ex == EX7.PROB.2ND.CLASS.DONT ||
+                ex == EX11.PROB.ACROSS.ALL.2ND.CLASS.DONT)
             prob.per.lev
-        else
-            stop0("extra=", extra, " is illegal (for method=\"", obj$method, "\")")
-
+        else {
+            extra.help()
+            stop0("extra=", extra, " is illegal")
+        }
     if(extra >= 100) { # add percent?
         sep <- switch(ex+1,  # figure out where to put percent (same line? below? etc.)
-                      newline,                    # 0 (may be a double newline)
-                      "\n",                       # 1
-                      "\n",                       # 2
-                      "\n",                       # 3
-                      "\n",                       # 4
-                      newline,                    # 5
-                      if(under) "  " else "\n",   # 7 # modified march 2016
-                      if(under) "\n\n" else "\n", # 7
-                      "  ",                       # 8
-                      "\n")                       # 9
+                      newline,                    # EX0.DEFAULT (may be a double newline)
+                      "\n",                       # EX1.NOBS
+                      "\n",                       # EX2.CLASS.RATE
+                      "\n",                       # EX3.MISCLASS.RATE
+                      "\n",                       # EX4.PROB.PER.CLASS
+                      newline,                    # EX5.PROB.PER.CLASS.DONT
+                      if(under) "  " else "\n",   # EX6.PROB.2ND.CLASS # modified march 2016
+                      if(under) "\n\n" else "\n", # EX7.PROB.2ND.CLASS.DONT
+                      "  ",                       # EX8.PROB.FITTED.CLASS
+                      "\n",                       # EX9.PROB.ACROSS.ALL
+                      if(under) "  " else "\n",   # EX10.PROB.ACROSS.ALL.2ND.CLASS
+                      if(under) "\n\n" else "\n") # EX11.PROB.ACROSS.ALL.2ND.CLASS.DONT
 
         labs <- sprintf("%s%s%s%%", labs, sep,
                         formatf(100 * frame$wt / frame$wt[1],
@@ -206,26 +285,31 @@ get.class.labs <- function(obj, extra, under, digits, xsep, varlen, class.stats)
     }
     labs
 }
-get.poisson.labs <- function(obj, extra, under, digits, xsep, varlen)
+get.poisson.labs <- function(obj, extra, under, digits, xsep, varlen) # also used for exp
 {
     frame <- obj$frame
     rate  <- format0(frame$yval2[,1], digits)
     nbr <- format0(frame$yval2[,2], digits)
     newline <- if(under) "\n\n" else "\n"
     ex <- if(extra < 100) extra else extra - 100
-    if(ex == 0)
+    if(ex == EX0.DEFAULT)
         labs <- rate
-    else if(ex == 1) {      # add number of events and n?
+    else if(ex == EX1.NOBS) {      # add number of events and n?
         if(is.null(xsep))
             xsep <- " / "
         labs <- sprintf("%s%s%s%s%s",
             rate, newline, nbr, xsep, format0(frame$n, digits))
-    } else if(ex == 2) {    # add number of events?
+    } else if(ex == EX2.CLASS.RATE) {    # add number of events?
         labs <- sprintf("%s%s%s", rate, newline, nbr)
         newline <- "  "     # want percent, if any, on same line
-    } else
-        stop0("extra=", extra, " is illegal (for method=\"", obj$method, "\")")
-
+    } else if (ex > EX11.PROB.ACROSS.ALL.2ND.CLASS.DONT) {
+        extra.help()
+        stop0("extra=", extra, " is illegal")
+    } else { # ex >= EX3.CLASS.RATE && ex <= EX11.PROB.ACROSS.ALL.2ND.CLASS.DONT
+        extra.help()
+        stop0("extra=", extra,
+' is legal only for "class" models (you have a \"", x$method, "\" model)')
+    }
     if(extra >= 100)        # add percent?
         labs <- sprintf("%s%s%s%%", labs, newline,
                         formatf(100 * frame$wt / frame$wt[1],

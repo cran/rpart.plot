@@ -42,11 +42,13 @@
 #
 #------------------------------------------------------------------------------
 
-TYPE.default     <- 0 # allowable values of prp's type argument
-TYPE.all         <- 1
-TYPE.all.under   <- 2
-TYPE.fancy.noall <- 3
-TYPE.fancy.all   <- 4
+# allowable values of prp's type argument
+TYPE.0default          <- 0
+TYPE.1all              <- 1
+TYPE.2all.under        <- 2
+TYPE.3fancy.no.all     <- 3
+TYPE.4fancy.all        <- 4
+TYPE.5.varname.in.node <- 5
 
 rpart.plot <- function(x=stop("no 'x' arg"),
     type=2, extra="auto", under=FALSE, fallen.leaves=TRUE,
@@ -85,7 +87,8 @@ rpart.plot.version1 <- function(x=stop("no 'x' arg"),
 }
 
 prp <- function(x=stop("no 'x' arg"),
-    type=0, extra=0, under=FALSE, clip.right.labs=TRUE,
+    type=0,
+    extra=0, under=FALSE, clip.right.labs=TRUE,
     nn=FALSE, ni=FALSE, yesno=TRUE,
     fallen.leaves=FALSE, branch=if(fallen.leaves) 1 else .2,
     uniform=TRUE, left=TRUE, xflip=FALSE, yflip=FALSE, Margin=0, space=1, gap=NULL,
@@ -125,7 +128,9 @@ prp <- function(x=stop("no 'x' arg"),
     FUN="text",
 
     nspace=branch, minbranch=.3, do.par=TRUE,
-    add.labs=TRUE, clip.left.labs=FALSE, fam.main="",
+    add.labs=TRUE,
+    clip.left.labs=(type == 5),
+    fam.main="",
     yshift=0, yspace=space, shadow.offset=.4,
 
     split.adj=NULL, split.yshift=0, split.space=space,
@@ -221,9 +226,9 @@ prp <- function(x=stop("no 'x' arg"),
             yspace <- yspace + ygap/2
             gap <- ygap <- 0
         }
-        # With type==TYPE.all.under and no visible split box, branch lines
+        # With type==TYPE.2all.under and no visible split box, branch lines
         # look better if just a small space around labs.
-        small.underspace <- type == TYPE.all.under &&
+        small.underspace <- type == TYPE.2all.under &&
             is.box.invisible(split.box.col, split.border.col, bg)
 
         split.boxes <-
@@ -368,9 +373,9 @@ prp <- function(x=stop("no 'x' arg"),
     # later on.  But it is impossible to be exhaustive.
 
     stopifnot(is.numeric(type) && length(type) == 1 && floor(type) == type)
-    if(type < TYPE.default || type > TYPE.fancy.all)
-        stop0("type must be ", TYPE.default, "...",
-              TYPE.fancy.all, ", you have type=", type)
+    if(type < TYPE.0default || type > TYPE.5.varname.in.node)
+        stop0("type must be ", TYPE.0default, "...",
+              TYPE.5.varname.in.node, ", you have type=", type)
     under <- check.boolean(under)
     clip.left.labs[1] <- check.boolean(clip.left.labs[1])
     clip.right.labs[1] <- check.boolean(clip.right.labs[1])
@@ -412,7 +417,7 @@ prp <- function(x=stop("no 'x' arg"),
     if(length(family) != 1 || length(split.family) != 1 || length(nn.family) != 1)
         stop0("prp: family argument must be length 1 (family cannot be vectorized)")
     stopifnot(is.numeric(digits) && length(digits) == 1 &&
-              floor(digits) == digits) #$$$ && digits >= 0)
+              floor(digits) == digits)
     if(digits == 0)
         digits <- getOption("digits")
     if(!is.na.or.zero(branch.type)) {
@@ -448,7 +453,15 @@ prp <- function(x=stop("no 'x' arg"),
                                     node.fun.name, class.stats, node.labs)
     box.col     <- temp$box.col     # box.palette (if specified) converted to box.col
     box.palette <- temp$box.palette # expanded box.palette
-
+    box.col <- recycle(box.col, node.labs)
+    if(type == TYPE.5.varname.in.node) {
+        box.col[!is.leaf] <- split.box.col
+        col <- recycle(col, is.leaf)
+        col[!is.leaf] <- split.col
+        border.col <- recycle(border.col, is.leaf)
+        border.col[!is.leaf] <-
+            if(is.specified(split.border.col)) split.border.col else 1
+    }
     split.labs <- split.labs.wrapper(obj, split.fun,
                 deparse(substitute(split.fun)),
                 split.prefix, split.suffix,
@@ -479,8 +492,8 @@ prp <- function(x=stop("no 'x' arg"),
     if(is.fancy(type)) {
         right.split.labs <- split.labs[match(2 * nodes+1, nodes)]
         split.labs <- split.labs[match(2 * nodes, nodes)]
-        if(!left) # following msg assumes hard coded TYPE.fancy, TYPE.fancy.all
-            stop0("left=FALSE is not yet supported with type=3 or 4")
+        if(!left) # TODO msg uses hard coded TYPE.3fancy, TYPE.4fancy.all, TYPE.5.varname.in.node
+            stop0("left=FALSE is not yet supported with type=3 or 4 or 5")
     } else {
         if(left != xflip)   # default, set right labs to NA
             split.labs <- split.labs[match(2 * nodes, nodes)]
@@ -516,6 +529,7 @@ prp <- function(x=stop("no 'x' arg"),
     if(yesno == 2 && !is.fancy(type))
         split.labs <- ifelse(split.labs == "NA",
                              "NA", paste(yes.text, split.labs, no.text))
+
     layout <- get.layout(obj, type, nn, yesno, fallen.leaves, branch,
         uniform, Margin, cex, auto.cex, compress, ycompress,
         trace, main, sub,
@@ -581,6 +595,8 @@ prp <- function(x=stop("no 'x' arg"),
         stopifnot(all(leaf.round >= 0))
         leaf.round <- recycle(leaf.round, nodes)
         round[is.leaf] <- leaf.round[is.leaf]
+        if(type == TYPE.5.varname.in.node) # want leaf boxes to look different to interior boxes
+            round[!is.leaf] <- 0           # TODO would be nice if this was more flexible
         # draw shadows first, if any, so boxes and lines are over shadows
         if(draw.shadows || draw.split.shadows)
             draw.labs(draw.shadows, draw.split.shadows)
@@ -617,7 +633,7 @@ prp <- function(x=stop("no 'x' arg"),
               split.labs="", split.cex=split.cex, split.box=split.boxes)
 
     possible.palette.legend(rv, class.stats, box.col, box.palette,
-                            legend.x, legend.y, legend.cex)
+                            legend.x, legend.y, legend.cex, tweak, trace)
     invisible(rv)
 }
 init.plot <- function(x, y,
@@ -736,7 +752,7 @@ get.yshift <- function(type, nodes, is.leaf,
         split.yshift <- split.yshift -
                         ratio * node.shift - max(ygap, .25) - split.shift
 
-    } else if(type == TYPE.all) {
+    } else if(type == TYPE.1all) {
         # Want the split box on the node, and the top of the node
         # box just above the bottom of the split box (a slight overlap).
         # These get combined and treated as one large box in get.layout.
@@ -750,7 +766,7 @@ get.yshift <- function(type, nodes, is.leaf,
         # except that we do move leaf nodes down a bit to roughly match their split brothers
         yshift[is.leaf] <- yshift[is.leaf] - node.nlines[is.leaf]
 
-    } else if(type == TYPE.all.under) {
+    } else if(type == TYPE.2all.under) {
         # Want the node box on the node, and the top of the split
         # box just below the bottom of the node box.
         # These get combined and treated as one large box in get.layout.
@@ -861,7 +877,15 @@ get.boxes <- function(boxtype,  # one of "default", "left", "right", "undersplit
             child <- match(2 * nodes + 1, nodes)    # right child
             # lower the right splits relative to the left splits
             box.heights <- y2 - y1
-            adjust <- box.heights + (max(ygap, .4) * height1)
+            # May 2018: Raised right hand labels slightly when actually drawing
+            # because they sometimes were too close to the node box beneath them.
+            # We only do it when actually drawing otherwise the layout engine
+            # code elsewhere would have to be adjusted.
+            adjust <-
+                if(box.around.all.text) # figuring out spacing?
+                    box.heights + (max(ygap, .4) * height1) # (original code)
+                else                    # actually drawing
+                    box.heights
             y1 <- y1 - adjust
             y2 <- y2 - adjust
             yshift <- yshift - min(box.heights / height1, na.rm=TRUE)
@@ -947,7 +971,9 @@ is.auto <- function(x, n=2)
 }
 is.fancy <- function(type)
 {
-    type == TYPE.fancy.noall || type == TYPE.fancy.all
+    type == TYPE.3fancy.no.all ||
+    type == TYPE.4fancy.all    ||
+    type == TYPE.5.varname.in.node
 }
 # text before \n\n goes in the box
 # text after \n\n if any goes under the box

@@ -50,7 +50,7 @@ draw.yes.no <- function(yesno, yes.text, no.text,
         xright <- split.boxes$x2[inode] # horiz posn of right text
 
         # get vertical position of text
-        y <- if(type == TYPE.all.under)
+        y <- if(type == TYPE.2all.under)
                 .5 * (split.boxes$y1[inode] + split.boxes$y2[inode]) # center of split box
             else if(branch >= .5)   # just below center of top split box
                 .5 * (split.boxes$y1[inode] + split.boxes$y2[inode]) - .4 * height1

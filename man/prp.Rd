@@ -69,7 +69,7 @@ prp(x=stop("no 'x' arg"),
     FUN="text",
 
     nspace=branch, minbranch=.3, do.par=TRUE,
-    add.labs=TRUE, clip.left.labs=FALSE, fam.main="",
+    add.labs=TRUE, clip.left.labs=(type == 5), fam.main="",
     yshift=0, yspace=space, shadow.offset=.4,
     split.adj=NULL, split.yshift=0, split.space=space,
     split.yspace=yspace, split.shadow.offset=shadow.offset,
@@ -104,6 +104,8 @@ prp(x=stop("no 'x' arg"),
               Similar to \code{text.rpart}'s \code{fancy=TRUE}.
               See also \code{clip.right.labs}.\cr
 
+     \bold{5} \bold{New in version 2.2.0.}
+              Show the split variable name in the interior nodes.\cr
   }
   \item{extra}{
      Display extra information at the nodes. Possible values:
@@ -140,22 +142,33 @@ Automatically select a value based on the model type, as follows:\cr
               % and the second a probability of \code{.19}.
 
      \bold{5} Class models:
-              like \code{4} but do not display the fitted class.
+              like \code{4} but don't display the fitted class.
 
      \bold{6} Class models:
               the probability of the second class only.
               Useful for binary responses.
 
      \bold{7} Class models:
-              like \code{6} but do not display the fitted class.
+              like \code{6} but don't display the fitted class.
 
      \bold{8} Class models:
               the probability of the fitted class.
 
      \bold{9} Class models:
-              the probabilities times the fraction of observations in the node
-              (the probability relative to all observations,
-              sum across all leaves is 1).
+              The probability relative to \emph{all} observations --
+              the sum of these probabilities across all leaves is 1.
+              This is in contrast to the options above, which give the probability
+              relative to observations falling \emph{in the node} --
+              the sum of the probabilities across the node is 1.
+
+     \bold{10} \bold{New in version 2.2.0.}
+              Class models:
+              Like \code{9} but display the probability of the second class only.
+              Useful for binary responses.\cr
+
+     \bold{11} \bold{New in version 2.2.0.}
+              Class models:
+              Like \code{10} but don't display the fitted class.\cr
 
      \bold{+100} Add \code{100} to any of the above to also display
                  the percentage of observations in the node.
@@ -164,13 +177,10 @@ Automatically select a value based on the model type, as follows:\cr
                  Actually, it's a weighted percentage
                  using the \code{weights} passed to \code{rpart}.\cr
 
-    Note 1: Unlike \code{text.rpart},
+    Note: Unlike \code{text.rpart},
     by default \code{prp} uses its own routine for
     generating node  labels (not the function attached to the object).
     See the \code{node.fun} argument.\cr
-    Note 2: The \code{extra} argument has special meaning
-    for \code{mvpart} objects.
-    See the Appendix to this package's vignette.
   }
   \item{under}{
      Applies only if \code{extra > 0}.
@@ -180,7 +190,7 @@ Automatically select a value based on the model type, as follows:\cr
   }
   \item{clip.right.labs}{
      Default is \code{TRUE} meaning ``clip'' the right-hand split labels,
-     i.e. do not print \code{variable=}.
+     i.e. don't print \code{variable=}.
      Applies only if \code{type=3} or \code{4}.
      See also \code{clip.left.labs}.
   }
@@ -348,6 +358,7 @@ This is a vector of \code{\link{colors}},
 for example \bold{box.palette=c("green", "green2", "green4")}.
 Small fitted values are displayed with colors at the start of the vector;
 large values with colors at the end.
+Quantiles are used to partition the fitted values.
 
 The special value \bold{box.palette=0} (default for \code{prp}) uses
 the background color (typically white).
@@ -910,12 +921,13 @@ classes).
   }
   \item{legend.x}{
     Applies only to models with a multilevel class response
-    (not binary or anova models, for which no legend is drawn).
+    (not binary or anova models, for which no legend is drawn).\cr
     Horizontal position of the legend.
     Typically a value between \code{0} and \code{1}, although values beyond
-    those limits are often useful.
+    those limits are often useful.\cr
     Default is \code{NULL} meaning automatically position the legend (assuming
-    there is enough space). Use \code{NA} for no legend.
+    there is enough space). Use \code{NA} for no legend.\cr
+    Use \code{trace=TRUE} to see the automatically calculated legend position.
   }
   \item{legend.y}{
     Like \code{legend.x} but for the vertical position of the legend.

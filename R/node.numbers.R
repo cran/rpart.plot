@@ -24,7 +24,7 @@ draw.node.numbers <- function(nn, ni, draw.shadow, type, branch,
     #--- draw.node.numbers starts here ---
     # The node numbers go on top of the node box or split box, whichever
     # is higher.  So we have to get the positions of those boxes first.
-    if(is.fancy(type) || type == TYPE.all.under) {
+    if(is.fancy(type) || type == TYPE.2all.under) {
         all.labs   <- node.labs
         all.yshift <- yshift
         all.cex    <- cex
@@ -46,7 +46,8 @@ draw.node.numbers <- function(nn, ni, draw.shadow, type, branch,
     if(!is.invisible(shadow.col, bg)) {
         # following prevents shadows on node numbers when not on their split boxes
         want.interior.node.shadows <-
-            identical(shadow.col, split.shadow.col) || type == TYPE.fancy.all || type == TYPE.all.under
+            identical(shadow.col, split.shadow.col) ||
+                      type == TYPE.4fancy.all || type == TYPE.2all.under
         shadow.col <- recycle(shadow.col, nodes)
         if(!want.interior.node.shadows)
             shadow.col[!is.leaf] <- if(is.character(col)) par("bg") else 0

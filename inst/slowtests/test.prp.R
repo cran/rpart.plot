@@ -508,8 +508,23 @@ prp(a4, type=1, yesno=T, faclen=-1, under=T, extra=109, cex.main=.9, main="extra
 
 par(old.par)
 
+# May 2018: extra=9,10,11
+old.par <- par(no.readonly=TRUE)
+par(mfrow=c(2, 3))
+prp(a4, extra=9, main="extra=9")
+prp(a4, extra=10, main="extra=10")
+prp(a4, extra=11, main="extra=11")
+prp(a4, extra=109, main="extra=109")
+prp(a4, extra=110, main="extra=110")
+prp(a4, extra=111, main="extra=111")
+expect.err(try(prp(a4, extra=12, main="extra=12")), 'extra=12 is illegal')
+expect.err(try(prp(a4, extra=99, main="extra=99")), 'extra=99 is illegal')
+expect.err(try(prp(a4, extra=-1, main="extra=-1")), 'extra=-1 is illegal')
+expect.err(try(prp(a4, extra=1.23, main="extra=1.23")), 'extra=1.23 is illegal')
+par(old.par)
+
 par(mfrow=c(3,3))
-prp(a4, type=1,          extra=2,   main="Page 16")
+prp(a4, type=1,          extra=2,   main="Page 17")
 prp(a4, type=1, under=T, extra=3,   main="extra=3 (misclassification rate)\nunder=T")
 prp(a4, type=1,          extra=102, main="extra=102 (classification rate)\n")
 prp(a4, type=1, under=T, extra=103, main="extra=103 (misclassification rate)\nunder=T")
@@ -521,7 +536,7 @@ ozone2$O3a <- round(runif(330, 1, 10))
 y <- cbind(ozone2$O3, ozone2$O3a)
 a5 <- rpart(y~.-O3-O3a, data=ozone2, control=list(cp=.04))
 par(mfrow=c(2, 3))
-plot(a5, unif=TRUE, branch=.3, main="Page 17"); text(a5, use.n=TRUE, all=T, digits=3, xpd=NA, cex=1.1)
+plot(a5, unif=TRUE, branch=.3, main="Page 18"); text(a5, use.n=TRUE, all=T, digits=3, xpd=NA, cex=1.1)
 prp(a5, extra=0, digits=3, type=4, trace=1, main="extra=0\ntype=4")
 prp(a5, extra=1, type=4, clip.right=FALSE, under=TRUE, main="extra=1: nbr of events, nbr of obs\ntype=4", trace=1, under.cex=1)
 prp(a5, extra=2, trace=1, type=0, under=T, main="extra=2: nbr of events", under.cex=1)
@@ -531,7 +546,7 @@ prp(a5, extra=102, type=4, under=TRUE, xsep="/", main="extra=102\ntype=4", trace
 a7 <- rpart(survived~., data=ptitanic, control=list(cp=.02))
 par(mfrow=c(2, 2))
 # test many parameters, and their vectorization
-prp(a7, main="Page 18", Margin=.03,
+prp(a7, main="Page 19", Margin=.03,
     extra=4, under=T, prefix="res:", suffix=" (probs)", split.suffix="\n\nabc", faclen=0, trace=3,
     nn=1,
     under.col=c(2,3), under.font=c(3,2), under.ygap=c(.2,-.2), under.cex=c(1.1, .8),
@@ -563,7 +578,7 @@ data(iris)
 a.iris <- rpart(Species~., data=iris)
 par(mfrow=c(2, 2))
 old.bg <- par(bg="gray")
-prp(a.iris, main="Page 19",
+prp(a.iris, main="Page 20",
     type=4, extra=1, under=TRUE,
     col=c("orange", "green", "wheat")[a.iris$frame$yval], under.col="red",
     border.col=c(3,4), nn.col=c(2,3),
@@ -579,7 +594,7 @@ par(mfrow=c(1, 1))
 
 par(mfrow=c(2, 3))
 a <- rpart(survived~., data=ptitanic, control=list(cp=.01))
-prp(a, uniform=T, branch=.4, compress=T, extra=104, trace=2, main="Page 20")
+prp(a, uniform=T, branch=.4, compress=T, extra=104, trace=2, main="Page 21")
 prp(a, uniform=T, branch=.4, compress=T, extra=104, mar=c(1,2,3,4), trace=2, main="test mar=c(1,2,3,4)")
 prp(a, uniform=T, branch=.4, compress=T, extra=104, mar=c(5,2,3,4), trace=2, main="test mar=c(5,2,3,4)")
 prp(a, uniform=T, branch=.4, compress=T, extra=104, xpd=T, trace=2, prefix="123456789", cex=1, main="test xpd=T, par=1")
@@ -590,7 +605,7 @@ par(mfrow=c(1, 1))
 
 a <- rpart(pclass ~ ., data=ptitanic, control=rpart.control(cp=.01))
 par(mfrow=c(2,3))
-prp(a, type=0, faclen=0, extra=1, under=F, shadow.col="darkgray", nn=T, yesno=0, split.shadow.col="darkgray", main="Page 21")
+prp(a, type=0, faclen=0, extra=1, under=F, shadow.col="darkgray", nn=T, yesno=0, split.shadow.col="darkgray", main="Page 22")
 prp(a, type=1, faclen=0, extra=1, under=F, shadow.col="darkgray", nn=T, yesno=1, main="type=1\nyesno=1")
 prp(a, type=1, faclen=0, extra=2, under=T, shadow.col="darkgray", nn=T, yesno=2, main="type=1\nyesno=2")
 prp(a, type=2, faclen=0, extra=3, under=F, shadow.col="darkgray", nn=T, yesno=0, split.shadow.col="darkgray", main="type=2\nyesno=0")
@@ -604,7 +619,7 @@ par(mfrow=c(1,1))
 a <- rpart(pclass ~ ., data=ptitanic, cp=.005)
 par(mfrow=c(3,3))
 old.par <- par(no.readonly=TRUE)
-prp(a, trace=2, main="Page 22") # trace=2 so can see the grid
+prp(a, trace=2, main="Page 23") # trace=2 so can see the grid
     # set par settings that can legally change to NULL for comparison
     old.par$usr <- old.par$fig <- old.par$mfg <- old.par$xaxp <- old.par$yaxp <- NULL
     par <- par(no.readonly=TRUE)
@@ -619,7 +634,7 @@ par(mfrow=c(1,1))
 # different branch types (also test different values for yesno)
 a <- rpart(pclass ~ ., data=ptitanic, cp=.02)
 par(mfrow=c(2,3))
-prp(a, branch.type=5, yesno=0, main="Page 23")
+prp(a, branch.type=5, yesno=0, main="Page 24")
 prp(a, branch.type=1, yesno=1, main="branch.type=1\ndev  yesno=1")
 prp(a, branch.type=2, yesno=2, main="branch.type=2\nsqrt(dev)\nuniform=FALSE  yesno=2", uniform=FALSE)
 prp(a, branch.type=6, yesno=0, fallen.leaves=T, main="branch.type=6\ncomplexity\nfallen.leaves  yesno=0")
@@ -629,7 +644,7 @@ prp(a, branch.type=8, yesno=2, main="branch.type=8\nyval - min(yval)  yesno=2")
 par(mfrow=c(2,3))
 # continuous response
 a.age <- rpart(age~., data=ptitanic, cp=.04)
-prp(a.age, branch.type=7, branch.col="pink", main="Page 24")
+prp(a.age, branch.type=7, branch.col="pink", main="Page 25")
 
 # test different types with branch.type
 # prp(a, type=1, branch.type=5, branch.col="slategray3", main="type=1\nbranch.type=5") # already tested
@@ -648,14 +663,14 @@ root <- rpart(survived ~ ., data=ptitanic, cp=.5)
 prp(a, branch.type=branch.fun1, branch.col="slategray3", main="branch.fun1")
 
 par(mfrow=c(2,3))
-prp(root, branch.type=5, main="Page 25")
+prp(root, branch.type=5, main="Page 26")
 prp(a, branch=0, branch.type=5, branch.tweak=1.5, branch.col="slategray3",
     branch.fill=2, main="branch.type=5\nbranch args")
 
 par(mfrow=c(4,4))
 set.seed(1924)
 root <- rpart(survived ~ ., data=ptitanic, cp=.5)
-temp <- prp(root, main="Page 26")
+temp <- prp(root, main="Page 27")
 print(temp)
 prp(root, type=1, main="type=1")
 prp(root, type=2, extra=1, main="type=2, extra=1")
@@ -819,6 +834,8 @@ source("test.palette.R", echo=TRUE)
 source("test.na.R", echo=TRUE)
 
 source("test.imports.R", echo=TRUE)
+
+source("test.type5.R", echo=TRUE)
 
 if(!interactive()) {
     dev.off()         # finish postscript plot

@@ -92,8 +92,8 @@ get.layout <- function(obj, type, nn, yesno, fallen.leaves, branch,
                 do.init.plot=TRUE)
 
             split.boxes <- get.boxes(
-                # extra space under split if type==TYPE.all.under so can see branch lines
-                if(type == TYPE.all.under) "undersplit" else "default",
+                # extra space under split if type==TYPE.2all.under so can see branch lines
+                if(type == TYPE.2all.under) "undersplit" else "default",
                 split.labs, x, y,
                 xmax, ymax, nodes, branch,
                 Margin, FALSE, FALSE, main, sub, 0, 1, 0, 1,
@@ -147,6 +147,7 @@ get.layout <- function(obj, type, nn, yesno, fallen.leaves, branch,
             delta.y <- interleave3(delta.y, delta.y, delta.y)
         combined.boxes$y1 <- combined.boxes$y1 + delta.y
         combined.boxes$y2 <- combined.boxes$y2 + delta.y
+
         list(boxes=combined.boxes, x=new.x, y=new.y)
     }
     # Get the amount needed to scale each node by to get a gap of exactly
@@ -443,10 +444,10 @@ get.layout <- function(obj, type, nn, yesno, fallen.leaves, branch,
                                         Margin, max.cex, font1, family1)
             # TODO fix type1 handling, although works ok most of the time
             type1 <- type
-            if(type == TYPE.fancy.all)
-                type1 <- TYPE.all
-            else if(type == TYPE.fancy.noall)
-                type1 <- TYPE.default
+            if(type == TYPE.4fancy.all || type == TYPE.5.varname.in.node)
+                type1 <- TYPE.1all
+            else if(type == TYPE.3fancy.no.all)
+                type1 <- TYPE.0default
             boxes <- get.combined.boxes(x.org, y.org, xmax, ymax, scale, type1, split.yshift)$boxes
             gap <- Inf # min diff between this ceiling and previous floor
             # TODO this doesn't work with fallen leaves
@@ -530,6 +531,7 @@ get.layout <- function(obj, type, nn, yesno, fallen.leaves, branch,
     }
     if(auto.cex)
         cex  <- scale * cex
+
     list(node.xy=list(x=x, y=y), cex=cex,
          xlim=c(-xmax / 2 + .5, xmax / 2 + .5), # center graph horizontally
          ylim=c(-ymax / 2 + .5, ymax / 2 + .5), # center graph vertically

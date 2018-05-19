@@ -1,11 +1,31 @@
 Changes to rpart.plot
 ---------------------
 
+2.2.0    May 19, 2018
+
+  Added new option type=5 (puts the split variable name in the interior nodes).
+
+  Added new options extra=10 and extra=11.
+  Improved error messages for illegal values of extra.
+
+  Slightly raised right-hand split labels (type=3 and type=4) because
+  they sometimes were too close to the node box beneath them.
+
+  The legend for multi-class models now includes all classes, even those
+  classes which are never predicted by the model.  Such classes have an
+  "(unused)" suffix in the legend.
+
+  Documentation touch ups.
+
+  The vignettes are now compressed with gs and qpdf as in tools::compactPDF,
+  (but that happens outside the standard CRAN build system).  It does mean
+  that the tar.gz file for rpart.plot is a little smaller (now 628 kByte).
+
 2.1.2    Apr 20, 2017
 
   Added dependency on R version 3.2.0 (necessary for use of anyNA).
 
-  The digits argument can now be negative, meaning use the standard 
+  The digits argument can now be negative, meaning use the standard
   R "format" function (with the absolute value of digits).
 
 2.1.1    Feb 17, 2017

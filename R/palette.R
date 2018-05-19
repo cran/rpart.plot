@@ -206,7 +206,7 @@ is.diverging <- function(pal, trace)
 
     crit1 > 1.5 && crit2 < .1
 }
-# Return an index vector with elements with values in the  range 1 to nquantiles.
+# Return an index vector with elements with values in the range 1 to nquantiles.
 # Each element indicates the quantile of the corresponding element in fitted.
 # The returned index vector is intended to be used as in index into a color palette.
 
@@ -415,11 +415,9 @@ length(box.palette), ".\n",
     list(box.col=box.col, box.palette=box.palette)
 }
 # Possibly add a legend (only for multi-level-response models)
-# TODO For classes that are never predicted, include them in the
-#      legend but with a color of white (right now we simply drop them)
 
 possible.palette.legend <- function(rv, class.stats, box.col, box.palette,
-                                    legend.x, legend.y, legend.cex)
+                                    legend.x, legend.y, legend.cex, tweak, trace)
 {
     if(!is.specified(box.palette[1]) || all(box.palette == get.bg()))
         return()
@@ -427,36 +425,64 @@ possible.palette.legend <- function(rv, class.stats, box.col, box.palette,
         return()
     if(!is.null(legend.y[1]) && is.na(legend.y[1]))
         return()
+
     obj <- rv$obj
     if(obj$method != "class")
         return()
     if(class.stats$nlev <= 2)
         return()
+
     # get here if multi-level-response model with a list box.palette
-    used.classes <- 1:class.stats$nlev # same as code in handle.multiclass.palette
+
+     # same as code in handle.multiclass.palette
+    used.classes <- 1:class.stats$nlev
     if(class.stats$nlev > length(box.palette))
         used.classes <- unique(sort(class.stats$fitted, na.last=TRUE))
+
+    # box.palette is a list of vectors, we want last element of each vector
     last.elem <- function(x) x[length(x)]
-    box.palette <- sapply(box.palette, last.elem)
-    legend <- attr(obj, "ylevels")[used.classes]
-    # TODO the automatic positioning of the legend is sometimes incorrect
-    xedge <- rv$boxes$x1[1]
-    if(is.na(xedge))
-        xedge <- rv$branch.x[1,1]
+    palette <- sapply(box.palette, last.elem)
+    # set legend to names of all classes, if class unused then append "unused"
+    # also set legend.col to class colors, if class unused then use bg color
+    # TODO this could be vectorized
+    legend.col <- character(length=class.stats$nlev)
+    legend <- character(length=class.stats$nlev)
+    iclass <- 1
+    for(i in 1:class.stats$nlev) {
+        if(i %in% used.classes) {
+            legend[i]     <- attr(obj, "ylevels")[i]
+            legend.col[i] <- palette[iclass]
+            iclass        <- iclass + 1
+        } else {
+            legend[i]     <- paste0(attr(obj, "ylevels")[i], " (unused)")
+            legend.col[i] <- get.bg()
+        }
+    }
     x <- legend.x
     if(is.null(x)) { # auto horizontal position?
-        x <- if(rv$x[1] > .4) rv$xlim[1]                      # left side
+        x <- if(rv$x[1] > .5) rv$xlim[1]                      # left side
              else rv$xlim[2] - .2 * (rv$xlim[2] - rv$xlim[1]) # right side
-        if(1.4 * max(strwidth(legend)) > xedge) # not enough horizontal space?
-            return()
+        # May 2018: removed this because it's probably best to always display
+        #           the legend even if there is some overwriting
+        #
+        # # check that there is space for the legend
+        # xedge <-
+        #   if(!is.na(rv$boxes$x1[1]) # top node box exists?  (depends on prp's type arg)
+        #       rv$boxes$x1[1]        # top node left edge
+        #   else                      # else use top branch position
+        #       rv$branch.x[1,1]
+        # if(1.4 * max(strwidth(legend)) > xedge) # not enough horizontal space?
+        #     return()
     }
     y <- legend.y
-    if(is.null(y)) # auto vertical position?
-        y <- rv$boxes$y2[1]  + 1.5 * strheight("X")
+    if(is.null(y)) # auto vertical position? estimate from height of legend
+        y <- rv$y[1] + min(5, 1 + length(legend)) * strheight("X")
+    if(trace >= 1)
+        printf("legend.x %g   legend.y %g\n", x, y)
     legend(x=x, y=y, legend=legend,
-        col=0, xpd=NA, bty="n", cex=legend.cex * min(1.1 * rv$cex, 1),
+        col=0, xpd=NA, bty="n", cex=tweak * legend.cex * min(1.1 * rv$cex, 1),
         border=0,
-        fill=box.palette[1:length(used.classes)])
+        fill=legend.col)
 }
 get.palette.fitted <- function(default.fitted, node.labs, pal.node.fun, trace)
 {

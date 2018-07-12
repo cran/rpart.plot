@@ -1,28 +1,29 @@
-@rem test.prp.bat
-@rem Stephen Milborrow Nov 2010 Gardens, Cape Town
+@rem rpart.plot/inst/slowtests/make.bat
 
-@echo === test.prp ===============================================
 time /T
-@"C:\PROGRA~1\R\R-3.5.0\bin\R.exe" CMD BATCH --quiet --vanilla test.prp.R
-@if %errorlevel% equ 0 goto good1:
-@echo error: R returned errorlevel %errorlevel%, see test.prp.Rout:
-@echo.
-@tail test.prp.Rout
-@echo.
-@exit /B 1
-:good1
-diff -w test.prp.Rout test.prp.Rout.save
-@if %errorlevel% equ 0 goto good2:
-@echo test.prp.Rout test.prp.Rout.save: files differ
-@diffps -s Rplots.ps ../../.#/test.prp.save.ps
-@exit /B %errorlevel%
-:good2
-diffps Rplots.ps ../../.#/test.prp.save.ps
-@if %errorlevel% equ 0 goto good3:
-@echo Rplots.ps test.prp.save.ps: files differ
-@exit /B %errorlevel%
-:good3
-@rm -f test.prp.Rout
-@rm -f Rplots.ps
+@call test.rpart.plot.bat
+                        @if %errorlevel% NEQ 0 goto error
+@call test.rpart.rules.bat
+                        @if %errorlevel% NEQ 0 goto error
+@call vignette.bat
+                        @if %errorlevel% NEQ 0 goto error
+@call rpart.report.bat
+                        @if %errorlevel% NEQ 0 goto error
+@call webpage.figs.bat
+                        @if %errorlevel% NEQ 0 goto error
+@call test.describe.col.bat
+                        @if %errorlevel% NEQ 0 goto error
+@call test.palette.bat
+                        @if %errorlevel% NEQ 0 goto error
+@call test.na.bat
+                        @if %errorlevel% NEQ 0 goto error
+@call test.imports.bat
+                        @if %errorlevel% NEQ 0 goto error
+@call test.type5.bat
+                        @if %errorlevel% NEQ 0 goto error
+@goto done
+:error
+@echo ==== ERROR ====
+:done
 time /T
 @exit /B  0

@@ -1,19 +1,14 @@
-rpart.plot/src/tests/README.txt
--------------------------------
+rpart.plot/inst/slowtests/README.txt
+------------------------------------
 
-These are files for testing rpart.plot.  The make.bat script
-runs test.prp.R and compares the results to
-test.prp.Rout.save and test.prp.save.ps.
+The tests in this directory must be run manually before submitting a
+new version of this package to CRAN.
 
-The tests are in a separate directory so they do not run
-automatically.  This is because
+They are much more comprehensive than the standard CRAN checks in
+tests/tests.rpart.plot.R, but take several minutes to run.
 
-(a) the tests are are very slow
-
-(b) different versions of R generate slightly different
-    postscript, so the diffs have to be examined manually
-
-(c) the current version of the test script runs only under Windows.
-
-Stephen Milborrow
-Berea, Jan 2011
+Also they compare postscript files, and there are sometimes arbitrary
+changes to the format of those postscript files due to changes in the
+postscript driver across R releases.  Such changes must be manually
+checked by comparing the files in a postscript viewer.  Complete
+automation isn't possible.

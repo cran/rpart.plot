@@ -1,11 +1,44 @@
 Changes to rpart.plot
 ---------------------
 
+3.0.0  July 10, 2018
+
+  Added the rpart.rules function to display a set of rules for a tree.
+
+  Numbers in the displayed tree will now be a little different for
+  some models, because of the following changes:
+
+    (i) The new roundint argument.  With roundint=TRUE (default), we
+    display "nsiblings < 3" instead of "nsiblings < 2.5" if all values
+    of "nsiblings" in the training data are integers (where "nsiblings"
+    could be any variable in the tree, with R type "numeric" or "integer").
+    See Section 4.1 in the package vignette.
+    If roundint=TRUE and the data used to build the model is no longer
+    available, a warning will be issued.
+
+    (ii) When applying the digits argument, when the last digit is 5 we now
+    always round up (rather than rounding-to-even).  This gives more easily
+    interpretable results, especially because splits ending in ".5" are
+    common for integer predictors.  Thus "intx < 2.5" is now rounded
+    to "intx < 3" (rather than "intx < 2", which was misleading).
+    The old behaviour was an artifact of the fact that base::format rounds
+    to even when the last digit is a 5.
+
+  Splits on variables of class "logical" are now displayed as
+  "survived = 0" and "survived = 1".  In previous versions they
+  were displayed as "survived < 0.5" and "survived >= 0.5".
+
+  Added the clip.facs argument (default FALSE) to drop predictor
+  names in splits on factors.  For example, with clip.facs=TRUE,
+  "pclass = 2nd,3rd" is displayed simply as "2nd,3rd".
+  See Section 4.1 in the package vignette.
+
 2.2.0    May 19, 2018
 
   Added new option type=5 (puts the split variable name in the interior nodes).
 
   Added new options extra=10 and extra=11.
+
   Improved error messages for illegal values of extra.
 
   Slightly raised right-hand split labels (type=3 and type=4) because

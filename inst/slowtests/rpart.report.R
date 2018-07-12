@@ -1,7 +1,10 @@
-# code.in.rpart.report.with.prp.R
+# rpart.report.R: test code from rpart package vignette with rpart.plot package
 
-# must set use.prp to TRUE or FALSE before using this file
-# use.prp <- TRUE
+source("test.prolog.R")
+
+USE.PRP <- TRUE # global option
+
+set.seed(1924)
 
 # Not all the data in the rpart reports is (easily) available
 # so sometimes we use alternative data below
@@ -17,13 +20,15 @@ progstat <- factor(stagec$pgstat, levels=0:1, labels=c("No", "Prog"))
 cfit <- rpart(progstat ~ age + eet + g2 + grade + gleason + ploidy,
               data=stagec, method='class')
 print(cfit)
+print(rpart.rules(cfit))
 par(mfrow=c(2,3))
-if (use.prp) {
-    prp(cfit, main="Section 3", uniform=F, branch=1)
+if (USE.PRP) {
+    prp(cfit, main="Section 3", uniform=F, branch=1, roundint=FALSE)
 } else {
     plot(cfit, main="Section 3")
     text(cfit)
 }
+par(old.par)
 
 cat("### Section 4\n")
 
@@ -49,14 +54,34 @@ x <- cbind(temp1, temp2) #x is the matrix of predictors
 temp3 <- rpart.control(xval=10, minbucket=2, minsplit=4, cp=0)
 dfit <- rpart(y ~ x, method='class', control=temp3)
 printcp(dfit)
+print(rpart.rules(dfit))
 
 fit9 <- prune(dfit, cp=.02)
-if (use.prp) {
-    prp(fit9, branch=.3, compress=T, main="Section 4")
+print(rpart.rules(fit9, style='tall'))
+
+df <- data.frame(y, x)
+dfit.df <- rpart(y ~ ., data=df, method='class', control=temp3)
+fit9.df <- prune(dfit.df, cp=.02)
+print(rpart.rules(fit9.df, cover=TRUE))
+
+df.logical <- data.frame(y, x == 1)
+dfit.df.logical <- rpart(y ~ ., data=df.logical, method='class', control=temp3)
+fit9.df.logical <- prune(dfit.df.logical, cp=.02)
+print(rpart.rules(fit9.df.logical))
+
+# trace=1 below so we can see message: Variable name 'x1' is not in splits in terms$dataClasses
+# This message is printed only when trace>0
+par(mfrow=c(2,2))
+if (USE.PRP) {
+    prp(fit9,            branch=.3, compress=T, main="Section 4 dfit trace=0", trace=0, roundint=FALSE)    # silent but get.is.logical() fails
+    prp(fit9,            branch=.3, compress=T, main="Section 4 dfit trace=1", trace=1, roundint=FALSE)    # message Variable not in dataClasses
+    prp(fit9.df,         branch=.3, compress=T, main="Section 4 dfit.df", trace=1, roundint=FALSE)         # ok
+    prp(fit9.df.logical, branch=.3, compress=T, main="Section 4 dfit.df.logical", trace=1, roundint=FALSE) # ok
 } else {
-    plot(fit9, branch=.3, compress=T, main="Section 4")
+    plot(fit9, branch=.3, compress=T, main="Section 4 trace=0")
     text(fit9)
 }
+par(old.par)
 
 cat("### Section 5\n")
 
@@ -67,37 +92,42 @@ cat("### Section 6\n")
 
 fit1 <- rpart(Reliability ~ Price + Country + Mileage + Type,
               data=cu.summary, parms=list(split='gini'))
+print(rpart.rules(fit1, style='tall', cover=TRUE))
 fit2 <- rpart(Reliability ~ Price + Country + Mileage + Type,
               data=cu.summary, parms=list(split='information'))
+print(rpart.rules(fit2))
 par(mfrow=c(1,2))
-if (use.prp) {
-    prp(fit1, extra=T, main="Section 6\ngini", uniform=F, branch=1, xsep="/", under=T)
-    prp(fit2, extra=T, main="nunif", uniform=F, branch=1, under=T)
+if (USE.PRP) {
+    prp(fit1, extra=T, main="Section 6\ngini", uniform=F, branch=1, xsep="/", under=T, roundint=FALSE)
+    prp(fit2, extra=T, main="nunif", uniform=F, branch=1, under=T, roundint=FALSE)
 } else {
     plot(fit1, main="Section 6\ngini"); text(fit1, use.n=T, cex=.8, xpd=NA)
     plot(fit2, main="\nunif"); text(fit2, use.n=T, cex=.8, xpd=NA)
 }
-par(mfrow=c(1,1))
+par(old.par)
 
 lmat <- matrix(c(0,4,3,0), nrow=2, ncol=2, byrow=F)
 fit1 <- rpart(Kyphosis ~ Age + Number + Start, data=kyphosis)
+print(rpart.rules(fit1, style='wide'))
 fit2 <- rpart(Kyphosis ~ Age + Number + Start, data=kyphosis,
-parms=list(prior=c(.65,.35)))
+              parms=list(prior=c(.65,.35)))
+print(rpart.rules(fit2, style='wide'))
 fit3 <- rpart(Kyphosis ~ Age + Number + Start, data=kyphosis,
-parms=list(loss=lmat))
+              parms=list(loss=lmat))
+print(rpart.rules(fit3, style='tall'))
 par(mfrow=c(1,3))
-if (use.prp) {
-    prp(fit1, main="Section 6a", extra=T, type=1, uniform=F, branch=1)
+if (USE.PRP) {
+    prp(fit1, main="Section 6a", extra=T, type=1, uniform=F, branch=1, roundint=FALSE)
     # TODO this gives very small text, can improve by using minbranch=.5:
-    # prp(fit1, main="Section 6a", extra=T, type=4, uniform=F, branch=1)
-    prp(fit2, extra=T, type=4, uniform=F, branch=1)
-    prp(fit3, extra=T, type=4, uniform=F, branch=1, yesno.yshift=-.5) # yesno.yshift just to test
+    # prp(fit1, main="Section 6a", extra=T, type=4, uniform=F, branch=1, roundint=FALSE)
+    prp(fit2, extra=T, type=4, uniform=F, branch=1, roundint=FALSE)
+    prp(fit3, extra=T, type=4, uniform=F, branch=1, yesno.yshift=-.5, roundint=FALSE) # yesno.yshift just to test
 } else {
     plot(fit1, main="Section 6a"); text(fit1, use.n=T, fancy=T, xpd=NA)
     plot(fit2); text(fit2, use.n=T, fancy=T, xpd=NA)
     plot(fit3); text(fit3, use.n=T, fancy=T, xpd=NA)
 }
-par(mfrow=c(1,1))
+par(old.par)
 
 cat("### Section 7\n")
 
@@ -109,21 +139,23 @@ data(car.test.frame); cars <- car.test.frame
 
 fit3 <- rpart(Price ~ ., data=cars)
 fit3
+print(rpart.rules(fit3, style='wide'))
 printcp(fit3)
 print(fit3, cp=.10)
 
 summary(fit3, cp=.10)
 
 par(mfrow=c(1,2))
-if (use.prp) {
-    prp(fit3, extra=T, main="Section 7", uniform=F, under=T)
+if (USE.PRP) {
+    prp(fit3, extra=T, main="Section 7", uniform=F, under=T, roundint=FALSE)
 } else {
     plot(fit3)
     text(fit3, use.n=T, main="Section 7", xpd=NA)
 }
 # test negative digits (so will use standard format function)
-prp(fit3, extra=T, main="Section 7 (negative digits)", uniform=F, under=T, digits=-6)
-par(mfrow=c(1,1))
+prp(fit3, extra=T, main="Section 7 (negative digits)", uniform=F, under=T, digits=-6, roundint=FALSE)
+print(rpart.rules(fit3, digits=-6)) # will treat digits-6 the same as digits=6
+par(old.par)
 
 # plot(predict(fit3), resid(fit3))
 # axis(3, at=fit3$frame$yval[fit3$frame$var=='<leaf>'],
@@ -132,6 +164,7 @@ par(mfrow=c(1,1))
 # abline(h=0)
 
 cfit2 <- rpart(pgstat ~ age + eet + g2 + grade + gleason + ploidy, data=stagec)
+print(rpart.rules(cfit2, style='wide'))
 printcp(cfit2)
 print(cfit2, cp=.03)
 
@@ -142,16 +175,16 @@ cat("### Section 8\n")
 #              method='poisson', control=rpart.control(cp=.05, maxcompete=2))
 # summary(fit, cp=.10)
 # par(mfrow=c(2,2))
-# if (use.prp) {
-#     prp(fit, extra=T, main="Section 8", uniform=F, faclen=-1, tweak=1.1)
+# if (USE.PRP) {
+#     prp(fit, extra=T, main="Section 8", uniform=F, faclen=-1, tweak=1.1, roundint=FALSE)
 # } else {
 #     plot(fit, main="Section 8")
 #     text(fit, use.n=T, xpd=NA)
 # }
 #
 # fit.prune <- prune(fit, cp=.15)
-# if (use.prp) {
-#     prp(fit.prune, extra=T, main="Section 8a")
+# if (USE.PRP) {
+#     prp(fit.prune, extra=T, main="Section 8a", roundint=FALSE)
 # } else {
 #     plot(fit.prune)
 #     text(fit.prune, use.n=T, xpd=NA, main="Section 8a")
@@ -161,8 +194,8 @@ cat("### Section 8\n")
 # fit <- rpart(Surv(stagec$pgtime, stagec$pgstat) ~ age + eet + g2 + grade +
 #              gleason + ploidy, data=stagec)
 # print(fit)
-# if (use.prp) {
-#     prp(fit, uniform=T, branch=.4, compress=T, extra=T, main="Section 8b")
+# if (USE.PRP) {
+#     prp(fit, uniform=T, branch=.4, compress=T, extra=T, main="Section 8b", roundint=FALSE)
 # } else {
 #     plot(fit, uniform=T, branch=.4, compress=T, main="Section 8b")
 #     text(fit, use.n=T)
@@ -172,13 +205,13 @@ cat("### Section 8\n")
 
 # # modified for running in a script
 # fit2 <- prune(fit, cp=.015) # was fit2 <- snip.rpart(fit)
-# if (use.prp) {
-#     prp(fit2, uniform=T, branch=.4, compress=T, extra=T, main="Section 8c")
+# if (USE.PRP) {
+#     prp(fit2, uniform=T, branch=.4, compress=T, extra=T, main="Section 8c", roundint=FALSE)
 # } else {
 #     plot(fit2)
 #     text(fit2, use.n=T, main="Section 8c")
 # }
-# par(mfrow=c(1,1))
+# par(old.par)
 
 # newgrp <- fit2$where
 # plot(survfit(Surv(pgtime, pgstat) ~ newgrp, data=stagec), mark.time=F, lty=1:4)
@@ -189,13 +222,15 @@ cat("### Section 9\n")
 
 fit <- rpart(progstat ~ age + eet + g2 + grade + gleason + ploidy, stagec,
              control=rpart.control(cp=.025))
-if (use.prp) {
-    prp(fit, main="Section 9", uniform=F, branch=1)
-    prp(fit, uniform=T, extra=T, type=1, main="Section 9a")
-    prp(fit, branch=0, extra=T, uniform=F, main="Section 9b")
-    prp(fit, branch=.4, uniform=T, compress=T, type=1, extra=T, main="Section 9c")
+print(rpart.rules(fit, style='tall'))
+par(mfrow=c(2,3))
+if (USE.PRP) {
+    prp(fit, main="Section 9", uniform=F, branch=1, roundint=FALSE)
+    prp(fit, uniform=T, extra=T, type=1, main="Section 9a", roundint=FALSE)
+    prp(fit, branch=0, extra=T, uniform=F, main="Section 9b", roundint=FALSE)
+    prp(fit, branch=.4, uniform=T, compress=T, type=1, extra=T, main="Section 9c", roundint=FALSE)
     # post.rpart is essentially:
-    prp(fit, uniform=T, branch=0.2, compress=T, Margin=0.1, type=4, extra=T, under=T, main="Section 9d")
+    prp(fit, uniform=T, branch=0.2, compress=T, Margin=0.1, type=4, extra=T, under=T, main="Section 9d", roundint=FALSE)
 } else {
     plot(fit, main="Section 9")
     text(fit)
@@ -213,12 +248,18 @@ if (use.prp) {
     plot(fit, uniform=T, branch=0.2, compress=T, margin=0.1, main="Section 9d")
     text(fit, fancy=T, use.n=T)
 }
+par(old.par)
 
 cat("### Section 10\n")
 
 fit <- rpart(pgtime ~ age + eet + g2 + grade + gleason + ploidy, stagec)
+print(rpart.rules(fit, style='wide'))
 fit$cptable
 temp <- xpred.rpart(fit)
 err <- (stagec$pgtime - temp)^2
 sum.err <- apply(err, 2, sum)
 sum.err / (fit$frame)$dev[1]
+
+par(old.par)
+
+source("test.epilog.R")

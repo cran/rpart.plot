@@ -75,7 +75,7 @@ check.classname <- function(object, substituted.object, allowed.classnames)
 {
     err.msg <- quotify(allowed.classnames)
     if(length(allowed.classnames) > 1)
-        err.msg <- sprintf("one of\n%s", err.msg)
+        err.msg <- sprint("one of\n%s", err.msg)
     if(is.null(object))
         stopf("object is NULL but expected an object of class of %s",
               err.msg)
@@ -130,7 +130,7 @@ check.no.na.in.mat <- function(object)
                 if(!is.null(colnames(object)))
                     colnames(object)[icol]
                 else
-                    sprintf("%s[,%d]",
+                    sprint("%s[,%d]",
                         short.deparse(substitute(object), "matrix"), icol)
 
             check(object, check.name, "NA", is.na, na.ok=FALSE)
@@ -203,13 +203,13 @@ check.that.most.are.positive <- function(x, xname, user.arg, non.positive.msg, f
     nonpos <- x <= 0
     if(sum(nonpos, na.rm=TRUE) > frac.allowed * length(x)) { # more than frac.allowed nonpos?
         ifirst <- which(nonpos)[1]
-        stop0(sprintf(
+        stop0(sprint(
                 "%s is not allowed because too many %ss are %s\n",
                 user.arg, unquote(xname), non.positive.msg),
-              sprintf(
+              sprint(
                 "       %.2g%% are %s (%g%% is allowed)\n",
                 100 * sum(nonpos) / length(x), non.positive.msg, 100 * frac.allowed),
-               sprintf("       e.g. %s[%d] is %g", unquote(xname), ifirst, x[ifirst]))
+               sprint("       e.g. %s[%d] is %g", unquote(xname), ifirst, x[ifirst]))
     }
 }
 check.vec <- function(object, object.name, expected.len=NA, logical.ok=TRUE, na.ok=FALSE)
@@ -237,9 +237,9 @@ colname <- function(object, i, object.name=trunc.deparse(substitute(object)))
     if(!is.null(colnames))
         colnames[i]
     else if(NCOL(object) > 1)
-        sprintf("%s[,%g]", object.name, i)
+        sprint("%s[,%g]", object.name, i)
     else
-        sprintf(object.name)
+        sprint(object.name)
 }
 # if trace>0 or the func fails, then print the call to func
 
@@ -372,11 +372,23 @@ get.model.env <- function(object, object.name="object", trace=0)
     # check args, because this func is called very early in plotmo (and friends)
     stopifnot.string(object.name)
     check.numeric.scalar(trace, logical.ok=TRUE)
+    if(is.null(object))
+        stopf("%s is NULL", object.name)
     if(!is.list(object))
         stopf("%s is not an S3 model", object.name)
     if(class(object)[1] == "list")
         stopf("%s is a plain list, not an S3 model", object.name)
-
+    if(trace >= 2) {
+        callers.name <- callers.name()
+        my.call <- call.as.char(n=2)
+        printf.wrap("%s trace %g: %s\n", callers.name, trace, my.call)
+        call <- getCall(object)
+        if(is.null(call))
+            printf("object class is \"%s\" with no call\n", class(object)[1])
+        else
+            printf.wrap("object call is %s\n", strip.deparse(call))
+        printf("--get.model.env for %s object\n", class(object)[1])
+    }
     # following will fail for non-formula models because they have no terms field
     terms <- try(terms(object), silent=trace < 3)
     if(!is.try.err(terms) && !is.null(terms)) {
@@ -410,11 +422,9 @@ get.model.env <- function(object, object.name="object", trace=0)
         stop0("attr(object, \".Environment\") is not an environment")
 
     model.env <- parent.frame(n=2) # caller of the function that called model.env
-    if(trace >= 2) {
-        callers.name <- callers.name()
-        printf("assuming the environment of the %s model is that of %s's caller: %s\n",
-               class(object)[1], callers.name, environment.as.char(model.env))
-    }
+    trace2(trace,
+           "assuming the environment of the %s model is that of %s's caller: %s\n",
+           class(object)[1], callers.name, environment.as.char(model.env))
     return(model.env)
 }
 get.rsq <- function(rss, tss)
@@ -454,7 +464,7 @@ grepany <- function(pattern, x, ignore.case=FALSE, ...)
     any(grepl(pattern, x, ignore.case=ignore.case, ...))
 }
 # scalar form of ifelse, with short name :-)
-# only evaluates no argument if necessary
+# only evaluates the "no" argument if necessary
 ife <- function(ife.test, ife.yes, ife.no)
 {
     ife.test <- check.boolean(ife.test)
@@ -473,7 +483,7 @@ imatch.choices <- function(arg, choices,
                if(err.msg.has.index) " an integer index or" else "",
                if(nchar(err.msg.ext)) paste0(" ", err.msg.ext, " or") else "")
     if(nchar(err.msg) == 0)
-        err.msg <- sprintf("Choose%s one of: %s", err.msg.ext, quotify(choices))
+        err.msg <- sprint("Choose%s one of: %s", err.msg.ext, quotify(choices))
     if(!is.character(arg) || length(arg) != 1 || !nzchar(arg))
          stopf("illegal '%s' argument\n%s", argname, err.msg)
     imatch <- pmatch(arg, choices)
@@ -498,7 +508,8 @@ imatch.choices <- function(arg, choices,
 }
 is.integral <- function(object)
 {
-    all(floor(object) == object)
+    object <- object[!is.na(object)]
+    length(object) > 0 && all(floor(object) == object)
 }
 # is.specified's main purpose is to see if a plot component should be
 # drawn, i.e., to see if the component "has a color"
@@ -506,9 +517,10 @@ is.integral <- function(object)
 is.specified <- function(object)
 {
     try <-
-      try(!is.null(object) && !anyNA(object) && !identical(object, 0) &&
+      try(!is.null(object) && !anyNA(object) && !is.zero(object) &&
           # following needed for e.g. col=c("red", 0) because 0 is converted to string
-          !identical(object, "0") && !identical(object, "NA"), silent=FALSE)
+          !identical(object, "0") && !identical(object, "0L") &&
+          !identical(object, "NA"), silent=FALSE)
     if(is.try.err(try)) {
         # this occurs if object is say a closure and anyNA fails
         # anyNA was introduced in R 3.1.0
@@ -520,6 +532,10 @@ is.specified <- function(object)
 is.try.err <- function(object)
 {
     class(object)[1] == "try-error"
+}
+is.zero <- function(object) # needed because identical(object, 0) fails if object is 0L
+{
+    identical(object, 0) || identical(object, 0L)
 }
 # Lighten color by amount 0 ... 1 where 1 is white.
 # If amount is negative, then darken the color, -1 is black.
@@ -605,9 +621,12 @@ my.data.frame <- function(x, trace, stringsAsFactors=TRUE)
     colnames(df) <- safe.colnames(x) # restore original column names
     df
 }
-my.fixed.point <- function(x, digits)
+# default min.nrow=3 to use fixed point only if more than intercept and one other term
+my.fixed.point <- function(x, digits, min.nrow=3)
 {
-    if(NROW(x) > 2) # only use fixed point if more than intercept and one other term
+    if(is.null(dim(x)))
+        x <- as.matrix(x)
+    if(NROW(x) >= min.nrow)
         x <- apply(x, 2, zapsmall, digits+1)
     x
 }
@@ -652,14 +671,14 @@ paste.trunc <- function(..., sep=" ", collapse=" ", maxlen=60)
 }
 pastef <- function(s, fmt, ...) # paste the printf style args to s
 {
-    paste0(s, sprintf(fmt, ...))
+    paste0(s, sprint(fmt, ...))
 }
 print.first.few.elements.of.vector <- function(x, trace, name=NULL)
 {
     try(cat(" min", min(x), "max", max(x)), silent=TRUE)
     spaces <- "               "
     if(!is.null(name))
-        spaces <- sprintf("%*s", nchar(name), " ")  # nchar spaces
+        spaces <- sprint("%*s", nchar(name), " ")  # nchar spaces
     cat0("\n", spaces, " value")
     len <- if(trace >= 4) length(x)
            else           min(if(is.logical(x)) 20 else 10, length(x))
@@ -677,16 +696,32 @@ print.first.few.elements.of.vector <- function(x, trace, name=NULL)
         print(summary(x))
     }
 }
+# A safe version of sprintf.
+# Like sprintf except that %s on NULL prints "NULL" rather than
+# preventing the entire string from being printed
+#
+# e.g. sprintf("abc %s def", NULL) returns an empty string -- a silent failure!
+# but   sprint("abc %s def", NULL) returns "abc NULL def"
+#
+# e.g. sprintf("abc %d def", NULL) returns an empty string!
+# but   sprint("abc %d def", NULL) causes an error msg (not a silent failure)
+
+sprint <- function(fmt, ...)
+{
+    dots <- list(...)
+    dots <- lapply(dots, function(e) if(is.null(e)) "NULL" else e)
+    do.call(sprintf, c(fmt, dots))
+}
 printf <- function(fmt, ...) # like c printf
 {
-    cat(sprintf(fmt, ...), sep="")
+    cat(sprint(fmt, ...), sep="")
 }
 # like printf but wrap at terminal width
 # exdent=NULL for automatic determination of xdent (line up to func opening paren)
 # TODO maxlen seems to be ignored, strwrap truncates before that?
 printf.wrap <- function(fmt, ..., exdent=NULL, maxlen=2000)
 {
-    s <- paste.trunc(paste.collapse(sprintf(fmt, ...)), maxlen=maxlen)
+    s <- paste.trunc(paste.collapse(sprint(fmt, ...)), maxlen=maxlen)
     if(is.null(exdent)) {
         # align to opening paren of func call e.g. "graphics::par(xxx)" or "foo$method("
         # TODO this doesn't account for leading newlines if any
@@ -731,9 +766,9 @@ quote.deparse <- function(object, alternative="object")
 quote.with.c <- function(names) # return "x" or c("x1", "x2")
 {
     if(length(names) == 1)
-        sprintf("\"%s\"", names)
+        sprint("\"%s\"", names)
     else
-        sprintf("c(%s)", paste0("\"", paste(names, collapse="\", \""), "\""))
+        sprint("c(%s)", paste0("\"", paste(names, collapse="\", \""), "\""))
 }
 quotify <- function(s, quote="\"") # add quotes and collapse to a single string
 {                                  # called quotify because quote is taken
@@ -823,7 +858,7 @@ stop0 <- function(...)
 }
 stopf <- function(fmt, ...) # args like printf
 {
-    stop(sprintf(fmt, ...), call.=FALSE)
+    stop(sprint(fmt, ...), call.=FALSE)
 }
 # stop if s is not a one element character vector
 stopifnot.string <- function(s, name=short.deparse(substitute(s)),
@@ -833,16 +868,16 @@ stopifnot.string <- function(s, name=short.deparse(substitute(s)),
         if(null.ok)
             return()
         else
-            stop0(name, " is NULL (it should be a string)")
+            stop0("'", name, "' is NULL (it should be a string)")
     }
     if(!is.character(s))
-        stop0(name, " is not a character variable (class(",
+        stop0("'", name, "' is not a character variable (class(",
               name, ") is \"", class(s), "\")")
     if(length(s) != 1)
-        stop0(name, " has more than one element\n       ",
+        stop0("'", name, "' has more than one element\n       ",
               name, " = c(", paste.trunc("\"", s, "\"", sep=""), ")")
     if(!allow.empty && !nzchar(s))
-        stop0(name, " is an empty string")
+        stop0("'", name, "' is an empty string")
 }
 strip.deparse <- function(object) # deparse, collapse, remove most white space
 {
@@ -906,15 +941,15 @@ to.logical <- function(object, len)
 }
 trace1 <- function(trace, fmt, ...)
 {
-    stopifnot(is.numeric(trace))
+    stopifnot(!(is.numeric(trace) && is.logical(trace)))
     if(trace >= 1)
-        cat(sprintf(fmt, ...), sep="")
+        cat(sprint(fmt, ...), sep="")
 }
 trace2 <- function(trace, fmt, ...)
 {
     stopifnot(is.numeric(trace))
     if(trace >= 2)
-        cat(sprintf(fmt, ...), sep="")
+        cat(sprint(fmt, ...), sep="")
 }
 # Truncate deparse(object) if it is too long.
 # Necessary because deparse(substitute(x)) might return something very
@@ -973,7 +1008,7 @@ warn.if.not.all.finite <- function(object, text="unknown")
 }
 warnf <- function(fmt, ...) # args like printf
 {
-    warning(sprintf(fmt, ...), call.=FALSE)
+    warning(sprint(fmt, ...), call.=FALSE)
 }
 warning0 <- function(...)
 {

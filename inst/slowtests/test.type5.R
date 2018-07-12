@@ -1,39 +1,15 @@
 # test.type5.R
 
-library(rpart.plot)
-library(rattle, quietly=TRUE)
-data(ptitanic)
-library(earth)
-data(ozone1)
-options(warn=1) # print warnings as they occur
+source("test.prolog.R")
 
-# test that we got an error as expected from a try() call
-expect.err <- function(object, expected.msg="")
-{
-    if(class(object)[1] == "try-error") {
-        msg <- attr(object, "condition")$message[1]
-        if(length(grep(expected.msg, msg)))
-            cat("Got error as expected from ",
-                deparse(substitute(object)), "\n", sep="")
-        else
-            stop(sprintf("Expected \"%s\"\n  but got \"%s...\"",
-                         expected.msg, substr(msg, 1, 120)))
-    } else
-        stop("did not get expected try error")
-}
-cat("== start test.type5.R ==\n")
 anova.model <- rpart(Mileage~., data=cu.summary)
 data(iris)
 multi.class.model <- rpart(Species~., data=iris, cp=.001, minsplit=10)
 data(ptitanic)
-binary.model <- rpart(survived~., data=ptitanic, cp=.02)
+ptit <- ptitanic
+binary.model <- rpart(survived~., data=ptit, cp=.02)
 
-old.par <- par(mfrow=c(2,3), mar=c(0, 0, 6, 0))
-
-expect.err(try(rpart.plot(anova.model, type=-1)), "type must be 0...5, you have type=-1")
-expect.err(try(rpart.plot(anova.model, type=6)), "type must be 0...5, you have type=6")
-expect.err(try(rpart.plot(anova.model, type=1.23)), "floor")
-expect.err(try(rpart.plot(anova.model, type="x")), "is.numeric")
+par(mfrow=c(2,3), mar=c(0, 0, 6, 0))
 
 rpart.plot(anova.model, type=5, main="*** rpart.plot type=5 ***\nanova.model\nmileage")
 
@@ -45,17 +21,14 @@ rpart.plot(anova.model, type=5, under=TRUE, varlen=-2, faclen=4,
            box.palette="BnBu",
            main='varlen=3, faclen=3\nbox.palette="BnBu"')
 
+expect.err(try(rpart.plot(anova.model, type=-1)), "type must be 0...5, you have type=-1")
+expect.err(try(rpart.plot(anova.model, type=6)), "type must be 0...5, you have type=6")
+expect.err(try(rpart.plot(anova.model, type="x")), "type=x but it should be an an integer")
+expect.err(try(rpart.plot(anova.model, type=1.23)), "type=1.23 but it should be an an integer")
+
 par(old.par)
 
-old.par <- par(mfrow=c(2,3), mar=c(0, 0, 6, 0))
-par(old.par)
-
-old.par <- par(mfrow=c(2,3), mar=c(0, 0, 6, 0))
-
-expect.err(try(prp(anova.model, type=-1)), "type must be 0...5, you have type=-1")
-expect.err(try(prp(anova.model, type=6)), "type must be 0...5, you have type=6")
-expect.err(try(prp(anova.model, type=1.23)), "floor")
-expect.err(try(prp(anova.model, type="x")), "is.numeric")
+par(mfrow=c(2,3), mar=c(0, 0, 6, 0))
 
 prp(anova.model, type=5, main="*** prp type=5 ***\nanova.model\nmileage")
 
@@ -90,5 +63,11 @@ prp(anova.model, type=5, under=TRUE, varlen=-2, faclen=4,
            box.palette="RdYlGn",
            main='varlen=-2, faclen=4\nbox.palette="RdYlGn"')
 
+expect.err(try(prp(anova.model, type=-1)), "type must be 0...5, you have type=-1")
+expect.err(try(prp(anova.model, type=6)), "type must be 0...5, you have type=6")
+expect.err(try(prp(anova.model, type="x")), "type=x but it should be an an integer")
+expect.err(try(prp(anova.model, type=1.23)), "type=1.23 but it should be an an integer")
+
 par(old.par)
-cat("== done test.type5.R ==\n")
+
+source("test.epilog.R")

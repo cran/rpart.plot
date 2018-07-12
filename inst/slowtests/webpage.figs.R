@@ -1,5 +1,8 @@
 # webpage-figs.R
 
+source("test.prolog.R")
+data(ptitanic)
+
 #png("rpart.plot-example1.png", width=600, height=600)
 tree <- rpart(survived ~ ., data=ptitanic, cp=.012)
 prp(tree, type=4, extra=6, faclen=0, main="rpart.plot",
@@ -50,3 +53,6 @@ prp(iris.tree, type=0, extra=104, main="Fisher's Iris Data",
     cex.main=3, col.main="white", max.auto.cex=2, split.font=1, font=2)
 par(bg=old.bg)
 #dev.off()
+par(old.par)
+
+source("test.epilog.R")

@@ -210,7 +210,7 @@ is.diverging <- function(pal, trace)
 # Each element indicates the quantile of the corresponding element in fitted.
 # The returned index vector is intended to be used as in index into a color palette.
 
-quantile.index <- function(fitted, pal.halflen)
+quantile.index <- function(fitted, pal.halflen, trace)
 {
     # length(fitted)==0 if called from get.col.from.diverging.palette
     # and no fitted > pal.thresh
@@ -218,7 +218,7 @@ quantile.index <- function(fitted, pal.halflen)
         return(1)
     fitted.nona <- fitted
     if(anyNA(fitted)) {
-        warning0("NA in fitted values (fitted[", which(is.na(fitted))[1], "] is NA)")
+        trace1(trace, "fitted[%d] is NA\n", which(is.na(fitted))[1])
         fitted.nona[is.na(fitted)] <- min(fitted, na.rm=TRUE)
     }
     q <- quantile(fitted.nona,      # e.g. pal.halflen=2 means q=c(0, .5, 1)
@@ -251,13 +251,13 @@ get.col.from.diverging.palette <- function(fitted, pal, trace, box.palette, pal.
               "\" cannot be used for this model\n",
               "       because there are NAs in the fitted values.\n",
               "       Try something like box.palette=\"Blues\"")
-    quantile.index1 <- quantile.index(fitted[fitted <= pal.thresh], length(pal)/2)
-    quantile.index2 <- quantile.index(fitted[fitted >  pal.thresh], length(pal)/2)
-    quantile.index <- rep(NA, times=length(fitted))
-    quantile.index[fitted <= pal.thresh] <- quantile.index1
-    quantile.index[fitted >  pal.thresh] <- quantile.index2 + length(pal) / 2
-    quantile.index[is.na(fitted)] <- NA
-    pal[quantile.index]
+    index1 <- quantile.index(fitted[fitted <= pal.thresh], length(pal)/2, trace)
+    index2 <- quantile.index(fitted[fitted >  pal.thresh], length(pal)/2, trace)
+    index <- rep(NA, times=length(fitted))
+    index[fitted <= pal.thresh] <- index1
+    index[fitted >  pal.thresh] <- index2 + length(pal) / 2
+    index[is.na(fitted)] <- NA
+    pal[index]
 }
 print.palette <- function(pal)
 {
@@ -279,11 +279,11 @@ handle.anova.palette <- function(obj, box.palette, trace,
     if(trace >= 1)
         printf("box.palette %s(%s): %s to %s\n",
                if(is.predefined.palette(original.pal))
-                    sprintf("\"%s\" ", original.pal)
+                    sprint("\"%s\" ", original.pal)
                else
                     "",
                if(diverging)
-                    sprintf("diverging pal.thresh %g", pal.thresh)
+                    sprint("diverging pal.thresh %g", pal.thresh)
                 else
                     "not diverging",
                describe.col(pal[1], show.hex=FALSE),
@@ -296,7 +296,7 @@ handle.anova.palette <- function(obj, box.palette, trace,
                     get.col.from.diverging.palette(fitted,
                         pal, trace, box.palette, pal.thresh)
                  else
-                    pal[quantile.index(fitted, length(pal))],
+                    pal[quantile.index(fitted, length(pal), trace)],
          box.palette=pal)
 }
 # multiclass response, or two class response with box.palette=list
@@ -381,7 +381,7 @@ length(box.palette), ".\n",
         # sformat will be something like "box.col %-7.7s: %s\n"
         if(warning.issued)
             printf("\n")
-        sformat <- sprintf("%sbox.col %%-%d.%ds: %%s\n",
+        sformat <- sprint("%sbox.col %%-%d.%ds: %%s\n",
             if(warning.issued) "  " else "", max, max)
         for(i in 1:length(used.classes))
             printf(sformat, paste(ylevel[used.classes[i]]),
@@ -416,7 +416,7 @@ length(box.palette), ".\n",
 }
 # Possibly add a legend (only for multi-level-response models)
 
-possible.palette.legend <- function(rv, class.stats, box.col, box.palette,
+possible.palette.legend <- function(ret, class.stats, box.col, box.palette,
                                     legend.x, legend.y, legend.cex, tweak, trace)
 {
     if(!is.specified(box.palette[1]) || all(box.palette == get.bg()))
@@ -426,7 +426,7 @@ possible.palette.legend <- function(rv, class.stats, box.col, box.palette,
     if(!is.null(legend.y[1]) && is.na(legend.y[1]))
         return()
 
-    obj <- rv$obj
+    obj <- ret$obj
     if(obj$method != "class")
         return()
     if(class.stats$nlev <= 2)
@@ -460,27 +460,27 @@ possible.palette.legend <- function(rv, class.stats, box.col, box.palette,
     }
     x <- legend.x
     if(is.null(x)) { # auto horizontal position?
-        x <- if(rv$x[1] > .5) rv$xlim[1]                      # left side
-             else rv$xlim[2] - .2 * (rv$xlim[2] - rv$xlim[1]) # right side
+        x <- if(ret$x[1] > .5) ret$xlim[1]                      # left side
+             else ret$xlim[2] - .2 * (ret$xlim[2] - ret$xlim[1]) # right side
         # May 2018: removed this because it's probably best to always display
         #           the legend even if there is some overwriting
         #
         # # check that there is space for the legend
         # xedge <-
-        #   if(!is.na(rv$boxes$x1[1]) # top node box exists?  (depends on prp's type arg)
-        #       rv$boxes$x1[1]        # top node left edge
+        #   if(!is.na(ret$boxes$x1[1]) # top node box exists?  (depends on prp's type arg)
+        #       ret$boxes$x1[1]        # top node left edge
         #   else                      # else use top branch position
-        #       rv$branch.x[1,1]
+        #       ret$branch.x[1,1]
         # if(1.4 * max(strwidth(legend)) > xedge) # not enough horizontal space?
         #     return()
     }
     y <- legend.y
     if(is.null(y)) # auto vertical position? estimate from height of legend
-        y <- rv$y[1] + min(5, 1 + length(legend)) * strheight("X")
+        y <- ret$y[1] + min(5, 1 + length(legend)) * strheight("X")
     if(trace >= 1)
         printf("legend.x %g   legend.y %g\n", x, y)
     legend(x=x, y=y, legend=legend,
-        col=0, xpd=NA, bty="n", cex=tweak * legend.cex * min(1.1 * rv$cex, 1),
+        col=0, xpd=NA, bty="n", cex=tweak * legend.cex * min(1.1 * ret$cex, 1),
         border=0,
         fill=legend.col)
 }

@@ -4,9 +4,6 @@
 \description{
 Display a diagram showing the built-in palettes
 accepted by \code{prp}'s \code{box.palette} argument.
-%
-% (The \code{box.palette} argument also accepts \code{"auto"}
-% and palettes specified as a vector of colors.)
 }
 \usage{
 show.prp.palettes()

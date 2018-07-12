@@ -5,7 +5,7 @@
 # is a vector or a function etc.
 # TODO this won't work if x is a numeric NA (as opposed to a logical NA)?
 
-is.na.or.zero <- function(x) identical(x, NA) || identical(x, 0)
+is.na.or.zero <- function(x) identical(x, NA) || is.zero(x)
 
 is.left <- function(nodes) nodes %% 2 == 0
 
@@ -150,18 +150,18 @@ formate <- function(x, digits=2, smallest=.001, largest=9999, strip.leading.zero
         x
     }
     format1 <- function(x) {  # x is a scalar, apply appropriate formatting function
-        if(digits==0 || x == 0 || is.na(x) || is.infinite(x) ||
-                (abs(x) >= smallest && abs(x) <= largest))
+        if(digits==0 || any(x == 0) || any(is.na(x)) || any(is.infinite(x)) ||
+                 any(abs(x) >= smallest & abs(x) <= largest))
             format(x, digits=digits)
         else
             formate1(x)
     }
     # formate starts here
     digits <- abs(digits) # TODO correct?
-    stopifnot(is.numeric(digits) && length(digits) == 1 && digits > 0)
+    check.integer.scalar(digits, min=1)
     stopifnot(is.numeric(x) && length(x) >= 1)
-    stopifnot(is.numeric(smallest) && length(smallest) == 1 && smallest <= .1)
-    stopifnot(is.numeric(largest)  && length(largest) == 1  && largest >= 100)
+    check.numeric.scalar(smallest, max=.1)
+    check.numeric.scalar(largest, min=100)
     s <- sapply(x, format1)
     s <- gsub(" ", "", s) # remove spaces sometimes inserted by format
     if(strip.leading.zeros)
@@ -195,13 +195,13 @@ format0 <- function(x, digits=2)
 }
 # formatf converts the given number (could also be a vector of
 # numbers) to a string in the following manner:
-# (i)  Uses sprintf %.Df so fixed number of decimal places in all values in x
+# (i)  Uses sprint %.Df so fixed number of decimal places in all values in x
 # (ii) If strip.leading.zeros then strips leading zeros: 0.12 becomes .12
 #      (which is useful when space is tight)
 
 formatf <- function(x, digits=2, strip.leading.zeros=FALSE)
 {
-    s <- sprintf("%.*f", if(digits > 0) digits else 0, x)
+    s <- sprint("%.*f", if(digits > 0) digits else 0, x)
     if(strip.leading.zeros)
         s <- gsub("^0\\.([0-9])", ".\\1", s) # 0.12 becomes .12, -0.12 doesn't change
     s
@@ -220,7 +220,7 @@ unique.substr <- function(names, minlen)
         if(length(unique(substr(names, 1, len))) == nbr.of.names)
             break
     if(len == maxlen) {
-        warning0("could not find unique substring for \"", names[1],
+        warning0("cannot find unique substring for \"", names[1],
                  "\" and related names")
         return(names) # NOTE: return
     }
@@ -235,7 +235,7 @@ unique.substr <- function(names, minlen)
 
 my.abbreviate <- function(names, minlen, one.is.special=FALSE)
 {
-    stopifnot(is.numeric(minlen) && floor(minlen) == minlen)
+    check.integer.scalar(minlen)
     if(minlen == 1 && one.is.special) {
         if(length(names) > 52) # 52 = 2 * 26 letters in alphabet
             stop0(deparse(substitute(minlen)),

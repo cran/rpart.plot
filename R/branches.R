@@ -107,22 +107,22 @@ draw.branches <- function(obj, branch.type, branch.col,
     get.branch.y <- function(y)
     {
         stopifnot(branch.type == 0)
-        if(type == TYPE.0default) {
+        if(type == TYPE0.default) {
             y[1,] <- .667 * split.boxes$y1 + .333 * split.boxes$y2
             y[1, is.leaf] <- node.boxes$y2[is.leaf]
-        } else if(type == TYPE.1all) {
+        } else if(type == TYPE1.all) {
             y[1,] <- .667 * split.boxes$y1 + .333 * split.boxes$y2
             y[1,is.leaf] <- node.boxes$y2[is.leaf]
             y[2,] <- y[3,] <- ((node.boxes$y1 + node.boxes$y2) / 2)[parent]
-        } else if(type == TYPE.2all.under) {
+        } else if(type == TYPE2.all.under) {
             y[1,] <- node.boxes$y2
             y[2,] <- y[3,] <- ((split.boxes$y1 + split.boxes$y2) / 2)[parent]
-        } else if(type == TYPE.3fancy.no.all) {
+        } else if(type == TYPE3.fancy.no.all) {
             y[1, is.leaf] <- node.boxes$y2[is.leaf]
-        } else if(type == TYPE.4fancy.all) {
+        } else if(type == TYPE4.fancy.all) {
             y[1,] <- node.boxes$y2
             y[2,] <- y[3,] <- ((node.boxes$y1 + node.boxes$y2) / 2)[parent]
-        } else if(type == TYPE.5.varname.in.node) {
+        } else if(type == TYPE5.varname.in.node) {
             y[1, is.leaf] <- node.boxes$y2[is.leaf]
         } else
             stop("illegal type ", type) # programming error
@@ -204,7 +204,7 @@ draw.branches <- function(obj, branch.type, branch.col,
                 (is.numeric(branch.type) && length(branch.type) == 1))
     wide.branches <- !is.na.or.zero(branch.type)
     if(wide.branches &&
-            type != TYPE.0default && type != TYPE.1all && type != TYPE.2all.under) {
+            type != TYPE0.default && type != TYPE1.all && type != TYPE2.all.under) {
         if(is.function(branch.type))
             stop0("branch.type=function is not yet supported with type=", type)
         else
@@ -237,8 +237,8 @@ draw.branches <- function(obj, branch.type, branch.col,
         branch.xy$y <- get.branch.y(branch.xy$y)
         draw.branch.lines(branch.xy, branch.col, branch.lty, branch.lwd)
     } else {
-        temp <- get.wide.branches(branch.xy)
-        draw.branch.lines(temp$branch.xy, branch.col, branch.lty, branch.lwd)
+        ret <- get.wide.branches(branch.xy)
+        draw.branch.lines(ret$branch.xy, branch.col, branch.lty, branch.lwd)
 
         # Omit shape border lines, they artificially expand the size of the polygon
         # slightly, messing up the proportions especially for small widths.
@@ -249,11 +249,11 @@ draw.branches <- function(obj, branch.type, branch.col,
 
         # draw the branch shape
         for(i in 1:length(nodes))
-            polygon(temp$shape.xy$x[,i], temp$shape.xy$y[,i],
+            polygon(ret$shape.xy$x[,i], ret$shape.xy$y[,i],
                     col=branch.fill[i], border=branch.col[i],
                     lty=branch.lty[i], lwd=branch.lwd[i])
     }
-    if(type == TYPE.3fancy.no.all) { # draw small vertical line at top split?
+    if(type == TYPE3.fancy.no.all) { # draw small vertical line at top split?
         lines(c(node.xy$x[1], node.xy$x[1]),
               c(node.xy$y[1], node.xy$y[1] + strheight),
               col=branch.col[1], lty=branch.lty[1], lwd=branch.lwd[1])

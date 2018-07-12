@@ -1,54 +1,45 @@
 # test.na.R: test that NA predicted responses are shown with a hatched box
+#
+# TODO To get NA fitted values we force them into the model's frame
 
-library(rpart.plot)
+source("test.prolog.R")
 data(ptitanic)
-library(earth)
-data(ozone1)
-sessionInfo()
-ititanic <- ptitanic
-ititanic$survived <- as.integer(ititanic$survived == "survived")
-options(warn=1) # print warnings as they occur
-
-# test that we got an error as expected from a try() call
-expect.err <- function(object, expected.msg="")
-{
-    if(class(object)[1] == "try-error") {
-        msg <- attr(object, "condition")$message[1]
-        if(length(grep(expected.msg, msg)))
-            cat("Got error as expected from ",
-                deparse(substitute(object)), "\n", sep="")
-        else
-            stop(sprintf("Expected \"%s\"\n  but got \"%s...\"",
-                         expected.msg, substr(msg, 1, 120)))
-    } else
-        stop("did not get expected try error")
-}
-par(mfrow=c(2,2))
-
-# TODO I'm not sure how to generate models with NAs in the fitted values
-#      so I hack it here by forcing values in the models frame
+options(warn=2) # treat warnings as errors (catch NA warnings, if any)
 
 #--- continuous response ---
 
-a.age <- rpart(age~., data=ptitanic, cp=.02)
-a.age$frame$yval[6] <- NA
-rpart.plot(a.age, nn=1, main="age with na")
+par(mfrow=c(2,2))
+age <- rpart(age~., data=ptitanic, cp=.02)
+age$frame$yval[2] <- NA # node 2 (internal)
+age$frame$yval[6] <- NA # node 5 (leaf)
+age$frame$yval[8] <- NA # node 6 (leaf)
+rpart.plot(age, type=4, nn=1, clip.right.labs=FALSE, branch=.3,
+           digits=-2, roundint=TRUE,
+           main="age with na", trace=1) # trace=1 to get message: fitted[6] is NA
+print(rpart.rules(age))
 
 # --- binary response ---
 
-a <- rpart(survived~., data=ptitanic, control=list(cp=.02))
-a$frame$yval[3] <- a$frame$yval2[3,1] <- a$frame$yval2[3,5] <- NA
-a$frame$yval[4] <- a$frame$yval2[4,1] <- a$frame$yval2[4,5] <- NA
+survived <- rpart(survived~., data=ptitanic, control=list(cp=.02))
+survived$frame$yval[3] <- survived$frame$yval2[3,1] <- survived$frame$yval2[3,5] <- NA # node 4 (leaf)
+survived$frame$yval[4] <- survived$frame$yval2[4,1] <- survived$frame$yval2[4,5] <- NA # node 5 (internal)
 
-expect.err(try(rpart.plot(a, nn=1, type=1, fallen.leaves=FALSE,
+expect.err(try(rpart.plot(survived, nn=1, type=1, fallen.leaves=FALSE,
                main="survived with na")),
  "Diverging palettes like box.palette=\"BuGn\" cannot be used for this model")
 
-rpart.plot(a, nn=1, type=1, fallen.leaves=FALSE, box.palette="Blues",
+rpart.plot(survived, nn=1, type=1, fallen.leaves=FALSE, box.palette="Blues",
            main="survived with na")
+print(rpart.rules(survived, cover=TRUE))
 
 #--- multiclass response ---
 
-a.pclass <- rpart(pclass ~ ., data=ptitanic, control=rpart.control(cp=.01))
-a.pclass$frame$yval[3] <- a.pclass$frame$yval2[3,1] <- NA
-rpart.plot(a.pclass, nn=1, main="pclass with na")
+pclass <- rpart(pclass ~ ., data=ptitanic, control=rpart.control(cp=.01))
+pclass$frame$yval[3] <- pclass$frame$yval2[3,1] <- NA # node 4
+pclass$frame$yval2[3, 6] <- NA # change class probs [.74 .16 .10] to  [.74 NA .10]
+rpart.plot(pclass, nn=1, main="pclass with na")
+print(rpart.rules(pclass))
+
+par(old.par)
+
+source("test.epilog.R")

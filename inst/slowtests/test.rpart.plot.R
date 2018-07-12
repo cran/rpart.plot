@@ -1,36 +1,21 @@
-# test.prp.R
+# test.rpart.plot.R: this does a regression test of rpart.plot and rpart.plot
+# Stephen Milborrow Nov 2010 Gardens, Cape Town
 
-library(rpart.plot)
-data(ptitanic)
-library(earth)
-data(ozone1)
-sessionInfo()
-ititanic <- ptitanic
-ititanic$survived <- as.integer(ititanic$survived == "survived")
-options(warn=1) # print warnings as they occur
+source("test.prolog.R")
 
-if(!interactive())
-    postscript(paper="letter", fonts=c("Helvetica", "NewCenturySchoolbook"))
-
-# test that we got an error as expected from a try() call
-expect.err <- function(object, expected.msg="")
-{
-    if(class(object)[1] == "try-error") {
-        msg <- attr(object, "condition")$message[1]
-        if(length(grep(expected.msg, msg)))
-            cat("Got error as expected from ",
-                deparse(substitute(object)), "\n", sep="")
-        else
-            stop(sprintf("Expected \"%s\"\n  but got \"%s...\"",
-                         expected.msg, substr(msg, 1, 120)))
-    } else
-        stop("did not get expected try error")
-}
+print(sessionInfo())
+print(citation("rpart.plot"))
 
 example(rpart.plot)
 example(rpart.plot.version1)
 example(prp)
-print(citation("rpart.plot"))
+
+data(ptitanic)
+example(ptitanic)
+library(earth)
+data(ozone1)
+ititanic <- ptitanic
+ititanic$survived <- as.integer(ititanic$survived == "survived")
 
 # test format0 and formatf
 
@@ -111,8 +96,9 @@ cols <- ifelse(nodes %in% path, 1, "slategray4")
 lwds <- ifelse(nodes %in% path, 2, 1)
 lty  <- ifelse(nodes %in% path, 1, 2)
 prp(fit.oz, type=4, clip.right.labs=F, nn=TRUE, trace=3, # some niceties
-   main=paste("Path to node", node), col.m=3, lwd=lwds, digits=4,
+   main=paste("Path to node", node), col.m=3, lwd=lwds, digits=10,
    col=cols, branch.col=cols, split.col=cols, nn.col=cols)
+par(old.par)
 
 my.labs <- function(x, labs, digits, varlen)
 {
@@ -137,6 +123,7 @@ my.labs3 <- function(x, labs, digits, varlen) # use passed in labs
     sprintf("%s\n\ndev %.1f", labs, x$frame$dev)
 }
 prp(fit2, node.fun=my.labs3, main="my.labs3\nextra=100", trace=1, extra=100, under=T)
+par(old.par)
 
 # commented out for rpart.plot version 1.4-0 (user mode no longer supported)
 # fit.user <- rpart(survived~., data=ptitanic, cp=.02)
@@ -263,6 +250,7 @@ prp(a20, type=4, trace=2, nn=T, split.border.col=1,
     split.prefix=c("", "", "down ", "", "", "", ""),
     split.yshift=c(0, -3, 0, 0, 0, 0, 0))
 
+par(old.par)
 
 a21 <- rpart(survived~., data=ptitanic, control=list(cp=.02))
 par(mfrow=c(3,3))
@@ -365,6 +353,7 @@ prp(a21, type=1, trace=2, nn=0, ni=0,
     yshift=c(3, 0, 3, 3, 0, 0, 0),
     split.prefix=c("", "", "down\n", "", "", "", ""),
     split.yshift=c(0, -1, 0, 0, 0, 0, 0))
+par(old.par)
 
 
 par(mfrow=c(3,3))
@@ -380,6 +369,7 @@ prp(a8, type=2, extra=104, under=T, main="extra=104, under=T")
 prp(a8, type=2, extra=104, under=T, under.cex=.6, main="extra=104, under=T\nunder.cex=.6")
 prp(a8, type=2, extra=104, under=T, under.cex=1, main="extra=104, under=T\nunder.cex=1.2")
 prp(a8, type=2, extra=104, under=T, split.border.col=1, border.col=0, main="extra=104, under=T\nsplit.border=1, border=0")
+par(old.par)
 
 par(mfrow=c(2,2))
 fit3 <- rpart(survived~., data=ititanic, control=list(cp=.002))
@@ -388,11 +378,13 @@ prp(fit3, extra=100, trace=3, nn=TRUE, faclen=0, fallen.leaves=TRUE, main="falle
 prp(fit3, type=4, trace=3, nn=TRUE, clip.right.labs=0, split.border.col=1, main="type=4 ")
 # use prefix below to force shifting of fallen leaves to test shifter
 prp(fit3, type=4, branch=.5, extra=1, under=TRUE, trace=3, nn=FALSE, fallen.leaves=1, prefix="probability ", main="type=4, fallen leaves")
+par(old.par)
 
 par(mfrow=c(2,2))
 fit7 <- rpart(survived ~ ., data=ptitanic, cp=.01)
 # this was wrong until I added check that a shift doesn't move nodes above the nodes for the level above
 prp(fit7, extra=1, branch=1, trace=3, nn=1, main="Page 10")
+par(old.par)
 
 par(mfrow=c(2,2))
 prp(fit2, prefix=ifelse(fit2$frame$yval > .5, "survived\n", "died\n"), main="Page 11",
@@ -415,6 +407,7 @@ prp(fit.small, extra=100, faclen=0, main="small tree", trace=1)
 # test negative digits
 prp(fit2, faclen=0, digits=-4,
     border.col=NA, split.border.col="steelblue3", split.round=1)
+par(old.par)
 
 par(mfrow=c(2,3))
 fit4 <- rpart(survived~., data=ititanic, method="class", control=list(cp=.02))
@@ -441,6 +434,7 @@ obj <- prp(fit.oz1, main="unknown.anova.method\ndigits=7", digits=7, trace=1)
 obj <- prp(fit.oz1, main="unknown.anova.method\ntype=1\nbox.palette=\"auto\"", type=1, box.palette="auto")
 cat("obj returned by prp:\n")
 print(obj)
+par(old.par)
 
 # test extra and faclen etc. on anova model
 a1 <- rpart(survived~., data=ititanic, control=list(cp=.03))
@@ -456,6 +450,7 @@ prp(a1, main="\n\nxflip",                xflip=TRUE,             extra=101, facl
 prp(a1, main="type=4",                                type=4, extra=101, faclen=0, trace=1)
 prp(a1, main="xflip type=4",              xflip=TRUE, type=4, extra=101, faclen=0, trace=1)
 prp(a1, main="xflip type=4 clip.right=FALSE",   xflip=TRUE, type=4, extra=101, faclen=0, clip.right=FALSE, trace=1)
+par(old.par)
 
 # test extra and faclen etc. on class model
 a2 <- rpart(survived~., data=ptitanic, control=list(cp=.02))
@@ -468,8 +463,9 @@ prp(a2, extra=1, type=1,  xsep=", ", main="extra=1", trace=1)
 prp(a2, extra=100, type=3, clip.right.labs=FALSE, main="extra=100", trace=3, split.border.col=1, ycompress.cex=1)
 prp(a2, extra=4, type=0, main="extra=4", faclen=0, trace=1, under=TRUE, col=2)
 prp(a2, extra=104, type=0, main="extra=104", faclen=0, trace=1)
+par(old.par)
 
-old.par <- par(mfrow=c(8,4), mar = c(4, 3, 2, 1), mgp = c(1.5, .5, 0))
+par(mfrow=c(9,4), mar = c(4, 3, 2, 1), mgp = c(1.5, .5, 0))
 
 a4 <- rpart(survived~., data=ptitanic, cp=.03)
 plot(a4, unif=T, branch=.3); text(a4, use.n=1, cex=1, xpd=NA, pretty=0); title("Page 15", cex.main=.9)
@@ -487,8 +483,11 @@ prp(a4, type=1, yesno=T, faclen=-1, under=F, extra=104, cex.main=.9, main="extra
 prp(a4, type=1, yesno=T, faclen=-1, under=F, extra=105, cex.main=.9, main="extra=105\nunder=F")
 prp(a4, type=1, yesno=T, faclen=-1, under=F, extra=106, cex.main=.9, main="extra=106\nunder=F")
 prp(a4, type=1, yesno=T, faclen=-1, under=F, extra=107, cex.main=.9, main="extra=107\nunder=F")
+prp(a4, type=1, yesno=T, faclen=-1, under=F, extra=108, cex.main=.9, main="extra=108\nunder=F")
 prp(a4, type=1, yesno=T, faclen=-1, under=F, extra=109, cex.main=.9, main="extra=109\n under=F")
 
+plot(0, 0, type="n", axes=FALSE, xlab="", ylab="")
+plot(0, 0, type="n", axes=FALSE, xlab="", ylab="")
 plot(0, 0, type="n", axes=FALSE, xlab="", ylab="")
 prp(a4, type=1, yesno=T, faclen=-1, under=T, extra=0, cex.main=.9, main="extra=0\nunder=T")
 prp(a4, type=1, yesno=T, faclen=-1, under=T, extra=1, cex.main=.9, main="extra=1\nunder=T")
@@ -504,12 +503,12 @@ prp(a4, type=1, yesno=T, faclen=-1, under=T, extra=104, cex.main=.9, main="extra
 prp(a4, type=1, yesno=T, faclen=-1, under=T, extra=105, cex.main=.9, main="extra=105\nunder=T")
 prp(a4, type=1, yesno=T, faclen=-1, under=T, extra=106, cex.main=.9, main="extra=106\nunder=T")
 prp(a4, type=1, yesno=T, faclen=-1, under=T, extra=107, cex.main=.9, main="extra=107\nunder=T")
+prp(a4, type=1, yesno=T, faclen=-1, under=T, extra=108, cex.main=.9, main="extra=108\nunder=T")
 prp(a4, type=1, yesno=T, faclen=-1, under=T, extra=109, cex.main=.9, main="extra=109\n under=T")
 
 par(old.par)
 
 # May 2018: extra=9,10,11
-old.par <- par(no.readonly=TRUE)
 par(mfrow=c(2, 3))
 prp(a4, extra=9, main="extra=9")
 prp(a4, extra=10, main="extra=10")
@@ -528,6 +527,7 @@ prp(a4, type=1,          extra=2,   main="Page 17")
 prp(a4, type=1, under=T, extra=3,   main="extra=3 (misclassification rate)\nunder=T")
 prp(a4, type=1,          extra=102, main="extra=102 (classification rate)\n")
 prp(a4, type=1, under=T, extra=103, main="extra=103 (misclassification rate)\nunder=T")
+par(old.par)
 
 # poisson
 set.seed(8)
@@ -541,6 +541,7 @@ prp(a5, extra=0, digits=3, type=4, trace=1, main="extra=0\ntype=4")
 prp(a5, extra=1, type=4, clip.right=FALSE, under=TRUE, main="extra=1: nbr of events, nbr of obs\ntype=4", trace=1, under.cex=1)
 prp(a5, extra=2, trace=1, type=0, under=T, main="extra=2: nbr of events", under.cex=1)
 prp(a5, extra=102, type=4, under=TRUE, xsep="/", main="extra=102\ntype=4", trace=1, under.cex=1)
+par(old.par)
 
 # prefix, suffix, etc.
 a7 <- rpart(survived~., data=ptitanic, control=list(cp=.02))
@@ -572,7 +573,7 @@ prp(a7, type=4, extra=4, under=T,
 
 prp(a7, type=4, extra=1, under=F, prefix="response:",
     suffix="\n\n (probs)", split.suffix="\n\nabc", faclen=0, trace=3)
-par(mfrow=c(1, 1))
+par(old.par)
 
 data(iris)
 a.iris <- rpart(Species~., data=iris)
@@ -590,7 +591,7 @@ prp(a.iris, main="Page 20",
 rpart.plot(a.iris, main="rpart.plot\ndefault")
 rpart.plot(a.iris, box.palette=0, main="rpart.plot\nbox.palette=0")
 par(bg=old.bg)
-par(mfrow=c(1, 1))
+par(old.par)
 
 par(mfrow=c(2, 3))
 a <- rpart(survived~., data=ptitanic, control=list(cp=.01))
@@ -599,7 +600,7 @@ prp(a, uniform=T, branch=.4, compress=T, extra=104, mar=c(1,2,3,4), trace=2, mai
 prp(a, uniform=T, branch=.4, compress=T, extra=104, mar=c(5,2,3,4), trace=2, main="test mar=c(5,2,3,4)")
 prp(a, uniform=T, branch=.4, compress=T, extra=104, xpd=T, trace=2, prefix="123456789", cex=1, main="test xpd=T, par=1")
 prp(a, uniform=T, branch=.4, compress=T, extra=104, xpd=F, trace=2, prefix="123456789", cex=1, main="test xpd=F, par=1")
-par(mfrow=c(1, 1))
+par(old.par)
 
 # shadows (also test different values for yesno)
 
@@ -611,25 +612,25 @@ prp(a, type=1, faclen=0, extra=2, under=T, shadow.col="darkgray", nn=T, yesno=2,
 prp(a, type=2, faclen=0, extra=3, under=F, shadow.col="darkgray", nn=T, yesno=0, split.shadow.col="darkgray", main="type=2\nyesno=0")
 prp(a, type=3, faclen=0, extra=4, under=T, shadow.col="darkgray", nn=T, yesno=1, split.shadow.col="darkgray", main="type=3\nyesno=1")
 prp(a, type=4, faclen=0, extra=101, under=T, shadow.col="darkgray", nn=T, yesno=2, split.shadow.col="darkgray", main="type=4\nyesno=2")
-par(mfrow=c(1,1))
+par(old.par)
 
 # misc.
 
 # test that do.par correctly restores eveything, also test do.par=FALSE
 a <- rpart(pclass ~ ., data=ptitanic, cp=.005)
 par(mfrow=c(3,3))
-old.par <- par(no.readonly=TRUE)
+temp.par <- par(no.readonly=TRUE)
 prp(a, trace=2, main="Page 23") # trace=2 so can see the grid
     # set par settings that can legally change to NULL for comparison
-    old.par$usr <- old.par$fig <- old.par$mfg <- old.par$xaxp <- old.par$yaxp <- NULL
+    temp.par$usr <- temp.par$fig <- temp.par$mfg <- temp.par$xaxp <- temp.par$yaxp <- NULL
     par <- par(no.readonly=TRUE)
     par$usr <- par$fig <- par$mfg <- par$xaxp <- par$yaxp <- NULL
-    stopifnot(isTRUE(all.equal(old.par, par)))
+    stopifnot(isTRUE(all.equal(temp.par, par)))
 prp(a, trace=2, main="do.par=FALSE", do.par=FALSE)
     par <- par(no.readonly=TRUE)
     par$usr <- par$fig <- par$mfg <- par$xaxp <- par$yaxp <- NULL
-    stopifnot(isTRUE(all.equal(old.par, par)))
-par(mfrow=c(1,1))
+    stopifnot(isTRUE(all.equal(temp.par, par)))
+par(old.par)
 
 # different branch types (also test different values for yesno)
 a <- rpart(pclass ~ ., data=ptitanic, cp=.02)
@@ -640,6 +641,7 @@ prp(a, branch.type=2, yesno=2, main="branch.type=2\nsqrt(dev)\nuniform=FALSE  ye
 prp(a, branch.type=6, yesno=0, fallen.leaves=T, main="branch.type=6\ncomplexity\nfallen.leaves  yesno=0")
 prp(a, branch.type=7, yesno=1, fallen.leaves=T, main="branch.type=7\nabs(yval)\nfallen.leaves  yesno=1")
 prp(a, branch.type=8, yesno=2, main="branch.type=8\nyval - min(yval)  yesno=2")
+par(old.par)
 
 par(mfrow=c(2,3))
 # continuous response
@@ -661,11 +663,13 @@ branch.fun1 <- function(x)
 }
 root <- rpart(survived ~ ., data=ptitanic, cp=.5)
 prp(a, branch.type=branch.fun1, branch.col="slategray3", main="branch.fun1")
+par(old.par)
 
 par(mfrow=c(2,3))
 prp(root, branch.type=5, main="Page 26")
 prp(a, branch=0, branch.type=5, branch.tweak=1.5, branch.col="slategray3",
     branch.fill=2, main="branch.type=5\nbranch args")
+par(old.par)
 
 par(mfrow=c(4,4))
 set.seed(1924)
@@ -681,16 +685,7 @@ prp(root, type=4, extra=3, main="type=4, extra=4",
     right.split.prefix="R[", right.split.suffix="]R",
     round=9, leaf.round=0)
 prp(root, branch.type=5, main="branch.type=5")
-par(mfrow=c(1,1))
-
-source("user-manual-figs.R", echo=TRUE)
-par(mfrow=c(1,1))
-
-set.seed(1924)
-# use.prp <- FALSE
-# source("code.in.rpart.report.with.prp.R", echo=TRUE)
-use.prp <- TRUE
-source("code.in.rpart.report.with.prp.R", echo=TRUE)
+par(old.par)
 
 # clip.left.labs and clip.right.labs
 par(mfrow=c(3,3))
@@ -707,6 +702,7 @@ prp(tree, type=4, xflip=T, clip.left.labs=T, clip.right.labs=T, main="clip.left.
 prp(tree, type=4,          clip.left.labs=c(T, F, T), clip.right.labs=c(T, F, F), main="clip.labs vectorization")
 prp(tree, type=4, xflip=T, clip.left.labs=c(T, F, T), clip.right.labs=F,          main="xflip=T\nclip.labs vectorization")
 par(mfrow=c(1,1))
+par(old.par)
 
 # TODO mvpart is no longer on CRAN
 #
@@ -730,7 +726,7 @@ par(mfrow=c(1,1))
 # prp(a, under=F, type=2, extra=109, main="extra=109, under=F")
 # prp(a, under=T, type=3, extra=110, main="extra=110")
 # prp(a, under=T, type=4, extra=111, main="extra=111")
-# par(mfrow=c(1,1))
+# par(old.par)
 
 # # TODO this seems to not work with the new version of rpart (4.0.2)
 # library(rpart.plot)
@@ -771,7 +767,7 @@ par(mfrow=c(1,1))
 # tree1 <- mvpart(response~herbs+reft+moss+sand+twigs+water, data=spider,
 #             legend=F, method="mrt", plot.add=F, xv="min")
 #
-# old.par <- par(par(mfrow=c(4,4)), mar = c(3, 3, 3, 1), mgp = c(1.5, .5, 0))
+# par(par(mfrow=c(4,4)), mar = c(3, 3, 3, 1), mgp = c(1.5, .5, 0))
 # prp1 <- function(tree1, extra, main, type=1, under=T, col=1, yesno=F, tweak=1,
 #                  col.main="skyblue4", cex.main=1, ...)
 # {
@@ -792,9 +788,6 @@ par(mfrow=c(1,1))
 # prp1(tree1, extra=10, main="extra = 10\npredom species,  frac", tweak=1.2)
 # prp1(tree1, extra=11, main="extra = 11\npredom spec,  frac / sum(frac)", tweak=1.15)
 # par(old.par)
-
-par(mfrow=c(2,2))
-source("webpage-figs.R", echo=TRUE)
 
 # test rpart.plot version 1.5.3 (deal with situation where user has
 # a variable named text in the current environment).
@@ -828,16 +821,6 @@ text <- function(x, y, labels, ...) graphics::text(x, y, paste0("my-", labels), 
 prp(a100, FUN=text)
 title("a100g", cex=.6)
 remove(text)
+par(old.par)
 
-source("test.palette.R", echo=TRUE)
-
-source("test.na.R", echo=TRUE)
-
-source("test.imports.R", echo=TRUE)
-
-source("test.type5.R", echo=TRUE)
-
-if(!interactive()) {
-    dev.off()         # finish postscript plot
-    q(runLast=FALSE)  # needed else R prints the time on exit (R2.5 and higher) which messes up the diffs
-}
+source("test.epilog.R")

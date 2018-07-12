@@ -1,33 +1,12 @@
 # test.palette.R
 
-library(rpart.plot)
+source("test.prolog.R")
 library(rattle, quietly=TRUE)
-data(ptitanic)
-library(earth)
-data(ozone1)
-options(warn=1) # print warnings as they occur
 
-# test that we got an error as expected from a try() call
-expect.err <- function(object, expected.msg="")
-{
-    if(class(object)[1] == "try-error") {
-        msg <- attr(object, "condition")$message[1]
-        if(length(grep(expected.msg, msg)))
-            cat("Got error as expected from ",
-                deparse(substitute(object)), "\n", sep="")
-        else
-            stop(sprintf("Expected \"%s\"\n  but got \"%s...\"",
-                         expected.msg, substr(msg, 1, 120)))
-    } else
-        stop("did not get expected try error")
-}
-
-par(mfrow=c(1,1))
-show.prp.palettes()
+example(show.prp.palettes)
 
 # binomial model
 
-cat("== start test.palette.R ==\n")
 data(ptitanic)
 mod.survived <- rpart(survived~., data=ptitanic, control=list(cp=.02))
 # test built-in palettes
@@ -51,6 +30,7 @@ rpart.plot         (mod.survived, type=2,               fallen.leaves=TRUE, main
 rpart.plot.version1(mod.survived, type=2, extra="aUTO", fallen.leaves=TRUE, main="-Reds",    box.palette="-Reds")
 rpart.plot         (mod.survived, type=2, extra="Auto", fallen.leaves=TRUE, main="Purples",  box.palette="Purples")
 prp                (mod.survived, type=2, extra="autO", fallen.leaves=TRUE, main="-Purples", box.palette="-Purples")
+par(old.par)
 
 par(mfrow = c(4, 3), mar = c(3, 3, 3, 1), mgp = c(1.5, 0.5, 0))
 rpart.plot         (mod.survived, type=2,               fallen.leaves=TRUE, main="Blues",    box.palette="Blues", trace=1)
@@ -77,6 +57,7 @@ rpart.plot.version1(mod.survived, type=2, extra="aUTO", fallen.leaves=TRUE, main
 rpart.plot         (mod.survived, type=2, extra="Auto", fallen.leaves=TRUE, main="Purples",  box.palette="Purples")
 rpart.plot         (mod.survived, type=2, extra="Auto", fallen.leaves=TRUE, main="Pu",       box.palette="Pu")
 prp                (mod.survived, type=2, extra="autO", fallen.leaves=TRUE, main="-Pu",      box.palette="-Pu")
+par(old.par)
 
 par(mfrow = c(4, 2), mar = c(3, 3, 3, 1), mgp = c(1.5, 0.5, 0))
 rpart.plot         (mod.survived, type=2,               fallen.leaves=TRUE, main="RdYlGn",   box.palette="RdYlGn")
@@ -98,12 +79,14 @@ rpart.plot.version1(mod.survived, type=2, extra="auto", fallen.leaves=TRUE, main
 rpart.plot         (mod.survived, type=2, extra="auto", fallen.leaves=TRUE, main="BuBu",     box.palette="BuBu")
 rpart.plot(mod.survived, box.palette=0, main="mod.survived\nbox.palette=0")
 rpart.plot(mod.survived, box.palette=NA, main="mod.survived\nbox.palette=NA")
+par(old.par)
 
 # test list palette for binomial response
 par(mfrow = c(2, 2))
 rpart.plot         (mod.survived, type=2,               fallen.leaves=TRUE, main="test list palette for binomial response\nlist(Blues, Greens)", box.palette=list("Blues", "Greens"))
 rpart.plot.version1(mod.survived, type=2, extra="auto", fallen.leaves=TRUE, main="list(Blues, Purples)", box.palette=list("Blues", "Purples"))
 rpart.plot         (mod.survived, type=2, extra="auto", fallen.leaves=TRUE, main="BuGn", box.palette="BuGn")
+par(old.par)
 
 # test custom palettes
 par(mfrow = c(2, 2))
@@ -125,6 +108,7 @@ rpart.plot         (mod.survived, type=2, extra="auto", fallen.leaves=TRUE, main
 
 box.palette=c("pink", "wheat", "palegreen")
 rpart.plot.version1(mod.survived, type=2, extra="auto", fallen.leaves=TRUE, main="pink wheat palegreen", box.palette=box.palette)
+par(old.par)
 
 # continuous response (anova tree)
 itit <- ptitanic
@@ -167,6 +151,7 @@ rpart.plot         (mod.continuous.survived, type=2, extra="auto", fallen.leaves
 
 rpart.plot(mod.continuous.survived, box.palette=0,  main="box.palette=0")
 rpart.plot(mod.continuous.survived, box.palette=NA, main="box.palette=NA")
+par(old.par)
 
 par(mfrow = c(2, 2), mar = c(3, 3, 3, 1), mgp = c(1.5, 0.5, 0))
 mod.age <- rpart(age ~ ., data=ptitanic)
@@ -204,6 +189,7 @@ expect.err(try(rpart.plot(mod.age, type=2, extra="auto", fallen.leaves=TRUE, box
            "box.palette: 0 is neither a color nor a palette")
 
 rpart.plot(mod.age, type=2, extra="auto", fallen.leaves=TRUE, box.palette=c(2,3,4), main="box.palette=c(2,3,4)")
+par(old.par)
 
 # multiclass responses
 mod.class <- rpart(pclass~., data=ptitanic, control=list(cp=.02))
@@ -230,11 +216,15 @@ rpart.plot(mod.species, type=2, extra="auto", fallen.leaves=TRUE, trace=1,
            main='mod.species\nbox.palette=list("Reds", "Blues", "Grays")')
 rpart.plot(mod.species, type=2, extra="auto", fallen.leaves=TRUE, box.palette="Blues", main="box.palette=\"Blues\"")
 rpart.plot(mod.species, type=2, extra="auto", fallen.leaves=TRUE, box.palette="lightpink", main="box.palette=\"lightpink\"")
+par(old.par)
+
 par(mfrow = c(2, 2))
 prp(mod.continuous.survived, type=2, extra="auto", fallen.leaves=TRUE, main="mod.continuous.survived\nc(\"Red\", \"Yellow\", \"Green\")",  box.palette=c("red", "yellow", "green"))
 prp(mod.continuous.survived, type=2, extra="auto", fallen.leaves=TRUE, main="mod.continuous.survived\nc(\"Green\", \"Yellow\", \"Red\")",  box.palette=c("green", "yellow", "red"))
 expect.err(try(rpart.plot(mod.species, type=2, extra="auto", fallen.leaves=TRUE, box.palette=c("Blues", "Reds"), main="box.palette=c(\"Blues\", \"Reds\")")),
-           "The rpart model has a multiclass response .not a continuous or binary response.")
+           "The rpart model has a multiclass response (not a continuous or binary response)")
+
+par(old.par)
 
 par(mfrow = c(1, 2))
 mod.country <- rpart(Country ~ ., cu.summary)
@@ -253,7 +243,8 @@ rv <- rpart.plot(mod.country, type=2, extra="auto", fallen.leaves=TRUE, main="mu
 rv <- rpart.plot(mod.country, type=2, extra="auto", fallen.leaves=FALSE, box.palette="auto", main="multiclass, fallen.leaves=FALSE", trace=-1)
 expect.err(try(rpart.plot(mod.country, type=2, extra="auto", fallen.leaves=TRUE,
                box.palette=c("lightblue2", "pink"))),
-               "The rpart model has a multiclass response .not a continuous or binary response.")
+               "The rpart model has a multiclass response (not a continuous or binary response)")
+par(old.par)
 
 # poisson model
 library(earth)
@@ -269,6 +260,7 @@ rpart.plot    (mod.poisson, type=2, extra="auto", fallen.leaves=TRUE, main="pois
 fancyRpartPlot(mod.poisson, main="fancyRpartPlot", sub="")
 rpart.plot    (mod.poisson, type=2, extra="auto", fallen.leaves=TRUE, main="poisson\nbox.palette=RdYlGn", box.palette="RdYlGn")
 rpart.plot    (mod.poisson, type=2, extra="auto", fallen.leaves=TRUE, main="poisson\nbox.palette=BuGn", box.palette="BuGn")
+par(old.par)
 
 # compare "auto" to "-auto"
 
@@ -278,6 +270,7 @@ rpart.plot(mod.continuous.survived, type=2, extra="auto", main="-auto\nmod.conti
 
 rpart.plot(mod.age,     type=2, extra="a",  main="auto\nmod.age",  box.palette="auto")
 rpart.plot(mod.age,     type=2, extra="a", main="-auto\nmod.age", box.palette="-auto")
+par(old.par)
 
 par(mfrow=c(2, 2))
 rpart.plot(mod.class,   type=2, extra="au",  main="auto\nmod.class",  box.palette="auto")
@@ -285,6 +278,7 @@ rpart.plot(mod.class,   type=2, extra="au", main="-auto\nmod.class", box.palette
 
 rpart.plot(mod.poisson, type=2, extra="AUTO",  main="auto\nmod.poisson",  box.palette="auto")
 rpart.plot(mod.poisson, type=2, extra="AUTO", main="-auto\nmod.poisson", box.palette="-auto")
+par(old.par)
 
 par(mfrow=c(2, 2))
 rpart.plot(mod.species, type=2, extra="A",  main="auto\nmod.species",  box.palette="auto")
@@ -293,6 +287,7 @@ rpart.plot(mod.species, type=2, extra="A", main="-auto\nmod.species", box.palett
 # TODO we shouldn't really accept extra="axxx" as "auto" (not serious)
 rpart.plot(mod.country, type=2, extra="axxx",  main="auto\nmod.country",  box.palette="auto")
 rpart.plot(mod.country, type=2, extra="axxx", main="-auto\nmod.country", box.palette="-auto")
+par(old.par)
 
 # test legend.x and legend.y and legend.cex
 par(mfrow=c(2,2))
@@ -301,6 +296,7 @@ rpart.plot(multi.class.model, legend.x=NULL, main="legend.x=NULL (default)")
 rpart.plot(multi.class.model, legend.x=NA, main="legend.x=NA (no legend)")
 rpart.plot(multi.class.model, fallen.leaves=TRUE, legend.x=.8, main="legend.x=.8")
 rpart.plot(multi.class.model, legend.x=-.1, legend.cex=1.4, main="legend.x=-.1, legend.cex=1.4")
+par(old.par)
 
 par(mfrow=c(2,2))
 rpart.plot(multi.class.model, legend.y=NULL, main="legend.y=NULL (default)")
@@ -308,6 +304,7 @@ rpart.plot(multi.class.model, fallen.leaves=FALSE, legend.y=NA, main="legend.y=N
 rpart.plot(multi.class.model, fallen.leaves=FALSE, legend.y=.16, main="legend.y=.16")
 rpart.plot(multi.class.model, legend.x=0, legend.y=1.1, legend.cex=.8,
            main="legend.x=0 legend.y=1.1 legend.cex=.8")
+par(old.par)
 
 cat("palette handling for node.fun, pal.thresh, and pal.node.fun\n")
 
@@ -381,25 +378,24 @@ plot2(anova.mod, node.fun=function(x, labs, digits, varlen) paste("surv=\n", lab
 plot2(anova.mod, extra=0, node.fun=function(x, labs, digits, varlen) paste("surv=\n", -10 * as.numeric(labs)))
 plot2(anova.mod, extra=0, node.fun=function(x, labs, digits, varlen) paste("surv=\n", -1e8 * as.numeric(labs)))
 plot2(anova.mod, box.palette="Gy")
-par(mfrow=c(4, 2))
-par(mar=c(0, 0, 3, 0))
+par(old.par)
+par(mfrow=c(4, 2), mar=c(0, 0, 3, 0))
 plot2(anova.mod, box.palette="RdGy")
 plot2(anova.mod, node.fun=function(x, labs, digits, varlen) c(1,2,3,4,"nonesuch",6,7,8,9)) # expect try error
 plot2(anova.mod, node.fun=function(x, labs, digits, varlen) 1:nrow(x$frame))
 plot2(anova.mod, node.fun=function(x, labs, digits, varlen) paste("prefix", 1:nrow(x$frame), "suffix"))
+par(old.par)
 
 # test pal.thresh
-par(mfrow=c(3, 2))
-par(oma=c(0, 0, 3, 0))
-par(mar=c(0, 0, 3, 0))
+par(mfrow=c(3, 2), oma=c(0, 0, 3, 0), mar=c(0, 0, 3, 0))
 rpart.plot(anova.mod, extra=0, box.palette="RdGn", main="pal.thresh=default", trace=0)
 title("pal.thresh (anova model)\n\n\n\n", xpd=NA)
 rpart.plot(anova.mod, extra=0, box.palette="RdGn", main="pal.thresh=1.2",  pal.thresh=1.2)
 rpart.plot(anova.mod, extra=0, box.palette="RdGn", main="pal.thresh=100",  pal.thresh=100)
 rpart.plot(anova.mod, extra=0, box.palette="RdGn", main="pal.thresh=-100",  pal.thresh=-100)
+par(old.par)
 # test James Hedge's example
-par(mfrow=c(3, 2))
-par(mar=c(0, 0, 4, 0))
+par(mfrow=c(3, 2), mar=c(0, 0, 4, 0))
 plot2(anova.mod, node.fun=function(x, labs, digits, varlen) paste(x$frame$yval * x$frame$n),
       optional.msg="box.palette=default\n")
 plot2(anova.mod, node.fun=function(x, labs, digits, varlen) paste(x$frame$yval * x$frame$n),
@@ -409,6 +405,7 @@ rpart.plot(anova.mod, box.palette="BuGn", pal.thresh=1.8,
            main="box.palette=\"BuGn\", pal.thresh=1.8")
 rpart.plot(anova.mod, box.palette=c("lightblue", "lightgreen"), pal.thresh=1.8,
            main="box.palette=c(\"lightblue\", \"lightgreen\"), pal.thresh=1.8")
+par(old.par)
 
 # test expand.palette
 paste.c <- rpart.plot:::paste.c
@@ -428,8 +425,9 @@ test.expand.palette(c("auto", "-Reds"))
 expect.err(try(test.expand.palette("")), "box.palette: \"\" is neither a color nor a palette")
 expect.err(try(test.expand.palette("nonesuch")), "box.palette: \"nonesuch\" is neither a color nor a palette")
 expect.err(try(test.expand.palette("Nonesuch")), "box.palette=\"Nonesuch\" is not allowed")
-expect.err(try(test.expand.palette(c("tan1", "huh?"))), "box.palette: \"huh.\" is neither a color nor a palette")
+expect.err(try(test.expand.palette(c("tan1", "huh?"))), "box.palette: \"huh?\" is neither a color nor a palette")
 cat("\n")
+par(old.par)
 
 #--- binomial model ---
 
@@ -446,9 +444,9 @@ plot(c(0,1), c(0,1), col=0, bty="n", xlab="", xaxt="n", ylab="", yaxt="n")
 plot2(binom.mod, node.fun=function(x, labs, digits, varlen) paste(labs))
 
 plot2(binom.mod, node.fun=function(x, labs, digits, varlen) round(get.class.stats(x)$prob.per.lev[,2], 3))
+par(old.par)
 
-par(mfrow=c(4, 2))
-par(mar=c(0, 0, 4, 0))
+par(mfrow=c(4, 2), mar=c(0, 0, 4, 0))
 
 plot2(binom.mod, node.fun=function(x, labs, digits, varlen) letters[1:nrow(x$frame)]) # expect try error
 
@@ -457,11 +455,10 @@ plot2(binom.mod, node.fun=function(x, labs, digits, varlen) c(1,2,3,4,"nonesuch"
 plot2(binom.mod, node.fun=function(x, labs, digits, varlen) 1:nrow(x$frame))
 
 plot2(binom.mod, node.fun=function(x, labs, digits, varlen) paste("prefix", 1:nrow(x$frame), "suffix"))
+par(old.par)
 
 # test pal.thresh
-par(mfrow=c(4, 2))
-par(oma=c(0, 0, 3, 0))
-par(mar=c(0, 0, 3, 0))
+par(mfrow=c(4, 2), oma=c(0, 0, 3, 0), mar=c(0, 0, 3, 0))
 rpart.plot(binom.mod)
 title("pal.thresh (binom mod)\n\n\n\n", xpd=NA)
 rpart.plot(binom.mod, main="pal.thresh=.5",  pal.thresh=.5, trace=0)
@@ -473,10 +470,10 @@ rpart.plot(binom.mod, main="pal.thresh=-10", pal.thresh=-10, trace=0)
 rpart.plot(binom.mod, main="pal.thresh=10",  pal.thresh=10, trace=0)
 
 rpart.plot(binom.mod, main="pal.thresh=.2",  pal.thresh=.2, trace=0)
+par(old.par)
 
 # test pal.thresh with node.fun
-par(mfrow=c(4, 2))
-par(mar=c(0, 0, 3, 0))
+par(mfrow=c(4, 2), mar=c(0, 0, 3, 0))
 rpart.plot(binom.mod)
 title("pal.thresh with node.fun (binom mod)\n\n")
 plot(c(0,1), c(0,1), col=0, bty="n", xlab="", xaxt="n", ylab="", yaxt="n")
@@ -494,8 +491,9 @@ plot2(binom.mod, node.fun=function(x, labs, digits, varlen)
 mod.survived <- rpart(survived~., data=ptitanic, control=list(cp=.02))
 
 rpart.plot(mod.survived, type=2, fallen.leaves=TRUE,
-main="test list palette for binomial response\nlist(Blues, Greens)",
-box.palette=list("Blues", "Greens"))
+  main="test list palette for binomial response\nlist(Blues, Greens)",
+  box.palette=list("Blues", "Greens"))
+par(old.par)
 
 #--- poisson model ---
 
@@ -528,6 +526,7 @@ rpart.plot(mod.poisson, extra=0, fallen.leaves=TRUE,
            pal.node.fun=TRUE,
            node.fun=function(x, labs, digits, varlen)
                     sprintf("now %.2f\nwas %.2f", 10*as.numeric(labs)-5, as.numeric(labs)))
+par(old.par)
 
 #--- multiclass model ---
 
@@ -551,8 +550,8 @@ plot2(mod.multiclass, box.palette="OrGn", pal.thresh=20, trace=1,
 expect.err(try(rpart.plot(mod.multiclass, type=2, extra="auto", trace=2,
                fallen.leaves=TRUE, box.palette=c("blues", "reds"),
                main="box.palette=c(\"blues\", \"reds\")")),
-           "The rpart model has a multiclass response .not a continuous or binary response.")
+           "The rpart model has a multiclass response (not a continuous or binary response)")
 
 par(old.par)
 
-cat("== done test.palette.R ==\n")
+source("test.epilog.R")

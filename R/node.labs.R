@@ -1,6 +1,6 @@
 # node.labs.R: functions for generating labels
 
-EX0.DEFAULT                         <- 0
+EX0                                 <- 0
 EX1.NOBS                            <- 1
 EX2.CLASS.RATE                      <- 2
 EX3.MISCLASS.RATE                   <- 3
@@ -30,19 +30,18 @@ extra.help <- function()
 "    8  Class models: Probability of the fitted class\n",
 "    9  Class models: Probability relative to all observations\n",
 "    10 Class models: like 9 but display the probability of the second class only\n",
-"    11 Class models: Like 10 but don't display the fitted class\n",
+"\n",
+"    Add 100 to also display the percentage of observations in the node\n",
 "\n")
 }
 is.vec <- function(x) {
     (NROW(x) == 1 || NCOL(x) == 1) && NROW(x) * NCOL(x) > 0
 }
-
 is.numeric.response <- function(obj) {
     # see if we have the fields necessary for
     # get.anova.labs (but not get.class.labs)
     is.vec(obj$frame$yval) && is.null(obj$frame$yval2)
 }
-
 is.class.response <- function(obj) {
     # check that we have the fields necessary for get.class.labs
     yval2 <- obj$frame$yval2
@@ -51,14 +50,18 @@ is.class.response <- function(obj) {
     is.vec(obj$frame$n) &&
     is.vec(obj$frame$wt)
 }
-
+is.multiclass.response <- function(obj) {
+    is.class.response(obj) && NCOL(obj$frame$yval2) > 6
+}
 # call node.fun or obj$functions$text, and check its args and returned value
 internal.node.labs <- function(x, node.fun, node.fun.name, type, extra,
-                               under, xsep, digits, varlen, prefix, suffix, class.stats)
+                               under, xsep, digits, varlen,
+                               prefix, suffix, class.stats)
 {
     stopifnot(is.numeric(extra) || is.logical(extra))
     stopifnot(length(extra) == 1)
-    if(extra < 0 || floor(extra) != extra) {
+    ex <- if(extra < 100) extra else extra - 100
+    if(ex < 0 || floor(ex) != ex) {
         extra.help()
         stop0("extra=", extra, " is illegal")
     }
@@ -108,9 +111,9 @@ internal.node.labs <- function(x, node.fun, node.fun.name, type, extra,
     }
     labs <- paste0(prefix, labs, suffix)
     is.leaf <- is.leaf(frame)
-    if(type == TYPE.0default || type == TYPE.3fancy.no.all)
+    if(type == TYPE0.default || type == TYPE3.fancy.no.all)
         labs[!is.leaf] <- NA # no labels for internal nodes
-    else if(type == TYPE.5.varname.in.node) { # use split variable in interior nodes
+    else if(type == TYPE5.varname.in.node) { # use split variable in interior nodes
         splits <- as.character(frame$var[!is.leaf])
         splits <- my.abbreviate(splits, varlen)
         labs[!is.leaf] <- splits
@@ -124,10 +127,10 @@ get.anova.labs <- function(x, extra, under, digits, xsep, varlen)
     newline <- if(under) "\n\n" else "\n"
     ex <- if(extra < 100) extra else extra - 100
     labs <-
-        if(ex == EX0.DEFAULT)
+        if(ex == EX0)
             fitted
         else if(ex == EX1.NOBS) # add n?
-            sprintf("%s%sn=%s", fitted, newline, format0(frame$n, digits))
+            sprint("%s%sn=%s", fitted, newline, format0(frame$n, digits))
         else if (ex == EX2.CLASS.RATE) {
             extra.help()
             stop0("extra=", extra,
@@ -144,18 +147,18 @@ get.anova.labs <- function(x, extra, under, digits, xsep, varlen)
 
     if(extra >= 100) {   # add percent?
         sep <- if(extra == 100) newline else "  "
-        labs <- sprintf("%s%s%s%%", labs, sep,
+        labs <- sprint("%s%s%s%%", labs, sep,
                         formatf(100 * frame$wt / frame$wt[1],
                                 digits=max(0, abs(digits)-2)))
     }
     labs
 }
-get.class.stats <- function(obj)
+get.class.stats <- function(x)
 {
     # columns of yval2 for e.g. a two-level response are: fitted n1 n2 prob1 prob2
-    yval2 <- obj$frame$yval2
+    yval2 <- x$frame$yval2
     if(NCOL(yval2) < 5)
-        stop0("is.class.response(obj) yet frame$yval2 is not ",
+        stop0("is.class.response(x) yet frame$yval2 is not ",
               "a matrix with five or more columns")
     fitted <- yval2[, 1] # fitted level as an integer
     if(NCOL(yval2) %% 2 == 0) { # new style yval2?
@@ -184,10 +187,10 @@ rescale.prob.across.all <- function(class.stats, scale, ntotal)
                     ncol=class.stats$nlev, byrow=TRUE)
     class.stats$prob.per.lev * scale / ntotal
 }
-get.class.labs <- function(obj, extra, under, digits, xsep, varlen, class.stats)
+get.class.labs <- function(x, extra, under, digits, xsep, varlen, class.stats)
 {
-    frame <- obj$frame
-    n <- obj$frame$n
+    frame <- x$frame
+    n <- x$frame$n
     ntotal <- n[1]
     print.all.probs <- TRUE
     ex <- if(extra < 100) extra else extra - 100
@@ -228,11 +231,12 @@ get.class.labs <- function(obj, extra, under, digits, xsep, varlen, class.stats)
                        1, paste.with.breaks, collapse=xsep)
     prob.per.lev <- formatf(class.stats$prob.per.lev, abs(digits),
                             strip.leading.zeros=print.all.probs)
+
     if(print.all.probs)
         prob.per.lev <- apply(matrix(prob.per.lev, ncol=class.stats$nlev),
                               1, paste.with.breaks, collapse=xsep)
 
-    ylevel <- attr(obj, "ylevel")
+    ylevel <- attr(x, "ylevel")
     # fitted level as a string
     # (as.character below converts factor levels to character)
     sfitted <-
@@ -242,7 +246,7 @@ get.class.labs <- function(obj, extra, under, digits, xsep, varlen, class.stats)
     newline <- if(under) "\n\n" else "\n"
 
     labs <-
-        if(ex == EX0.DEFAULT)
+        if(ex == EX0)
             sfitted
         else if(ex == EX1.NOBS)
             paste0(sfitted, newline, n.per.lev)
@@ -262,11 +266,12 @@ get.class.labs <- function(obj, extra, under, digits, xsep, varlen, class.stats)
             prob.per.lev
         else {
             extra.help()
-            stop0("extra=", extra, " is illegal")
+            stop0("extra=", ex, " is illegal")
         }
+
     if(extra >= 100) { # add percent?
         sep <- switch(ex+1,  # figure out where to put percent (same line? below? etc.)
-                      newline,                    # EX0.DEFAULT (may be a double newline)
+                      newline,                    # EX0 (may be a double newline)
                       "\n",                       # EX1.NOBS
                       "\n",                       # EX2.CLASS.RATE
                       "\n",                       # EX3.MISCLASS.RATE
@@ -274,33 +279,33 @@ get.class.labs <- function(obj, extra, under, digits, xsep, varlen, class.stats)
                       newline,                    # EX5.PROB.PER.CLASS.DONT
                       if(under) "  " else "\n",   # EX6.PROB.2ND.CLASS # modified march 2016
                       if(under) "\n\n" else "\n", # EX7.PROB.2ND.CLASS.DONT
-                      "  ",                       # EX8.PROB.FITTED.CLASS
+                      "\n",                       # EX8.PROB.FITTED.CLASS
                       "\n",                       # EX9.PROB.ACROSS.ALL
                       if(under) "  " else "\n",   # EX10.PROB.ACROSS.ALL.2ND.CLASS
                       if(under) "\n\n" else "\n") # EX11.PROB.ACROSS.ALL.2ND.CLASS.DONT
 
-        labs <- sprintf("%s%s%s%%", labs, sep,
+        labs <- sprint("%s%s%s%%", labs, sep,
                         formatf(100 * frame$wt / frame$wt[1],
                                 digits=max(0, abs(digits)-2)))
     }
     labs
 }
-get.poisson.labs <- function(obj, extra, under, digits, xsep, varlen) # also used for exp
+get.poisson.labs <- function(x, extra, under, digits, xsep, varlen) # also used for exp
 {
-    frame <- obj$frame
+    frame <- x$frame
     rate  <- format0(frame$yval2[,1], digits)
     nbr <- format0(frame$yval2[,2], digits)
     newline <- if(under) "\n\n" else "\n"
     ex <- if(extra < 100) extra else extra - 100
-    if(ex == EX0.DEFAULT)
+    if(ex == EX0)
         labs <- rate
     else if(ex == EX1.NOBS) {      # add number of events and n?
         if(is.null(xsep))
             xsep <- " / "
-        labs <- sprintf("%s%s%s%s%s",
+        labs <- sprint("%s%s%s%s%s",
             rate, newline, nbr, xsep, format0(frame$n, digits))
     } else if(ex == EX2.CLASS.RATE) {    # add number of events?
-        labs <- sprintf("%s%s%s", rate, newline, nbr)
+        labs <- sprint("%s%s%s", rate, newline, nbr)
         newline <- "  "     # want percent, if any, on same line
     } else if (ex > EX11.PROB.ACROSS.ALL.2ND.CLASS.DONT) {
         extra.help()
@@ -311,7 +316,7 @@ get.poisson.labs <- function(obj, extra, under, digits, xsep, varlen) # also use
 ' is legal only for "class" models (you have a \"", x$method, "\" model)')
     }
     if(extra >= 100)        # add percent?
-        labs <- sprintf("%s%s%s%%", labs, newline,
+        labs <- sprint("%s%s%s%%", labs, newline,
                         formatf(100 * frame$wt / frame$wt[1],
                                 digits=max(0, abs(digits)-2)))
     labs
@@ -324,7 +329,7 @@ print.node.labs.and.stop <- function(labs, fun.name, ...)
     stop0("the call to ", fun.name, " returned a bad result: ", ...)
 }
 # check returned labs because split.fun or node.fun may be user supplied
-check.returned.labs <- function(obj, labs, fun.name)
+check.returned.labs <- function(x, labs, fun.name)
 {
     if(length(labs) == 0)
         print.node.labs.and.stop(labs, fun.name, "length(labs) == 0")
@@ -333,10 +338,10 @@ check.returned.labs <- function(obj, labs, fun.name)
         if(anyNA(labs))
             print.node.labs.and.stop(labs, fun.name, "NA in labs")
     }
-    if(length(labs) != nrow(obj$frame))
+    if(length(labs) != nrow(x$frame))
         print.node.labs.and.stop(labs, fun.name, "\nthe number ", length(labs),
             " of returned labels is not equal to the number of rows in frame ",
-            nrow(obj$frame))
+            nrow(x$frame))
 }
 # similar to paste but insert \n as necessary to break up long lines
 paste.with.breaks <- function(x, collapse)

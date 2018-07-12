@@ -73,7 +73,7 @@ do.snip <- function(obj, nodes, split.labels, node.xy, branch.xy,
         print.node.info <- function(msg, inode)
         {
             if(nchar(msg)) {
-                msg1 <- sprintf("%s node %d", msg, nodes[inode])
+                msg1 <- sprint("%s node %d", msg, nodes[inode])
                 display.msg(msg1)
                 printf("%-18s %s\n", msg1,
                     if(is.leaf[inode]) "" else split.labels[inode])

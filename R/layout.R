@@ -13,8 +13,8 @@ get.layout <- function(obj, type, nn, yesno, fallen.leaves, branch,
     max.auto.cex, min.auto.cex, ycompress.cex, accept.cex,
     shift.amounts, Fallen.yspace, bg)
 {
-    printf2 <- function(...) if(trace >= 2) cat0(sprintf(..., sep=""))
-    printf3 <- function(...) if(trace >= 4) cat0("        ", sprintf(..., sep=""))
+    printf2 <- function(...) if(trace >= 2) cat0(sprint(..., sep=""))
+    printf3 <- function(...) if(trace >= 4) cat0("        ", sprint(..., sep=""))
 
     merge1 <- function(vec, split.vec)
     {
@@ -92,8 +92,8 @@ get.layout <- function(obj, type, nn, yesno, fallen.leaves, branch,
                 do.init.plot=TRUE)
 
             split.boxes <- get.boxes(
-                # extra space under split if type==TYPE.2all.under so can see branch lines
-                if(type == TYPE.2all.under) "undersplit" else "default",
+                # extra space under split if type==TYPE2.all.under so can see branch lines
+                if(type == TYPE2.all.under) "undersplit" else "default",
                 split.labs, x, y,
                 xmax, ymax, nodes, branch,
                 Margin, FALSE, FALSE, main, sub, 0, 1, 0, 1,
@@ -245,12 +245,12 @@ get.layout <- function(obj, type, nn, yesno, fallen.leaves, branch,
 
     get.scale <- function(x, y, xmax, ymax, scale, split.yshift)
     {
-        temp <- get.scales(x, y, xmax, ymax, scale, split.yshift)
-        imin <- which.min(temp$scales) # index of worst scale
+        ret <- get.scales(x, y, xmax, ymax, scale, split.yshift)
+        imin <- which.min(ret$scales) # index of worst scale
         if(length(imin) == 0) # TODO look into this
             0
         else
-            temp$scales[imin]
+            ret$scales[imin]
     }
     # get.scale gives a result which ignores that changing scale can change
     # which nodes are neighbors.
@@ -293,7 +293,7 @@ get.layout <- function(obj, type, nn, yesno, fallen.leaves, branch,
         issue.shifter.msg <- function() # called only if trace >= 2
         {
             printf(
-"Shifter: cex improvement %.3g best.shift.amount %g best.split.yshift.amount %g%s\n",
+"shifter: cex improvement %.3g best.shift.amount %g best.split.yshift.amount %g%s\n",
                 best.scale.after.shifting / start.scale, best.shift.amount,
                 best.split.yshift[2] - split.yshift[2],
                 if(best.scale.after.shifting / scale >= accept.cex)
@@ -310,7 +310,7 @@ get.layout <- function(obj, type, nn, yesno, fallen.leaves, branch,
                         printf("ycompress increased available space by %.2f\n", improvement)
                 else {
                     stopifnot(is.fancy(type))
-                    printf("Shifting split labels increased available space by %.2f\n",
+                    printf("shifting split labels increased available space by %.2f\n",
                            improvement)
                 }
             }
@@ -354,11 +354,11 @@ get.layout <- function(obj, type, nn, yesno, fallen.leaves, branch,
                 shifted.y <- get.shifted.y(shift.amount, ref.shift, nnodes)
                 # check that a shift doesn't move nodes above the nodes for the level above
                 if(any(shifted.y > shifted.y[iparents], na.rm=TRUE)) {
-                    printf2("    Node shifter: skipping invalid      shift.amount %-4.1f\n", shift.amount)
+                    printf2("    node shifter: skipping invalid      shift.amount %-4.1f\n", shift.amount)
                     next
                 }
                 scale.after.shifting <- get.actual.scale(x.org, shifted.y, split.yshift)
-                printf2("    Node shifter: cex improvement %-5.3g shift.amount %-4.1f ",
+                printf2("    node shifter: cex improvement %-5.3g shift.amount %-4.1f ",
                         scale.after.shifting / start.scale, shift.amount)
                 # Note use of >= versus > below, so will use 1st shift unless actually worse.
                 # We do want to move enough to allow some room for expansion, but
@@ -398,15 +398,15 @@ get.layout <- function(obj, type, nn, yesno, fallen.leaves, branch,
                 # Note that the scale returned by get.actual.scale is clamped at
                 # min.auto.cex and thus can't be used to compare different configurations.
 
-                printf2("Shifter: forcing shift, because start.scale %.3g <= min.auto.cex %.3g\n",
+                printf2("shifter: forcing shift, because start.scale %.3g <= min.auto.cex %.3g\n",
                         start.scale, min.auto.cex)
                 if(accept.cex > .98)
                     accept.cex <- .98 # force shift to be accepted, unless actually worse
             }
             if(!is.null(is.shift)) {
-                temp <- search.for.best.shift()
-                best.scale.after.shifting <- temp$best.scale.after.shifting
-                best.shift.amount <- temp$best.shift.amount
+                ret <- search.for.best.shift()
+                best.scale.after.shifting <- ret$best.scale.after.shifting
+                best.shift.amount <- ret$best.shift.amount
                 y <- get.shifted.y(best.shift.amount, ref.shift, nnodes)
             }
         }
@@ -423,7 +423,7 @@ get.layout <- function(obj, type, nn, yesno, fallen.leaves, branch,
         xmax <- round(new.scale * xcompact.ratio - .05, 1) # round down to one digit after point
         xmax <- max(xmax, 1) # never expand horizontally
         if(xmax != 1)
-            printf2("Compacted horizontally, new xlim is c(0, %.3g)\n", xmax)
+            printf2("compacted horizontally, new xlim is c(0, %.3g)\n", xmax)
         xmax
     }
     do.ycompact <- function(scale)
@@ -444,10 +444,10 @@ get.layout <- function(obj, type, nn, yesno, fallen.leaves, branch,
                                         Margin, max.cex, font1, family1)
             # TODO fix type1 handling, although works ok most of the time
             type1 <- type
-            if(type == TYPE.4fancy.all || type == TYPE.5.varname.in.node)
-                type1 <- TYPE.1all
-            else if(type == TYPE.3fancy.no.all)
-                type1 <- TYPE.0default
+            if(type == TYPE4.fancy.all || type == TYPE5.varname.in.node)
+                type1 <- TYPE1.all
+            else if(type == TYPE3.fancy.no.all)
+                type1 <- TYPE0.default
             boxes <- get.combined.boxes(x.org, y.org, xmax, ymax, scale, type1, split.yshift)$boxes
             gap <- Inf # min diff between this ceiling and previous floor
             # TODO this doesn't work with fallen leaves
@@ -463,7 +463,7 @@ get.layout <- function(obj, type, nn, yesno, fallen.leaves, branch,
         }
         ymax <- max(1, round(ymax - .05, 1)) # round down to one digit after point
         if(ymax > 1)
-            printf2("Compacted vertically, new ylim is c(0, %.3g)\n", ymax)
+            printf2("compacted vertically, new ylim is c(0, %.3g)\n", ymax)
         ymax
     }
     tree.depth <- function (nodes) # lifted from rpart::tree.depth.R
@@ -501,7 +501,7 @@ get.layout <- function(obj, type, nn, yesno, fallen.leaves, branch,
     scale <- ymax <- xmax <- 1
     scale <- get.actual.scale(x.org, y.org, split.yshift)
 
-    printf2("Initial scale %.3g\n", scale)
+    printf2("initial scale %.3g\n", scale)
     shifted <- shifter(scale)
     if(shifted$scale / scale >= shifted$accept.cex) {
         y <- shifted$y
@@ -510,7 +510,7 @@ get.layout <- function(obj, type, nn, yesno, fallen.leaves, branch,
     }
     scale.before.clip <- scale
     if(auto.cex && scale > max.auto.cex) {
-        printf2("Clipped scale %.3g to max.auto.cex %.3g\n", scale, max.auto.cex)
+        printf2("clipped scale %.3g to max.auto.cex %.3g\n", scale, max.auto.cex)
         scale <- max.auto.cex
     }
     # get node xy taking into account xmin, xmax etc. adjustment for labs on edges
@@ -518,7 +518,7 @@ get.layout <- function(obj, type, nn, yesno, fallen.leaves, branch,
     x <- xy$x
     y <- xy$y
     if(scale <= min.auto.cex) {
-        warning0(sprintf(
+        warning0(sprint(
             "labs do not fit even at cex %.3g, there may be some overplotting",
             min.auto.cex))
         scale <- min.auto.cex

@@ -22,7 +22,7 @@ my.snip.rpart <- function(x, toss) {
     toss <- unique(toss)
     toss.idx <- match(toss, id, nomatch=0) #the rows of the named nodes
     if(any(toss.idx ==0L)) {
-        warning("Nodes ", toss[toss.idx==0L], " are not in this tree")
+        warning0("Nodes ", toss[toss.idx==0L], " are not in this tree")
         toss <- toss[toss.idx>0L]
         toss.idx <- toss.idx[toss.idx>0L]
     }

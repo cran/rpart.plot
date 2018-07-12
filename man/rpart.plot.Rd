@@ -32,13 +32,14 @@ The function \code{\link{rpart.plot.version1}} is compatible with
 old versions of this function and has the same defaults as \code{\link{prp}}.
 }
 \usage{
-rpart.plot(x=stop("no 'x' arg"),
-    type=2, extra="auto",
-    under=FALSE, fallen.leaves=TRUE,
-    digits=2, varlen=0, faclen=0,
-    cex=NULL, tweak=1,
-    snip=FALSE,
-    box.palette="auto", shadow.col=0,
+rpart.plot(x = stop("no 'x' arg"),
+    type = 2, extra = "auto",
+    under = FALSE, fallen.leaves = TRUE,
+    digits = 2, varlen = 0, faclen = 0, roundint = TRUE,
+    cex = NULL, tweak = 1,
+    clip.facs = FALSE, clip.right.labs = TRUE,
+    snip = FALSE,
+    box.palette = "auto", shadow.col = 0,
     ...)
 }
 \arguments{
@@ -99,11 +100,6 @@ Automatically select a value based on the model type, as follows:\cr
      \bold{4} Class models:
               probability per class of observations in the node
               (conditioned on the node, sum across a node is 1).
-              % (One could argue that \code{2} should be the default value
-              % for \code{class} models.)
-              % For example, \code{.81 .19} means that of the observations in the node,
-              % the first class has a probability of \code{.81}
-              % and the second a probability of \code{.19}.
 
      \bold{5} Class models:
               like \code{4} but don't display the fitted class.
@@ -189,17 +185,45 @@ Automatically select a value based on the model type, as follows:\cr
      means represent the factor levels with alphabetic characters
      (\code{a} for the first level, \code{b} for the second, etc.).
   }
+  \item{roundint}{
+     \bold{New in version 3.0.0.}
+     If \code{roundint=TRUE} (default) and all values of a predictor in the
+     training data are integers, then splits for that predictor
+     are rounded to integer.
+     For example, display \code{nsiblings < 3} instead of \code{nsiblings < 2.5}.\cr
+     If \code{roundint=TRUE} and the data used to build the model is no longer
+     available, a warning will be issued.\cr
+     Using \code{roundint=FALSE} is advised if non-integer values are in fact possible
+     for a predictor, even though all values in the training data for that
+     predictor are integral.
+  }
   \item{cex}{
-     Default \code{NULL}, meaning calculate the text size automatically.
+     Default \code{NULL}, meaning calculate the text size automatically.\cr
+     Since font sizes are discrete, the \code{cex} you ask for
+     may not be exactly the \code{cex} you get.
   }
   \item{tweak}{
      Adjust the (possibly automatically calculated) \code{cex}.
-     Default \code{1}, meaning no adjustment.
-     Use say \code{tweak=1.2} to make the text 20\% larger.
-     However, since font sizes are discrete the \code{cex} you ask for
-     may not be exactly the \code{cex} you get.
-     And a small change to tweak may not actually change the type size,
+     Using \code{tweak} is often easier than specifying \code{cex}.\cr
+     The default \code{tweak} is \code{1}, meaning no adjustment.\cr
+     Use say \code{tweak=1.2} to make the text 20\% larger.\cr
+     Since font sizes are discrete,
+     a small change to tweak may not actually change the type size,
      or change it more than you want.
+  }
+\item{clip.facs}{
+\bold{New in version 3.0.0.}
+Default \code{FALSE}.
+If \code{TRUE}, print splits on factors as \code{female} instead of
+\code{sex = female}; the variable name and equals is dropped.
+\cr
+Another example: print \code{survived} or \code{died} rather than
+\code{survived = survived} or \code{survived = died}.\cr
+}
+  \item{clip.right.labs}{
+     Applies only if \code{type=3} or \code{4}.\cr
+     Default is \code{TRUE} meaning ``clip'' the right-hand split labels,
+     i.e., don't print \code{variable=}.
   }
   \item{snip}{
      Default \code{FALSE}.
@@ -251,45 +275,47 @@ The returned value is identical to that of \code{\link{prp}}.
   and the R port of that package by Brian Ripley.
 }
 \seealso{
-  The package vignette \href{../doc/prp.pdf}{Plotting rpart trees with the rpart.plot package}\cr\cr
-  \code{\link{prp}}\cr\cr
-  \code{\link{rpart.plot.version1}}\cr\cr
+  The package vignette \href{../doc/prp.pdf}{Plotting rpart trees with the rpart.plot package}\cr
+  \code{\link{prp}}\cr
+  \code{\link{rpart.plot.version1}}\cr
+  \code{\link{rpart.rules}}\cr
 Functions in the \code{rpart} package:
   \code{\link{plot.rpart}}
   \code{\link{text.rpart}}
   \code{\link{rpart}}
 }
 \examples{
-old.par <- par(mfrow=c(2,2))                    # put 4 figures on one page
+old.par <- par(mfrow=c(2,2))            # put 4 figures on one page
 
 data(ptitanic)
 
 #---------------------------------------------------------------------------
 
-binary.model <- rpart(survived ~ ., data=ptitanic, cp=.02)
-                                        # cp=.02 for small demo tree
+binary.model <- rpart(survived ~ ., data = ptitanic, cp = .02)
+                                        # cp = .02 for small demo tree
 
 rpart.plot(binary.model,
-           main="titanic survived\n(binary response)")
+           main = "titanic survived\n(binary response)")
 
-rpart.plot(binary.model,
-           box.palette="Grays",         # override default GnBu palette
-           main="titanic survived\nbox.palette = \"Grays\"")
+rpart.plot(binary.model, type = 3, clip.right.labs = FALSE,
+           branch = .4,
+           box.palette = "Grays",       # override default GnBu palette
+           main = "type = 3, clip.right.labs = FALSE, ...\n")
 
 #---------------------------------------------------------------------------
 
-anova.model <- rpart(Mileage ~ ., data=cu.summary)
+anova.model <- rpart(Mileage ~ ., data = cu.summary)
 
 rpart.plot(anova.model,
-           shadow.col="gray",           # add shadows just for kicks
-           main="miles per gallon\n(continuous response)\n")
+           shadow.col = "gray",         # add shadows just for kicks
+           main = "miles per gallon\n(continuous response)\n")
 
 #---------------------------------------------------------------------------
 
-multi.class.model <- rpart(Reliability ~ ., data=cu.summary)
+multi.class.model <- rpart(Reliability ~ ., data = cu.summary)
 
 rpart.plot(multi.class.model,
-           main="vehicle reliability\n(multi class response)")
+           main = "vehicle reliability\n(multi class response)")
 
 par(old.par)
 }

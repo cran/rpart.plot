@@ -43,31 +43,35 @@
 #------------------------------------------------------------------------------
 
 # allowable values of prp's type argument
-TYPE.0default          <- 0
-TYPE.1all              <- 1
-TYPE.2all.under        <- 2
-TYPE.3fancy.no.all     <- 3
-TYPE.4fancy.all        <- 4
-TYPE.5.varname.in.node <- 5
+TYPE0.default         <- 0
+TYPE1.all             <- 1
+TYPE2.all.under       <- 2
+TYPE3.fancy.no.all    <- 3
+TYPE4.fancy.all       <- 4
+TYPE5.varname.in.node <- 5
 
 rpart.plot <- function(x=stop("no 'x' arg"),
     type=2, extra="auto", under=FALSE, fallen.leaves=TRUE,
-    digits=2, varlen=0, faclen=0,
+    digits=2, varlen=0, faclen=0, roundint=TRUE,
     cex=NULL, tweak=1,
+    clip.facs=FALSE, clip.right.labs=TRUE,
     snip=FALSE,
     box.palette="auto", shadow.col=0,
     ...)
 {
+    if(!inherits(x, "rpart"))
+        stop("Not an rpart object")
+    if(check.boolean(roundint))
+        x[["model"]] <- rpart.model.frame(x, parent.frame(), "rpart.plot")
     prp(x,
-        type=type, extra=extra,
-        under=under, fallen.leaves=fallen.leaves,
-        digits=digits, varlen=varlen, faclen=faclen,
+        type=type, extra=extra, under=under, fallen.leaves=fallen.leaves,
+        digits=digits, varlen=varlen, faclen=faclen, roundint=roundint,
         cex=cex, tweak=tweak,
+        clip.facs=clip.facs, clip.right.labs=clip.right.labs,
         snip=snip,
         box.palette=box.palette, shadow.col=shadow.col,
         ...)
 }
-
 rpart.plot.version1 <- function(x=stop("no 'x' arg"),
     type=0, extra=0, under=FALSE, fallen.leaves=FALSE,
     digits=2, varlen=-8, faclen=3,
@@ -76,26 +80,29 @@ rpart.plot.version1 <- function(x=stop("no 'x' arg"),
     box.palette=0, shadow.col=0,
     ...)
 {
+    if(!inherits(x, "rpart"))
+        stop("Not an rpart object")
+    # x[["model"]] unneeded because roundint=FALSE
     prp(x,
         type=type, extra=extra,
-        under=under, fallen.leaves=fallen.leaves,
-        digits=digits, varlen=varlen, faclen=faclen,
+        under=under, fallen.leaves=fallen.leaves, clip.facs=FALSE,
+        digits=digits, varlen=varlen, faclen=faclen, roundint=FALSE,
         cex=cex, tweak=tweak,
         snip=snip,
         box.palette=box.palette, shadow.col=shadow.col,
         ...)
 }
-
 prp <- function(x=stop("no 'x' arg"),
-    type=0,
-    extra=0, under=FALSE, clip.right.labs=TRUE,
+    type=0, extra=0, under=FALSE, fallen.leaves=FALSE,
     nn=FALSE, ni=FALSE, yesno=TRUE,
-    fallen.leaves=FALSE, branch=if(fallen.leaves) 1 else .2,
-    uniform=TRUE, left=TRUE, xflip=FALSE, yflip=FALSE, Margin=0, space=1, gap=NULL,
-    digits=2, varlen=-8, faclen=3,
+    branch=if(fallen.leaves) 1 else .2,
+    uniform=TRUE, left=TRUE, xflip=FALSE, yflip=FALSE,
+    digits=2, varlen=-8, faclen=3, roundint=TRUE,
     cex=NULL, tweak=1,
+    clip.facs=FALSE, clip.right.labs=TRUE,
     compress=TRUE, ycompress=uniform,
-    trace=FALSE, snip=FALSE, snip.fun=NULL,
+    Margin=0, space=1, gap=NULL,
+    snip=FALSE, snip.fun=NULL, trace=FALSE,
 
     box.col=0, box.palette=0,
     pal.thresh=NULL, pal.node.fun=FALSE,
@@ -113,7 +120,7 @@ prp <- function(x=stop("no 'x' arg"),
     split.suffix="", right.split.suffix=NULL,
     facsep=",", eq=" = ", lt=" < ", ge=" >= ",
 
-    branch.col=if(identical(branch.type, 0)) 1 else "gray",
+    branch.col=if(is.zero(branch.type)) 1 else "gray",
     branch.lty=1, branch.lwd=NULL,
     branch.type=0, branch.tweak=1,
     min.branch.width=.002, branch.fill=branch.col,
@@ -226,9 +233,9 @@ prp <- function(x=stop("no 'x' arg"),
             yspace <- yspace + ygap/2
             gap <- ygap <- 0
         }
-        # With type==TYPE.2all.under and no visible split box, branch lines
+        # With type==TYPE2.all.under and no visible split box, branch lines
         # look better if just a small space around labs.
-        small.underspace <- type == TYPE.2all.under &&
+        small.underspace <- type == TYPE2.all.under &&
             is.box.invisible(split.box.col, split.border.col, bg)
 
         split.boxes <-
@@ -317,7 +324,7 @@ prp <- function(x=stop("no 'x' arg"),
     #--- prp starts here ---
 
     if(!inherits(x, "rpart"))
-        stop0("the object passed to prp is not an rpart object")
+        stop("Not an rpart object")
     obj <- x
 
     # Process dots args.  The call to eval.parent is necessary to evaluate the
@@ -357,25 +364,16 @@ prp <- function(x=stop("no 'x' arg"),
     if(obj$method == "class" || is.class.response(obj))
         class.stats <- get.class.stats(obj)
 
-    bg <- get.bg() # never returns NA or 0
-    border.col       <- set.zero.to.bg(border.col,       bg)
-    shadow.col       <- set.zero.to.bg(shadow.col,       bg)
-    under.col        <- set.zero.to.bg(under.col,        bg)
-    split.col        <- set.zero.to.bg(split.col,        bg)
-    split.box.col    <- set.zero.to.bg(split.box.col,    bg)
-    split.shadow.col <- set.zero.to.bg(split.shadow.col, bg)
-    nn.col           <- set.zero.to.bg(nn.col,           bg)
-    nn.box.col       <- set.zero.to.bg(nn.box.col,       bg)
-    nn.border.col    <- set.zero.to.bg(nn.border.col,    bg)
-
     # The idea with the following  argument checking is to catch user
     # errors here where possible before they cause an obscure message
     # later on.  But it is impossible to be exhaustive.
 
-    stopifnot(is.numeric(type) && length(type) == 1 && floor(type) == type)
-    if(type < TYPE.0default || type > TYPE.5.varname.in.node)
-        stop0("type must be ", TYPE.0default, "...",
-              TYPE.5.varname.in.node, ", you have type=", type)
+    trace <- as.numeric(check.integer.scalar(trace, logical.ok=TRUE))
+    type <- check.integer.scalar(type, logical.ok=FALSE)
+    if(type < TYPE0.default || type > TYPE5.varname.in.node)
+        stop0("type must be ", TYPE0.default, "...",
+              TYPE5.varname.in.node, ", you have type=", type)
+
     under <- check.boolean(under)
     clip.left.labs[1] <- check.boolean(clip.left.labs[1])
     clip.right.labs[1] <- check.boolean(clip.right.labs[1])
@@ -388,6 +386,7 @@ prp <- function(x=stop("no 'x' arg"),
     stopifnot(is.character(yes.text) && length(yes.text) == 1)
     stopifnot(is.character(no.text) && length(no.text) == 1)
     fallen.leaves <- check.boolean(fallen.leaves)
+    clip.facs <- check.boolean(clip.facs)
     uniform <- check.boolean(uniform)
     left <- check.boolean(left)
     xflip <- check.boolean(xflip)
@@ -416,10 +415,28 @@ prp <- function(x=stop("no 'x' arg"),
         check.func.args(snip.fun, "snip.fun", function(tree) NULL)
     if(length(family) != 1 || length(split.family) != 1 || length(nn.family) != 1)
         stop0("prp: family argument must be length 1 (family cannot be vectorized)")
-    stopifnot(is.numeric(digits) && length(digits) == 1 &&
-              floor(digits) == digits)
-    if(digits == 0)
-        digits <- getOption("digits")
+    digits   <- process.digits.arg(digits)
+    varlen   <- check.integer.scalar(varlen, logical.ok=FALSE)
+    faclen   <- check.integer.scalar(faclen, logical.ok=FALSE)
+    roundint <- check.boolean(roundint)
+
+    bg <- get.bg() # never returns NA or 0
+    border.col       <- set.zero.to.bg(border.col,       bg)
+    shadow.col       <- set.zero.to.bg(shadow.col,       bg)
+    under.col        <- set.zero.to.bg(under.col,        bg)
+    split.col        <- set.zero.to.bg(split.col,        bg)
+    split.box.col    <- set.zero.to.bg(split.box.col,    bg)
+    split.shadow.col <- set.zero.to.bg(split.shadow.col, bg)
+    nn.col           <- set.zero.to.bg(nn.col,           bg)
+    nn.box.col       <- set.zero.to.bg(nn.box.col,       bg)
+    nn.border.col    <- set.zero.to.bg(nn.border.col,    bg)
+
+    # If roundint, we need the data used to build the model, so get it.
+    # If model=TRUE was used when calling rpart, we use that saved model.
+    # Note that we can't use attr(,".Environment") from terms(obj) because that
+    # gives the wrong environment if rpart called from within a function.
+    if(roundint && !identical(x$model, NA)) # the NA check prevents duplicated warnings
+        obj[["model"]] <- rpart.model.frame(obj, parent.frame(), "prp")
     if(!is.na.or.zero(branch.type)) {
         branch <- if(branch > .5) 1 else 0
         ycompact <- FALSE # want branches to be as vertical as possible
@@ -443,18 +460,18 @@ prp <- function(x=stop("no 'x' arg"),
         extra <- get.default.extra(obj, class.stats)
 
     node.fun.name <- deparse(substitute(node.fun))
-    node.labs <- internal.node.labs(obj, node.fun, node.fun.name,
-                                    type, extra, under, xsep, digits, varlen,
+    node.labs <- internal.node.labs(obj, node.fun, node.fun.name, type, extra,
+                                    under, xsep, digits, varlen,
                                     prefix, suffix, class.stats)
 
     # handle the box.col and box.palette arguments possibly specified by the user
-    temp <- handle.box.palette.args(obj, trace, box.col, box.palette,
-                                    pal.thresh, pal.node.fun,
-                                    node.fun.name, class.stats, node.labs)
-    box.col     <- temp$box.col     # box.palette (if specified) converted to box.col
-    box.palette <- temp$box.palette # expanded box.palette
+    ret <- handle.box.palette.args(obj, trace, box.col, box.palette,
+                                   pal.thresh, pal.node.fun,
+                                   node.fun.name, class.stats, node.labs)
+    box.col     <- ret$box.col     # box.palette (if specified) converted to box.col
+    box.palette <- ret$box.palette # expanded box.palette
     box.col <- recycle(box.col, node.labs)
-    if(type == TYPE.5.varname.in.node) {
+    if(type == TYPE5.varname.in.node) {
         box.col[!is.leaf] <- split.box.col
         col <- recycle(col, is.leaf)
         col[!is.leaf] <- split.col
@@ -466,8 +483,9 @@ prp <- function(x=stop("no 'x' arg"),
                 deparse(substitute(split.fun)),
                 split.prefix, split.suffix,
                 right.split.prefix, right.split.suffix,
-                type, clip.left.labs, clip.right.labs, xflip, digits,
-                varlen, faclen, facsep, eq, lt, ge)
+                type, clip.facs, clip.left.labs, clip.right.labs, xflip,
+                digits, varlen, faclen, roundint, trace,
+                facsep, eq, lt, ge)
 
     if(do.par) {
         # Make the side margins small.
@@ -492,7 +510,7 @@ prp <- function(x=stop("no 'x' arg"),
     if(is.fancy(type)) {
         right.split.labs <- split.labs[match(2 * nodes+1, nodes)]
         split.labs <- split.labs[match(2 * nodes, nodes)]
-        if(!left) # TODO msg uses hard coded TYPE.3fancy, TYPE.4fancy.all, TYPE.5.varname.in.node
+        if(!left) # TODO msg uses hard coded TYPE3.fancy, TYPE4.fancy.all, TYPE5.varname.in.node
             stop0("left=FALSE is not yet supported with type=3 or 4 or 5")
     } else {
         if(left != xflip)   # default, set right labs to NA
@@ -520,11 +538,11 @@ prp <- function(x=stop("no 'x' arg"),
     nn.space            <- recycle(nn.space, nodes)
     nn.yspace           <- recycle(nn.yspace, nodes)
 
-    temp <- get.yshift(type, nodes, is.leaf,
-                       cex, node.labs, yshift, yspace, under.cex,
-                       split.labs, split.cex, split.yshift, split.yspace, ygap)
-    yshift       <- temp$yshift
-    split.yshift <- temp$split.yshift
+    ret <- get.yshift(type, nodes, is.leaf,
+                      cex, node.labs, yshift, yspace, under.cex,
+                      split.labs, split.cex, split.yshift, split.yspace, ygap)
+    yshift       <- ret$yshift
+    split.yshift <- ret$split.yshift
 
     if(yesno == 2 && !is.fancy(type))
         split.labs <- ifelse(split.labs == "NA",
@@ -562,7 +580,7 @@ prp <- function(x=stop("no 'x' arg"),
     stopifnot(is.numeric(ylim) && length(ylim) == 2)
     split.yshift <- layout$split.yshift
     if(trace > 0) {
-        tweak.msg <- if(tweak == 1) "" else sprintf(" (before applying tweak %g)", tweak)
+        tweak.msg <- if(tweak == 1) "" else sprint(" (before applying tweak %g)", tweak)
         printf("cex %.3g%s   xlim c(%.3g, %.3g)   ylim c(%.3g, %.3g)\n",
                cex[1], tweak.msg, xlim[1], xlim[2], ylim[1], ylim[2])
     }
@@ -595,7 +613,7 @@ prp <- function(x=stop("no 'x' arg"),
         stopifnot(all(leaf.round >= 0))
         leaf.round <- recycle(leaf.round, nodes)
         round[is.leaf] <- leaf.round[is.leaf]
-        if(type == TYPE.5.varname.in.node) # want leaf boxes to look different to interior boxes
+        if(type == TYPE5.varname.in.node) # want leaf boxes to look different to interior boxes
             round[!is.leaf] <- 0           # TODO would be nice if this was more flexible
         # draw shadows first, if any, so boxes and lines are over shadows
         if(draw.shadows || draw.split.shadows)
@@ -614,27 +632,28 @@ prp <- function(x=stop("no 'x' arg"),
                     xlim, ylim, yshift, ygap, bg,
                     min.branch.width)
     if(add.labs) {
-        temp <- draw.labs(FALSE, FALSE)
-        node.boxes <- temp$node.boxes
-        split.boxes <- temp$split.boxes
+        ret <- draw.labs(FALSE, FALSE)
+        node.boxes  <- ret$node.boxes
+        split.boxes <- ret$split.boxes
     }
     snipped.nodes <- NULL
     if(snip) {
-        temp <- do.snip(obj, nodes, split.labs, node.xy, branch.xy,
-                        branch.lwd, xlim, ylim, digits, snip.fun, cex)
-        obj <- temp$obj
-        snipped.nodes <- temp$snipped.nodes
+        ret <- do.snip(obj, nodes, split.labs, node.xy, branch.xy,
+                       branch.lwd, xlim, ylim, digits, snip.fun, cex)
+        obj <- ret$obj
+        snipped.nodes <- ret$snipped.nodes
     }
-    rv <- list(obj=obj, snipped.nodes=snipped.nodes,
-              xlim=xlim, ylim=ylim,
-              x=node.xy$x, y=node.xy$y,
-              branch.x=branch.xy$x, branch.y=branch.xy$y,
-              labs=node.labs, cex=cex, boxes=node.boxes,
-              split.labs="", split.cex=split.cex, split.box=split.boxes)
+    ret <- list(obj=obj, snipped.nodes=snipped.nodes,
+                xlim=xlim, ylim=ylim,
+                x=node.xy$x, y=node.xy$y,
+                branch.x=branch.xy$x, branch.y=branch.xy$y,
+                labs=node.labs, cex=cex, boxes=node.boxes,
+                split.labs="", split.cex=split.cex, split.box=split.boxes)
 
-    possible.palette.legend(rv, class.stats, box.col, box.palette,
+    possible.palette.legend(ret, class.stats, box.col, box.palette,
                             legend.x, legend.y, legend.cex, tweak, trace)
-    invisible(rv)
+
+    invisible(ret)
 }
 init.plot <- function(x, y,
                       Margin, xflip, yflip, main, sub,
@@ -685,6 +704,17 @@ init.plot <- function(x, y,
         rect(usr[1], usr[3], usr[2], usr[4], col=NA, border=col, lty=1, lwd=cex)
         text((usr[1] + usr[2]) / 2, usr[4], "usr", col=col, xpd=NA)
     }
+}
+process.digits.arg <- function(digits)
+{
+    digits <- check.integer.scalar(digits, min=-22, max=22, logical.ok=FALSE)
+    if(digits == 0)
+        digits <- getOption("digits")
+    if(digits > 8)  # silently reduce digits because of verysmall in tweak.splits
+        digits <- 8
+    else if(digits < -8)
+        digits <- -8
+    digits
 }
 get.default.extra <- function(obj, class.stats)
 {
@@ -752,7 +782,7 @@ get.yshift <- function(type, nodes, is.leaf,
         split.yshift <- split.yshift -
                         ratio * node.shift - max(ygap, .25) - split.shift
 
-    } else if(type == TYPE.1all) {
+    } else if(type == TYPE1.all) {
         # Want the split box on the node, and the top of the node
         # box just above the bottom of the split box (a slight overlap).
         # These get combined and treated as one large box in get.layout.
@@ -766,7 +796,7 @@ get.yshift <- function(type, nodes, is.leaf,
         # except that we do move leaf nodes down a bit to roughly match their split brothers
         yshift[is.leaf] <- yshift[is.leaf] - node.nlines[is.leaf]
 
-    } else if(type == TYPE.2all.under) {
+    } else if(type == TYPE2.all.under) {
         # Want the node box on the node, and the top of the split
         # box just below the bottom of the node box.
         # These get combined and treated as one large box in get.layout.
@@ -971,9 +1001,9 @@ is.auto <- function(x, n=2)
 }
 is.fancy <- function(type)
 {
-    type == TYPE.3fancy.no.all ||
-    type == TYPE.4fancy.all    ||
-    type == TYPE.5.varname.in.node
+    type == TYPE3.fancy.no.all ||
+    type == TYPE4.fancy.all    ||
+    type == TYPE5.varname.in.node
 }
 # text before \n\n goes in the box
 # text after \n\n if any goes under the box

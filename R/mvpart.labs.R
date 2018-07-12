@@ -49,7 +49,7 @@ get.mvpart.labs <- function(x, extra, under, digits, xsep, varlen)
         if(ex == 0 || ex == 4 || ex == 8)
             main
         else if(ex == 1 || ex == 5 || ex == 9)
-            sprintf("%s%sn=%s", main, newline, format0(frame$n, digits))
+            sprint("%s%sn=%s", main, newline, format0(frame$n, digits))
         else if(ex == 2 || ex == 3 || ex == 6 || ex == 7 || ex == 10 || ex == 11)
             paste0(main, newline, resp.per.species)
         else
@@ -70,7 +70,7 @@ get.mvpart.labs <- function(x, extra, under, digits, xsep, varlen)
                       "\n",     # 10
                       "\n")     # 11
 
-        labs <- sprintf("%s%s%s%%", labs, sep,
+        labs <- sprint("%s%s%s%%", labs, sep,
                         formatf(100 * frame$wt / frame$wt[1],
                         digits=max(0, abs(digits)-2)))
     }

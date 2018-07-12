@@ -1,24 +1,20 @@
 # describe.col.R
-# TODO is there a library function to do this?
+#
+# Note: describe.col(0) or describe.col(NA) will start the graphics window.
+#       if a graphics device is not already initiated.
+#
+# TODO is there an existing library function to do this?
+# TODO consider getting rid of check.palette.index
 
-COL.TAB <- NULL # global to describe.col, and used only by describe.col
+COLORTAB <- NULL # global to describe.col, and used only by describe.col
 
-describe.col <- function(col, check.palette.index=FALSE, show.hex=TRUE)
+describe.col <- function(col, show.hex=TRUE, check.palette.index=TRUE)
 {
-    if(is.null(COL.TAB)) { # first time? if so, must prepare COL.TAB
-        colors <- colors()
-        tab <- matrix(nrow=length(colors), ncol=3)
-        for(i in 1:length(colors()))
-            tab[i,] <- col2rgb(colors[i])
-        unlockBinding("COL.TAB", asNamespace("rpart.plot"))
-        COL.TAB <<- tab
-        lockBinding("COL.TAB", asNamespace("rpart.plot"))
-    }
-    #--- describe.col starts here ---
+    init.COLORTAB()
     must.convert <- TRUE
     if(is.numeric(col)) {
         if(!isTRUE(all.equal(floor(col), col)))
-            stop0("non-integer \"col\" is illegal")
+            stop0("non-integer col is illegal")
         # june 2014: changes needed for changes to col2rgb
         if(is.matrix(col)) {
             if(length(col) == 3)
@@ -27,38 +23,59 @@ describe.col <- function(col, check.palette.index=FALSE, show.hex=TRUE)
                 stop0("bad format col")
         } else if(length(col) != 1)
             stop0("only one color is allowed")
-        else if(identical(col, 0) || is.na(col)) {
-            col <- par("bg")
-        }
-        if(check.palette.index) {
+        else if(check.palette.index) {
             if(col < 0)
-                stop0("col ", col, " is illegal (col must be greater than or equal to 0)")
+                stop0("col ", col,
+                      " is illegal (col must be greater than or equal to 0)")
             else if(col > length(palette()))
                 stop0("illegal col ", col,
-                      " (only ", length(palette()), " colors in the current palette)")
+                      " (only ", length(palette()),
+                      " colors in the current palette)")
         }
+        if(is.zero(col) || is.na(col))
+            col <- par("bg")
     }
     if(must.convert)
         col <- col2rgb(col)
     if(length(col) != 3)
         stop0("only one color is allowed")
-    min <- imin <- Inf
-    for(i in 1:nrow(COL.TAB)) {
-        dist <- sum(abs(COL.TAB[i,] - col))
-        if(dist < min) {
-            min <- dist
-            imin <- i
-        }
-    }
-    match.col.name <- colors()[imin]
+    ret <- get.closest.col(col)
+        icol <- ret$icol # index of closest col in COLORTAB
+        dist <- ret$dist # distance to closest col
+    closest.col.name <- colors()[icol]
     paste0(rgb(col[1], col[2], col[3], maxColorValue=255),
            " (",
-           ifelse(min != 0, "near ", ""),
-           match.col.name,
-           ifelse(show.hex && min != 0, " ", ""),
-           ifelse(show.hex && min != 0,
-               rgb(COL.TAB[imin,1], COL.TAB[imin,2], COL.TAB[imin,3],
+           ifelse(dist != 0, "near ", ""),
+           closest.col.name,
+           ifelse(show.hex && dist != 0, " ", ""),
+           ifelse(show.hex && dist != 0,
+               rgb(COLORTAB[icol,1], COLORTAB[icol,2], COLORTAB[icol,3],
                    maxColorValue=255),
                ""),
            ")")
+}
+init.COLORTAB <- function()
+{
+    if(is.null(COLORTAB)) {
+        colors <- colors()
+        tab <- matrix(nrow=length(colors), ncol=3)
+        for(i in 1:length(colors()))
+            tab[i,] <- col2rgb(colors[i])
+        unlockBinding("COLORTAB", asNamespace("rpart.plot"))
+        COLORTAB <<- tab
+        lockBinding("COLORTAB", asNamespace("rpart.plot"))
+    }
+}
+get.closest.col <- function(col)
+{
+    # TODO following should probably use HSV distance but this is more intuitive
+    dist <- icol <- Inf
+    for(i in 1:nrow(COLORTAB)) {
+        this.dist <- sum(abs(COLORTAB[i,] - col))
+        if(this.dist < dist) {
+            dist <- this.dist
+            icol <- i
+        }
+    }
+    list(icol=icol, dist=dist)
 }

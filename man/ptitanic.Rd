@@ -45,8 +45,8 @@ How \code{ptitanic} was built:
     # discard name, ticket, fare, cabin, embarked, body, home.dest
     ptitanic <- titanic3[,c(1,2,4,5,6,7)]
     # change survived from integer to factor
-    ptitanic$survived <- factor(ptitanic$survived, labels=c("died", "survived"))
-    save(ptitanic, file="ptitanic.rda")}
+    ptitanic$survived <- factor(ptitanic$survived, labels = c("died", "survived"))
+    save(ptitanic, file = "ptitanic.rda")}
 This version of the data differs from
 \code{\link[earth]{etitanic}} in the \code{\link[earth]{earth}} package
 in that here \code{survived} is a factor (not an integer)
@@ -55,9 +55,19 @@ and \code{age} has some \code{NA}s.
 \examples{
 data(ptitanic)
 summary(ptitanic)
+
+# survival rate was greater for females
+rpart.rules(rpart(survived ~ sex, data = ptitanic))
+
+# survival rate was greater for higher classes
+rpart.rules(rpart(survived ~ pclass, data = ptitanic))
+
+# survival rate was greater for children
+rpart.rules(rpart(survived ~ age, data = ptitanic))
+
 # main indicator of missing data is 3rd class esp. with many children
 obs.with.nas <- rowSums(is.na(ptitanic)) > 0
-prp(rpart(obs.with.nas~., data=ptitanic, method="class"),
-    main="observations with missing data", extra=7)
+rpart.rules(rpart(obs.with.nas ~ ., data = ptitanic, method = "class"))
+
 }
 \keyword{datasets}

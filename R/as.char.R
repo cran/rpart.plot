@@ -14,7 +14,7 @@ as.char <- function(object, maxlen=20)
     else if(is.environment(object))
         environment.as.char(object)
 
-    else if(is.call(object)) { # e.g. x is a call object in foo(x=1:3)
+    else if(is.call(object)) { # e.g. obj is a call object in foo(x=1:3)
         s <- strip.space.collapse(format(object))
         if(nchar(s) > maxlen)
             s <- paste0(substr(s, 1, maxlen), "...)")
@@ -32,7 +32,7 @@ as.char <- function(object, maxlen=20)
         paste.c(signif(zapsmall(object, digits=4), digits=4))
     }
     else if(length(dim(object)) == 2)
-        sprintf("%s[%g,%g]", class(object)[1], NROW(object), NCOL(object))
+        sprint("%s[%g,%g]", class(object)[1], NROW(object), NCOL(object))
 
     else if(class(object)[1] == "list") # not is.list() because e.g. lm objects are lists
         paste0("list(", paste.trunc(list.as.char(object), maxlen=maxlen+12), ")")
@@ -50,14 +50,14 @@ list.as.char <- function(object, maxlen=20)
     names <- names(object)
     for(i in seq_along(object)) {
         if(i != 1)
-            s <- sprintf("%s, ", s)
+            s <- sprint("%s, ", s)
         name.ok <- length(names) >= i && !is.na(names[i]) && nzchar(names[i])
         if(name.ok && names[i] == "...")
-            s <- sprintf("%s...", s) # print dots as ... not as ...=pairlist.object
+            s <- sprint("%s...", s) # print dots as ... not as ...=pairlist.object
         else {
             if(name.ok)
-                s <- sprintf("%s%s=", s, names(object)[i])
-            s <- sprintf("%s%s", s, as.char(object[[i]], maxlen=maxlen))
+                s <- sprint("%s%s=", s, names(object)[i])
+            s <- sprint("%s%s", s, as.char(object[[i]], maxlen=maxlen))
         }
     }
     s    # one element character vector e.g "x=1, 2"
@@ -77,9 +77,9 @@ environment.as.char <- function(env, maxlen=60) # compact description
         stripped.env # something like "namespace:stats" or "R_GlobalEnv"
 
     else # return the names of the objects in the environment
-        sprintf("env(%s)",
-                paste.trunc(paste0(ls(env, all.names=TRUE), collapse=", "),
-                            maxlen=maxlen))
+        sprint("env(%s)",
+               paste.trunc(paste0(ls(env, all.names=TRUE), collapse=", "),
+                           maxlen=maxlen))
 }
 # The main purpose of this routine is to summarize matrices and data.frames,
 # but it will also (semi)gracefully handle any object that is passed to it.
@@ -182,7 +182,7 @@ print_summary <- function(x, xname=trunc.deparse(substitute(x)),
     try(print.with.strings.quoted(df.short))
     is.fac <- sapply(df, is.factor)
     if(is.null(colnames))
-        colnames(df) <- sprintf("[,%d]", seq_len(NCOL(x)))
+        colnames(df) <- sprint("[,%d]", seq_len(NCOL(x)))
     if(any(is.fac)) {
         names <- paste0(colnames(df),
                         ifelse(sapply(df, is.ordered), "(ordered)", ""))

@@ -28,15 +28,16 @@ in version 2.0.0 of this package.)
 }
 \usage{
 prp(x=stop("no 'x' arg"),
-    type=0, extra=0, under=FALSE, clip.right.labs=TRUE,
+    type=0, extra=0, under=FALSE, fallen.leaves=FALSE,
     nn=FALSE, ni=FALSE, yesno=TRUE,
-    fallen.leaves=FALSE, branch=if(fallen.leaves) 1 else .2,
+    branch=if(fallen.leaves) 1 else .2,
     uniform=TRUE, left=TRUE, xflip=FALSE, yflip=FALSE,
-    Margin=0, space=1, gap=NULL,
-    digits=2, varlen=-8, faclen=3,
+    digits=2, varlen=-8, faclen=3, roundint=TRUE,
     cex=NULL, tweak=1,
+    clip.facs=FALSE, clip.right.labs=TRUE,
     compress=TRUE, ycompress=uniform,
-    trace=FALSE, snip=FALSE, snip.fun=NULL,
+    Margin=0, space=1, gap=NULL,
+    snip=FALSE, snip.fun=NULL, trace=FALSE,
 
     box.col=0, box.palette=0,
     pal.thresh=NULL, pal.node.fun=FALSE,
@@ -54,7 +55,7 @@ prp(x=stop("no 'x' arg"),
     split.suffix="", right.split.suffix=NULL,
     facsep=",", eq=" = ", lt=" < ", ge=" >= ",
 
-    branch.col=if(identical(branch.type, 0)) 1 else "gray",
+    branch.col=if(is.zero(branch.type)) 1 else "gray",
     branch.lty=1, branch.lwd=NULL,
     branch.type=0, branch.tweak=1,
     min.branch.width=.002, branch.fill=branch.col,
@@ -135,11 +136,6 @@ Automatically select a value based on the model type, as follows:\cr
      \bold{4} Class models:
               probability per class of observations in the node
               (conditioned on the node, sum across a node is 1).
-              % (One could argue that \code{2} should be the default value
-              % for \code{class} models.)
-              % For example, \code{.81 .19} means that of the observations in the node,
-              % the first class has a probability of \code{.81}
-              % and the second a probability of \code{.19}.
 
      \bold{5} Class models:
               like \code{4} but don't display the fitted class.
@@ -188,11 +184,9 @@ Automatically select a value based on the model type, as follows:\cr
      Use \code{TRUE} to put the text \emph{under} the box.
      See also \code{under.cex}.
   }
-  \item{clip.right.labs}{
-     Default is \code{TRUE} meaning ``clip'' the right-hand split labels,
-     i.e. don't print \code{variable=}.
-     Applies only if \code{type=3} or \code{4}.
-     See also \code{clip.left.labs}.
+  \item{fallen.leaves}{
+     Default \code{FALSE}.
+     If \code{TRUE}, position the leaf nodes at the bottom of the graph.
   }
   \item{nn}{
      Display the node numbers.
@@ -218,10 +212,6 @@ Automatically select a value based on the model type, as follows:\cr
      Use \code{nn.col} and the other \code{nn} parameters
      to change the color etc. of the \code{yes} and \code{no} text.
      Use \code{yes.text} and \code{no.text} to change the actual text displayed.)
-  }
-  \item{fallen.leaves}{
-     Default \code{FALSE}.
-     If \code{TRUE}, position the leaf nodes at the bottom of the graph.
   }
   \item{branch}{
     Controls the shape of the branch lines.
@@ -250,21 +240,6 @@ Automatically select a value based on the model type, as follows:\cr
   \item{yflip}{
      Default \code{FALSE}. If \code{TRUE}, flip the tree vertically, so the root
      is at the bottom.
-  }
-  \item{Margin}{
-     Extra white space around the tree, as a fraction of the graph width.
-     Default \code{0}, meaning no extra space.
-     To add say 10\% space around the tree use \code{Margin=0.1}.
-     (This is the \code{margin} argument of \code{plot.rpart}.
-     The name was changed to prevent partial matching with \code{mar},
-     which can be passed in as a \dots argument.)
-  }
-  \item{gap}{
-     Minimum horizontal gap between the (possibly invisible) boxes, in character widths.
-     Default \code{NULL}, meaning automatically choose a suitable value
-     (normally \code{1}, but if the graph is very crowded will be set to \code{0},
-     permitting boxes to touch to allow a bigger \code{cex}).
-     See also \code{space}.
   }
   \item{digits}{
      The number of significant digits in displayed numbers.
@@ -299,17 +274,46 @@ Automatically select a value based on the model type, as follows:\cr
      means represent the factor levels with alphabetic characters
      (\code{a} for the first level, \code{b} for the second, etc.).
   }
+  \item{roundint}{
+     \bold{New in version 3.0.0.}
+     If \code{roundint=TRUE} (default) and all values of a predictor in the
+     training data are integers, then splits for that predictor
+     are rounded to integer.
+     For example, display \code{nsiblings < 3} instead of \code{nsiblings < 2.5}.\cr
+     If \code{roundint=TRUE} and the data used to build the model is no longer
+     available, a warning will be issued.\cr
+     Using \code{roundint=FALSE} is advised if non-integer values are in fact possible
+     for a predictor, even though all values in the training data for that
+     predictor are integral.
+  }
   \item{cex}{
-     Default \code{NULL}, meaning calculate the text size automatically.
+     Default \code{NULL}, meaning calculate the text size automatically.\cr
+     Since font sizes are discrete, the \code{cex} you ask for
+     may not be exactly the \code{cex} you get.
   }
   \item{tweak}{
      Adjust the (possibly automatically calculated) \code{cex}.
-     Default \code{1}, meaning no adjustment.
-     Use say \code{tweak=1.2} to make the text 20\% larger.
-     However, since font sizes are discrete the \code{cex} you ask for
-     may not be exactly the \code{cex} you get.
-     And a small change to tweak may not actually change the type size,
+     Using \code{tweak} is often easier than specifying \code{cex}.\cr
+     The default \code{tweak} is \code{1}, meaning no adjustment.\cr
+     Use say \code{tweak=1.2} to make the text 20\% larger.\cr
+     Since font sizes are discrete,
+     a small change to tweak may not actually change the type size,
      or change it more than you want.
+  }
+\item{clip.facs}{
+\bold{New in version 3.0.0.}
+Default \code{FALSE}.
+If \code{TRUE}, print splits on factors as \code{female} instead of
+\code{sex = female}; the variable name and equals is dropped.
+\cr
+Another example: print \code{survived} or \code{died} rather than
+\code{survived = survived} or \code{survived = died}.\cr
+}
+  \item{clip.right.labs}{
+     Applies only if \code{type=3} or \code{4}.\cr
+     Default is \code{TRUE} meaning ``clip'' the right-hand split labels,
+     i.e., don't print \code{variable=}.\cr
+     See also \code{clip.left.labs}.
   }
   \item{compress}{
      If \code{TRUE} (the default), make more space
@@ -328,10 +332,28 @@ Automatically select a value based on the model type, as follows:\cr
      works a little better (allowing larger text)
      with \code{type=1}, \code{2}, or \code{3}. % (i.e. not "fancy").
   }
-  \item{trace}{
-     Default \code{FALSE}.
-     Use \code{TRUE} to print the automatically calculated \code{cex}, \code{xlim}, and \code{ylim}.
-     Use integer values greater than 1 for more detailed tracing.\cr
+  \item{Margin}{
+     Extra white space around the tree, as a fraction of the graph width.
+     Default \code{0}, meaning no extra space.
+     To add say 10\% space around the tree use \code{Margin=0.1}.
+     (This is the \code{margin} argument of \code{plot.rpart}.
+     The name was changed to prevent partial matching with \code{mar},
+     which can be passed in as a \dots argument.)
+  }
+  \item{space}{
+     Horizontal space to the box border on each side of the node label text,
+     in character widths.
+     Default \code{1}.
+     Use this (and \code{yspace}) for bigger boxes.
+     Since this affects the size of the (possibly invisible) boxes,
+     it also affects the graph layout and hence also the automatic calculation of \code{cex}.
+  }
+  \item{gap}{
+     Minimum horizontal gap between the (possibly invisible) boxes, in character widths.
+     Default \code{NULL}, meaning automatically choose a suitable value
+     (normally \code{1}, but if the graph is very crowded will be set to \code{0},
+     permitting boxes to touch to allow a bigger \code{cex}).
+     See also \code{space}.
   }
   \item{snip}{
      Default \code{FALSE}.
@@ -346,6 +368,11 @@ Automatically select a value based on the model type, as follows:\cr
      See the \href{../doc/prp.pdf}{package vignette} for an example.
 
      \bold{The following control the node labels.}
+  }
+  \item{trace}{
+     Default \code{FALSE}.
+     Use \code{TRUE} to print the automatically calculated \code{cex}, \code{xlim}, and \code{ylim}.
+     Use integer values greater than 1 for more detailed tracing.\cr
   }
   \item{box.col}{
      Color of the boxes around the text.
@@ -756,14 +783,6 @@ classes).
      Negative values move the text down; positive up
      (the box around the text will follow along).
   }
-  \item{space}{
-     Horizontal space to the box border on each side of the node label text,
-     in character widths.
-     Default \code{1}.
-     Use this (and \code{yspace}) for bigger boxes.
-     Since this affects the size of the (possibly invisible) boxes,
-     it also affects the graph layout and hence also the automatic calculation of \code{cex}.
-  }
   \item{yspace}{
      Vertical space to the box border above and below the node label text, in character heights.
      Default \code{space}.
@@ -969,43 +988,43 @@ Functions in the \code{rpart} package:
 }
 \examples{
 data(ptitanic)
-tree <- rpart(survived ~ ., data=ptitanic, cp=.02)
-                         # cp=.02 because want small tree for demo
+tree <- rpart(survived ~ ., data = ptitanic, cp = .02)
+                           # cp = .02 because want small tree for demo
 
-old.par <- par(mfrow=c(2,2))
-                         # put 4 figures on one page
+old.par <- par(mfrow = c(2,2))
+                           # put 4 figures on one page
 
-prp(tree, main="default prp\n(type = 0, extra = 0)")
+prp(tree, main = "default prp\n(type =  0, extra = 0)")
 
-prp(tree, main="type = 4,  extra = 6\nbox.palette = \"auto\"",
-    type=4, extra=6,     # label all nodes, show prob of second class
-    box.palette="auto",  # auto color the nodes based on the model type
-    faclen=0)            # faclen=0 to print full factor names
+prp(tree, main = "type = 4,  extra = 6\nbox.palette = \"auto\"",
+    type = 4, extra = 6,   # label all nodes, show prob of second class
+    box.palette = "auto",  # auto color the nodes based on the model type
+    faclen = 0)            # faclen = 0 to print full factor names
 
 cols <- ifelse(tree$frame$yval == 1, "darkred", "green4")
-                         # green if survived
+                           # green if survived
 
-prp(tree, main="assorted arguments",
-    extra=106,           # display prob of survival and percent of obs
-    nn=TRUE,             # display the node numbers
-    fallen.leaves=TRUE,  # put the leaves on the bottom of the page
-    shadow.col="gray",   # shadows under the leaves
-    branch.lty=3,        # draw branches using dotted lines
-    branch=.5,           # change angle of branch lines
-    faclen=0,            # faclen=0 to print full factor names
-    trace=1,             # print the automatically calculated cex
-    split.cex=1.2,       # make the split text larger than the node text
-    split.prefix="is ",  # put "is " before split text
-    split.suffix="?",    # put "?" after split text
-    col=cols, border.col=cols,   # green if survived
-    split.box.col="lightgray",   # lightgray split boxes (default is white)
-    split.border.col="darkgray", # darkgray border on split boxes
-    split.round=.5)              # round the split box corners a tad
+prp(tree, main = "assorted arguments",
+    extra = 106,           # display prob of survival and percent of obs
+    nn = TRUE,             # display the node numbers
+    fallen.leaves = TRUE,  # put the leaves on the bottom of the page
+    shadow.col = "gray",   # shadows under the leaves
+    branch.lty = 3,        # draw branches using dotted lines
+    branch = .5,           # change angle of branch lines
+    faclen = 0,            # faclen = 0 to print full factor names
+    trace = 1,             # print the automatically calculated cex
+    split.cex = 1.2,       # make the split text larger than the node text
+    split.prefix = "is ",  # put "is " before split text
+    split.suffix = "?",    # put "?" after split text
+    col = cols, border.col = cols,   # green if survived
+    split.box.col = "lightgray",   # lightgray split boxes (default is white)
+    split.border.col = "darkgray", # darkgray border on split boxes
+    split.round = .5)              # round the split box corners a tad
 
 # compare to the plotting functions in the rpart package
-plot(tree, uniform=TRUE, compress=TRUE, branch=.2)
-text(tree, use.n=TRUE, cex=.8, xpd=NA) # cex is a guess, depends on your window size
-title("compare to the plotting functions\nin the rpart package", cex.sub=.8)
+plot(tree, uniform = TRUE, compress = TRUE, branch = .2)
+text(tree, use.n = TRUE, cex = .8, xpd = NA) # cex is a guess, depends on your window size
+title("compare to the plotting functions\nin the rpart package", cex.sub = .8)
 
 par(old.par)
 }

@@ -147,7 +147,12 @@ get.layout <- function(obj, type, nn, yesno, fallen.leaves, branch,
             delta.y <- interleave3(delta.y, delta.y, delta.y)
         combined.boxes$y1 <- combined.boxes$y1 + delta.y
         combined.boxes$y2 <- combined.boxes$y2 + delta.y
-
+        # combined.boxes is a list of vectors, e.g. for a stump:
+        #         root node2 node3
+        #    $x1: 0.32 -0.01  0.82
+        #    $y1: 0.57 -0.02 -0.02
+        #    $x2: 0.68  0.18  1.02
+        #    $y2: 1.05  0.28  0.28
         list(boxes=combined.boxes, x=new.x, y=new.y)
     }
     # Get the amount needed to scale each node by to get a gap of exactly
@@ -532,7 +537,8 @@ get.layout <- function(obj, type, nn, yesno, fallen.leaves, branch,
     if(auto.cex)
         cex  <- scale * cex
 
-    list(node.xy=list(x=x, y=y), cex=cex,
+    list(node.xy=list(x=x, y=y), # coords of center of each node box
+         cex=cex,
          xlim=c(-xmax / 2 + .5, xmax / 2 + .5), # center graph horizontally
          ylim=c(-ymax / 2 + .5, ymax / 2 + .5), # center graph vertically
          split.yshift=split.yshift,

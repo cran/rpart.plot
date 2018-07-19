@@ -351,7 +351,7 @@ handle.multiclass.palette <- function(obj, box.palette, trace, class.stats)
 "the number of classes predicted by the model ", class.stats$nlev,
 " is greater than length(box.palette) ",
 length(box.palette), ".\n",
-"To make this warning go away use box.palette=0 or trace=-1.")
+"To silence this warning use box.palette=0 or trace=-1.")
             }
             return(list(box.col=get.bg()))
         } else {
@@ -366,7 +366,7 @@ length(box.palette), ".\n",
 # length(box.palette), ".\n",
 # "(However only 4 classes are predicted by the model, therefore there are enough\n",
 # "palettes in box.palette for a unique color per class after reassigning the palettes.)\n",
-# "To make this warning go away use box.palette=0 or trace=-1.")
+# "To silence this warning use box.palette=0 or trace=-1.")
             }
         }
     }
@@ -401,7 +401,7 @@ length(box.palette), ".\n",
 "because there are more than ", length(box.palette),
 " predicted classes ",
 "but length(box.palette) is ", length(box.palette), "\n",
-"To make this warning go away use box.palette=0 or trace=-1")
+"To silence this warning use box.palette=0 or trace=-1")
             first.time <- FALSE
         } else {
             pal <- box.palette[[ilist]]
@@ -507,7 +507,7 @@ get.palette.fitted <- function(default.fitted, node.labs, pal.node.fun, trace)
             print(node.labs)
             cat("\n")
             stop0("Cannot convert node labs to numeric\n",
-"To make this error go away, change node.fun or use pal.node.fun=FALSE")
+"To silence this error, change node.fun or use pal.node.fun=FALSE")
         }
     }
     fitted

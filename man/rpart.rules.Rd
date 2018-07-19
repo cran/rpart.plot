@@ -17,7 +17,7 @@ rpart.rules(x = stop("no 'x' argument"),
 \item{x}{
 An \code{\link{rpart}} object.  The only required argument.
 }
-\item{style}{One of\cr
+\item{style}{One of:\cr
 \bold{"wide"} (default) One rule per line.  May require a lot of horizontal space.\cr
 \bold{"tall"} One split per line.\cr
 \bold{"tallw"} Like \code{"tall"} but with more horizontal white space for readability.\cr

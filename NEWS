@@ -1,6 +1,10 @@
 Changes to rpart.plot
 ---------------------
 
+3.0.1  July 19, 2018
+
+  Touchups to the documentation and code for rules.
+
 3.0.0  July 10, 2018
 
   Added the rpart.rules function to display a set of rules for a tree.
@@ -16,13 +20,11 @@ Changes to rpart.plot
     If roundint=TRUE and the data used to build the model is no longer
     available, a warning will be issued.
 
-    (ii) When applying the digits argument, when the last digit is 5 we now
-    always round up (rather than rounding-to-even).  This gives more easily
-    interpretable results, especially because splits ending in ".5" are
-    common for integer predictors.  Thus "intx < 2.5" is now rounded
-    to "intx < 3" (rather than "intx < 2", which was misleading).
-    The old behaviour was an artifact of the fact that base::format rounds
-    to even when the last digit is a 5.
+    (ii) When applying the digits argument in splits, if the last digit
+    is 5 we now always round up (rather than rounding to even).
+    Thus "x < 12.5" is now rounded to "x < 13" (rather than "x < 12",
+    which was misleading). The old behaviour was an artifact of the fact
+    that base::format rounds to even when the last digit is a 5.
 
   Splits on variables of class "logical" are now displayed as
   "survived = 0" and "survived = 1".  In previous versions they

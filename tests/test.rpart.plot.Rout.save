@@ -7,42 +7,40 @@
 Loading required package: rpart
 > data(trees)     # anova model
 > Volume <- rpart(Volume~., data=trees)
-> print(rpart.rules(Volume, trace=1))
-
-iframe   3 node   4 path c("root", "Girth < 16.15", "Girth < 12.45")
-iframe   4 node   5 path c("root", "Girth < 16.15", "Girth >= 12.45")
-iframe   5 node   3 path c("root", "Girth >= 16.15")
-
-raw rules:
-  lab         fit iclass       cover Girth= Girth< Girth>= Height= Height< Height>=
-4     17.93333333     17 48.38709677         12.45                                 
-5     30.53333333     30 29.03225806         16.15   12.45                         
-3     55.92857143     55 22.58064516                 16.15                         
-
-processed rules:
-  Volume                       
-4     18 when Girth <  12      
-5     31 when Girth is 12 to 16
-3     56 when Girth >=       16
-
- Volume                       
-     18 when Girth <  12      
-     31 when Girth is 12 to 16
-     56 when Girth >=       16
+> print(rpart.rules(Volume, digits=5))
+ Volume                             
+ 17.933 when Girth <  12.45         
+ 30.533 when Girth is 12.45 to 16.15
+ 55.929 when Girth >=          16.15
 > data(ptitanic)  # binomial model
-> survived <- rpart(survived ~ ., data=ptitanic, method="class")
-> print(rpart.rules(survived))
- survived                                                                                          
-     0.05 when sex is   male & age <   9.5         & sibsp >= 3                                    
-     0.11 when sex is female & age >=         16.5 & sibsp <  3 & pclass is        3rd & parch >= 4
-     0.14 when sex is female                       & sibsp >= 3 & pclass is        3rd             
-     0.17 when sex is   male & age >=          9.5                                                 
-     0.39 when sex is female & age >=         27.5 & sibsp <  3 & pclass is        3rd & parch <  4
-     0.39 when sex is female & age is 16.5 to 21.5 & sibsp <  3 & pclass is        3rd & parch <  4
-     0.62 when sex is female & age is 21.5 to 27.5 & sibsp <  3 & pclass is        3rd & parch <  4
-     0.73 when sex is female & age <  16.5         & sibsp <  3 & pclass is        3rd             
-     0.89 when sex is   male & age <   9.5         & sibsp <  3                                    
-     0.93 when sex is female                                    & pclass is 1st or 2nd             
+> ptitanic1 <- ptitanic
+> ptitanic1$female <- ptitanic1$sex == "female" # logical variable
+> ptitanic1$sex <- NULL
+> ptitanic1$parch <- NULL
+> survived <- rpart(survived ~ ., data=ptitanic1, method="class")
+> print(rpart.rules(survived, clip.facs=TRUE))
+ survived                                                                
+     0.05 when not female & age <   9.5         & sibsp >= 3             
+     0.14 when female                           & sibsp >= 3 &        3rd
+     0.17 when not female & age >=          9.5                          
+     0.38 when female     & age >=         27.5 & sibsp <  3 &        3rd
+     0.39 when female     & age is 16.5 to 21.5 & sibsp <  3 &        3rd
+     0.61 when female     & age is 21.5 to 27.5 & sibsp <  3 &        3rd
+     0.73 when female     & age <  16.5         & sibsp <  3 &        3rd
+     0.89 when not female & age <   9.5         & sibsp <  3             
+     0.93 when female                                        & 1st or 2nd
+> ptitanic1 <- NULL # delete the data, will affect male and sibsp in printed rules
+> print(rpart.rules(survived, roundint=FALSE)) # roundint=FALSE else warning
+ survived                                                                               
+     0.05 when female <  0.5 & age <   9.5         & sibsp >= 2.5                       
+     0.14 when female >= 0.5                       & sibsp >= 2.5 & pclass is        3rd
+     0.17 when female <  0.5 & age >=          9.5                                      
+     0.38 when female >= 0.5 & age >=         27.5 & sibsp <  2.5 & pclass is        3rd
+     0.39 when female >= 0.5 & age is 16.5 to 21.5 & sibsp <  2.5 & pclass is        3rd
+     0.61 when female >= 0.5 & age is 21.5 to 27.5 & sibsp <  2.5 & pclass is        3rd
+     0.73 when female >= 0.5 & age <  16.5         & sibsp <  2.5 & pclass is        3rd
+     0.89 when female <  0.5 & age <   9.5         & sibsp <  2.5                       
+     0.93 when female >= 0.5                                      & pclass is 1st or 2nd
 > data(iris)      # multiclass model
 > Species <- rpart(Species ~ ., data=iris, method="class")
 > print(rpart.rules(Species))

@@ -10,7 +10,7 @@ rpart.rules <- function(x=stop("no 'x' argument"),
    if(!inherits(x, "rpart"))
         stop("Not an rpart object")
 
-    ret <- warn.if.prp.arg.not.supported.by.rpart.rules(...)
+    ret <- check.if.dot.arg.supported.by.rpart.rules(...)
         extra         <- ret$extra
         digits        <- ret$digits
         varlen        <- ret$varlen
@@ -30,47 +30,46 @@ rpart.rules <- function(x=stop("no 'x' argument"),
     roundint <- check.boolean(roundint)
     clip.facs <- check.boolean(clip.facs)
     digits <- process.digits.arg(digits)
-    if(digits < 0) # no negative digits because don't want engineer notation
+    if(digits < 0) # non negative because we use standard data.frame formatting
         digits <- -digits
     varlen <- check.integer.scalar(varlen, logical.ok=FALSE)
     faclen <- check.integer.scalar(faclen, logical.ok=FALSE)
-    # if roundint, we need the data used to build the model, so get it
-    if(roundint)
-        obj[["model"]] <- rpart.model.frame(obj, parent.frame(), "rpart.rules")
+    obj$varinfo <- get.modelframe.info(obj, roundint, trace,
+                                       parent.frame(), "rpart.rules")
+    if(is.null(response.name)) # not explicitly specified by the user?
+        response.name <- obj$varinfo$response.name
+    stopifnot.string(response.name)
     stopifnot.string(facsep)
-    # we trim spaces around these because print.data.frame unavoidably
-    # adds spaces between columns
+    # we trim spaces around these because print.data.frame
+    # unavoidably adds spaces between columns
     stopifnot.string(eq);  eq  <- trim.surrounding.space(eq)
     stopifnot.string(lt);  lt  <- trim.surrounding.space(lt)
     stopifnot.string(ge);  ge  <- trim.surrounding.space(ge)
     stopifnot.string(and); and <- trim.surrounding.space(and)
-    if(!is.null(response.name))
-        stopifnot.string(response.name)
-    trace <- as.numeric(check.integer.scalar(trace, logical.ok=TRUE))
+    trace <- as.numeric(check.numeric.scalar(trace, logical.ok=TRUE))
     # we get the variable names from the splits because
     # attr(x$terms,"dataClasses") sometimes doesn't save the actual
     # variable names (e.g. model fit9 in slowtests/rpart.report.R)
     varnames <- unique(rownames(obj$splits))
-    if(length(varnames) == 0)       # null model?
+    if(length(varnames) == 0)       # null model, no splits?
         varnames <- "-NONESUCH-"    # any name will do here
 
     ret <- get.raw.rules(obj, extra, varlen, faclen, roundint, trace, facsep, varnames)
         rules          <- ret$rules
         nrules.per.var <- ret$nrules.per.var
 
-    if(trace > 0)
+    if(trace >= 1)
         trace.print.rules(rules, "raw rules")
 
     rules <- process.rules(rules, style, cover, nn, clip.facs,
                 eq, lt, ge, and,
                 digits, trace, varorder, varlen,
                 nrules.per.var, varnames,
-                if(is.null(response.name)) get.response.name(obj, trace)
-                else                       response.name,
+                response.name,
                 obj$method == "class" || is.class.response(obj),
                 attr(obj, "ylevels"))
 
-    if(trace > 0)
+    if(trace >= 1)
         trace.print.rules(rules, "processed rules")
 
     class(rules) <- c("rpart.rules", "data.frame")
@@ -83,6 +82,11 @@ rpart.rules <- function(x=stop("no 'x' argument"),
 print.rpart.rules <- function(x=stop("no 'x' argument"),
                               style=attr(x, "style"), ...)
 {
+    # some hand holding for an easy error: specifying digits in print.rpart.rules
+    dots <- match.call(expand.dots=FALSE)$...
+    if(!is.null(dots$di) || !is.null(dots$dig) || !is.null(dots$digi) ||
+       !is.null(dots$digit) || !is.null(dots$digits))
+        stop0("specify 'digits' in rpart.rules (not in print.rpart.rules)")
     stop.if.dot.arg.used(...)
     style <- match.choices(style, allowed.styles)
     old.width <- options(width=1e4)$width
@@ -333,11 +337,11 @@ format.fit <- function(fit, digits, is.class.response)
         } else
             rowmaxs <- apply(fit, 1, max)     # max of each row of fits
     if(n.subcol == 1) {
-        if(is.class.response) { # probabilities
-            fit <- sprint("%.2f", fit)
-            fit <- format(fit, justify="right")     # align for printing
-        } else # anova, poisson, or exp model
-            fit <- format(fit, digits=digits, justify="right") # align for printing
+        fit <- # align for printing
+            if(is.class.response) # probabilities, always 2 decimal places
+                format(sprint("%.2f", fit), justify="right")
+            else # anova, poisson, or exp model
+                format(fit, digits=digits, justify="right")
     } else {
         # Multiple responses per split e.g. ".12" ".34" ".56".
         # Want fixed number of decimal places, don't use format()
@@ -366,9 +370,7 @@ as.numeric.na.ok <- function(x) # as.numeric issues warning if NAs, we don't wan
     old.warn <- getOption("warn")   # no warning in as.numeric() if NAs in fit
     on.exit(options(warn=old.warn))
     options(warn=-1)                # temporarily turn off warnings
-    x <- as.numeric(x)
-    options(warn=old.warn)
-    x
+    as.numeric(x)
 }
 apply.varlen.to.colnames <- function(rules, varnames, varlen)
 {
@@ -438,7 +440,7 @@ format.rules <- function(rules, style, cover, clip.facs, eq, lt, ge, and,
             new[,n()] <- ifelse(subsequent & lt.or.ge, and, "")
             subsequent <- (subsequent | lt.or.ge)
             # add "verysmall" so format rounds .5 upwards, not to even
-            verysmall <- 1e-10
+            verysmall <- exp10(-abs(digits) - 8)
             if(any(is.lt)) # format for printing
                 rules.lt <- format(as.numeric(rules.lt) + verysmall,
                                    digits=digits, justify="right")
@@ -477,10 +479,9 @@ fit.colname <- function(ylevels, fit, n.subcol)
     width <- unlist(gregexpr(" ", substring(fit, 2)))[1] # position of first space
     if(width < 1) # paranoia                             # substring to skip possible lead space
         width <- 1
-    format <- sprint("%%%d.%ds", width[1], width[1]) # e.g. "%3.3s"
+    format <- sprint("%%%d.%ds", width, width) # e.g. "%3.3s"
     colname <- paste.collapse(sprint(format, ylevels))
     colname <- paste0(colname, " ") # space for "]" in column entries
-
     colname                         # "1st 2nd 3rd"
 }
 # if all elements in a column have leading space, trim that space
@@ -669,7 +670,7 @@ stop.if.dot.arg.used <- function()
 }
 # this also issues an error if an illegal argument name is attempted
 # following args must match args of prp() except where commented below
-warn.if.prp.arg.not.supported.by.rpart.rules <- function(x=stop("no 'x' arg"),
+check.if.dot.arg.supported.by.rpart.rules <- function(x=stop("no 'x' arg"),
     type=0,
     extra="auto", # different default
     under=FALSE, fallen.leaves=FALSE,

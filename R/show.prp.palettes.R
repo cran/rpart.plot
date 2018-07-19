@@ -37,14 +37,12 @@ show.prp.palettes <- function()
          main="prp built-in palettes\n", xpd=NA,
          col=0, bty="n", xlab="", xaxt="n", ylab="", yaxt="n")
     y <- 0 # position down the page
-    last.pal.name <- "XX"
     strheight <- 1.5 * my.strheight("X", cex=cex)
     width <- max(my.strwidth(predefined.palette.names))
     left <- 0
     right <- .3
     for(ipal in 2:length(predefined.palette.names)) { # start at 2 to skip AUTO
         pal.name <- predefined.palette.names[ipal]
-        last.pal.name <- substr(pal.name, 1, 2)
         show.palette(pal.name, y, left, right, width, strheight)
         y <- y + strheight
         if(pal.name %in% c("Purples", "Pu", "GyPu", "GnPu", "BuPu", "PuPu", "OrPu"))

@@ -61,8 +61,15 @@ rpart.plot <- function(x=stop("no 'x' arg"),
 {
     if(!inherits(x, "rpart"))
         stop("Not an rpart object")
-    if(check.boolean(roundint))
-        x[["model"]] <- rpart.model.frame(x, parent.frame(), "rpart.plot")
+    # We have to get "trace" for get.modelframe.info, but I don't want to
+    # add trace to the rpart.plot arg list, hence the following bit of
+    # code to get trace from the dots.
+    dots <- match.call(expand.dots=FALSE)$...
+    trace <- 0
+    if(!is.null(dots$trace))
+        trace <- eval(dots$trace)
+    x$varinfo <- get.modelframe.info(x, roundint, trace,
+                                     parent.frame(), "rpart.plot")
     prp(x,
         type=type, extra=extra, under=under, fallen.leaves=fallen.leaves,
         digits=digits, varlen=varlen, faclen=faclen, roundint=roundint,
@@ -82,7 +89,15 @@ rpart.plot.version1 <- function(x=stop("no 'x' arg"),
 {
     if(!inherits(x, "rpart"))
         stop("Not an rpart object")
-    # x[["model"]] unneeded because roundint=FALSE
+    # We have to get "trace" for get.modelframe.info, but I don't want to
+    # add trace to the rpart.plot arg list, hence the following bit of
+    # code to get trace from the dots.
+    dots <- match.call(expand.dots=FALSE)$...
+    trace <- 0
+    if(!is.null(dots$trace))
+        trace <- eval(dots$trace)
+    x$varinfo <- get.modelframe.info(x, roundint=FALSE, trace,
+                                     parent.frame(), "rpart.plot.version1")
     prp(x,
         type=type, extra=extra,
         under=under, fallen.leaves=fallen.leaves, clip.facs=FALSE,
@@ -368,7 +383,7 @@ prp <- function(x=stop("no 'x' arg"),
     # errors here where possible before they cause an obscure message
     # later on.  But it is impossible to be exhaustive.
 
-    trace <- as.numeric(check.integer.scalar(trace, logical.ok=TRUE))
+    trace <- as.numeric(check.numeric.scalar(trace, logical.ok=TRUE))
     type <- check.integer.scalar(type, logical.ok=FALSE)
     if(type < TYPE0.default || type > TYPE5.varname.in.node)
         stop0("type must be ", TYPE0.default, "...",
@@ -431,12 +446,12 @@ prp <- function(x=stop("no 'x' arg"),
     nn.box.col       <- set.zero.to.bg(nn.box.col,       bg)
     nn.border.col    <- set.zero.to.bg(nn.border.col,    bg)
 
-    # If roundint, we need the data used to build the model, so get it.
-    # If model=TRUE was used when calling rpart, we use that saved model.
-    # Note that we can't use attr(,".Environment") from terms(obj) because that
-    # gives the wrong environment if rpart called from within a function.
-    if(roundint && !identical(x$model, NA)) # the NA check prevents duplicated warnings
-        obj[["model"]] <- rpart.model.frame(obj, parent.frame(), "prp")
+    # We use parent.frame() here -- we can't use attr(,".Environment") from
+    # terms(obj) because that gives the wrong environment if rpart called
+    # from within a function.
+    if(is.null(obj$varinfo)) # this "if" prevents duplicate warnings
+        obj$varinfo <- get.modelframe.info(obj, roundint, trace,
+                                           parent.frame(), "prp")
     if(!is.na.or.zero(branch.type)) {
         branch <- if(branch > .5) 1 else 0
         ycompact <- FALSE # want branches to be as vertical as possible
@@ -855,7 +870,8 @@ get.boxes <- function(boxtype,  # one of "default", "left", "right", "undersplit
 
     # to minimize blanking out parts of the branch lines, we want only a
     # small white space around letters when fancy and non-visible boxes
-    if((boxtype == "left" || boxtype == "right") && is.box.invisible(box.col, border.col, bg))
+    if((boxtype == "left" || boxtype == "right") &&
+            is.box.invisible(box.col, border.col, bg))
         space <- recycle(min(.2, space), labs)
 
     # sanity check that variables are already expanded correctly for recycling

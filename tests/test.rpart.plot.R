@@ -4,10 +4,16 @@
 library(rpart.plot)
 data(trees)     # anova model
 Volume <- rpart(Volume~., data=trees)
-print(rpart.rules(Volume, trace=1))
+print(rpart.rules(Volume, digits=5))
 data(ptitanic)  # binomial model
-survived <- rpart(survived ~ ., data=ptitanic, method="class")
-print(rpart.rules(survived))
+ptitanic1 <- ptitanic
+ptitanic1$female <- ptitanic1$sex == "female" # logical variable
+ptitanic1$sex <- NULL
+ptitanic1$parch <- NULL
+survived <- rpart(survived ~ ., data=ptitanic1, method="class")
+print(rpart.rules(survived, clip.facs=TRUE))
+ptitanic1 <- NULL # delete the data, will affect male and sibsp in printed rules
+print(rpart.rules(survived, roundint=FALSE)) # roundint=FALSE else warning
 data(iris)      # multiclass model
 Species <- rpart(Species ~ ., data=iris, method="class")
 print(rpart.rules(Species))

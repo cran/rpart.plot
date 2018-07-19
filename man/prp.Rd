@@ -382,20 +382,20 @@ Another example: print \code{survived} or \code{died} rather than
   \item{box.palette}{
 Palette for coloring the node boxes based on the fitted value.
 This is a vector of \code{\link{colors}},
-for example \bold{box.palette=c("green", "green2", "green4")}.
+for example \code{box.palette=c("green", "green2", "green4")}.
 Small fitted values are displayed with colors at the start of the vector;
 large values with colors at the end.
 Quantiles are used to partition the fitted values.
 
-The special value \bold{box.palette=0} (default for \code{prp}) uses
+The special value \code{box.palette=0} (default for \code{prp}) uses
 the background color (typically white).
 
-The special value \bold{box.palette="auto"} (default for
+The special value \code{box.palette="auto"} (default for
 \code{rpart.plot}, case insensitive) automatically selects a
 predefined palette based on the type of model.
 
-Otherwise specify a predefined palette
-e.g. \bold{box.palette="Grays"} for the predefined gray palette (a range of grays).
+Otherwise specify a \bold{predefined palette}
+e.g. \code{box.palette="Grays"} for the predefined gray palette (a range of grays).
 The predefined palettes are (see the \code{\link{show.prp.palettes}} function):\cr
 \code{Grays} \code{Greys} \code{Greens} \code{Blues} \code{Browns} \code{Oranges} \code{Reds} \code{Purples} \cr
 \code{Gy} \code{Gn} \code{Bu} \code{Bn} \code{Or} \code{Rd} \code{Pu} (alternative names for the above palettes)\cr

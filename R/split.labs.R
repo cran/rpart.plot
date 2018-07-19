@@ -88,15 +88,14 @@ get.lsplit.rsplit <- function(x, isplit, split.var.names,
     ncat  <- splits[isplit, "ncat"]
     lsplit <- rsplit <- character(length=length(isplit))
     is.con <- ncat <= 1             # continuous vars (a logical vector)
-    is.logical <- get.is.logical(x, splits, trace)[isplit]
     if(any(is.con)) {               # any continuous vars?
         cut <- splits[isplit[is.con], "index"]
         formatted.cut <- format0(cut, digits)
         is.less.than <- ncat < 0
         lsplit[is.con] <- paste0(ifelse(is.less.than, lt, ge)[is.con], formatted.cut)
         rsplit[is.con] <- paste0(ifelse(is.less.than, ge, lt)[is.con], formatted.cut)
-
-        # print logical as "Survived = 1" not "Survived >= .5"
+        # print logical predictors as "Survived = 1" or "Survived = 0"
+        is.logical <- x$varinfo$is.logical[isplit]
         if(!anyNA(is.logical) && any(is.logical)) {
             eq0 <- paste0(logical.eq, "0")
             eq1 <- paste0(logical.eq, "1")
@@ -156,25 +155,15 @@ get.lsplit.rsplit <- function(x, isplit, split.var.names,
 
 tweak.splits <- function(obj, roundint, digits, trace)
 {
-    exp10 <- function(x) exp(x * log(10)) # e.g. exp10(-3) = 1e-3
-    #--- tweak.splits starts here ---
     verysmall <- exp10(-abs(digits) - 8)
     splits <- obj$splits
     splits[,"index"] <- splits[,"index"] + verysmall
     # Because rpart.model.frame() may fail or give warnings, we do
     # processing here only if the roundint argument is TRUE.
     if(roundint) {
-        is.roundint <- get.is.roundint(obj) # vector of bools
-        if(anyNA(is.roundint)) # rpart.model.frame failed?
+        is.roundint <- obj$varinfo$is.roundint # vector of bools
+        if(anyNA(is.roundint)) # couldn't get the is.roundint vector
             return(splits)
-        if(trace >= 2) {
-            varnames <- names(is.roundint)[is.roundint]
-            if(length(varnames))
-                cat("will apply roundint to the following variables:",
-                    varnames, "\n")
-            else
-                cat("will apply roundint to no variables\n")
-        }
         for(varname in names(is.roundint)) if(is.roundint[varname]) {
             i <- rownames(splits) %in% varname
             if(length(i) > 0)

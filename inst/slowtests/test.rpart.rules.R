@@ -16,13 +16,21 @@ Volume <- rpart(formula=Volume~Girth, data=trees1, cp=.001)
 rules <- rpart.rules(Volume, digits=4)
 rpart.plot(Volume, digits=4, main="Volume\ndata still available")
 print(rules)
+# can't use digits in print.rpart.rules (instead must specify digits in rpart.rules)
+expect.err(try(print(rpart.rules(Volume), digits=4)), "specify 'digits' in rpart.rules (not in print.rpart.rules)")
+expect.err(try(print(rpart.rules(Volume), digit=4)),  "specify 'digits' in rpart.rules (not in print.rpart.rules)")
+expect.err(try(print(rpart.rules(Volume), dig=4)),    "specify 'digits' in rpart.rules (not in print.rpart.rules)")
 trees1 <- "bad data"
 options(warn=2) # treat warnings as errors
-expect.err(try(rpart.rules(Volume, digits=4)), "(converted from warning) Cannot retrieve the model data")
-expect.err(try(rpart.plot(Volume, digits=4, main="Volume\ntrees not available")), "Cannot retrieve the model data")
-expect.err(try(prp(Volume, digits=4, main="Volume\ntrees not available")), "Cannot retrieve the model data")
+expect.err(try(rpart.rules(Volume, digits=4)), "(converted from warning) Cannot retrieve the data used to build the model (so cannot determine roundint and is.logical for the variables).")
+expect.err(try(rpart.plot(Volume, digits=4, main="Volume\ntrees not available")), "Cannot retrieve the data used to build the model")
+expect.err(try(prp(Volume, digits=4, main="Volume\ntrees not available")), "Cannot retrieve the data used to build the model")
 rpart.plot(Volume, digits=4, roundint=FALSE, main="Volume roundint=FALSE\ndata not available")
-options(warn=1) # print warnings as they occur
+trees1 <- trees[,1:2] # only part of the data
+expect.err(try(rpart.rules(Volume, digits=4)), "(converted from warning) Cannot retrieve the data used to build the model (model.frame: invalid type (list) for variable 'Volume').")
+print(rpart.rules(Volume, digits=4, roundint=FALSE, trace=.5)) # trace print: Cannot retrieve the data used to build the model (model.frame: invalid type (list) for variable 'Volume')
+trees1 <- trees[,2:3] # only part of the data
+print(rpart.rules(Volume, digits=4, roundint=FALSE, trace=.5)) # trace print: Cannot retrieve the data used to build the model (model.frame: object 'Girth' not found)
 
 # test with rpart argument model=TRUE
 trees1 <- trees * 10 # so all values integral
@@ -39,7 +47,10 @@ cat0("\n=== test digits, varlen, faclen, trace ===\n\n")
 
 mileage <- rpart(Mileage ~ ., data=cu.summary)
 
+options(warn=1234) # for testing that rpart.rules doesn't mess up options(warn)
 print(rpart.rules(mileage))
+stopifnot(options("warn") == 1234) # make sure rpart.rules didn't mess up options(warn)
+options(warn=1) # print warnings as they occur
 print(rpart.rules(mileage, digits=0, trace=1)) # this also tests print(rules)
 print(rpart.rules(mileage, digits=2))
 print(rpart.rules(mileage, digits=3))
@@ -180,11 +191,11 @@ mod                  <- ret$mod
 mod.without.data.arg <- ret$mod.without.data.arg
 
 # check if we can still access the data used to build the model in build.models
-print(rpart.rules(mod, roundint=FALSE)) # ok
+print(rpart.rules(mod, roundint=FALSE, trace=.5)) # ok
 options(warn=2) # treat warnings as errors
-expect.err(try(rpart.rules(mod)), "Cannot retrieve the model data")
-print(rpart.rules(mod.without.data.arg, roundint=FALSE)) # ok
-print(rpart.rules(mod.without.data.arg, roundint=TRUE)) # ok, because environment saved with formula in model
+expect.err(try(rpart.rules(mod)), "Cannot retrieve the data used to build the model (so cannot determine roundint and is.logical for the variables).")
+print(rpart.rules(mod.without.data.arg, roundint=FALSE, trace=.5)) # ok
+print(rpart.rules(mod.without.data.arg, roundint=TRUE, trace=.5))  # ok, because environment saved with formula in model
 options(warn=1) # print warnings as they occur
 
 cat0("\n=== fit.oz, digits=4 ===\n")

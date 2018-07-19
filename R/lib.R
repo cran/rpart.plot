@@ -290,6 +290,10 @@ eval.trace <- function(
 
     eval(expr, envir, enclos)
 }
+exp10 <- function(x) # e.g. exp10(-3) = 1e-3
+{
+    exp(x * log(10))
+}
 # This function is used for checking both xlim and ylim.
 # This checks that lim is is a 2 element numeric vector.
 # Also, if xlim[1] == xlim[2], then plot() issues a confusing message.
@@ -506,6 +510,8 @@ imatch.choices <- function(arg, choices,
     }
     imatch
 }
+# TRUE if all values in object are integers, ignoring NAs
+# assumes object is numeric or logical (check this before call this function)
 is.integral <- function(object)
 {
     object <- object[!is.na(object)]

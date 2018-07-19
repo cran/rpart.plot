@@ -20,8 +20,8 @@ printcall <- function(prefix="", call=NULL, all=FALSE, n=1)
 # all=TRUE to include all formal args (not always avail e.g. for primitives)
 #
 # TODO Does not expand the dots (just prints "..."), need fixed version of match.call
-#      To expand the dots see e.g. higher.call.to.deprefix (but that would only work
-#      here if dots for caller at n where the same as the dots to printcall
+#      to expand the dots see e.g. higher.call.to.deprefix (but that would only work
+#      here if dots for caller at n where the same as the dots to printcall).
 
 call.as.char <- function(call=NULL, all=FALSE, n=1)
 {

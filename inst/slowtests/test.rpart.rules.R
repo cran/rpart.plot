@@ -32,9 +32,11 @@ print(rpart.rules(Volume, digits=4, roundint=FALSE, trace=.5)) # trace print: Ca
 trees1 <- trees[,2:3] # only part of the data
 print(rpart.rules(Volume, digits=4, roundint=FALSE, trace=.5)) # trace print: Cannot retrieve the data used to build the model (model.frame: object 'Girth' not found)
 
-# test with rpart argument model=TRUE
+# test with rpart argument model=TRUE (also use space in predictor name for testing node label parsing)
 trees1 <- trees * 10 # so all values integral
-Volume.modTRUE <- rpart(formula=Volume~Girth, data=trees1, cp=.001, model=TRUE)
+trees1[["Girth Around"]] <- trees1$Girth # space in predictor name
+trees1$Girth <- NULL
+Volume.modTRUE <- rpart(formula=Volume~., data=trees1, cp=.001, model=TRUE)
 rules <- rpart.rules(Volume.modTRUE, digits=4)
 print(rules)
 trees1 <- "bad data"

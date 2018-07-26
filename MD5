@@ -1,6 +1,6 @@
-99be77b335b2a566029cd75099364de7 *DESCRIPTION
+deb5b7975d40a1e96b9a2f4e220306a3 *DESCRIPTION
 5778d00308214bb43ce98e65c3ea09c9 *NAMESPACE
-0cade6fbe6b802872e6cf46ac69db568 *NEWS
+0aa4bdf6cf760fe6583ce275b461d695 *NEWS
 c452837668598b2bb103bbc6edac67b3 *R/as.char.R
 3a372a8fcaedf23c319fda7ad72aec1d *R/branches.R
 124f86e7a65cc1ff25fd96af973a6072 *R/check.index.R
@@ -26,7 +26,7 @@ f53926a88bd6c9b2c61217dbed9411cd *R/rounded.rect.R
 51d70bbaa0186d089b2b5f6eb3e34386 *R/yes.no.R
 f66787088c53930a51438504efeca4bf *data/ptitanic.rda
 1fd39a5751f9ab8448fe4717a11e1359 *inst/doc/index.html
-f5ce4f38f3e6baecbffb07ecf5d737dd *inst/doc/prp.pdf
+099bf951935e698246a6df88c9559d72 *inst/doc/prp.pdf
 a5f2f11338510a67704a513bca990d1f *inst/slowtests/README.txt
 147bd7a75b6159f73762a034b106c82a *inst/slowtests/data.stagec
 8593c84a26b065b3ec6383018af9271a *inst/slowtests/header.R
@@ -48,12 +48,12 @@ de6c426acef38fad9806f66877af9b59 *inst/slowtests/test.na.bat
 f28ca341c1e1ad766a9ce459c3c1d79c *inst/slowtests/test.palette.Rout.save
 2cbd3961499d64b5f7727c7af79fb1fb *inst/slowtests/test.palette.bat
 66a91ec5d4554bcd6b00be2f49bf0e4a *inst/slowtests/test.prolog.R
-9d6d3cd83b79a31d71459beabb13bdb8 *inst/slowtests/test.prp.Rout.save
+ccf7ebffbd4fbf960175b0a5da199dbc *inst/slowtests/test.prp.Rout.save
 7632b94575d3c529d4140b22643cc4ff *inst/slowtests/test.rpart.plot.R
-65b75c0c64e1e8822d234463bac23e81 *inst/slowtests/test.rpart.plot.Rout.save
+21656730f52644cd66945d5fe5232b3c *inst/slowtests/test.rpart.plot.Rout.save
 e5cafc54e3da361f76db478f5ad42b96 *inst/slowtests/test.rpart.plot.bat
-9e70348f344a415fe4f554d58218777f *inst/slowtests/test.rpart.rules.R
-ab9ddd0638429d1997ec743fe9ff3ec5 *inst/slowtests/test.rpart.rules.Rout.save
+66e42594b09d9ebc80109e19ab8162db *inst/slowtests/test.rpart.rules.R
+7da86e5ab8eec546c90ed93dcd15ef83 *inst/slowtests/test.rpart.rules.Rout.save
 a4d6c9a2a2b89333d5c2c74b9b362ad0 *inst/slowtests/test.rpart.rules.bat
 666c6dc0a919668efb6effe0efa5407d *inst/slowtests/test.type5.R
 bb2e7246722d675b2d9c0000d880fdaf *inst/slowtests/test.type5.Rout.save
@@ -68,7 +68,7 @@ da7ef73ce1e8dc4b2720b3cf27878336 *inst/slowtests/webpage.figs.bat
 ada46467f2739d4f8fb9e4359409258a *man/ptitanic.Rd
 38b258fd87ef9643a64ac81a88edb19c *man/rpart.plot.Rd
 4a3fde3a30064c5c3463ee417ccc88b1 *man/rpart.plot.version1.Rd
-fb15d74addb6a4066cbdeba784fed3f5 *man/rpart.rules.Rd
+877db7d5fef43593d49b7f22607ce1c3 *man/rpart.rules.Rd
 26a08e79ded6939726c6cb4ca2cf28c8 *man/show.prp.palettes.Rd
 5437efc3c7a680640f0d7a2d8699deb0 *tests/README.txt
 9dec2eda172eacd68701b0bc59e1453e *tests/test.rpart.plot.R

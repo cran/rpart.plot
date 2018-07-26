@@ -99,21 +99,23 @@ Cannot retrieve the data used to build the model (model.frame: object 'Girth' no
   305.3 when Girth is 124.5 to 161.5
   559.3 when Girth >=          161.5
 > 
-> # test with rpart argument model=TRUE
+> # test with rpart argument model=TRUE (also use space in predictor name for testing node label parsing)
 > trees1 <- trees * 10 # so all values integral
-> Volume.modTRUE <- rpart(formula=Volume~Girth, data=trees1, cp=.001, model=TRUE)
+> trees1[["Girth Around"]] <- trees1$Girth # space in predictor name
+> trees1$Girth <- NULL
+> Volume.modTRUE <- rpart(formula=Volume~., data=trees1, cp=.001, model=TRUE)
 > rules <- rpart.rules(Volume.modTRUE, digits=4)
 > print(rules)
- Volume                         
-  179.3 when Girth <  125       
-  305.3 when Girth is 125 to 162
-  559.3 when Girth >=        162
+ Volume                                
+  179.3 when Girth Around <  125       
+  305.3 when Girth Around is 125 to 162
+  559.3 when Girth Around >=        162
 > trees1 <- "bad data"
 > print(rpart.rules(Volume.modTRUE, digits=4)) # ok, trees1 is ignored
- Volume                         
-  179.3 when Girth <  125       
-  305.3 when Girth is 125 to 162
-  559.3 when Girth >=        162
+ Volume                                
+  179.3 when Girth Around <  125       
+  305.3 when Girth Around is 125 to 162
+  559.3 when Girth Around >=        162
 > rpart.plot(Volume.modTRUE, digits=4, main="Volume.modTRUE\ndata not available")
 > rpart.plot(Volume.modTRUE, digits=4, roundint=FALSE, main="Volume.modTRUE roundint=FALSE\ndata not available")
 > par(old.par)

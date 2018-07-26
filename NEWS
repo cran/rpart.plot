@@ -1,6 +1,10 @@
 Changes to rpart.plot
 ---------------------
 
+3.0.2  July 25, 2018
+
+  Documentation fixes.
+
 3.0.1  July 19, 2018
 
   Touchups to the documentation and code for rules.

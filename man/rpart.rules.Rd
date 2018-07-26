@@ -64,7 +64,7 @@ See \code{\link{prp}} for details on these arguments.
 \code{varlen} \tab \code{= 0} \tab \tab \tab \tab default displays full variable names  \cr
 \code{faclen} \tab \code{= 0} \tab \tab \tab \tab default displays full factor names  \cr
 \code{trace} \tab \code{= 0} \tab \tab \tab \tab \cr
-\code{and} \tab \code{= " & "} \tab \tab \tab \tab the string that separates the rules when \code{style="wide"}  \cr
+\code{and} \tab \code{= " & "} \tab \tab \tab \tab the string that separates the splits when \code{style="wide"}  \cr
 \code{facsep} \tab \code{= " or "} \tab \tab \tab \tab \cr
 \code{eq} \tab \code{= " is "} \tab \tab \tab \tab \cr
 \code{lt} \tab \code{= " <  "} \tab \tab \tab \tab \cr

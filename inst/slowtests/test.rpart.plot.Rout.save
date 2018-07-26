@@ -22,7 +22,7 @@ attached base packages:
 [1] stats     graphics  grDevices utils     datasets  methods   base     
 
 other attached packages:
-[1] rpart.plot_3.0.1 rpart_4.1-13    
+[1] rpart.plot_3.0.2 rpart_4.1-13    
 
 loaded via a namespace (and not attached):
 [1] compiler_3.5.1
@@ -33,7 +33,7 @@ Warning in citation("rpart.plot") :
 To cite package 'rpart.plot' in publications use:
 
   Stephen Milborrow (2018). rpart.plot: Plot 'rpart' Models: An
-  Enhanced Version of 'plot.rpart'. R package version 3.0.1.
+  Enhanced Version of 'plot.rpart'. R package version 3.0.2.
   http://www.milbo.org/rpart-plot
 
 A BibTeX entry for LaTeX users is
@@ -42,7 +42,7 @@ A BibTeX entry for LaTeX users is
     title = {rpart.plot: Plot 'rpart' Models: An Enhanced Version of 'plot.rpart'},
     author = {Stephen Milborrow},
     year = {2018},
-    note = {R package version 3.0.1},
+    note = {R package version 3.0.2},
     url = {http://www.milbo.org/rpart-plot},
   }
 

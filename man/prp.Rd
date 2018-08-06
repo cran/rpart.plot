@@ -1,6 +1,6 @@
 \name{prp}
 \alias{prp}
-\title{Plot an \code{rpart} model.}
+\title{Plot an rpart model.}
 \description{
 Plot an \code{\link{rpart}} model.
 

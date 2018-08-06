@@ -1,4 +1,4 @@
-> # test.rpart.rules.R (also tests roundint argument)
+> # test.rpart.rules.R (also tests rpart.predict and roundint argument)
 > 
 > source("test.prolog.R")
 Loading required package: rpart
@@ -265,6 +265,40 @@ processed rules:
       24 when Price >=         11485 & Comp or Smal or Spor
       25 when Price is 9447 to 11485 & Comp or Smal or Spor
       32 when Price <  9447                                
+> 
+> # rpart.predict (anova model)
+> stopifnot(identical(options("width"), old.width))
+> owidth <- options("width")
+> options(width=1e3)
+> print(predict(mileage)[1:5])
+ Eagle Summit 4 Ford Escort   4  Ford Festiva 4   Honda Civic 4 Mazda Protege 4 
+       32.08333        32.08333        32.08333        32.08333        32.08333 
+> print(rpart.predict(mileage)[1:5])
+ Eagle Summit 4 Ford Escort   4  Ford Festiva 4   Honda Civic 4 Mazda Protege 4 
+       32.08333        32.08333        32.08333        32.08333        32.08333 
+> stopifnot(identical(predict(mileage), rpart.predict(mileage)))
+> print(rpart.predict(mileage, rules=TRUE)[12:14,])
+                     Mileage                                                                    
+Toyota Tercel 4     32.08333 because Price <  9447                                              
+Volkswagen Jetta 4  25.45455 because Price is 9447 to 11485 & Type is Compact or Small or Sporty
+Chevrolet Camaro V8 23.85714 because Price >=         11485 & Type is Compact or Small or Sporty
+> # use max and not identical because rpart.predict(mileage, rules=TRUE)[,1] doesn't have names
+> stopifnot(max(abs(predict(mileage) - rpart.predict(mileage, rules=TRUE)[,1])) == 0)
+> stopifnot(identical(as.numeric(predict(mileage)), rpart.predict(mileage, rules=TRUE)[,1]))
+> print(rpart.predict(mileage, nn=TRUE)[12:14,])
+                     Mileage nn
+Toyota Tercel 4     32.08333  3
+Volkswagen Jetta 4  25.45455 11
+Chevrolet Camaro V8 23.85714 10
+> stopifnot(max(abs(predict(mileage) - rpart.predict(mileage, nn=TRUE)[,1])) == 0)
+> print(rpart.predict(mileage, nn=TRUE, rules=TRUE)[12:14,])
+                     Mileage nn                                                                    
+Toyota Tercel 4     32.08333  3 because Price <  9447                                              
+Volkswagen Jetta 4  25.45455 11 because Price is 9447 to 11485 & Type is Compact or Small or Sporty
+Chevrolet Camaro V8 23.85714 10 because Price >=         11485 & Type is Compact or Small or Sporty
+> stopifnot(max(abs(predict(mileage) - rpart.predict(mileage, nn=TRUE, rules=TRUE)[,1])) == 0)
+> options(width=owidth$width)
+> stopifnot(identical(options("width"), old.width))
 > 
 > # test negative response and predictor values
 > cu.summary2 <- cu.summary
@@ -984,21 +1018,21 @@ processed rules:
        USA [.00 .05 .05 .15 .15 .00 .00 .00 .10 .50] when Reliability is Much worse or worse or average & Price >=          16669 & Type is   Large or Medium     17%
        USA [.00 .00 .02 .04 .17 .00 .07 .04 .00 .67] when Reliability is Much worse or worse or average & Price <  16669                                          46%
 > print(rpart.rules(Country, nn=TRUE))
-   Country  Bra Eng Fra Ger Jap Jap Kor Mex Swe USA                                                                                                              nn
-   Germany [.00 .00 .00 .50 .10 .00 .00 .00 .30 .10] when Reliability is Much worse or worse or average & Price >=          16669 & Type is Compact or Sporty    12
-     Japan [.00 .00 .00 .00 .71 .14 .14 .00 .00 .00] when Reliability is          better or Much better & Price <   7038                                         10
-     Japan [.00 .00 .00 .11 .89 .00 .00 .00 .00 .00] when Reliability is          better or Much better & Price >=          13202                                 4
- Japan/USA [.06 .00 .00 .00 .29 .47 .00 .06 .00 .12] when Reliability is          better or Much better & Price is  7038 to 13202                                11
-       USA [.00 .05 .05 .15 .15 .00 .00 .00 .10 .50] when Reliability is Much worse or worse or average & Price >=          16669 & Type is   Large or Medium    13
-       USA [.00 .00 .02 .04 .17 .00 .07 .04 .00 .67] when Reliability is Much worse or worse or average & Price <  16669                                          7
+ nn   Country  Bra Eng Fra Ger Jap Jap Kor Mex Swe USA                                                                                                          
+ 12   Germany [.00 .00 .00 .50 .10 .00 .00 .00 .30 .10] when Reliability is Much worse or worse or average & Price >=          16669 & Type is Compact or Sporty
+ 10     Japan [.00 .00 .00 .00 .71 .14 .14 .00 .00 .00] when Reliability is          better or Much better & Price <   7038                                     
+  4     Japan [.00 .00 .00 .11 .89 .00 .00 .00 .00 .00] when Reliability is          better or Much better & Price >=          13202                            
+ 11 Japan/USA [.06 .00 .00 .00 .29 .47 .00 .06 .00 .12] when Reliability is          better or Much better & Price is  7038 to 13202                            
+ 13       USA [.00 .05 .05 .15 .15 .00 .00 .00 .10 .50] when Reliability is Much worse or worse or average & Price >=          16669 & Type is   Large or Medium
+  7       USA [.00 .00 .02 .04 .17 .00 .07 .04 .00 .67] when Reliability is Much worse or worse or average & Price <  16669                                     
 > print(rpart.rules(Country, cover=TRUE, nn=TRUE))
-   Country  Bra Eng Fra Ger Jap Jap Kor Mex Swe USA                                                                                                             cover  nn
-   Germany [.00 .00 .00 .50 .10 .00 .00 .00 .30 .10] when Reliability is Much worse or worse or average & Price >=          16669 & Type is Compact or Sporty      9%  12
-     Japan [.00 .00 .00 .00 .71 .14 .14 .00 .00 .00] when Reliability is          better or Much better & Price <   7038                                           6%  10
-     Japan [.00 .00 .00 .11 .89 .00 .00 .00 .00 .00] when Reliability is          better or Much better & Price >=          13202                                  8%   4
- Japan/USA [.06 .00 .00 .00 .29 .47 .00 .06 .00 .12] when Reliability is          better or Much better & Price is  7038 to 13202                                 15%  11
-       USA [.00 .05 .05 .15 .15 .00 .00 .00 .10 .50] when Reliability is Much worse or worse or average & Price >=          16669 & Type is   Large or Medium     17%  13
-       USA [.00 .00 .02 .04 .17 .00 .07 .04 .00 .67] when Reliability is Much worse or worse or average & Price <  16669                                          46%   7
+ nn   Country  Bra Eng Fra Ger Jap Jap Kor Mex Swe USA                                                                                                             cover
+ 12   Germany [.00 .00 .00 .50 .10 .00 .00 .00 .30 .10] when Reliability is Much worse or worse or average & Price >=          16669 & Type is Compact or Sporty      9%
+ 10     Japan [.00 .00 .00 .00 .71 .14 .14 .00 .00 .00] when Reliability is          better or Much better & Price <   7038                                           6%
+  4     Japan [.00 .00 .00 .11 .89 .00 .00 .00 .00 .00] when Reliability is          better or Much better & Price >=          13202                                  8%
+ 11 Japan/USA [.06 .00 .00 .00 .29 .47 .00 .06 .00 .12] when Reliability is          better or Much better & Price is  7038 to 13202                                 15%
+ 13       USA [.00 .05 .05 .15 .15 .00 .00 .00 .10 .50] when Reliability is Much worse or worse or average & Price >=          16669 & Type is   Large or Medium     17%
+  7       USA [.00 .00 .02 .04 .17 .00 .07 .04 .00 .67] when Reliability is Much worse or worse or average & Price <  16669                                          46%
 > 
 > print(rpart.rules(Country, style="tall"))
                       Bra Eng Fra Ger Jap Jap Kor Mex Swe USA 
@@ -1055,59 +1089,59 @@ Country is USA       [.00 .00 .02 .04 .17 .00 .07 .04 .00 .67] with cover 46% wh
     Reliability is Much worse or worse or average
     Price < 16669
 > print(rpart.rules(Country, style="tall", nn=TRUE))
-                      Bra Eng Fra Ger Jap Jap Kor Mex Swe USA 
+                           Bra Eng Fra Ger Jap Jap Kor Mex Swe USA 
 [12] Country is Germany   [.00 .00 .00 .50 .10 .00 .00 .00 .30 .10] when
-    Reliability is Much worse or worse or average
-    Price >= 16669
-    Type is Compact or Sporty
+         Reliability is Much worse or worse or average
+         Price >= 16669
+         Type is Compact or Sporty
 
 [10] Country is Japan     [.00 .00 .00 .00 .71 .14 .14 .00 .00 .00] when
-    Reliability is better or Much better
-    Price < 7038
+         Reliability is better or Much better
+         Price < 7038
 
-[4] Country is Japan     [.00 .00 .00 .11 .89 .00 .00 .00 .00 .00] when
-    Reliability is better or Much better
-    Price >= 13202
+[4]  Country is Japan     [.00 .00 .00 .11 .89 .00 .00 .00 .00 .00] when
+         Reliability is better or Much better
+         Price >= 13202
 
 [11] Country is Japan/USA [.06 .00 .00 .00 .29 .47 .00 .06 .00 .12] when
-    Reliability is better or Much better
-    Price is 7038 to 13202
+         Reliability is better or Much better
+         Price is 7038 to 13202
 
 [13] Country is USA       [.00 .05 .05 .15 .15 .00 .00 .00 .10 .50] when
-    Reliability is Much worse or worse or average
-    Price >= 16669
-    Type is Large or Medium
+         Reliability is Much worse or worse or average
+         Price >= 16669
+         Type is Large or Medium
 
-[7] Country is USA       [.00 .00 .02 .04 .17 .00 .07 .04 .00 .67] when
-    Reliability is Much worse or worse or average
-    Price < 16669
+[7]  Country is USA       [.00 .00 .02 .04 .17 .00 .07 .04 .00 .67] when
+         Reliability is Much worse or worse or average
+         Price < 16669
 > print(rpart.rules(Country, style="tall", cover=TRUE, nn=TRUE))
-                      Bra Eng Fra Ger Jap Jap Kor Mex Swe USA 
+                           Bra Eng Fra Ger Jap Jap Kor Mex Swe USA 
 [12] Country is Germany   [.00 .00 .00 .50 .10 .00 .00 .00 .30 .10] with cover 9% when
-    Reliability is Much worse or worse or average
-    Price >= 16669
-    Type is Compact or Sporty
+         Reliability is Much worse or worse or average
+         Price >= 16669
+         Type is Compact or Sporty
 
 [10] Country is Japan     [.00 .00 .00 .00 .71 .14 .14 .00 .00 .00] with cover 6% when
-    Reliability is better or Much better
-    Price < 7038
+         Reliability is better or Much better
+         Price < 7038
 
-[4] Country is Japan     [.00 .00 .00 .11 .89 .00 .00 .00 .00 .00] with cover 8% when
-    Reliability is better or Much better
-    Price >= 13202
+[4]  Country is Japan     [.00 .00 .00 .11 .89 .00 .00 .00 .00 .00] with cover 8% when
+         Reliability is better or Much better
+         Price >= 13202
 
 [11] Country is Japan/USA [.06 .00 .00 .00 .29 .47 .00 .06 .00 .12] with cover 15% when
-    Reliability is better or Much better
-    Price is 7038 to 13202
+         Reliability is better or Much better
+         Price is 7038 to 13202
 
 [13] Country is USA       [.00 .05 .05 .15 .15 .00 .00 .00 .10 .50] with cover 17% when
-    Reliability is Much worse or worse or average
-    Price >= 16669
-    Type is Large or Medium
+         Reliability is Much worse or worse or average
+         Price >= 16669
+         Type is Large or Medium
 
-[7] Country is USA       [.00 .00 .02 .04 .17 .00 .07 .04 .00 .67] with cover 46% when
-    Reliability is Much worse or worse or average
-    Price < 16669
+[7]  Country is USA       [.00 .00 .02 .04 .17 .00 .07 .04 .00 .67] with cover 46% when
+         Reliability is Much worse or worse or average
+         Price < 16669
 > 
 > print(rpart.rules(Country, style="tallw"))
                       Bra Eng Fra Ger Jap Jap Kor Mex Swe USA 
@@ -1164,59 +1198,59 @@ Country is USA       [.00 .00 .02 .04 .17 .00 .07 .04 .00 .67] with cover 46% wh
                                                                Reliability is Much worse or worse or average
                                                                Price < 16669
 > print(rpart.rules(Country, style="tallw", nn=TRUE))
-                      Bra Eng Fra Ger Jap Jap Kor Mex Swe USA 
+                           Bra Eng Fra Ger Jap Jap Kor Mex Swe USA 
 [12] Country is Germany   [.00 .00 .00 .50 .10 .00 .00 .00 .30 .10] when
-                                                               Reliability is Much worse or worse or average
-                                                               Price >= 16669
-                                                               Type is Compact or Sporty
+                                                                    Reliability is Much worse or worse or average
+                                                                    Price >= 16669
+                                                                    Type is Compact or Sporty
 
 [10] Country is Japan     [.00 .00 .00 .00 .71 .14 .14 .00 .00 .00] when
-                                                               Reliability is better or Much better
-                                                               Price < 7038
+                                                                    Reliability is better or Much better
+                                                                    Price < 7038
 
-[4] Country is Japan     [.00 .00 .00 .11 .89 .00 .00 .00 .00 .00] when
-                                                               Reliability is better or Much better
-                                                               Price >= 13202
+[4]  Country is Japan     [.00 .00 .00 .11 .89 .00 .00 .00 .00 .00] when
+                                                                    Reliability is better or Much better
+                                                                    Price >= 13202
 
 [11] Country is Japan/USA [.06 .00 .00 .00 .29 .47 .00 .06 .00 .12] when
-                                                               Reliability is better or Much better
-                                                               Price is 7038 to 13202
+                                                                    Reliability is better or Much better
+                                                                    Price is 7038 to 13202
 
 [13] Country is USA       [.00 .05 .05 .15 .15 .00 .00 .00 .10 .50] when
-                                                               Reliability is Much worse or worse or average
-                                                               Price >= 16669
-                                                               Type is Large or Medium
+                                                                    Reliability is Much worse or worse or average
+                                                                    Price >= 16669
+                                                                    Type is Large or Medium
 
-[7] Country is USA       [.00 .00 .02 .04 .17 .00 .07 .04 .00 .67] when
-                                                               Reliability is Much worse or worse or average
-                                                               Price < 16669
+[7]  Country is USA       [.00 .00 .02 .04 .17 .00 .07 .04 .00 .67] when
+                                                                    Reliability is Much worse or worse or average
+                                                                    Price < 16669
 > print(rpart.rules(Country, style="tallw", cover=TRUE, nn=TRUE))
-                      Bra Eng Fra Ger Jap Jap Kor Mex Swe USA 
+                           Bra Eng Fra Ger Jap Jap Kor Mex Swe USA 
 [12] Country is Germany   [.00 .00 .00 .50 .10 .00 .00 .00 .30 .10] with cover 9% when
-                                                               Reliability is Much worse or worse or average
-                                                               Price >= 16669
-                                                               Type is Compact or Sporty
+                                                                    Reliability is Much worse or worse or average
+                                                                    Price >= 16669
+                                                                    Type is Compact or Sporty
 
 [10] Country is Japan     [.00 .00 .00 .00 .71 .14 .14 .00 .00 .00] with cover 6% when
-                                                               Reliability is better or Much better
-                                                               Price < 7038
+                                                                    Reliability is better or Much better
+                                                                    Price < 7038
 
-[4] Country is Japan     [.00 .00 .00 .11 .89 .00 .00 .00 .00 .00] with cover 8% when
-                                                               Reliability is better or Much better
-                                                               Price >= 13202
+[4]  Country is Japan     [.00 .00 .00 .11 .89 .00 .00 .00 .00 .00] with cover 8% when
+                                                                    Reliability is better or Much better
+                                                                    Price >= 13202
 
 [11] Country is Japan/USA [.06 .00 .00 .00 .29 .47 .00 .06 .00 .12] with cover 15% when
-                                                               Reliability is better or Much better
-                                                               Price is 7038 to 13202
+                                                                    Reliability is better or Much better
+                                                                    Price is 7038 to 13202
 
 [13] Country is USA       [.00 .05 .05 .15 .15 .00 .00 .00 .10 .50] with cover 17% when
-                                                               Reliability is Much worse or worse or average
-                                                               Price >= 16669
-                                                               Type is Large or Medium
+                                                                    Reliability is Much worse or worse or average
+                                                                    Price >= 16669
+                                                                    Type is Large or Medium
 
-[7] Country is USA       [.00 .00 .02 .04 .17 .00 .07 .04 .00 .67] with cover 46% when
-                                                               Reliability is Much worse or worse or average
-                                                               Price < 16669
+[7]  Country is USA       [.00 .00 .02 .04 .17 .00 .07 .04 .00 .67] with cover 46% when
+                                                                    Reliability is Much worse or worse or average
+                                                                    Price < 16669
 > 
 > expect.err(try(rpart.rules(Country, nonesuch="nonesuch")), 'unused argument (nonesuch = "nonesuch")')
 Error in check.if.dot.arg.supported.by.rpart.rules(...) : 
@@ -1233,6 +1267,100 @@ Got error as expected from try(rpart.rules(99))
 Error in check.if.dot.arg.supported.by.rpart.rules(...) : 
   unused argument (ylim = c(0, 1))
 Got error as expected from try(rpart.rules(Country, ylim = c(0, 1)))
+> 
+> # rpart.predict (factor response, 10 levels)
+> stopifnot(identical(options("width"), old.width))
+> owidth <- options("width")
+> options(width=1e3)
+> print(predict(Country)[1:5,])
+                    Brazil England     France    Germany     Japan Japan/USA      Korea     Mexico Sweden       USA
+Acura Integra 4 0.05882353       0 0.00000000 0.00000000 0.2941176 0.4705882 0.00000000 0.05882353      0 0.1176471
+Dodge Colt 4    0.00000000       0 0.00000000 0.00000000 0.7142857 0.1428571 0.14285714 0.00000000      0 0.0000000
+Dodge Omni 4    0.00000000       0 0.01851852 0.03703704 0.1666667 0.0000000 0.07407407 0.03703704      0 0.6666667
+Eagle Summit 4  0.05882353       0 0.00000000 0.00000000 0.2941176 0.4705882 0.00000000 0.05882353      0 0.1176471
+Ford Escort   4 0.00000000       0 0.01851852 0.03703704 0.1666667 0.0000000 0.07407407 0.03703704      0 0.6666667
+> stopifnot(all.equal(predict(Country), as.matrix(rpart.predict(Country, rules=TRUE)[,1:10])))
+> stopifnot(max(abs(predict(Country) - rpart.predict(Country, rules=TRUE)[,1:10])) == 0)
+> print(rpart.predict(Country, nn=TRUE)[1:5,])
+                    Brazil England     France    Germany     Japan Japan/USA      Korea     Mexico Sweden       USA nn
+Acura Integra 4 0.05882353       0 0.00000000 0.00000000 0.2941176 0.4705882 0.00000000 0.05882353      0 0.1176471 11
+Dodge Colt 4    0.00000000       0 0.00000000 0.00000000 0.7142857 0.1428571 0.14285714 0.00000000      0 0.0000000 10
+Dodge Omni 4    0.00000000       0 0.01851852 0.03703704 0.1666667 0.0000000 0.07407407 0.03703704      0 0.6666667  7
+Eagle Summit 4  0.05882353       0 0.00000000 0.00000000 0.2941176 0.4705882 0.00000000 0.05882353      0 0.1176471 11
+Ford Escort   4 0.00000000       0 0.01851852 0.03703704 0.1666667 0.0000000 0.07407407 0.03703704      0 0.6666667  7
+> stopifnot(all.equal(predict(Country), as.matrix(rpart.predict(Country, nn=TRUE)[,1:10])))
+> print(rpart.predict(Country, nn=TRUE, rules=TRUE)[1:5,], digits=2)
+                Brazil England France Germany Japan Japan/USA Korea Mexico Sweden  USA nn                                                                                                            
+Acura Integra 4  0.059       0  0.000   0.000  0.29      0.47 0.000  0.059      0 0.12 11 because Reliability is          better or Much better & Price is  7038 to 13202                            
+Dodge Colt 4     0.000       0  0.000   0.000  0.71      0.14 0.143  0.000      0 0.00 10 because Reliability is          better or Much better & Price <   7038                                     
+Dodge Omni 4     0.000       0  0.019   0.037  0.17      0.00 0.074  0.037      0 0.67  7 because Reliability is Much worse or worse or average & Price <  16669                                     
+Eagle Summit 4   0.059       0  0.000   0.000  0.29      0.47 0.000  0.059      0 0.12 11 because Reliability is          better or Much better & Price is  7038 to 13202                            
+Ford Escort   4  0.000       0  0.019   0.037  0.17      0.00 0.074  0.037      0 0.67  7 because Reliability is Much worse or worse or average & Price <  16669                                     
+> stopifnot(all.equal(predict(Country), as.matrix(rpart.predict(Country, nn=TRUE, rules=TRUE)[,1:10])))
+> 
+> print(predict(Country, type="class")[1:5])
+Acura Integra 4    Dodge Colt 4    Dodge Omni 4  Eagle Summit 4 Ford Escort   4 
+      Japan/USA           Japan             USA       Japan/USA             USA 
+Levels: Brazil England France Germany Japan Japan/USA Korea Mexico Sweden USA
+> print(rpart.predict(Country, type="class", rules=TRUE, because="reason:")[1:5,])
+                    class                                                                                                            
+Acura Integra 4 Japan/USA reason: Reliability is          better or Much better & Price is  7038 to 13202                            
+Dodge Colt 4        Japan reason: Reliability is          better or Much better & Price <   7038                                     
+Dodge Omni 4          USA reason: Reliability is Much worse or worse or average & Price <  16669                                     
+Eagle Summit 4  Japan/USA reason: Reliability is          better or Much better & Price is  7038 to 13202                            
+Ford Escort   4       USA reason: Reliability is Much worse or worse or average & Price <  16669                                     
+> pred <- rpart.predict(Country, type="class", rules=TRUE)
+> names <- rownames(pred)
+> pred <- pred[,1]
+> names(pred) <- names
+> stopifnot(all.equal(predict(Country, type="class"), pred))
+> print(rpart.predict(Country, type="class", rules=TRUE, because="")[1:5,])
+                    class                                                                                                    
+Acura Integra 4 Japan/USA Reliability is          better or Much better & Price is  7038 to 13202                            
+Dodge Colt 4        Japan Reliability is          better or Much better & Price <   7038                                     
+Dodge Omni 4          USA Reliability is Much worse or worse or average & Price <  16669                                     
+Eagle Summit 4  Japan/USA Reliability is          better or Much better & Price is  7038 to 13202                            
+Ford Escort   4       USA Reliability is Much worse or worse or average & Price <  16669                                     
+> print(rpart.predict(Country, type="class", rules=TRUE, nn=TRUE)[1:5,])
+                    class nn                                                                                                            
+Acura Integra 4 Japan/USA 11 because Reliability is          better or Much better & Price is  7038 to 13202                            
+Dodge Colt 4        Japan 10 because Reliability is          better or Much better & Price <   7038                                     
+Dodge Omni 4          USA  7 because Reliability is Much worse or worse or average & Price <  16669                                     
+Eagle Summit 4  Japan/USA 11 because Reliability is          better or Much better & Price is  7038 to 13202                            
+Ford Escort   4       USA  7 because Reliability is Much worse or worse or average & Price <  16669                                     
+> pred <- rpart.predict(Country, type="class", rules=TRUE, nn=TRUE)
+> names <- rownames(pred)
+> pred <- pred[,1]
+> names(pred) <- names
+> stopifnot(all.equal(predict(Country, type="class"), pred))
+> 
+> print(rpart.predict(Country, newdata=cu.summary[5:8,]))
+                    Brazil England     France    Germany     Japan Japan/USA      Korea     Mexico Sweden       USA
+Ford Escort   4 0.00000000       0 0.01851852 0.03703704 0.1666667 0.0000000 0.07407407 0.03703704      0 0.6666667
+Ford Festiva 4  0.00000000       0 0.00000000 0.00000000 0.7142857 0.1428571 0.14285714 0.00000000      0 0.0000000
+GEO Metro  3    0.00000000       0 0.00000000 0.00000000 0.7142857 0.1428571 0.14285714 0.00000000      0 0.0000000
+GEO Prizm  4    0.05882353       0 0.00000000 0.00000000 0.2941176 0.4705882 0.00000000 0.05882353      0 0.1176471
+> print(rpart.predict(Country, newdata=cu.summary[5:8,], nn=TRUE))
+                    Brazil England     France    Germany     Japan Japan/USA      Korea     Mexico Sweden       USA nn
+Ford Escort   4 0.00000000       0 0.01851852 0.03703704 0.1666667 0.0000000 0.07407407 0.03703704      0 0.6666667  7
+Ford Festiva 4  0.00000000       0 0.00000000 0.00000000 0.7142857 0.1428571 0.14285714 0.00000000      0 0.0000000 10
+GEO Metro  3    0.00000000       0 0.00000000 0.00000000 0.7142857 0.1428571 0.14285714 0.00000000      0 0.0000000 10
+GEO Prizm  4    0.05882353       0 0.00000000 0.00000000 0.2941176 0.4705882 0.00000000 0.05882353      0 0.1176471 11
+> print(rpart.predict(Country, newdata=cu.summary[5:8,], rules=TRUE))
+                    Brazil England     France    Germany     Japan Japan/USA      Korea     Mexico Sweden       USA                                                                                
+Ford Escort   4 0.00000000       0 0.01851852 0.03703704 0.1666667 0.0000000 0.07407407 0.03703704      0 0.6666667 because Reliability is Much worse or worse or average & Price <  16669         
+Ford Festiva 4  0.00000000       0 0.00000000 0.00000000 0.7142857 0.1428571 0.14285714 0.00000000      0 0.0000000 because Reliability is          better or Much better & Price <   7038         
+GEO Metro  3    0.00000000       0 0.00000000 0.00000000 0.7142857 0.1428571 0.14285714 0.00000000      0 0.0000000 because Reliability is          better or Much better & Price <   7038         
+GEO Prizm  4    0.05882353       0 0.00000000 0.00000000 0.2941176 0.4705882 0.00000000 0.05882353      0 0.1176471 because Reliability is          better or Much better & Price is  7038 to 13202
+> print(rpart.predict(Country, newdata=cu.summary[5:8,], nn=TRUE, rules=TRUE))
+                    Brazil England     France    Germany     Japan Japan/USA      Korea     Mexico Sweden       USA nn                                                                                
+Ford Escort   4 0.00000000       0 0.01851852 0.03703704 0.1666667 0.0000000 0.07407407 0.03703704      0 0.6666667  7 because Reliability is Much worse or worse or average & Price <  16669         
+Ford Festiva 4  0.00000000       0 0.00000000 0.00000000 0.7142857 0.1428571 0.14285714 0.00000000      0 0.0000000 10 because Reliability is          better or Much better & Price <   7038         
+GEO Metro  3    0.00000000       0 0.00000000 0.00000000 0.7142857 0.1428571 0.14285714 0.00000000      0 0.0000000 10 because Reliability is          better or Much better & Price <   7038         
+GEO Prizm  4    0.05882353       0 0.00000000 0.00000000 0.2941176 0.4705882 0.00000000 0.05882353      0 0.1176471 11 because Reliability is          better or Much better & Price is  7038 to 13202
+> 
+> options(width=owidth$width)
+> stopifnot(identical(options("width"), old.width))
 > 
 > cat0("\n=== \"style\" argument ===\n")
 
@@ -1347,6 +1475,52 @@ Mileage is 25 when
 
 Mileage is 32 when
               Price < 9447
+> rules.nn <- rpart.rules(Mileage, nn=TRUE)
+> print(rules.nn)
+ nn Mileage                                                                 
+  8      19 when Price >=          9447 & Type is               Large or Van
+  9      22 when Price >=          9447 & Type is                     Medium
+ 10      24 when Price >=         11485 & Type is Compact or Small or Sporty
+ 11      25 when Price is 9447 to 11485 & Type is Compact or Small or Sporty
+  3      32 when Price <  9447                                              
+> print(rules.nn, style='tall')
+[8]  Mileage is 19 when
+         Price >= 9447
+         Type is Large or Van
+
+[9]  Mileage is 22 when
+         Price >= 9447
+         Type is Medium
+
+[10] Mileage is 24 when
+         Price >= 11485
+         Type is Compact or Small or Sporty
+
+[11] Mileage is 25 when
+         Price is 9447 to 11485
+         Type is Compact or Small or Sporty
+
+[3]  Mileage is 32 when
+         Price < 9447
+> print(rules.nn, style='tallw')
+[8]  Mileage is 19 when
+                   Price >= 9447
+                   Type is Large or Van
+
+[9]  Mileage is 22 when
+                   Price >= 9447
+                   Type is Medium
+
+[10] Mileage is 24 when
+                   Price >= 11485
+                   Type is Compact or Small or Sporty
+
+[11] Mileage is 25 when
+                   Price is 9447 to 11485
+                   Type is Compact or Small or Sporty
+
+[3]  Mileage is 32 when
+                   Price < 9447
 > 
 > data(ptitanic)
 > survived <- rpart(survived ~ ., data=ptitanic)
@@ -1489,6 +1663,286 @@ survived is 0.93 with cover 19% when
     fm
     1s or 2n
 > 
+> print(rpart.rules(survived, varlen=-3, faclen=2, nn=TRUE))
+  nn survived                                                                             
+  10     0.05 when sex is ml & age <   9.5         & sib >= 3                             
+  52     0.11 when sex is fm & age >=         16.5 & sib <  3 & pcl is       3r & par >= 4
+  12     0.14 when sex is fm                       & sib >= 3 & pcl is       3r           
+   4     0.17 when sex is ml & age >=          9.5                                        
+ 106     0.39 when sex is fm & age >=         27.5 & sib <  3 & pcl is       3r & par <  4
+ 214     0.39 when sex is fm & age is 16.5 to 21.5 & sib <  3 & pcl is       3r & par <  4
+ 215     0.62 when sex is fm & age is 21.5 to 27.5 & sib <  3 & pcl is       3r & par <  4
+  27     0.73 when sex is fm & age <  16.5         & sib <  3 & pcl is       3r           
+  11     0.89 when sex is ml & age <   9.5         & sib <  3                             
+   7     0.93 when sex is fm                                  & pcl is 1s or 2n           
+> print(rpart.rules(survived, varlen=-3, faclen=2, nn=TRUE, cover=TRUE))
+  nn survived                                                                                cover
+  10     0.05 when sex is ml & age <   9.5         & sib >= 3                                   2%
+  52     0.11 when sex is fm & age >=         16.5 & sib <  3 & pcl is       3r & par >= 4      1%
+  12     0.14 when sex is fm                       & sib >= 3 & pcl is       3r                 2%
+   4     0.17 when sex is ml & age >=          9.5                                             61%
+ 106     0.39 when sex is fm & age >=         27.5 & sib <  3 & pcl is       3r & par <  4      3%
+ 214     0.39 when sex is fm & age is 16.5 to 21.5 & sib <  3 & pcl is       3r & par <  4      2%
+ 215     0.62 when sex is fm & age is 21.5 to 27.5 & sib <  3 & pcl is       3r & par <  4      6%
+  27     0.73 when sex is fm & age <  16.5         & sib <  3 & pcl is       3r                 3%
+  11     0.89 when sex is ml & age <   9.5         & sib <  3                                   2%
+   7     0.93 when sex is fm                                  & pcl is 1s or 2n                19%
+> print(rpart.rules(survived, style="wide", varlen=-3, faclen=2, nn=TRUE))
+  nn survived                                                                             
+  10     0.05 when sex is ml & age <   9.5         & sib >= 3                             
+  52     0.11 when sex is fm & age >=         16.5 & sib <  3 & pcl is       3r & par >= 4
+  12     0.14 when sex is fm                       & sib >= 3 & pcl is       3r           
+   4     0.17 when sex is ml & age >=          9.5                                        
+ 106     0.39 when sex is fm & age >=         27.5 & sib <  3 & pcl is       3r & par <  4
+ 214     0.39 when sex is fm & age is 16.5 to 21.5 & sib <  3 & pcl is       3r & par <  4
+ 215     0.62 when sex is fm & age is 21.5 to 27.5 & sib <  3 & pcl is       3r & par <  4
+  27     0.73 when sex is fm & age <  16.5         & sib <  3 & pcl is       3r           
+  11     0.89 when sex is ml & age <   9.5         & sib <  3                             
+   7     0.93 when sex is fm                                  & pcl is 1s or 2n           
+> print(rpart.rules(survived, style="tall", varlen=-3, faclen=2, nn=TRUE))
+[10]  survived is 0.05 when
+          sex is ml
+          age < 9.5
+          sib >= 3
+
+[52]  survived is 0.11 when
+          sex is fm
+          age >= 16.5
+          sib < 3
+          pcl is 3r
+          par >= 4
+
+[12]  survived is 0.14 when
+          sex is fm
+          sib >= 3
+          pcl is 3r
+
+[4]   survived is 0.17 when
+          sex is ml
+          age >= 9.5
+
+[106] survived is 0.39 when
+          sex is fm
+          age >= 27.5
+          sib < 3
+          pcl is 3r
+          par < 4
+
+[214] survived is 0.39 when
+          sex is fm
+          age is 16.5 to 21.5
+          sib < 3
+          pcl is 3r
+          par < 4
+
+[215] survived is 0.62 when
+          sex is fm
+          age is 21.5 to 27.5
+          sib < 3
+          pcl is 3r
+          par < 4
+
+[27]  survived is 0.73 when
+          sex is fm
+          age < 16.5
+          sib < 3
+          pcl is 3r
+
+[11]  survived is 0.89 when
+          sex is ml
+          age < 9.5
+          sib < 3
+
+[7]   survived is 0.93 when
+          sex is fm
+          pcl is 1s or 2n
+> print(rpart.rules(survived, style="wide", clip.facs=TRUE, varlen=-3, faclen=2, nn=TRUE))
+  nn survived                                                               
+  10     0.05 when ml & age <   9.5         & sib >= 3                      
+  52     0.11 when fm & age >=         16.5 & sib <  3 &       3r & par >= 4
+  12     0.14 when fm                       & sib >= 3 &       3r           
+   4     0.17 when ml & age >=          9.5                                 
+ 106     0.39 when fm & age >=         27.5 & sib <  3 &       3r & par <  4
+ 214     0.39 when fm & age is 16.5 to 21.5 & sib <  3 &       3r & par <  4
+ 215     0.62 when fm & age is 21.5 to 27.5 & sib <  3 &       3r & par <  4
+  27     0.73 when fm & age <  16.5         & sib <  3 &       3r           
+  11     0.89 when ml & age <   9.5         & sib <  3                      
+   7     0.93 when fm                                  & 1s or 2n           
+> print(rpart.rules(survived, style="tall", cover=TRUE, clip.facs=TRUE, varlen=-3, faclen=2, nn=TRUE))
+[10]  survived is 0.05 with cover 2% when
+          ml
+          age < 9.5
+          sib >= 3
+
+[52]  survived is 0.11 with cover 1% when
+          fm
+          age >= 16.5
+          sib < 3
+          3r
+          par >= 4
+
+[12]  survived is 0.14 with cover 2% when
+          fm
+          sib >= 3
+          3r
+
+[4]   survived is 0.17 with cover 61% when
+          ml
+          age >= 9.5
+
+[106] survived is 0.39 with cover 3% when
+          fm
+          age >= 27.5
+          sib < 3
+          3r
+          par < 4
+
+[214] survived is 0.39 with cover 2% when
+          fm
+          age is 16.5 to 21.5
+          sib < 3
+          3r
+          par < 4
+
+[215] survived is 0.62 with cover 6% when
+          fm
+          age is 21.5 to 27.5
+          sib < 3
+          3r
+          par < 4
+
+[27]  survived is 0.73 with cover 3% when
+          fm
+          age < 16.5
+          sib < 3
+          3r
+
+[11]  survived is 0.89 with cover 2% when
+          ml
+          age < 9.5
+          sib < 3
+
+[7]   survived is 0.93 with cover 19% when
+          fm
+          1s or 2n
+> 
+> # rpart.predict (binomial response)
+> print(predict(survived)[1:5,])
+       died  survived
+1 0.0680000 0.9320000
+2 0.1111111 0.8888889
+3 0.0680000 0.9320000
+4 0.8291457 0.1708543
+5 0.0680000 0.9320000
+> stopifnot(all.equal(predict(survived), as.matrix(rpart.predict(survived, rules=TRUE)[,1:2])))
+> stopifnot(max(abs(predict(survived) - rpart.predict(survived, rules=TRUE)[,1:2])) == 0)
+> print(rpart.predict(survived, nn=TRUE)[1:5,])
+       died  survived nn
+1 0.0680000 0.9320000  7
+2 0.1111111 0.8888889 11
+3 0.0680000 0.9320000  7
+4 0.8291457 0.1708543  4
+5 0.0680000 0.9320000  7
+> stopifnot(all.equal(predict(survived), as.matrix(rpart.predict(survived, nn=TRUE)[,1:2])))
+> print(rpart.predict(survived, nn=TRUE, rules=TRUE)[1:5,])
+       died  survived nn
+1 0.0680000 0.9320000  7
+2 0.1111111 0.8888889 11
+3 0.0680000 0.9320000  7
+4 0.8291457 0.1708543  4
+5 0.0680000 0.9320000  7
+                                                                                              
+1 because sex is female                                    & pclass is 1st or 2nd             
+2 because sex is   male & age <   9.5         & sibsp <  3                                    
+3 because sex is female                                    & pclass is 1st or 2nd             
+4 because sex is   male & age >=          9.5                                                 
+5 because sex is female                                    & pclass is 1st or 2nd             
+> stopifnot(all.equal(predict(survived), as.matrix(rpart.predict(survived, nn=TRUE, rules=TRUE)[,1:2])))
+> 
+> print(predict(survived, type="class")[1:5])
+       1        2        3        4        5 
+survived survived survived     died survived 
+Levels: died survived
+> print(rpart.predict(survived, type="class", rules=TRUE)[1:5,])
+     class
+1 survived
+2 survived
+3 survived
+4     died
+5 survived
+                                                                                              
+1 because sex is female                                    & pclass is 1st or 2nd             
+2 because sex is   male & age <   9.5         & sibsp <  3                                    
+3 because sex is female                                    & pclass is 1st or 2nd             
+4 because sex is   male & age >=          9.5                                                 
+5 because sex is female                                    & pclass is 1st or 2nd             
+> pred <- rpart.predict(survived, type="class", rules=TRUE)
+> names <- rownames(pred)
+> pred <- pred[,1]
+> names(pred) <- names
+> stopifnot(all.equal(predict(survived, type="class"), pred))
+> print(rpart.predict(survived, type="class", rules=TRUE)[1:5,])
+     class
+1 survived
+2 survived
+3 survived
+4     died
+5 survived
+                                                                                              
+1 because sex is female                                    & pclass is 1st or 2nd             
+2 because sex is   male & age <   9.5         & sibsp <  3                                    
+3 because sex is female                                    & pclass is 1st or 2nd             
+4 because sex is   male & age >=          9.5                                                 
+5 because sex is female                                    & pclass is 1st or 2nd             
+> print(rpart.predict(survived, type="class", rules=TRUE, nn=TRUE)[1:5,])
+     class nn
+1 survived  7
+2 survived 11
+3 survived  7
+4     died  4
+5 survived  7
+                                                                                              
+1 because sex is female                                    & pclass is 1st or 2nd             
+2 because sex is   male & age <   9.5         & sibsp <  3                                    
+3 because sex is female                                    & pclass is 1st or 2nd             
+4 because sex is   male & age >=          9.5                                                 
+5 because sex is female                                    & pclass is 1st or 2nd             
+> pred <- rpart.predict(survived, type="class", rules=TRUE, nn=TRUE)
+> names <- rownames(pred)
+> pred <- pred[,1]
+> names(pred) <- names
+> stopifnot(all.equal(predict(survived, type="class"), pred))
+> 
+> print(rpart.predict(survived, newdata=ptitanic[5:8,]))
+       died  survived
+5 0.0680000 0.9320000
+6 0.8291457 0.1708543
+7 0.0680000 0.9320000
+8 0.8291457 0.1708543
+> print(rpart.predict(survived, newdata=ptitanic[5:8,], nn=TRUE))
+       died  survived nn
+5 0.0680000 0.9320000  7
+6 0.8291457 0.1708543  4
+7 0.0680000 0.9320000  7
+8 0.8291457 0.1708543  4
+> print(rpart.predict(survived, newdata=ptitanic[5:8,], rules=TRUE))
+       died  survived                                                          
+5 0.0680000 0.9320000 because sex is female              & pclass is 1st or 2nd
+6 0.8291457 0.1708543 because sex is   male & age >= 9.5                       
+7 0.0680000 0.9320000 because sex is female              & pclass is 1st or 2nd
+8 0.8291457 0.1708543 because sex is   male & age >= 9.5                       
+> print(rpart.predict(survived, newdata=ptitanic[5:8,], nn=TRUE, rules=TRUE))
+       died  survived nn
+5 0.0680000 0.9320000  7
+6 0.8291457 0.1708543  4
+7 0.0680000 0.9320000  7
+8 0.8291457 0.1708543  4
+                                                           
+5 because sex is female              & pclass is 1st or 2nd
+6 because sex is   male & age >= 9.5                       
+7 because sex is female              & pclass is 1st or 2nd
+8 because sex is   male & age >= 9.5                       
+> 
 > Reliability <- rpart(Reliability ~ ., data=cu.summary)
 > print(rpart.rules(Reliability, style='wide'))
  Reliability  Muc wor ave bet Muc                                                                                              
@@ -1621,18 +2075,18 @@ extra="A"
 > stopifnot(identical(rpart.rules(survived), rpart.rules(survived, extra=0))) # extra=0 same as "auto"
 > cat0("extra=1\n")
 extra=1
-> expect.err(try(rpart.rules(survived, extra=1)), "extra=1 is not yet supported by rpart.rules")
-Error : (converted from warning) extra=1 is not yet supported by rpart.rules (although legal for plots)
+> expect.err(try(rpart.rules(survived, extra=1)), "extra=1 is not supported by rpart.rules")
+Error : (converted from warning) extra=1 is not supported by rpart.rules (although useable for plots)
 Got error as expected from try(rpart.rules(survived, extra = 1))
 > cat0("extra=2\n")
 extra=2
-> expect.err(try(rpart.rules(survived, extra=2)), "extra=2 is not yet supported by rpart.rules")
-Error : (converted from warning) extra=2 is not yet supported by rpart.rules (although legal for plots)
+> expect.err(try(rpart.rules(survived, extra=2)), "extra=2 is not supported by rpart.rules")
+Error : (converted from warning) extra=2 is not supported by rpart.rules (although useable for plots)
 Got error as expected from try(rpart.rules(survived, extra = 2))
 > cat0("extra=3\n")
 extra=3
-> expect.err(try(rpart.rules(survived, extra=3)), "extra=3 is not yet supported by rpart.rules")
-Error : (converted from warning) extra=3 is not yet supported by rpart.rules (although legal for plots)
+> expect.err(try(rpart.rules(survived, extra=3)), "extra=3 is not supported by rpart.rules")
+Error : (converted from warning) extra=3 is not supported by rpart.rules (although useable for plots)
 Got error as expected from try(rpart.rules(survived, extra = 3))
 > cat0("extra=4\n")
 extra=4
@@ -1792,18 +2246,18 @@ extra=0
   virginica [ .00  .02  .98] when Petal.Length >= 2.5 & Petal.Width >= 1.8
 > cat0("extra=1\n")
 extra=1
-> expect.err(try(print(rpart.rules(Species, extra=1))), "extra=1 is not yet supported by rpart.rules")
-Error : (converted from warning) extra=1 is not yet supported by rpart.rules (although legal for plots)
+> expect.err(try(print(rpart.rules(Species, extra=1))), "extra=1 is not supported by rpart.rules")
+Error : (converted from warning) extra=1 is not supported by rpart.rules (although useable for plots)
 Got error as expected from try(print(rpart.rules(Species, extra = 1)))
 > cat0("extra=2\n")
 extra=2
-> expect.err(try(print(rpart.rules(Species, extra=2))), "extra=2 is not yet supported by rpart.rules")
-Error : (converted from warning) extra=2 is not yet supported by rpart.rules (although legal for plots)
+> expect.err(try(print(rpart.rules(Species, extra=2))), "extra=2 is not supported by rpart.rules")
+Error : (converted from warning) extra=2 is not supported by rpart.rules (although useable for plots)
 Got error as expected from try(print(rpart.rules(Species, extra = 2)))
 > cat0("extra=3\n")
 extra=3
-> expect.err(try(print(rpart.rules(Species, extra=3))), "extra=3 is not yet supported by rpart.rules")
-Error : (converted from warning) extra=3 is not yet supported by rpart.rules (although legal for plots)
+> expect.err(try(print(rpart.rules(Species, extra=3))), "extra=3 is not supported by rpart.rules")
+Error : (converted from warning) extra=3 is not supported by rpart.rules (although useable for plots)
 Got error as expected from try(print(rpart.rules(Species, extra = 3)))
 > cat0("extra=4\n")
 extra=4
@@ -2132,6 +2586,94 @@ Got error as expected from try(rpart.rules(survived, and = ""))
 survived is 0.38 when
    
 > 
+> # rpart.predict (null.model)
+> print(predict(null.model)[1:5,])
+      died survived
+1 0.618029 0.381971
+2 0.618029 0.381971
+3 0.618029 0.381971
+4 0.618029 0.381971
+5 0.618029 0.381971
+> stopifnot(all.equal(predict(null.model), as.matrix(rpart.predict(null.model, rules=TRUE)[,1:2])))
+> stopifnot(max(abs(predict(null.model) - rpart.predict(null.model, rules=TRUE)[,1:2])) == 0)
+> print(rpart.predict(null.model, nn=TRUE)[1:5,])
+      died survived nn
+1 0.618029 0.381971  1
+2 0.618029 0.381971  1
+3 0.618029 0.381971  1
+4 0.618029 0.381971  1
+5 0.618029 0.381971  1
+> stopifnot(all.equal(predict(null.model), as.matrix(rpart.predict(null.model, nn=TRUE)[,1:2])))
+> print(rpart.predict(null.model, nn=TRUE, rules=TRUE)[1:5,])
+      died survived nn                   
+1 0.618029 0.381971  1 because null model
+2 0.618029 0.381971  1 because null model
+3 0.618029 0.381971  1 because null model
+4 0.618029 0.381971  1 because null model
+5 0.618029 0.381971  1 because null model
+> stopifnot(all.equal(predict(null.model), as.matrix(rpart.predict(null.model, nn=TRUE, rules=TRUE)[,1:2])))
+> 
+> print(predict(null.model, type="class")[1:5])
+   1    2    3    4    5 
+died died died died died 
+Levels: died survived
+> print(rpart.predict(null.model, type="class", rules=TRUE, because="     reason: ")[1:5,])
+  class                      
+1  died    reason: null model
+2  died    reason: null model
+3  died    reason: null model
+4  died    reason: null model
+5  died    reason: null model
+> pred <- rpart.predict(null.model, type="class", rules=TRUE)
+> names <- rownames(pred)
+> pred <- pred[,1]
+> names(pred) <- names
+> stopifnot(all.equal(predict(null.model, type="class"), pred))
+> print(rpart.predict(null.model, type="class", rules=TRUE)[1:5,])
+  class                   
+1  died because null model
+2  died because null model
+3  died because null model
+4  died because null model
+5  died because null model
+> print(rpart.predict(null.model, type="class", rules=TRUE, nn=TRUE)[1:5,])
+  class nn                   
+1  died  1 because null model
+2  died  1 because null model
+3  died  1 because null model
+4  died  1 because null model
+5  died  1 because null model
+> pred <- rpart.predict(null.model, type="class", rules=TRUE, nn=TRUE)
+> names <- rownames(pred)
+> pred <- pred[,1]
+> names(pred) <- names
+> stopifnot(all.equal(predict(null.model, type="class"), pred))
+> 
+> print(rpart.predict(null.model, newdata=ptitanic[5:8,]))
+         died survived
+[1,] 0.618029 0.381971
+[2,] 0.618029 0.381971
+[3,] 0.618029 0.381971
+[4,] 0.618029 0.381971
+> print(rpart.predict(null.model, newdata=ptitanic[5:8,], nn=TRUE))
+      died survived nn
+1 0.618029 0.381971  1
+2 0.618029 0.381971  1
+3 0.618029 0.381971  1
+4 0.618029 0.381971  1
+> print(rpart.predict(null.model, newdata=ptitanic[5:8,], rules=TRUE))
+      died survived                   
+1 0.618029 0.381971 because null model
+2 0.618029 0.381971 because null model
+3 0.618029 0.381971 because null model
+4 0.618029 0.381971 because null model
+> print(rpart.predict(null.model, newdata=ptitanic[5:8,], nn=TRUE, rules=TRUE))
+      died survived nn                   
+1 0.618029 0.381971  1 because null model
+2 0.618029 0.381971  1 because null model
+3 0.618029 0.381971  1 because null model
+4 0.618029 0.381971  1 because null model
+> 
 > cat0("\n=== \"varorder\" argument ===\n")
 
 === "varorder" argument ===
@@ -2255,5 +2797,257 @@ Warning: varorder="nonesuch1" does not uniquely match one of: "sex" "pclass" "pa
 > par(old.par)
 > 
 > stopifnot(identical(options("width"), old.width))
+> 
+> # Survival model
+> 
+> library('rpart.plot')
+> library('survival')
+
+Attaching package: 'survival'
+
+The following object is masked from 'package:rpart':
+
+    solder
+
+> rpart.surv <- rpart(Surv(age, sibsp == 1) ~ ., ptitanic)
+> rpart.plot(rpart.surv, under=TRUE)
+> print(rpart.rules(rpart.surv))
+ Surv                                                            
+ 0.53 when parch <  1                             & sex is   male
+ 1.04 when parch >=      1 & pclass is        1st                
+ 1.18 when parch <  1                             & sex is female
+ 1.82 when parch >=      2 & pclass is 2nd or 3rd                
+ 4.35 when parch is 1 to 2 & pclass is 2nd or 3rd                
+> print(rpart.rules(rpart.surv, cover=TRUE, clip.facs=TRUE, digits=4))
+   Surv                                              cover
+ 0.5255 when parch <  1                   &   male     51%
+ 1.0387 when parch >=      1 &        1st               8%
+ 1.1823 when parch <  1                   & female     22%
+ 1.8168 when parch >=      2 & 2nd or 3rd               8%
+ 4.3502 when parch is 1 to 2 & 2nd or 3rd              11%
+> options(warn=2) # treat warnings as errors
+> expect.err(try(rpart.rules(rpart.surv, extra=1)), "(converted from warning) extra=1 is not supported by rpart.rules")
+Error : (converted from warning) extra=1 is not supported by rpart.rules (although useable for plots)
+Got error as expected from try(rpart.rules(rpart.surv, extra = 1))
+> expect.err(try(rpart.rules(rpart.surv, extra=2)), "(converted from warning) extra=2 is not supported by rpart.rules")
+Error : (converted from warning) extra=2 is not supported by rpart.rules (although useable for plots)
+Got error as expected from try(rpart.rules(rpart.surv, extra = 2))
+> options(warn=1) # print warnings as they occur
+> 
+> owidth <- options("width")
+> options(width=1e3)
+> # rpart.predict (Survival model)
+> print(predict(rpart.surv)[1:5])
+       1        2        3        4        5 
+1.182288 1.038697 1.038697 1.038697 1.038697 
+> print(rpart.predict(rpart.surv)[1:5])
+       1        2        3        4        5 
+1.182288 1.038697 1.038697 1.038697 1.038697 
+> stopifnot(identical(predict(rpart.surv), rpart.predict(rpart.surv)))
+> print(rpart.predict(rpart.surv, rules=TRUE)[12:14,])
+       Surv                                                               
+12 1.182288 because parch <  1                             & sex is female
+13 1.182288 because parch <  1                             & sex is female
+14 1.182288 because parch <  1                             & sex is female
+> # use max and not identical because rpart.predict(rpart.surv, rules=TRUE)[,1] doesn't have names
+> stopifnot(max(abs(predict(rpart.surv) - rpart.predict(rpart.surv, rules=TRUE)[,1])) == 0)
+> stopifnot(identical(as.numeric(predict(rpart.surv)), rpart.predict(rpart.surv, rules=TRUE)[,1]))
+> print(rpart.predict(rpart.surv, nn=TRUE)[12:14,])
+       Surv nn
+12 1.182288  5
+13 1.182288  5
+14 1.182288  5
+> stopifnot(max(abs(predict(rpart.surv) - rpart.predict(rpart.surv, nn=TRUE)[,1])) == 0)
+> print(rpart.predict(rpart.surv, nn=TRUE, rules=TRUE)[12:14,])
+       Surv nn                                                               
+12 1.182288  5 because parch <  1                             & sex is female
+13 1.182288  5 because parch <  1                             & sex is female
+14 1.182288  5 because parch <  1                             & sex is female
+> stopifnot(max(abs(predict(rpart.surv) - rpart.predict(rpart.surv, nn=TRUE, rules=TRUE)[,1])) == 0)
+> print(rpart.predict(rpart.surv, newdata=ptitanic[5:8,]))
+        5         6         7         8 
+1.0386969 0.5254767 1.1822877 0.5254767 
+> print(rpart.predict(rpart.surv, newdata=ptitanic[5:8,], nn=TRUE))
+       Surv nn
+5 1.0386969  6
+6 0.5254767  4
+7 1.1822877  5
+8 0.5254767  4
+> print(rpart.predict(rpart.surv, newdata=ptitanic[5:8,], rules=TRUE))
+       Surv                                                     
+5 1.0386969 because parch >=   1 & pclass is 1st                
+6 0.5254767 because parch <  1                   & sex is   male
+7 1.1822877 because parch <  1                   & sex is female
+8 0.5254767 because parch <  1                   & sex is   male
+> print(rpart.predict(rpart.surv, newdata=ptitanic[5:8,], nn=TRUE, rules=TRUE))
+       Surv nn                                                     
+5 1.0386969  6 because parch >=   1 & pclass is 1st                
+6 0.5254767  4 because parch <  1                   & sex is   male
+7 1.1822877  5 because parch <  1                   & sex is female
+8 0.5254767  4 because parch <  1                   & sex is   male
+> options(width=owidth$width)
+> stopifnot(identical(options("width"), old.width))
+> 
+> #--- extra tests for rpart.predict ---
+> 
+> survived <- rpart(survived ~ ., data=ptitanic)
+> print(rpart.rules(survived))
+ survived                                                                                          
+     0.05 when sex is   male & age <   9.5         & sibsp >= 3                                    
+     0.11 when sex is female & age >=         16.5 & sibsp <  3 & pclass is        3rd & parch >= 4
+     0.14 when sex is female                       & sibsp >= 3 & pclass is        3rd             
+     0.17 when sex is   male & age >=          9.5                                                 
+     0.39 when sex is female & age >=         27.5 & sibsp <  3 & pclass is        3rd & parch <  4
+     0.39 when sex is female & age is 16.5 to 21.5 & sibsp <  3 & pclass is        3rd & parch <  4
+     0.62 when sex is female & age is 21.5 to 27.5 & sibsp <  3 & pclass is        3rd & parch <  4
+     0.73 when sex is female & age <  16.5         & sibsp <  3 & pclass is        3rd             
+     0.89 when sex is   male & age <   9.5         & sibsp <  3                                    
+     0.93 when sex is female                                    & pclass is 1st or 2nd             
+> old.width <- options(width=1e3)$width
+> pred <- rpart.predict(survived, rules=TRUE)[2:4,]
+> rownames(pred) <- NULL
+> print(pred)
+       died  survived                                                                                             
+1 0.1111111 0.8888889 because sex is   male & age <   9.5         & sibsp <  3                                    
+2 0.0680000 0.9320000 because sex is female                                    & pclass is 1st or 2nd             
+3 0.8291457 0.1708543 because sex is   male & age >=          9.5                                                 
+> expect.err(try(rpart.predict(survived, rules=TRUE, style="tall")), "style = \"tall\" is not allowed in this context")
+Error : style = "tall" is not allowed in this context
+Got error as expected from try(rpart.predict(survived, rules = TRUE, style = "tall"))
+> print(rpart.predict(survived, rules=TRUE, cover=TRUE)[2:4,])
+       died  survived                                                                                                                   
+2 0.1111111 0.8888889 because sex is   male  & age <   9.5           & sibsp  <    3                                                  2%
+3 0.0680000 0.9320000 because sex is female                                            & pclass  is 1st or 2nd                       19%
+4 0.8291457 0.1708543 because sex is   male  & age >=          9.5                                                                   61%
+> print(rpart.predict(survived, rules=TRUE, roundint=FALSE)[2:4,])
+       died  survived                                                                                                 
+2 0.1111111 0.8888889 because sex is   male & age <   9.5         & sibsp <  2.5                                      
+3 0.0680000 0.9320000 because sex is female                                      & pclass is 1st or 2nd               
+4 0.8291457 0.1708543 because sex is   male & age >=          9.5                                                     
+> print(rpart.predict(survived, rules=TRUE, roundint=FALSE, clip.facs=TRUE)[2:4,])
+       died  survived                                                                                
+2 0.1111111 0.8888889 because   male & age <   9.5         & sibsp <  2.5                            
+3 0.0680000 0.9320000 because female                                      & 1st or 2nd               
+4 0.8291457 0.1708543 because   male & age >=          9.5                                           
+> print(rpart.predict(survived, rules=TRUE, varorder="pclass")[2:4,])
+       died  survived                                                                                             
+2 0.1111111 0.8888889 because                        sex is   male & age <   9.5         & sibsp <  3             
+3 0.0680000 0.9320000 because pclass is 1st or 2nd & sex is female                                                
+4 0.8291457 0.1708543 because                        sex is   male & age >=          9.5                          
+> print(rpart.predict(survived, rules=TRUE, faclen=-2)[2:4,])
+       died  survived                                                                                       
+2 0.1111111 0.8888889 because sex is ma & age <   9.5         & sibsp <  3                                  
+3 0.0680000 0.9320000 because sex is fe                                    & pclass is 1s or 2n             
+4 0.8291457 0.1708543 because sex is ma & age >=          9.5                                               
+> print(rpart.predict(survived, rules=TRUE, varlen=2)[2:4,])
+       died  survived                                                                                 
+2 0.1111111 0.8888889 because sx is   male & ag <   9.5         & sb <  3                             
+3 0.0680000 0.9320000 because sx is female                                & pc is 1st or 2nd          
+4 0.8291457 0.1708543 because sx is   male & ag >=          9.5                                       
+> print(rpart.predict(survived, rules=TRUE, varlen=2)[2:4,], digits=2)
+   died survived                                                                                 
+2 0.111     0.89 because sx is   male & ag <   9.5         & sb <  3                             
+3 0.068     0.93 because sx is female                                & pc is 1st or 2nd          
+4 0.829     0.17 because sx is   male & ag >=          9.5                                       
+> options(width=old.width)
+> 
+> set.seed(2018)
+> ptit <- ptitanic
+> ptit <- ptit[sample.int(nrow(ptitanic)),]
+> ptit <- ptit[1:50,]
+> pclass <- rpart(pclass~., data=ptit, control=list(cp=.05))
+> print(rpart.rules(pclass))
+ pclass  1st 2nd 3rd                                
+    1st [.78 .11 .11] when age >= 27 & sex is female
+    3rd [.29 .06 .65] when age >= 27 & sex is   male
+    3rd [.08 .17 .75] when age <  27                
+> options(digits=2)
+> 
+> print(predict(pclass)[1:5,])
+      1st   2nd  3rd
+441 0.778 0.111 0.11
+607 0.083 0.167 0.75
+80  0.778 0.111 0.11
+258 0.778 0.111 0.11
+619 0.294 0.059 0.65
+> stopifnot(all.equal(predict(pclass), as.matrix(rpart.predict(pclass, rules=TRUE)[,1:3])))
+> stopifnot(max(abs(predict(pclass) - rpart.predict(pclass, rules=TRUE)[,1:3])) == 0)
+> print(rpart.predict(pclass, nn=TRUE)[1:5,])
+      1st   2nd  3rd nn
+441 0.778 0.111 0.11  4
+607 0.083 0.167 0.75  3
+80  0.778 0.111 0.11  4
+258 0.778 0.111 0.11  4
+619 0.294 0.059 0.65  5
+> stopifnot(all.equal(predict(pclass), as.matrix(rpart.predict(pclass, nn=TRUE)[,1:3])))
+> print(rpart.predict(pclass, nn=TRUE, rules=TRUE)[1:5,])
+      1st   2nd  3rd nn                                  
+441 0.778 0.111 0.11  4 because age >= 27 & sex is female
+607 0.083 0.167 0.75  3 because age <  27                
+80  0.778 0.111 0.11  4 because age >= 27 & sex is female
+258 0.778 0.111 0.11  4 because age >= 27 & sex is female
+619 0.294 0.059 0.65  5 because age >= 27 & sex is   male
+> stopifnot(all.equal(predict(pclass), as.matrix(rpart.predict(pclass, nn=TRUE, rules=TRUE)[,1:3])))
+> 
+> print(predict(pclass, type="class")[1:5])
+441 607  80 258 619 
+1st 3rd 1st 1st 3rd 
+Levels: 1st 2nd 3rd
+> print(rpart.predict(pclass, type="class", rules=TRUE)[1:5,])
+    class                                  
+441   1st because age >= 27 & sex is female
+607   3rd because age <  27                
+80    1st because age >= 27 & sex is female
+258   1st because age >= 27 & sex is female
+619   3rd because age >= 27 & sex is   male
+> pred <- rpart.predict(pclass, type="class", rules=TRUE)
+> names <- rownames(pred)
+> pred <- pred[,1]
+> names(pred) <- names
+> stopifnot(all.equal(predict(pclass, type="class"), pred))
+> print(rpart.predict(pclass, type="class", rules=TRUE)[1:5,])
+    class                                  
+441   1st because age >= 27 & sex is female
+607   3rd because age <  27                
+80    1st because age >= 27 & sex is female
+258   1st because age >= 27 & sex is female
+619   3rd because age >= 27 & sex is   male
+> print(rpart.predict(pclass, type="class", rules=TRUE, nn=TRUE)[1:5,])
+    class nn                                  
+441   1st  4 because age >= 27 & sex is female
+607   3rd  3 because age <  27                
+80    1st  4 because age >= 27 & sex is female
+258   1st  4 because age >= 27 & sex is female
+619   3rd  5 because age >= 27 & sex is   male
+> pred <- rpart.predict(pclass, type="class", rules=TRUE, nn=TRUE)
+> names <- rownames(pred)
+> pred <- pred[,1]
+> names(pred) <- names
+> stopifnot(all.equal(predict(pclass, type="class"), pred))
+> 
+> print(rpart.predict(pclass, newdata=ptit[5:8,]))
+      1st   2nd  3rd
+619 0.294 0.059 0.65
+393 0.083 0.167 0.75
+791 0.294 0.059 0.65
+170 0.778 0.111 0.11
+> print(rpart.predict(pclass, newdata=ptit[5:8,], nn=TRUE))
+      1st   2nd  3rd nn
+619 0.294 0.059 0.65  5
+393 0.083 0.167 0.75  3
+791 0.294 0.059 0.65  5
+170 0.778 0.111 0.11  4
+> print(rpart.predict(pclass, newdata=ptit[5:8,], rules=TRUE))
+      1st   2nd  3rd                                  
+619 0.294 0.059 0.65 because age >= 27 & sex is   male
+393 0.083 0.167 0.75 because age <  27                
+791 0.294 0.059 0.65 because age >= 27 & sex is   male
+170 0.778 0.111 0.11 because age >= 27 & sex is female
+> print(rpart.predict(pclass, newdata=ptit[5:8,], nn=TRUE, rules=TRUE))
+      1st   2nd  3rd nn                                  
+619 0.294 0.059 0.65  5 because age >= 27 & sex is   male
+393 0.083 0.167 0.75  3 because age <  27                
+791 0.294 0.059 0.65  5 because age >= 27 & sex is   male
+170 0.778 0.111 0.11  4 because age >= 27 & sex is female
 > 
 > source("test.epilog.R")

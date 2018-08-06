@@ -21,7 +21,10 @@ rpart.rules <- function(x=stop("no 'x' argument"),
         lt            <- ret$lt
         ge            <- ret$ge
         and           <- ret$and
+        because       <- ret$because
         response.name <- ret$response.name
+        rpart.predict <- ret$rpart.predict # hidden arguments for rpart.predict
+        where         <- ret$where
 
     obj <- x
     style <- match.choices(style, allowed.styles)
@@ -29,6 +32,7 @@ rpart.rules <- function(x=stop("no 'x' argument"),
     nn <- check.boolean(nn)
     roundint <- check.boolean(roundint)
     clip.facs <- check.boolean(clip.facs)
+    rpart.predict <- check.boolean(rpart.predict)
     digits <- process.digits.arg(digits)
     if(digits < 0) # non negative because we use standard data.frame formatting
         digits <- -digits
@@ -42,10 +46,12 @@ rpart.rules <- function(x=stop("no 'x' argument"),
     stopifnot.string(facsep)
     # we trim spaces around these because print.data.frame
     # unavoidably adds spaces between columns
-    stopifnot.string(eq);  eq  <- trim.surrounding.space(eq)
-    stopifnot.string(lt);  lt  <- trim.surrounding.space(lt)
-    stopifnot.string(ge);  ge  <- trim.surrounding.space(ge)
-    stopifnot.string(and); and <- trim.surrounding.space(and)
+    stopifnot.string(eq);      eq      <- trim.surrounding.space(eq)
+    stopifnot.string(lt);      lt      <- trim.surrounding.space(lt)
+    stopifnot.string(ge);      ge      <- trim.surrounding.space(ge)
+    stopifnot.string(and);     and     <- trim.surrounding.space(and)
+    stopifnot.string(because, allow.empty=TRUE);
+    because <- trim.surrounding.space(because)
     trace <- as.numeric(check.numeric.scalar(trace, logical.ok=TRUE))
     # we get the variable names from the splits because
     # attr(x$terms,"dataClasses") sometimes doesn't save the actual
@@ -61,13 +67,16 @@ rpart.rules <- function(x=stop("no 'x' argument"),
     if(trace >= 1)
         trace.print.rules(rules, "raw rules")
 
-    rules <- process.rules(rules, style, cover, nn, clip.facs,
-                eq, lt, ge, and,
+    rules <- process.rules(obj, rules, style, cover, nn, clip.facs,
+                rpart.predict, where,
+                eq, lt, ge, and, because,
                 digits, trace, varorder, varlen,
                 nrules.per.var, varnames,
                 response.name,
                 obj$method == "class" || is.class.response(obj),
                 attr(obj, "ylevels"))
+
+    node.numbers <- rownames(rules)
 
     if(trace >= 1)
         trace.print.rules(rules, "processed rules")
@@ -77,6 +86,15 @@ rpart.rules <- function(x=stop("no 'x' argument"),
     attr(rules, "and")   <- and
     attr(rules, "eq")    <- eq
 
+    if(rpart.predict) {
+        # return a vector of strings, one string for each element of where
+        # TODO sometimes still too much whitespace e.g. example(rpart.predict)
+        # TODO must also trim trailing space
+        rules <- capture.output(print.rpart.rules(rules))
+        rules <- rules[-1] # drop data.frame column names
+        # trim leading single space added by print.data.frame in print.rpart.rules
+        rules <- gsub("^ ", "", rules)
+    }
     rules
 }
 print.rpart.rules <- function(x=stop("no 'x' argument"),
@@ -119,7 +137,7 @@ print.rpart.rules <- function(x=stop("no 'x' argument"),
 # lab is used only for multiclass models
 #
 # iclass is used only to sort rows on the fitted class for multiclass models
-#   for anova models, iclass is the same as fit
+#   for anova models, iclass is floor(fit)
 #   for class models, iclass is the fitted class as an integer
 
 get.raw.rules <- function(obj, extra, varlen, faclen, roundint, trace, facsep, varnames)
@@ -207,16 +225,18 @@ handle.extra.for.rules <- function(extra, obj, class.stats)
                 extra == EX2.CLASS.RATE ||
                 extra == EX3.MISCLASS.RATE) {
             warning0(
-"extra=", extra, " is not yet supported by rpart.rules (although legal for plots)")
+"extra=", extra, " is not supported by rpart.rules (although useable for plots)")
             extra <- get.default.extra(obj, class.stats) - 100
         } else if(extra == EX5.PROB.PER.CLASS.DONT ||
                   extra == EX7.PROB.2ND.CLASS.DONT ||
                   extra == EX11.PROB.ACROSS.ALL.2ND.CLASS.DONT)
             extra <- extra - 1 # must have class label for parse.split.lab
-    } else if(is.auto(extra, n=1))
+    } else if(is.auto(extra, n=1)) {
         extra <- get.default.extra(obj, class.stats)
-    else
+    } else
         stop0("rpart.rules: illegal extra")
+    if(obj$method == "poisson" || obj$method == "exp")
+        extra <- 0
     if(extra < 100)
         extra <- extra + 100
     extra
@@ -276,8 +296,9 @@ trace.print.rules <- function(rules, msg) # only used if trace > 0
     print(rules) # all columns are character except iclass
     cat0("\n")
 }
-process.rules <- function(rules, style, cover, nn, clip.facs,
-                          eq, lt, ge, and,
+process.rules <- function(obj, rules, style, cover, nn, clip.facs,
+                          rpart.predict, where,
+                          eq, lt, ge, and, because,
                           digits, trace, varorder, varlen,
                           nrules.per.var, varnames, response.name,
                           is.class.response, ylevels)
@@ -302,22 +323,53 @@ process.rules <- function(rules, style, cover, nn, clip.facs,
                           response.name, varnames, n.subcol)
     # retain only used columns
     rules <- rules[, apply(rules, 2, function(col) any(col != "")), drop=FALSE]
-    # all columns unnamed, except first (response.name)
-    colnames(rules) <- c(response.name, repl("", ncol(rules)-1))
+    if(rpart.predict) {
+        # drop all columns up to "when"
+        iwhen <- match("when", colnames(rules))[1] # index of "when" column
+        if(iwhen < ncol(rules)) {
+            rules <- rules[, iwhen:ncol(rules), drop=FALSE]
+            rules[1] <- because # replace "when" with "because"
+        }
+        else # null model (no rules)
+            rules <- as.data.frame(matrix(paste0(because, " null model"),
+                                   nrow=nrow(rules)), stringsAsFactors=FALSE)
+        colnames(rules) <- NULL # all columns unnamed
+    } else {
+        # all columns unnamed, except first column (response.name)
+        colnames(rules) <- c(response.name, repl("", ncol(rules)-1))
+    }
     if(cover) {
         # append cover column (space in "  cover" to shift printed cover column right)
         rules$cover <- sprint("%3.0f%%", as.numeric(rules.cover))
         colnames(rules)[ncol(rules)] <- "  cover"
     }
     if(nn) {
-        rules$nn <- rownames(rules)
-        colnames(rules)[ncol(rules)] <- if(!cover) "   nn" else " nn"
+        colnames <- colnames(rules)
+        rules <- cbind(rownames(rules), rules, stringsAsFactors=FALSE)
+        colnames(rules) <- c("nn", colnames)
     }
-    if(n.subcol > 1) { # multiple probabilities
+    if(rpart.predict) {
+        # must generate the rule for each element of where
+        if(style != "wide")
+            stop0("style = \"", style, "\" is not allowed in this context")
+        check.vec(where, "where", na.ok=TRUE)
+        nn <- as.numeric(rownames(obj$frame)[where])
+        stopifnot(!any(is.na(nn)))
+        # rules indexed by node number
+        rules.nn <- rules
+        rules.nn[1:max(nn), ] <- rules[1, , drop=FALSE]
+        for(name in rownames(rules))
+            rules.nn[as.numeric(name),] <-
+                rules[which(rownames(rules) == name), , drop=FALSE]
+        rules <- rules.nn[nn, , drop=FALSE]
+        rownames(rules) <- NULL
+        # retain only used columns
+        rules <- rules[, apply(rules, 2, function(col) any(col != "")), drop=FALSE]
+    } else if(n.subcol > 1) { # multiple probabilities
         # add column names etc. for a nice print
-        colnames(rules)[2] <- fit.colname(ylevels, fit, n.subcol)
-        rules[,2] <- paste0("[", rules[,2], "]")
-        rules[,3] <- " when"
+        colnames(rules)[2+nn] <- fit.colname(ylevels, fit, n.subcol)
+        rules[,2+nn] <- paste0("[", rules[,2+nn], "]")
+        rules[,3+nn] <- " when"
     }
     # following trim is necessary because we may not use all elements in
     # format.gt and format.le although we called format() with all elements
@@ -492,9 +544,11 @@ trim.leading.space.in.columns <- function(x)
         x1 <- x[,j]
         x1 <- x1[x1 != ""]
         len <- unlist(gregexpr("^ +", x1)) # length of leading spaces
-        min <- min(len)                    # shortest leading space
-        if(min > 0)
-            x[,j] <- substring(x[,j], min+1)
+        if(!is.null(len)) {
+            min <- min(len)                    # shortest leading space
+            if(min > 0)
+                x[,j] <- substring(x[,j], min+1)
+        }
     }
     x
 }
@@ -601,14 +655,16 @@ print.style.tall <- function(rules, style, and, eq)
         else # "tallw"
             printf(format, "", "  ", "") # prefix space to align with prolog
         printf(format2, "")
+        if(have.nn)
+            printf(format.nn, "")
     }
     #--- print.style.tall starts here ---
     colnames <- colnames(rules)
-    response.name <- colnames[1]
-    class.probs   <- colnames[2]
     ncol <- ncol(rules)
-    have.nn <- colnames[ncol] == " nn" || colnames[ncol] == "   nn"
-    have.cover <- colnames[ncol - have.nn] == "  cover"
+    have.nn <- colnames[1] == "nn"
+    have.cover <- colnames[ncol] == "  cover"
+    response.name <- colnames[1 + have.nn]
+    class.probs   <- colnames[2 + have.nn]
     have.class.probs <- class.probs != "" # currently used only for multi class models
     if(is.null(and))
         and <- " & "
@@ -621,7 +677,11 @@ print.style.tall <- function(rules, style, and, eq)
 
     # get format for prolog of each rule   # e.g. "survived is 0.93"
     format <- sprint("%%-%ds %%s %%-%ds", # e.g. "%-8s %s %-4s"
-                     nchar(response.name), max(nchar(rules[,1])))
+                     nchar(response.name),
+                     max(nchar(rules[, 1 + have.nn])))
+
+    nn.width <- if(have.nn) max(nchar(rules[, 1]))+3 else 0 # +3 for "[] "
+    format.nn <- sprint("%%-%ds", nn.width) # e.g. "%-0s" or "%-5s"
 
     format2 <- "%0.0s"
     if(have.class.probs) {
@@ -632,21 +692,23 @@ print.style.tall <- function(rules, style, and, eq)
         #                             age >= 35
         #                             survived is survived
 
-        printf(format, "", "  ", "") # prefix space to align with prolog
-        printf("  %s\n", colnames[2])
+        # prefix spaces to align with prolog
+        printf(format.nn, "")
+        printf(format, "", "  ", "")
+        printf("  %s\n", colnames[2 + have.nn])
         if(style == "tallw")
-            format2 <- sprint("%%-%ds  ", nchar(colnames[2]))
+            format2 <- sprint("%%-%ds  ", nchar(colnames[2 + have.nn]))
     }
     for(i in 1:nrow(rules)) {
         if(have.nn)
-            printf("[%s] ", rules[i, ncol])
-        printf(format, response.name, eq, rules[i, 1])
-        for(j in 2:(ncol(rules) - have.cover - have.nn)) { # if have.cover, skip last column
+            printf(format.nn, sprint("[%s] ", rules[i, 1]))
+        printf(format, response.name, eq, rules[i, 1 + have.nn])
+        for(j in (2 + have.nn):(ncol(rules) - have.cover)) {
             e <- trim.surrounding.space(rules[i, j])
             if(nchar(e)) {
                 if(e == "when") {
                     if(have.cover)
-                        printf(" with cover %-s", gsub("^ *", "", rules[i, ncol - have.nn]))
+                        printf(" with cover %-s", gsub("^ *", "", rules[i, ncol]))
                     printf(" when")
                     newline.with.spaces()
                 } else if(e == and)
@@ -737,7 +799,10 @@ check.if.dot.arg.supported.by.rpart.rules <- function(x=stop("no 'x' arg"),
     Fallen.yspace=.1,
     boxes.include.gap=FALSE,
     legend.x=NULL, legend.y=NULL, legend.cex=1,
-    and=" & ", response.name=NULL) # these are extra arguments for rpart.rules, not in prp arg list
+    # extra args for rpart.rules, not in prp arg list
+    and=" & ", because=" because ", response.name=NULL,
+    # hidden args for rpart.predict
+    RPART.PREDICT=FALSE, WHERE=NULL)
 {
     warn1 <- function(arg)
     {
@@ -862,6 +927,7 @@ check.if.dot.arg.supported.by.rpart.rules <- function(x=stop("no 'x' arg"),
     if(!missing(legend.cex))          warn1(legend.cex)
 
     list(extra=extra, digits=digits, varlen=varlen, faclen=faclen, trace=trace,
-         facsep=facsep, eq=eq, lt=lt, ge=ge, and=and,
-         response.name=response.name)
+         facsep=facsep, eq=eq, lt=lt, ge=ge, and=and, because=because,
+         response.name=response.name,
+         rpart.predict=RPART.PREDICT, where=WHERE)
 }

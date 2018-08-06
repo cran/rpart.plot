@@ -9,6 +9,8 @@ time /T
                         @if %errorlevel% NEQ 0 goto error
 @call rpart.report.bat
                         @if %errorlevel% NEQ 0 goto error
+@call usersplits.bat
+                        @if %errorlevel% NEQ 0 goto error
 @call webpage.figs.bat
                         @if %errorlevel% NEQ 0 goto error
 @call test.describe.col.bat

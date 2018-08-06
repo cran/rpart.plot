@@ -1,4 +1,4 @@
-# test.rpart.rules.R (also tests roundint argument)
+# test.rpart.rules.R (also tests rpart.predict and roundint argument)
 
 source("test.prolog.R")
 old.width <- options("width")
@@ -67,6 +67,24 @@ print(rpart.rules(mileage, faclen=-1))
 print(rpart.rules(mileage, faclen=-2, trace=TRUE))
 print(rpart.rules(mileage, faclen=-4))
 print(rpart.rules(mileage, faclen=-4, clip.facs=TRUE))
+
+# rpart.predict (anova model)
+stopifnot(identical(options("width"), old.width))
+owidth <- options("width")
+options(width=1e3)
+print(predict(mileage)[1:5])
+print(rpart.predict(mileage)[1:5])
+stopifnot(identical(predict(mileage), rpart.predict(mileage)))
+print(rpart.predict(mileage, rules=TRUE)[12:14,])
+# use max and not identical because rpart.predict(mileage, rules=TRUE)[,1] doesn't have names
+stopifnot(max(abs(predict(mileage) - rpart.predict(mileage, rules=TRUE)[,1])) == 0)
+stopifnot(identical(as.numeric(predict(mileage)), rpart.predict(mileage, rules=TRUE)[,1]))
+print(rpart.predict(mileage, nn=TRUE)[12:14,])
+stopifnot(max(abs(predict(mileage) - rpart.predict(mileage, nn=TRUE)[,1])) == 0)
+print(rpart.predict(mileage, nn=TRUE, rules=TRUE)[12:14,])
+stopifnot(max(abs(predict(mileage) - rpart.predict(mileage, nn=TRUE, rules=TRUE)[,1])) == 0)
+options(width=owidth$width)
+stopifnot(identical(options("width"), old.width))
 
 # test negative response and predictor values
 cu.summary2 <- cu.summary
@@ -295,6 +313,41 @@ expect.err(try(print(rpart.rules(Country), nonesuch2="nonesuch2")), 'unused argu
 expect.err(try(rpart.rules(99)), "Not an rpart object")
 expect.err(try(rpart.rules(Country, ylim=c(0,1))), 'unused argument (ylim = c(0, 1))')
 
+# rpart.predict (factor response, 10 levels)
+stopifnot(identical(options("width"), old.width))
+owidth <- options("width")
+options(width=1e3)
+print(predict(Country)[1:5,])
+stopifnot(all.equal(predict(Country), as.matrix(rpart.predict(Country, rules=TRUE)[,1:10])))
+stopifnot(max(abs(predict(Country) - rpart.predict(Country, rules=TRUE)[,1:10])) == 0)
+print(rpart.predict(Country, nn=TRUE)[1:5,])
+stopifnot(all.equal(predict(Country), as.matrix(rpart.predict(Country, nn=TRUE)[,1:10])))
+print(rpart.predict(Country, nn=TRUE, rules=TRUE)[1:5,], digits=2)
+stopifnot(all.equal(predict(Country), as.matrix(rpart.predict(Country, nn=TRUE, rules=TRUE)[,1:10])))
+
+print(predict(Country, type="class")[1:5])
+print(rpart.predict(Country, type="class", rules=TRUE, because="reason:")[1:5,])
+pred <- rpart.predict(Country, type="class", rules=TRUE)
+names <- rownames(pred)
+pred <- pred[,1]
+names(pred) <- names
+stopifnot(all.equal(predict(Country, type="class"), pred))
+print(rpart.predict(Country, type="class", rules=TRUE, because="")[1:5,])
+print(rpart.predict(Country, type="class", rules=TRUE, nn=TRUE)[1:5,])
+pred <- rpart.predict(Country, type="class", rules=TRUE, nn=TRUE)
+names <- rownames(pred)
+pred <- pred[,1]
+names(pred) <- names
+stopifnot(all.equal(predict(Country, type="class"), pred))
+
+print(rpart.predict(Country, newdata=cu.summary[5:8,]))
+print(rpart.predict(Country, newdata=cu.summary[5:8,], nn=TRUE))
+print(rpart.predict(Country, newdata=cu.summary[5:8,], rules=TRUE))
+print(rpart.predict(Country, newdata=cu.summary[5:8,], nn=TRUE, rules=TRUE))
+
+options(width=owidth$width)
+stopifnot(identical(options("width"), old.width))
+
 cat0("\n=== \"style\" argument ===\n")
 
 Species <- rpart(Species ~ ., data=iris)
@@ -312,6 +365,10 @@ rules <- rpart.rules(Mileage)
 print(rules)
 print(rules, style='tall')
 print(rules, style='tallw')
+rules.nn <- rpart.rules(Mileage, nn=TRUE)
+print(rules.nn)
+print(rules.nn, style='tall')
+print(rules.nn, style='tallw')
 
 data(ptitanic)
 survived <- rpart(survived ~ ., data=ptitanic)
@@ -319,6 +376,42 @@ print(rpart.rules(survived, style="wide", varlen=-3, faclen=2))
 print(rpart.rules(survived, style="tall", varlen=-3, faclen=2))
 print(rpart.rules(survived, style="wide", clip.facs=TRUE, varlen=-3, faclen=2))
 print(rpart.rules(survived, style="tall", cover=TRUE, clip.facs=TRUE, varlen=-3, faclen=2))
+
+print(rpart.rules(survived, varlen=-3, faclen=2, nn=TRUE))
+print(rpart.rules(survived, varlen=-3, faclen=2, nn=TRUE, cover=TRUE))
+print(rpart.rules(survived, style="wide", varlen=-3, faclen=2, nn=TRUE))
+print(rpart.rules(survived, style="tall", varlen=-3, faclen=2, nn=TRUE))
+print(rpart.rules(survived, style="wide", clip.facs=TRUE, varlen=-3, faclen=2, nn=TRUE))
+print(rpart.rules(survived, style="tall", cover=TRUE, clip.facs=TRUE, varlen=-3, faclen=2, nn=TRUE))
+
+# rpart.predict (binomial response)
+print(predict(survived)[1:5,])
+stopifnot(all.equal(predict(survived), as.matrix(rpart.predict(survived, rules=TRUE)[,1:2])))
+stopifnot(max(abs(predict(survived) - rpart.predict(survived, rules=TRUE)[,1:2])) == 0)
+print(rpart.predict(survived, nn=TRUE)[1:5,])
+stopifnot(all.equal(predict(survived), as.matrix(rpart.predict(survived, nn=TRUE)[,1:2])))
+print(rpart.predict(survived, nn=TRUE, rules=TRUE)[1:5,])
+stopifnot(all.equal(predict(survived), as.matrix(rpart.predict(survived, nn=TRUE, rules=TRUE)[,1:2])))
+
+print(predict(survived, type="class")[1:5])
+print(rpart.predict(survived, type="class", rules=TRUE)[1:5,])
+pred <- rpart.predict(survived, type="class", rules=TRUE)
+names <- rownames(pred)
+pred <- pred[,1]
+names(pred) <- names
+stopifnot(all.equal(predict(survived, type="class"), pred))
+print(rpart.predict(survived, type="class", rules=TRUE)[1:5,])
+print(rpart.predict(survived, type="class", rules=TRUE, nn=TRUE)[1:5,])
+pred <- rpart.predict(survived, type="class", rules=TRUE, nn=TRUE)
+names <- rownames(pred)
+pred <- pred[,1]
+names(pred) <- names
+stopifnot(all.equal(predict(survived, type="class"), pred))
+
+print(rpart.predict(survived, newdata=ptitanic[5:8,]))
+print(rpart.predict(survived, newdata=ptitanic[5:8,], nn=TRUE))
+print(rpart.predict(survived, newdata=ptitanic[5:8,], rules=TRUE))
+print(rpart.predict(survived, newdata=ptitanic[5:8,], nn=TRUE, rules=TRUE))
 
 Reliability <- rpart(Reliability ~ ., data=cu.summary)
 print(rpart.rules(Reliability, style='wide'))
@@ -337,11 +430,11 @@ cat0("extra=\"A\"\n")
 print(rpart.rules(survived, extra="A"))
 stopifnot(identical(rpart.rules(survived), rpart.rules(survived, extra=0))) # extra=0 same as "auto"
 cat0("extra=1\n")
-expect.err(try(rpart.rules(survived, extra=1)), "extra=1 is not yet supported by rpart.rules")
+expect.err(try(rpart.rules(survived, extra=1)), "extra=1 is not supported by rpart.rules")
 cat0("extra=2\n")
-expect.err(try(rpart.rules(survived, extra=2)), "extra=2 is not yet supported by rpart.rules")
+expect.err(try(rpart.rules(survived, extra=2)), "extra=2 is not supported by rpart.rules")
 cat0("extra=3\n")
-expect.err(try(rpart.rules(survived, extra=3)), "extra=3 is not yet supported by rpart.rules")
+expect.err(try(rpart.rules(survived, extra=3)), "extra=3 is not supported by rpart.rules")
 cat0("extra=4\n")
 print(rpart.rules(survived, extra=4))
 cat0("extra=5\n")
@@ -371,11 +464,11 @@ print(rpart.rules(Species))
 cat0("extra=0\n")
 print(rpart.rules(Species, extra=0))
 cat0("extra=1\n")
-expect.err(try(print(rpart.rules(Species, extra=1))), "extra=1 is not yet supported by rpart.rules")
+expect.err(try(print(rpart.rules(Species, extra=1))), "extra=1 is not supported by rpart.rules")
 cat0("extra=2\n")
-expect.err(try(print(rpart.rules(Species, extra=2))), "extra=2 is not yet supported by rpart.rules")
+expect.err(try(print(rpart.rules(Species, extra=2))), "extra=2 is not supported by rpart.rules")
 cat0("extra=3\n")
-expect.err(try(print(rpart.rules(Species, extra=3))), "extra=3 is not yet supported by rpart.rules")
+expect.err(try(print(rpart.rules(Species, extra=3))), "extra=3 is not supported by rpart.rules")
 cat0("extra=4\n")
 print(rpart.rules(Species, extra=4))
 cat0("extra=5\n")
@@ -425,6 +518,35 @@ print(rpart.rules(null.model))
 print(rpart.rules(null.model, style='wide'))
 print(rpart.rules(null.model, style='tall'))
 
+# rpart.predict (null.model)
+print(predict(null.model)[1:5,])
+stopifnot(all.equal(predict(null.model), as.matrix(rpart.predict(null.model, rules=TRUE)[,1:2])))
+stopifnot(max(abs(predict(null.model) - rpart.predict(null.model, rules=TRUE)[,1:2])) == 0)
+print(rpart.predict(null.model, nn=TRUE)[1:5,])
+stopifnot(all.equal(predict(null.model), as.matrix(rpart.predict(null.model, nn=TRUE)[,1:2])))
+print(rpart.predict(null.model, nn=TRUE, rules=TRUE)[1:5,])
+stopifnot(all.equal(predict(null.model), as.matrix(rpart.predict(null.model, nn=TRUE, rules=TRUE)[,1:2])))
+
+print(predict(null.model, type="class")[1:5])
+print(rpart.predict(null.model, type="class", rules=TRUE, because="     reason: ")[1:5,])
+pred <- rpart.predict(null.model, type="class", rules=TRUE)
+names <- rownames(pred)
+pred <- pred[,1]
+names(pred) <- names
+stopifnot(all.equal(predict(null.model, type="class"), pred))
+print(rpart.predict(null.model, type="class", rules=TRUE)[1:5,])
+print(rpart.predict(null.model, type="class", rules=TRUE, nn=TRUE)[1:5,])
+pred <- rpart.predict(null.model, type="class", rules=TRUE, nn=TRUE)
+names <- rownames(pred)
+pred <- pred[,1]
+names(pred) <- names
+stopifnot(all.equal(predict(null.model, type="class"), pred))
+
+print(rpart.predict(null.model, newdata=ptitanic[5:8,]))
+print(rpart.predict(null.model, newdata=ptitanic[5:8,], nn=TRUE))
+print(rpart.predict(null.model, newdata=ptitanic[5:8,], rules=TRUE))
+print(rpart.predict(null.model, newdata=ptitanic[5:8,], nn=TRUE, rules=TRUE))
+
 cat0("\n=== \"varorder\" argument ===\n")
 data(ptitanic)
 survived <- rpart(survived ~ ., data=ptitanic)
@@ -450,5 +572,93 @@ rpart.rules(survived, clip.facs=TRUE, cover=1, varorder=c('nonesuch1','pcl','non
 par(old.par)
 
 stopifnot(identical(options("width"), old.width))
+
+# Survival model
+
+library('rpart.plot')
+library('survival')
+rpart.surv <- rpart(Surv(age, sibsp == 1) ~ ., ptitanic)
+rpart.plot(rpart.surv, under=TRUE)
+print(rpart.rules(rpart.surv))
+print(rpart.rules(rpart.surv, cover=TRUE, clip.facs=TRUE, digits=4))
+options(warn=2) # treat warnings as errors
+expect.err(try(rpart.rules(rpart.surv, extra=1)), "(converted from warning) extra=1 is not supported by rpart.rules")
+expect.err(try(rpart.rules(rpart.surv, extra=2)), "(converted from warning) extra=2 is not supported by rpart.rules")
+options(warn=1) # print warnings as they occur
+
+owidth <- options("width")
+options(width=1e3)
+# rpart.predict (Survival model)
+print(predict(rpart.surv)[1:5])
+print(rpart.predict(rpart.surv)[1:5])
+stopifnot(identical(predict(rpart.surv), rpart.predict(rpart.surv)))
+print(rpart.predict(rpart.surv, rules=TRUE)[12:14,])
+# use max and not identical because rpart.predict(rpart.surv, rules=TRUE)[,1] doesn't have names
+stopifnot(max(abs(predict(rpart.surv) - rpart.predict(rpart.surv, rules=TRUE)[,1])) == 0)
+stopifnot(identical(as.numeric(predict(rpart.surv)), rpart.predict(rpart.surv, rules=TRUE)[,1]))
+print(rpart.predict(rpart.surv, nn=TRUE)[12:14,])
+stopifnot(max(abs(predict(rpart.surv) - rpart.predict(rpart.surv, nn=TRUE)[,1])) == 0)
+print(rpart.predict(rpart.surv, nn=TRUE, rules=TRUE)[12:14,])
+stopifnot(max(abs(predict(rpart.surv) - rpart.predict(rpart.surv, nn=TRUE, rules=TRUE)[,1])) == 0)
+print(rpart.predict(rpart.surv, newdata=ptitanic[5:8,]))
+print(rpart.predict(rpart.surv, newdata=ptitanic[5:8,], nn=TRUE))
+print(rpart.predict(rpart.surv, newdata=ptitanic[5:8,], rules=TRUE))
+print(rpart.predict(rpart.surv, newdata=ptitanic[5:8,], nn=TRUE, rules=TRUE))
+options(width=owidth$width)
+stopifnot(identical(options("width"), old.width))
+
+#--- extra tests for rpart.predict ---
+
+survived <- rpart(survived ~ ., data=ptitanic)
+print(rpart.rules(survived))
+old.width <- options(width=1e3)$width
+pred <- rpart.predict(survived, rules=TRUE)[2:4,]
+rownames(pred) <- NULL
+print(pred)
+expect.err(try(rpart.predict(survived, rules=TRUE, style="tall")), "style = \"tall\" is not allowed in this context")
+print(rpart.predict(survived, rules=TRUE, cover=TRUE)[2:4,])
+print(rpart.predict(survived, rules=TRUE, roundint=FALSE)[2:4,])
+print(rpart.predict(survived, rules=TRUE, roundint=FALSE, clip.facs=TRUE)[2:4,])
+print(rpart.predict(survived, rules=TRUE, varorder="pclass")[2:4,])
+print(rpart.predict(survived, rules=TRUE, faclen=-2)[2:4,])
+print(rpart.predict(survived, rules=TRUE, varlen=2)[2:4,])
+print(rpart.predict(survived, rules=TRUE, varlen=2)[2:4,], digits=2)
+options(width=old.width)
+
+set.seed(2018)
+ptit <- ptitanic
+ptit <- ptit[sample.int(nrow(ptitanic)),]
+ptit <- ptit[1:50,]
+pclass <- rpart(pclass~., data=ptit, control=list(cp=.05))
+print(rpart.rules(pclass))
+options(digits=2)
+
+print(predict(pclass)[1:5,])
+stopifnot(all.equal(predict(pclass), as.matrix(rpart.predict(pclass, rules=TRUE)[,1:3])))
+stopifnot(max(abs(predict(pclass) - rpart.predict(pclass, rules=TRUE)[,1:3])) == 0)
+print(rpart.predict(pclass, nn=TRUE)[1:5,])
+stopifnot(all.equal(predict(pclass), as.matrix(rpart.predict(pclass, nn=TRUE)[,1:3])))
+print(rpart.predict(pclass, nn=TRUE, rules=TRUE)[1:5,])
+stopifnot(all.equal(predict(pclass), as.matrix(rpart.predict(pclass, nn=TRUE, rules=TRUE)[,1:3])))
+
+print(predict(pclass, type="class")[1:5])
+print(rpart.predict(pclass, type="class", rules=TRUE)[1:5,])
+pred <- rpart.predict(pclass, type="class", rules=TRUE)
+names <- rownames(pred)
+pred <- pred[,1]
+names(pred) <- names
+stopifnot(all.equal(predict(pclass, type="class"), pred))
+print(rpart.predict(pclass, type="class", rules=TRUE)[1:5,])
+print(rpart.predict(pclass, type="class", rules=TRUE, nn=TRUE)[1:5,])
+pred <- rpart.predict(pclass, type="class", rules=TRUE, nn=TRUE)
+names <- rownames(pred)
+pred <- pred[,1]
+names(pred) <- names
+stopifnot(all.equal(predict(pclass, type="class"), pred))
+
+print(rpart.predict(pclass, newdata=ptit[5:8,]))
+print(rpart.predict(pclass, newdata=ptit[5:8,], nn=TRUE))
+print(rpart.predict(pclass, newdata=ptit[5:8,], rules=TRUE))
+print(rpart.predict(pclass, newdata=ptit[5:8,], nn=TRUE, rules=TRUE))
 
 source("test.epilog.R")

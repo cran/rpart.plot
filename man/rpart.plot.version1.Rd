@@ -1,6 +1,6 @@
 \name{rpart.plot.version1}
 \alias{rpart.plot.version1}
-\title{Plot an \code{rpart} model (old version).}
+\title{Plot an rpart model (old version).}
 \description{
 This function is provided for backward compatibility
 with old versions of \code{\link{rpart.plot}}

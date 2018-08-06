@@ -53,7 +53,10 @@ get.response.name <- function(obj, trace) # return a string
     }
     check.index(iresponse, "attr(terms(obj), \"response\")", varnames,
                 allow.negatives=FALSE)
-    varnames[iresponse]
+    response.name <- varnames[iresponse]
+    if(substr(response.name, 1, 5) == "Surv(") # response is a survival object?
+        response.name <- "Surv" # so rules not pushed far to the right with long response.name
+    response.name
 }
 # return a single NA, or a logical vec with an element for each split
 get.is.logical <- function(obj, model.frame, trace)

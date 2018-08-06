@@ -515,7 +515,10 @@ imatch.choices <- function(arg, choices,
 is.integral <- function(object)
 {
     object <- object[!is.na(object)]
-    length(object) > 0 && all(floor(object) == object)
+
+    length(object) > 0 &&
+    is.null(dim(object)) && # prevent error in floor for e.g. survival objects
+    all(floor(object) == object)
 }
 # is.specified's main purpose is to see if a plot component should be
 # drawn, i.e., to see if the component "has a color"

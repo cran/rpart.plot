@@ -165,7 +165,7 @@ expand.palette <- function(pal, default.pal)
             stop0(argname,
                 ": NULL is neither a color nor a palette.\n",
                 predefined.palettes.msg)
-        try <- try(col2rgb(pal_i))
+        try <- try(col2rgb(pal_i), silent=TRUE)
         if(is.try.err(try))
             stop0(argname, ": ",
                 if(is.character(pal_i[1])) quotify(pal_i)
@@ -325,13 +325,30 @@ handle.multiclass.palette <- function(obj, box.palette, trace, class.stats)
                     "list(Reds, Oranges, Grays, Blues, Greens)",           # 5
                     "list(Reds, Oranges, Purples, Grays, Blues, Greens)")) # 6 or more
     }
-    if(length(box.palette) == 1) # allow the user to specify a single color or palette
-        box.palette <- as.list(repl(box.palette, length(used.classes)))
+    if(length(box.palette) == 1) { # allow the user to specify a single color or palette
+        # how many uppercase letters in box.palette? e.g. Blues is 1, GnBu is 2
+        nuppercase <- length(gregexpr("[A-Z]", box.palette)[[1]])
+        if(nuppercase <= 1) # single color?
+            box.palette <- as.list(repl(box.palette, length(used.classes)))
+        else { # multiple colors: divide up the colors among the used.classes
+            cols <- expand.palette(box.palette, "Undefined")
+            if(length(cols) < length(used.classes))
+                cols <- repl(cols, length(used.classes))
+            nper <- length(cols) / length(used.classes)
+            box.palette <- list()
+            for(i in 0:(length(used.classes)-1))
+                box.palette[[i+1]] <- cols[floor(i*nper+1):floor(i*nper+nper)]
+        }
+    }
     if(!is.list(box.palette))
         stop0(
 "The rpart model has a multiclass response (not a continuous or binary response).\n",
-"Therefore box.palette must be \"auto\", or a list of palettes, or a single color or palette.\n",
+"Therefore box.palette must be \"auto\",\n",
+"                           or a list of colors or palettes,\n",
+"                           or a single color or palette.\n",
+"e.g. box.palette=list(\"pink\", \"lightblue\", \"lightgray\")\n",
 "e.g. box.palette=list(\"Reds\", \"Oranges\", \"Grays\", \"Blues\", \"Greens\")")
+
     for(i in 1:length(box.palette))
         box.palette[[i]] <- expand.palette(box.palette[[i]], "Undefined")
     if(trace >= 3) {
@@ -414,7 +431,7 @@ length(box.palette), ".\n",
     }
     list(box.col=box.col, box.palette=box.palette)
 }
-# Possibly add a legend (only for multi-level-response models)
+# Possibly add a legend (only for multi-class-response models)
 
 possible.palette.legend <- function(ret, class.stats, box.col, box.palette,
                                     legend.x, legend.y, legend.cex, tweak, trace)
@@ -439,23 +456,24 @@ possible.palette.legend <- function(ret, class.stats, box.col, box.palette,
     if(class.stats$nlev > length(box.palette))
         used.classes <- unique(sort(class.stats$fitted, na.last=TRUE))
 
-    # box.palette is a list of vectors, we want last element of each vector
-    last.elem <- function(x) x[length(x)]
-    palette <- sapply(box.palette, last.elem)
-    # set legend to names of all classes, if class unused then append "unused"
-    # also set legend.col to class colors, if class unused then use bg color
-    # TODO this could be vectorized
-    legend.col <- character(length=class.stats$nlev)
+    # box.palette is a list of vecs, we select one color from each vector
+    legend.col <- select.legend.col(box.palette)
+    if(is.na(legend.col[1]))
+        return() # all legend colors the same, no legend
+
+    # set legend to names of all classes (if class unused then append "unused")
+    # also set col to appropriate class colors (if class unused then bg color)
+    col <- character(length=class.stats$nlev)
     legend <- character(length=class.stats$nlev)
     iclass <- 1
     for(i in 1:class.stats$nlev) {
         if(i %in% used.classes) {
-            legend[i]     <- attr(obj, "ylevels")[i]
-            legend.col[i] <- palette[iclass]
-            iclass        <- iclass + 1
+            legend[i] <- attr(obj, "ylevels")[i]
+            col[i]    <- legend.col[iclass]
+            iclass    <- iclass + 1
         } else {
-            legend[i]     <- paste0(attr(obj, "ylevels")[i], " (unused)")
-            legend.col[i] <- get.bg()
+            legend[i] <- paste0(attr(obj, "ylevels")[i], " (unused)")
+            col[i]    <- get.bg()
         }
     }
     x <- legend.x
@@ -482,7 +500,23 @@ possible.palette.legend <- function(ret, class.stats, box.col, box.palette,
     legend(x=x, y=y, legend=legend,
         col=0, xpd=NA, bty="n", cex=tweak * legend.cex * min(1.1 * ret$cex, 1),
         border=0,
-        fill=legend.col)
+        fill=col)
+}
+select.legend.col <- function(box.palette)
+{
+    select.col <- function(cols)
+    {
+        hsv <- rgb2hsv(col2rgb(cols))
+        # sort first on the lowest value (lowest brightness), then on most saturated
+        order <- order(hsv["v",], 1 - hsv["s",])
+        cols[order[1]]
+    }
+    #--- select.legend.col starts here ---
+    legend.col <- sapply(box.palette, select.col)
+    # check if all legend colors are the same (e.g. box.color="Blues")
+    if(all(legend.col == legend.col[1]))
+        legend.col <- NA # all legend colors the same, no legend
+    legend.col
 }
 get.palette.fitted <- function(default.fitted, node.labs, pal.node.fun, trace)
 {

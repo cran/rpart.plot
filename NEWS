@@ -1,6 +1,19 @@
 Changes to rpart.plot
 ---------------------
 
+3.0.3  Aug 5, 2018
+
+  Survival responses are now once again handled correctly (broken
+  in version 3.0.0).  Thanks to Robert Redd for help on this.
+
+  Added the rpart.predict function for printing the rules for predictions.
+
+  If rpart.rules(nn=TRUE) we now prepend (rather than append) the node numbers.
+
+  Tweaks to make the colors more visible in the legend for multiclass models.
+
+  Documentation updates.
+
 3.0.2  July 25, 2018
 
   Documentation fixes.

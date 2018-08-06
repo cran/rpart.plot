@@ -531,7 +531,7 @@ par(old.par)
 #--- multiclass model ---
 
 mod.multiclass <- rpart(pclass~., data=ptitanic, control=list(cp=.02))
-par(mfrow=c(5, 2))
+par(mfrow=c(3, 2))
 plot2(mod.multiclass, optional.msg="mod.multiclass\n", trace=1,
       node.fun=function(x, labs, digits, varlen) substring(labs, 1, 1))
 plot2(mod.multiclass, box.palette=list("Bu","Or","Gy"), trace=1,
@@ -544,13 +544,17 @@ plot2(mod.multiclass, box.palette="BuOr", trace=1,
       optional.msg="box.palette=\"BuOr\"\n",
       node.fun=function(x, labs, digits, varlen) -as.numeric(substring(labs, 1, 1)))
 plot2(mod.multiclass, box.palette="OrGn", pal.thresh=20, trace=1,
-      optional.msg="box.palette=\"BuOr\" pal.thresh=20\n",
+      optional.msg="box.palette=\"OrGn\" pal.thresh=20\n",
       node.fun=function(x, labs, digits, varlen) 10 * as.numeric(substring(labs, 1, 1)))
 
 expect.err(try(rpart.plot(mod.multiclass, type=2, extra="auto", trace=2,
                fallen.leaves=TRUE, box.palette=c("blues", "reds"),
                main="box.palette=c(\"blues\", \"reds\")")),
            "The rpart model has a multiclass response (not a continuous or binary response)")
+
+plot2(mod.multiclass, box.palette=list("pink", "lightblue", "lightgray"),
+      optional.msg='list("pink", "lightblue", "lightgray")\n',
+      node.fun=function(x, labs, digits, varlen) 10 * as.numeric(substring(labs, 1, 1)))
 
 par(old.par)
 

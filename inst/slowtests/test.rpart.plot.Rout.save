@@ -22,7 +22,7 @@ attached base packages:
 [1] stats     graphics  grDevices utils     datasets  methods   base     
 
 other attached packages:
-[1] rpart.plot_3.0.2 rpart_4.1-13    
+[1] rpart.plot_3.0.3 rpart_4.1-13    
 
 loaded via a namespace (and not attached):
 [1] compiler_3.5.1
@@ -33,7 +33,7 @@ Warning in citation("rpart.plot") :
 To cite package 'rpart.plot' in publications use:
 
   Stephen Milborrow (2018). rpart.plot: Plot 'rpart' Models: An
-  Enhanced Version of 'plot.rpart'. R package version 3.0.2.
+  Enhanced Version of 'plot.rpart'. R package version 3.0.3.
   http://www.milbo.org/rpart-plot
 
 A BibTeX entry for LaTeX users is
@@ -42,7 +42,7 @@ A BibTeX entry for LaTeX users is
     title = {rpart.plot: Plot 'rpart' Models: An Enhanced Version of 'plot.rpart'},
     author = {Stephen Milborrow},
     year = {2018},
-    note = {R package version 3.0.2},
+    note = {R package version 3.0.3},
     url = {http://www.milbo.org/rpart-plot},
   }
 
@@ -223,6 +223,21 @@ Loading required package: TeachingDemos
 > data(ozone1)
 > ititanic <- ptitanic
 > ititanic$survived <- as.integer(ititanic$survived == "survived")
+> 
+> example(rpart.predict)
+
+rprt.p> data(ptitanic)
+
+rprt.p> model <- rpart(survived ~ ., data = ptitanic, cp = .02)
+
+rprt.p> head(rpart.predict(model, rules=TRUE))
+       died  survived                                                
+1 0.2725322 0.7274678 because sex is female                          
+2 0.1111111 0.8888889 because sex is   male & age <  9.5 & sibsp <  3
+3 0.2725322 0.7274678 because sex is female                          
+4 0.8291457 0.1708543 because sex is   male & age >= 9.5             
+5 0.2725322 0.7274678 because sex is female                          
+6 0.8291457 0.1708543 because sex is   male & age >= 9.5             
 > 
 > # test format0 and formatf
 > 

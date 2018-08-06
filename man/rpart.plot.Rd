@@ -1,6 +1,6 @@
 \name{rpart.plot}
 \alias{rpart.plot}
-\title{Plot an \code{rpart} model. A simplified interface to the \code{prp} function.}
+\title{Plot an rpart model. A simplified interface to the prp function.}
 \description{
 Plot an \code{\link{rpart}} model, automatically tailoring the plot
 for the model's response type.

@@ -650,53 +650,222 @@ node), split, n, deviance, yval
 > cat("### Section 8\n")
 ### Section 8
 > 
-> # TODO commented out because crashes in summary.rpart with rpart version 4.0.2
-> # fit <- rpart(skips ~ Opening + Solder + Mask + PadType + Panel, data=solder,
-> #              method='poisson', control=rpart.control(cp=.05, maxcompete=2))
-> # summary(fit, cp=.10)
-> # par(mfrow=c(2,2))
-> # if (USE.PRP) {
-> #     prp(fit, extra=T, main="Section 8", uniform=F, faclen=-1, tweak=1.1, roundint=FALSE)
-> # } else {
-> #     plot(fit, main="Section 8")
-> #     text(fit, use.n=T, xpd=NA)
-> # }
-> #
-> # fit.prune <- prune(fit, cp=.15)
-> # if (USE.PRP) {
-> #     prp(fit.prune, extra=T, main="Section 8a", roundint=FALSE)
-> # } else {
-> #     plot(fit.prune)
-> #     text(fit.prune, use.n=T, xpd=NA, main="Section 8a")
-> # }
+> fit <- rpart(skips ~ Opening + Solder + Mask + PadType + Panel, data=solder,
++              method='poisson', control=rpart.control(cp=.05, maxcompete=2))
+> summary(fit, cp=.10)
+Call:
+rpart(formula = skips ~ Opening + Solder + Mask + PadType + Panel, 
+    data = solder, method = "poisson", control = rpart.control(cp = 0.05, 
+        maxcompete = 2))
+  n= 720 
+
+          CP nsplit rel error    xerror       xstd
+1 0.36602468      0 1.0000000 1.0037225 0.06441403
+2 0.14356853      1 0.6339753 0.6379423 0.03718655
+3 0.07081271      2 0.4904068 0.4978424 0.02720793
+4 0.05274593      3 0.4195941 0.4275952 0.02306616
+5 0.05000000      4 0.3668481 0.3972584 0.02182192
+
+Variable importance
+Opening    Mask  Solder 
+     58      34       8 
+
+Node number 1: 720 observations,    complexity param=0.3660247
+  events=3575,  estimated rate=4.965278 , mean deviance=9.521792 
+  left son=2 (480 obs) right son=3 (240 obs)
+  Primary splits:
+      Opening splits as  LLR,  improve=2509.3530, (0 missing)
+      Mask    splits as  LLRR, improve=1323.3680, (0 missing)
+      Solder  splits as  LR,   improve= 936.9548, (0 missing)
+
+Node number 2: 480 observations
+  events=918,  estimated rate=1.91378 , mean deviance=3.75659 
+
+Node number 3: 240 observations,    complexity param=0.1435685
+  events=2657,  estimated rate=11.06571 , mean deviance=10.59656 
+  left son=6 (120 obs) right son=7 (120 obs)
+  Primary splits:
+      Mask    splits as  LLRR,       improve=984.2639, (0 missing)
+      Solder  splits as  LR,         improve=631.5271, (0 missing)
+      PadType splits as  RRRRLLRLRL, improve=244.9255, (0 missing)
+
+Node number 6: 120 observations
+  events=546,  estimated rate=4.550696 , mean deviance=4.970788 
+
+Node number 7: 120 observations
+  events=2111,  estimated rate=17.57051 , mean deviance=8.020159 
+
+> par(mfrow=c(2,2))
+> if (USE.PRP) {
++     plot(fit, main="Section 8 plot.rpart")
++     text(fit, use.n=T, xpd=NA)
++     rpart.plot(fit, main="Section 8 rpart.plot", under=TRUE, digits=4)
++     print(rpart.rules(fit, digits=4))
++ } else {
++     plot(fit, main="Section 8")
++     text(fit, use.n=T, xpd=NA)
++ }
+  skips                                                                    
+  1.038 when Opening is L or M & Mask is A1.5 or A3 or B3                  
+  4.542 when Opening is L or M & Mask is               B6                  
+  4.551 when Opening is      S & Mask is       A1.5 or A3                  
+ 10.398 when Opening is      S & Mask is         B3 or B6 & Solder is Thick
+ 24.700 when Opening is      S & Mask is         B3 or B6 & Solder is  Thin
 > 
-> # library(survival)
-> # fit <- rpart(Surv(stagec$pgtime, stagec$pgstat) ~ age + eet + g2 + grade +
-> #              gleason + ploidy, data=stagec)
-> # print(fit)
-> # if (USE.PRP) {
-> #     prp(fit, uniform=T, branch=.4, compress=T, extra=T, main="Section 8b", roundint=FALSE)
-> # } else {
-> #     plot(fit, uniform=T, branch=.4, compress=T, main="Section 8b")
-> #     text(fit, use.n=T)
-> # }
-> #
-> # summary(fit, cp=.02)
+> fit.prune <- prune(fit, cp=.15)
+> if (USE.PRP) {
++     plot(fit.prune, main="Section 8a plot.rpart")
++     text(fit.prune, use.n=T, xpd=NA)
++     rpart.plot(fit.prune, main="Section 8a rpart.plot", under=TRUE, digits=4)
++     print(rpart.rules(fit.prune))
++ } else {
++     plot(fit.prune)
++     text(fit.prune, use.n=T, xpd=NA, main="Section 8a")
++ }
+ skips                       
+   1.9 when Opening is L or M
+  11.1 when Opening is      S
 > 
-> # # modified for running in a script
-> # fit2 <- prune(fit, cp=.015) # was fit2 <- snip.rpart(fit)
-> # if (USE.PRP) {
-> #     prp(fit2, uniform=T, branch=.4, compress=T, extra=T, main="Section 8c", roundint=FALSE)
-> # } else {
-> #     plot(fit2)
-> #     text(fit2, use.n=T, main="Section 8c")
-> # }
-> # par(old.par)
+> library(survival)
+
+Attaching package: 'survival'
+
+The following object is masked from 'package:rpart':
+
+    solder
+
+> fit <- rpart(Surv(stagec$pgtime, stagec$pgstat) ~ age + eet + g2 + grade +
++              gleason + ploidy, data=stagec)
+> print(fit)
+n= 146 
+
+node), split, n, deviance, yval
+      * denotes terminal node
+
+ 1) root 146 195.411600 1.0000000  
+   2) grade< 2.5 61  45.021520 0.3624701  
+     4) g2< 11.36 33   9.120116 0.1225562 *
+     5) g2>=11.36 28  27.804100 0.7335298  
+      10) gleason< 5.5 20  14.376900 0.5292190 *
+      11) gleason>=5.5 8  11.201470 1.3083680 *
+   3) grade>=2.5 85 125.327400 1.6190620  
+     6) age>=56.5 75 104.154700 1.4287310  
+      12) gleason< 7.5 50  66.701410 1.1431320 *
+      13) gleason>=7.5 25  33.993130 2.0355220  
+        26) g2>=15.29 13  16.555970 1.3494740 *
+        27) g2< 15.29 12  14.220260 2.9210480 *
+     7) age< 56.5 10  15.522810 3.1977430 *
+> if (USE.PRP) {
++     plot(fit, uniform=T, branch=.4, compress=T, main="Section 8b plot.rpart")
++     text(fit, use.n=T)
++     rpart.plot(fit, main="Section 8b rpart.plot", under=TRUE, digits=4)
++     print(rpart.rules(fit))
++ } else {
++     plot(fit, uniform=T, branch=.4, compress=T, main="Section 8b")
++     text(fit, use.n=T)
++ }
+ Surv                                                      
+ 0.12 when grade <  3                & g2 <  11            
+ 0.53 when grade <  3 & gleason <  6 & g2 >= 11            
+ 1.14 when grade >= 3 & gleason <  8            & age >= 57
+ 1.31 when grade <  3 & gleason >= 6 & g2 >= 11            
+ 1.35 when grade >= 3 & gleason >= 8 & g2 >= 15 & age >= 57
+ 2.92 when grade >= 3 & gleason >= 8 & g2 <  15 & age >= 57
+ 3.20 when grade >= 3                           & age <  57
+> summary(fit, cp=.02)
+Call:
+rpart(formula = Surv(stagec$pgtime, stagec$pgstat) ~ age + eet + 
+    g2 + grade + gleason + ploidy, data = stagec)
+  n= 146 
+
+          CP nsplit rel error    xerror       xstd
+1 0.12825561      0 1.0000000 1.0260707 0.07387949
+2 0.04143718      1 0.8717444 0.9472096 0.07871897
+3 0.02891302      2 0.8303072 0.9821941 0.08332177
+4 0.01770700      3 0.8013942 1.0319186 0.09172419
+5 0.01646215      4 0.7836872 1.0588280 0.09819522
+6 0.01138994      5 0.7672250 1.0510569 0.09830015
+7 0.01000000      6 0.7558351 1.0642574 0.09980886
+
+Variable importance
+  grade gleason      g2  ploidy     age 
+     30      27      18      14      10 
+
+Node number 1: 146 observations,    complexity param=0.1282556
+  events=54,  estimated rate=1 , mean deviance=1.338436 
+  left son=2 (61 obs) right son=3 (85 obs)
+  Primary splits:
+      grade   < 2.5    to the left,  improve=25.114360, (0 missing)
+      gleason < 5.5    to the left,  improve=21.515590, (3 missing)
+      ploidy  < 1.5    to the left,  improve=13.874260, (0 missing)
+      g2      < 13.2   to the left,  improve=12.370770, (7 missing)
+      age     < 58.5   to the right, improve= 2.659133, (0 missing)
+  Surrogate splits:
+      gleason < 5.5    to the left,  agree=0.863, adj=0.672, (0 split)
+      ploidy  < 1.5    to the left,  agree=0.644, adj=0.148, (0 split)
+      g2      < 9.945  to the left,  agree=0.630, adj=0.115, (0 split)
+      age     < 66.5   to the right, agree=0.589, adj=0.016, (0 split)
+
+Node number 2: 61 observations,    complexity param=0.04143718
+  events=9,  estimated rate=0.3624701 , mean deviance=0.7380577 
+  left son=4 (33 obs) right son=5 (28 obs)
+  Primary splits:
+      g2      < 11.36  to the left,  improve=8.9819660, (1 missing)
+      ploidy  < 1.5    to the left,  improve=6.8795730, (0 missing)
+      age     < 68.5   to the right, improve=4.1362190, (0 missing)
+      gleason < 5.5    to the left,  improve=1.6564990, (3 missing)
+      eet     < 1.5    to the left,  improve=0.5950964, (1 missing)
+  Surrogate splits:
+      ploidy < 1.5    to the left,  agree=0.917, adj=0.815, (1 split)
+      age    < 65.5   to the left,  agree=0.617, adj=0.148, (0 split)
+
+Node number 3: 85 observations,    complexity param=0.02891302
+  events=45,  estimated rate=1.619062 , mean deviance=1.47444 
+  left son=6 (75 obs) right son=7 (10 obs)
+  Primary splits:
+      age     < 56.5   to the right, improve=6.3899780, (0 missing)
+      g2      < 22.765 to the right, improve=4.7850160, (6 missing)
+      gleason < 8.5    to the left,  improve=4.3730790, (0 missing)
+      ploidy  < 1.5    to the left,  improve=1.5650740, (0 missing)
+      eet     < 1.5    to the right, improve=0.8319287, (1 missing)
+
+Node number 4: 33 observations
+  events=1,  estimated rate=0.1225562 , mean deviance=0.2763672 
+
+Node number 5: 28 observations
+  events=8,  estimated rate=0.7335298 , mean deviance=0.9930034 
+
+Node number 6: 75 observations
+  events=37,  estimated rate=1.428731 , mean deviance=1.388729 
+
+Node number 7: 10 observations
+  events=8,  estimated rate=3.197743 , mean deviance=1.552281 
+
 > 
-> # newgrp <- fit2$where
-> # plot(survfit(Surv(pgtime, pgstat) ~ newgrp, data=stagec), mark.time=F, lty=1:4)
-> # title(xlab='Time to Progression', ylab='Prob Progression')
-> # legend(.2, .2, legend=paste('node', c(4,5,6,7)), lty=1:4)
+> # modified for running in a script
+> fit2 <- prune(fit, cp=.015) # was fit2 <- snip.rpart(fit)
+> if (USE.PRP) {
++     plot(fit2, main="Section 8c plot.rpart")
++     text(fit2, use.n=T)
++     rpart.plot(fit2, branch=.4, main="Section 8c rpart.plot", under=TRUE, digits=4)
++     print(rpart.rules(fit2))
++ } else {
++     plot(fit2)
++     text(fit2, use.n=T, main="Section 8c")
++ }
+ Surv                                                      
+ 0.12 when grade <  3 & g2 <  11                           
+ 0.73 when grade <  3 & g2 >= 11                           
+ 1.14 when grade >= 3            & age >= 57 & gleason <  8
+ 1.35 when grade >= 3 & g2 >= 15 & age >= 57 & gleason >= 8
+ 2.92 when grade >= 3 & g2 <  15 & age >= 57 & gleason >= 8
+ 3.20 when grade >= 3            & age <  57               
+> par(old.par)
+> 
+> newgrp <- fit2$where
+> plot(survfit(Surv(pgtime, pgstat) ~ newgrp, data=stagec), mark.time=F, lty=1:4)
+> title(xlab='Time to Progression', ylab='Prob Progression')
+> legend(.2, .2, legend=paste('node', c(4,5,6,7)), lty=1:4)
 > 
 > cat("### Section 9\n")
 ### Section 9
@@ -770,20 +939,20 @@ progstat is 0.88 when
     9.5 when gleason <  6      & g2 <   8.7         & age <  66      
     9.5 when gleason <  7      & g2 >=         14.7 & age <  66      
 > fit$cptable
-          CP nsplit rel error    xerror      xstd
-1 0.07572983      0 1.0000000 1.0077738 0.1314085
-2 0.02825076      2 0.8485403 0.9569872 0.1420893
-3 0.02576114      3 0.8202896 1.0430186 0.1447396
-4 0.02340241      5 0.7687673 1.0466560 0.1476237
-5 0.01789441      7 0.7219625 1.0847911 0.1462527
-6 0.01295145      8 0.7040681 1.0797633 0.1459190
-7 0.01000000      9 0.6911166 1.0739514 0.1473594
+          CP nsplit rel error   xerror      xstd
+1 0.07572983      0 1.0000000 1.011278 0.1314430
+2 0.02825076      2 0.8485403 1.075247 0.1559325
+3 0.02576114      3 0.8202896 1.125340 0.1526751
+4 0.02340241      5 0.7687673 1.123467 0.1504289
+5 0.01789441      7 0.7219625 1.113336 0.1504319
+6 0.01295145      8 0.7040681 1.129773 0.1585098
+7 0.01000000      9 0.6911166 1.153574 0.1590437
 > temp <- xpred.rpart(fit)
 > err <- (stagec$pgtime - temp)^2
 > sum.err <- apply(err, 2, sum)
 > sum.err / (fit$frame)$dev[1]
 0.53786491 0.04625392 0.02697724 0.02455346 0.02046393 0.01522362 0.01138044 
-  1.023042   1.143067   1.159977   1.179967   1.173421   1.190165   1.189830 
+  1.011351   1.081529   1.170262   1.169371   1.210871   1.282212   1.302712 
 > 
 > par(old.par)
 > 

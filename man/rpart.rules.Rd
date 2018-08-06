@@ -1,7 +1,7 @@
 \name{rpart.rules}
 \alias{rpart.rules}
 \alias{print.rpart.rules}
-\title{Print an \code{rpart} model as a set of rules.}
+\title{Print an rpart model as a set of rules.}
 \description{
 Print an \code{rpart} model as a set of rules.
 }
@@ -65,6 +65,7 @@ See \code{\link{prp}} for details on these arguments.
 \code{faclen} \tab \code{= 0} \tab \tab \tab \tab default displays full factor names  \cr
 \code{trace} \tab \code{= 0} \tab \tab \tab \tab \cr
 \code{and} \tab \code{= " & "} \tab \tab \tab \tab the string that separates the splits when \code{style="wide"}  \cr
+\code{because} \tab \code{= " because "} \tab \tab \tab \tab used by \code{\link{rpart.predict}} \cr
 \code{facsep} \tab \code{= " or "} \tab \tab \tab \tab \cr
 \code{eq} \tab \code{= " is "} \tab \tab \tab \tab \cr
 \code{lt} \tab \code{= " <  "} \tab \tab \tab \tab \cr

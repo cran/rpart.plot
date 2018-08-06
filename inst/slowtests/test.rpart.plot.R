@@ -17,6 +17,8 @@ data(ozone1)
 ititanic <- ptitanic
 ititanic$survived <- as.integer(ititanic$survived == "survived")
 
+example(rpart.predict)
+
 # test format0 and formatf
 
 x <- c(1.2345, 1.6, 1.23456, 12.345, 124.56,

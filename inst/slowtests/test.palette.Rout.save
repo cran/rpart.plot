@@ -207,7 +207,6 @@ cex 0.688   xlim c(0, 1)   ylim c(0, 1)
 > 
 > expect.err(try(rpart.plot.version1(mod.age, type=2, extra="auto", fallen.leaves=TRUE, box.palette="notacolor")),
 +            "box.palette: \"notacolor\" is neither a color nor a palette")
-Error in col2rgb(pal_i) : invalid color name 'notacolor'
 Error : box.palette: "notacolor" is neither a color nor a palette.
 Try something like box.palette="blue" or box.palette="Blues".
 The predefined palettes are (with an optional "-" prefix):
@@ -220,7 +219,6 @@ Got error as expected from try(rpart.plot.version1(mod.age, type = 2, extra = "a
 > 
 > expect.err(try(rpart.plot(mod.age, type=2, extra="auto", fallen.leaves=TRUE, box.palette="#1234XX")),
 +            "box.palette: \"#1234XX\" is neither a color nor a palette")
-Error in col2rgb(pal_i) : invalid hex digit in 'color' or 'lty'
 Error : box.palette: "#1234XX" is neither a color nor a palette.
 Try something like box.palette="blue" or box.palette="Blues".
 The predefined palettes are (with an optional "-" prefix):
@@ -233,7 +231,6 @@ Got error as expected from try(rpart.plot(mod.age, type = 2, extra = "auto", fal
 > 
 > expect.err(try(rpart.plot.version1(mod.age, type=2, extra="auto", fallen.leaves=TRUE, box.palette="#1234XX")),
 +            "box.palette: \"#1234XX\" is neither a color nor a palette")
-Error in col2rgb(pal_i) : invalid hex digit in 'color' or 'lty'
 Error : box.palette: "#1234XX" is neither a color nor a palette.
 Try something like box.palette="blue" or box.palette="Blues".
 The predefined palettes are (with an optional "-" prefix):
@@ -282,7 +279,6 @@ Got error as expected from try(rpart.plot.version1(mod.age, type = 2, extra = "a
 > 
 > expect.err(try(rpart.plot(mod.age, type=2, extra="auto", fallen.leaves=TRUE, box.palette=c(0, 1, 2), main="box.palette=c(0,1,2)")),
 +            "box.palette: 0 is neither a color nor a palette")
-Error in col2rgb(pal_i) : numerical color values must be positive
 Error : box.palette: 0 is neither a color nor a palette.
 Try something like box.palette="blue" or box.palette="Blues".
 The predefined palettes are (with an optional "-" prefix):
@@ -346,7 +342,10 @@ legend.x 0.8   legend.y 1.03572
 > expect.err(try(rpart.plot(mod.species, type=2, extra="auto", fallen.leaves=TRUE, box.palette=c("Blues", "Reds"), main="box.palette=c(\"Blues\", \"Reds\")")),
 +            "The rpart model has a multiclass response (not a continuous or binary response)")
 Error : The rpart model has a multiclass response (not a continuous or binary response).
-Therefore box.palette must be "auto", or a list of palettes, or a single color or palette.
+Therefore box.palette must be "auto",
+                           or a list of colors or palettes,
+                           or a single color or palette.
+e.g. box.palette=list("pink", "lightblue", "lightgray")
 e.g. box.palette=list("Reds", "Oranges", "Grays", "Blues", "Greens")
 Got error as expected from try(rpart.plot(mod.species, type = 2, extra = "auto", fallen.leaves = TRUE,     box.palette = c("Blues", "Reds"), main = "box.palette=c(\"Blues\", \"Reds\")"))
 > 
@@ -371,7 +370,10 @@ Got error as expected from try(rpart.plot(mod.species, type = 2, extra = "auto",
 +                box.palette=c("lightblue2", "pink"))),
 +                "The rpart model has a multiclass response (not a continuous or binary response)")
 Error : The rpart model has a multiclass response (not a continuous or binary response).
-Therefore box.palette must be "auto", or a list of palettes, or a single color or palette.
+Therefore box.palette must be "auto",
+                           or a list of colors or palettes,
+                           or a single color or palette.
+e.g. box.palette=list("pink", "lightblue", "lightgray")
 e.g. box.palette=list("Reds", "Oranges", "Grays", "Blues", "Greens")
 Got error as expected from try(rpart.plot(mod.country, type = 2, extra = "auto", fallen.leaves = TRUE,     box.palette = c("lightblue2", "pink")))
 > par(old.par)
@@ -590,7 +592,6 @@ cex 1   xlim c(0, 1)   ylim c(0, 1)
 > expect.err(try(test.expand.palette("")), "box.palette: \"\" is neither a color nor a palette")
 
 box.palette= 
-Error in col2rgb(pal_i) : invalid color name ''
 Error : box.palette: "" is neither a color nor a palette.
 Try something like box.palette="blue" or box.palette="Blues".
 The predefined palettes are (with an optional "-" prefix):
@@ -603,7 +604,6 @@ Got error as expected from try(test.expand.palette(""))
 > expect.err(try(test.expand.palette("nonesuch")), "box.palette: \"nonesuch\" is neither a color nor a palette")
 
 box.palette=nonesuch 
-Error in col2rgb(pal_i) : invalid color name 'nonesuch'
 Error : box.palette: "nonesuch" is neither a color nor a palette.
 Try something like box.palette="blue" or box.palette="Blues".
 The predefined palettes are (with an optional "-" prefix):
@@ -628,7 +628,6 @@ Got error as expected from try(test.expand.palette("Nonesuch"))
 > expect.err(try(test.expand.palette(c("tan1", "huh?"))), "box.palette: \"huh?\" is neither a color nor a palette")
 
 box.palette=c(tan1,huh?) 
-Error in col2rgb(pal_i) : invalid color name 'huh?'
 Error : box.palette: "huh?" is neither a color nor a palette.
 Try something like box.palette="blue" or box.palette="Blues".
 The predefined palettes are (with an optional "-" prefix):
@@ -756,43 +755,43 @@ To silence this error, change node.fun or use pal.node.fun=FALSE
 > #--- multiclass model ---
 > 
 > mod.multiclass <- rpart(pclass~., data=ptitanic, control=list(cp=.02))
-> par(mfrow=c(5, 2))
+> par(mfrow=c(3, 2))
 > plot2(mod.multiclass, optional.msg="mod.multiclass\n", trace=1,
 +       node.fun=function(x, labs, digits, varlen) substring(labs, 1, 1))
 multiclass auto box.palette: list(Blues, Greens)
 cex 1   xlim c(0, 1)   ylim c(0, 1)
-legend.x 0   legend.y 1.23731
+legend.x 0   legend.y 1.10395
 multiclass auto box.palette: list(Blues, Greens)
 cex 1   xlim c(0, 1)   ylim c(0, 1)
-legend.x 0   legend.y 1.23731
+legend.x 0   legend.y 1.10395
 > plot2(mod.multiclass, box.palette=list("Bu","Or","Gy"), trace=1,
 +       optional.msg="box.palette=list(\"Bu\",\"Or\",\"Gy\")\n",
 +       node.fun=function(x, labs, digits, varlen) substring(labs, 1, 1))
 cex 1   xlim c(0, 1)   ylim c(0, 1)
-legend.x 0   legend.y 1.23731
+legend.x 0   legend.y 1.10395
 cex 1   xlim c(0, 1)   ylim c(0, 1)
-legend.x 0   legend.y 1.23731
+legend.x 0   legend.y 1.10395
 > plot2(mod.multiclass, box.palette="BuOr", trace=1,
 +       optional.msg="box.palette=\"BuOr\"\n",
 +       node.fun=function(x, labs, digits, varlen) substring(labs, 1, 1))
 cex 1   xlim c(0, 1)   ylim c(0, 1)
-legend.x 0   legend.y 1.23731
+legend.x 0   legend.y 1.10395
 cex 1   xlim c(0, 1)   ylim c(0, 1)
-legend.x 0   legend.y 1.23731
+legend.x 0   legend.y 1.10395
 > plot2(mod.multiclass, box.palette="BuOr", trace=1,
 +       optional.msg="box.palette=\"BuOr\"\n",
 +       node.fun=function(x, labs, digits, varlen) -as.numeric(substring(labs, 1, 1)))
 cex 1   xlim c(0, 1)   ylim c(0, 1)
-legend.x 0   legend.y 1.23731
+legend.x 0   legend.y 1.10395
 cex 1   xlim c(0, 1)   ylim c(0, 1)
-legend.x 0   legend.y 1.23731
+legend.x 0   legend.y 1.10395
 > plot2(mod.multiclass, box.palette="OrGn", pal.thresh=20, trace=1,
-+       optional.msg="box.palette=\"BuOr\" pal.thresh=20\n",
++       optional.msg="box.palette=\"OrGn\" pal.thresh=20\n",
 +       node.fun=function(x, labs, digits, varlen) 10 * as.numeric(substring(labs, 1, 1)))
 cex 1   xlim c(0, 1)   ylim c(0, 1)
-legend.x 0   legend.y 1.23731
+legend.x 0   legend.y 1.10395
 cex 1   xlim c(0, 1)   ylim c(0, 1)
-legend.x 0   legend.y 1.23731
+legend.x 0   legend.y 1.10395
 > 
 > expect.err(try(rpart.plot(mod.multiclass, type=2, extra="auto", trace=2,
 +                fallen.leaves=TRUE, box.palette=c("blues", "reds"),
@@ -801,9 +800,16 @@ legend.x 0   legend.y 1.23731
 will apply roundint to the following variables in splits: sibsp parch 
 handle.box.palette for class response invokes handle.multiclass.palette
 Error : The rpart model has a multiclass response (not a continuous or binary response).
-Therefore box.palette must be "auto", or a list of palettes, or a single color or palette.
+Therefore box.palette must be "auto",
+                           or a list of colors or palettes,
+                           or a single color or palette.
+e.g. box.palette=list("pink", "lightblue", "lightgray")
 e.g. box.palette=list("Reds", "Oranges", "Grays", "Blues", "Greens")
 Got error as expected from try(rpart.plot(mod.multiclass, type = 2, extra = "auto", trace = 2,     fallen.leaves = TRUE, box.palette = c("blues", "reds"), main = "box.palette=c(\"blues\", \"reds\")"))
+> 
+> plot2(mod.multiclass, box.palette=list("pink", "lightblue", "lightgray"),
++       optional.msg='list("pink", "lightblue", "lightgray")\n',
++       node.fun=function(x, labs, digits, varlen) 10 * as.numeric(substring(labs, 1, 1)))
 > 
 > par(old.par)
 > 

@@ -17,6 +17,7 @@ rpart.plot(age, type=4, nn=1, clip.right.labs=FALSE, branch=.3,
            digits=-2, roundint=TRUE,
            main="age with na", trace=1) # trace=1 to get message: fitted[6] is NA
 print(rpart.rules(age))
+print(rpart.predict(age, rules=TRUE)[53:56,])
 
 # --- binary response ---
 
@@ -31,6 +32,7 @@ expect.err(try(rpart.plot(survived, nn=1, type=1, fallen.leaves=FALSE,
 rpart.plot(survived, nn=1, type=1, fallen.leaves=FALSE, box.palette="Blues",
            main="survived with na")
 print(rpart.rules(survived, cover=TRUE))
+print(rpart.predict(survived, rules=TRUE)[1:5,])
 
 #--- multiclass response ---
 
@@ -39,6 +41,7 @@ pclass$frame$yval[3] <- pclass$frame$yval2[3,1] <- NA # node 4
 pclass$frame$yval2[3, 6] <- NA # change class probs [.74 .16 .10] to  [.74 NA .10]
 rpart.plot(pclass, nn=1, main="pclass with na")
 print(rpart.rules(pclass))
+print(rpart.predict(pclass, rules=TRUE, clip.facs=TRUE)[5:8,])
 
 par(old.par)
 

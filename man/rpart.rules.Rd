@@ -64,12 +64,14 @@ See \code{\link{prp}} for details on these arguments.
 \code{varlen} \tab \code{= 0} \tab \tab \tab \tab default displays full variable names  \cr
 \code{faclen} \tab \code{= 0} \tab \tab \tab \tab default displays full factor names  \cr
 \code{trace} \tab \code{= 0} \tab \tab \tab \tab \cr
-\code{and} \tab \code{= " & "} \tab \tab \tab \tab the string that separates the splits when \code{style="wide"}  \cr
-\code{because} \tab \code{= " because "} \tab \tab \tab \tab used by \code{\link{rpart.predict}} \cr
 \code{facsep} \tab \code{= " or "} \tab \tab \tab \tab \cr
 \code{eq} \tab \code{= " is "} \tab \tab \tab \tab \cr
 \code{lt} \tab \code{= " <  "} \tab \tab \tab \tab \cr
 \code{ge} \tab \code{= " >= "} \tab \tab \tab \tab \cr
+\code{and} \tab \code{= " & "} \tab \tab \tab \tab\cr
+\code{when} \tab \code{= " when "} \tab \tab \tab \tab\cr
+\code{because} \tab \code{= " because "} \tab \tab \tab \tab used only by \code{\link{rpart.predict}} \cr
+\code{null.model} \tab \code{= "null model"} \tab \tab \tab \tab for root-only models (no splits)\cr
 \code{response.name} \tab \code{= NULL} \tab \tab \tab \tab the response name printed before the rules (\code{NULL} means automatic)  \cr
 }
 }
@@ -91,6 +93,7 @@ See \code{\link{prp}} for details on these arguments.
 \value{
 A \code{data.frame} of class \code{c("rpart.rules", "data.frame")}
 with some attached attributes which are passed on to \code{print.rpart.rules}.
+Note that \code{print.rpart.rules} temporarily increases \code{options(width)}.
 }
 \seealso{
 \code{\link{rpart.plot}}

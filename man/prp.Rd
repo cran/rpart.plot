@@ -1012,7 +1012,7 @@ prp(tree, main = "assorted arguments",
     branch.lty = 3,        # draw branches using dotted lines
     branch = .5,           # change angle of branch lines
     faclen = 0,            # faclen = 0 to print full factor names
-    trace = 1,             # print the automatically calculated cex
+    trace = 1,             # print the auto calculated cex, xlim, ylim
     split.cex = 1.2,       # make the split text larger than the node text
     split.prefix = "is ",  # put "is " before split text
     split.suffix = "?",    # put "?" after split text

@@ -94,13 +94,15 @@ get.lsplit.rsplit <- function(x, isplit, split.var.names,
         is.less.than <- ncat < 0
         lsplit[is.con] <- paste0(ifelse(is.less.than, lt, ge)[is.con], formatted.cut)
         rsplit[is.con] <- paste0(ifelse(is.less.than, ge, lt)[is.con], formatted.cut)
-        # print logical predictors as "Survived = 1" or "Survived = 0"
-        is.logical <- x$varinfo$is.logical[isplit]
-        if(!anyNA(is.logical) && any(is.logical)) {
+        # print logical and 01 predictors as "Survived = 1" or "Survived = 0"
+        islogical <- x$varinfo$islogical[isplit]
+        is01      <- x$varinfo$is01[isplit]
+        if(!anyNA(islogical) && !anyNA(is01) && (any(islogical) || any(is01))) {
+            isbool <- islogical | (roundint & is01)
             eq0 <- paste0(logical.eq, "0")
             eq1 <- paste0(logical.eq, "1")
-            lsplit[is.logical] <- paste0(ifelse(is.less.than, eq0, eq1)[is.logical])
-            rsplit[is.logical] <- paste0(ifelse(is.less.than, eq1, eq0)[is.logical])
+            lsplit[isbool] <- paste0(ifelse(is.less.than, eq0, eq1)[isbool])
+            rsplit[isbool] <- paste0(ifelse(is.less.than, eq1, eq0)[isbool])
         }
     }
     is.cat <- ncat > 1              # categorical variables (a logical vector)
@@ -161,10 +163,10 @@ tweak.splits <- function(obj, roundint, digits, trace)
     # Because rpart.model.frame() may fail or give warnings, we do
     # processing here only if the roundint argument is TRUE.
     if(roundint) {
-        is.roundint <- obj$varinfo$is.roundint # vector of bools
-        if(anyNA(is.roundint)) # couldn't get the is.roundint vector
+        isroundint <- obj$varinfo$isroundint # vector of bools
+        if(anyNA(isroundint)) # couldn't get the isroundint vector
             return(splits)
-        for(varname in names(is.roundint)) if(is.roundint[varname]) {
+        for(varname in names(isroundint)) if(isroundint[varname]) {
             i <- rownames(splits) %in% varname
             if(length(i) > 0)
                 splits[,"index"][i] <- ceiling(splits[,"index"][i] - verysmall)

@@ -27,7 +27,7 @@ attached base packages:
 
 other attached packages:
 [1] earth_4.6.3        plotmo_3.4.1       TeachingDemos_2.10 plotrix_3.7-2     
-[5] rpart.plot_3.0.3   rpart_4.1-13      
+[5] rpart.plot_3.0.4   rpart_4.1-13      
 
 loaded via a namespace (and not attached):
 [1] compiler_3.5.0 tools_3.5.0   
@@ -176,7 +176,7 @@ Warning in citation("rpart.plot") :
 To cite package 'rpart.plot' in publications use:
 
   Stephen Milborrow (NA). rpart.plot: Plot 'rpart' Models: An Enhanced
-  Version of 'plot.rpart'. R package version 3.0.3.
+  Version of 'plot.rpart'. R package version 3.0.4.
   http://www.milbo.org/rpart-plot
 
 A BibTeX entry for LaTeX users is
@@ -184,7 +184,7 @@ A BibTeX entry for LaTeX users is
   @Manual{,
     title = {rpart.plot: Plot 'rpart' Models: An Enhanced Version of 'plot.rpart'},
     author = {Stephen Milborrow},
-    note = {R package version 3.0.3},
+    note = {R package version 3.0.4},
     url = {http://www.milbo.org/rpart-plot},
   }
 
@@ -3933,7 +3933,7 @@ attached base packages:
 other attached packages:
 [1] randomForest_4.6-14 rattle_5.1.0        earth_4.6.3        
 [4] plotmo_3.4.1        TeachingDemos_2.10  plotrix_3.7-2      
-[7] rpart.plot_3.0.3    rpart_4.1-13       
+[7] rpart.plot_3.0.4    rpart_4.1-13       
 
 loaded via a namespace (and not attached):
 [1] compiler_3.5.0     magrittr_1.5       tools_3.5.0        RColorBrewer_1.1-2
@@ -4017,7 +4017,7 @@ attached base packages:
 other attached packages:
 [1] randomForest_4.6-14 rattle_5.1.0        earth_4.6.3        
 [4] plotmo_3.4.1        TeachingDemos_2.10  plotrix_3.7-2      
-[7] rpart.plot_3.0.3    rpart_4.1-13       
+[7] rpart.plot_3.0.4    rpart_4.1-13       
 
 loaded via a namespace (and not attached):
 [1] compiler_3.5.0     magrittr_1.5       tools_3.5.0        RColorBrewer_1.1-2

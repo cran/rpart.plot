@@ -204,56 +204,185 @@ y is 9 [.00 .00 .05 .05 .05 .10 .00 .00 .10 .67] when
     x1 >= 0.5
     x7 < 0.5
     x4 >= 0.5
+> print(rpart.rules(fit9, trace=1, roundint=FALSE)) # message Variable not in the model.frame
+Variable 'x1' in splits is not in the model.frame (so cannot determine roundint and is.binary for the variable)
+colnames(model.frame): y x
+
+iframe   3 node   4 path c("root", "x1 < 0.5", "x2 < 0.5")
+iframe   5 node  10 path c("root", "x1 < 0.5", "x2 >= 0.5", "x5 < 0.5")
+iframe   6 node  11 path c("root", "x1 < 0.5", "x2 >= 0.5", "x5 >= 0.5")
+iframe   9 node  12 path c("root", "x1 >= 0.5", "x7 >= 0.5", "x6 < 0.5")
+iframe  13 node 104 path c("root", "x1 >= 0.5", "x7 >= 0.5", "x6 >= 0.5", "x3 >= 0.5", "x5 >= 0.5", "x8 < 0.5")
+iframe  14 node 105 path c("root", "x1 >= 0.5", "x7 >= 0.5", "x6 >= 0.5", "x3 >= 0.5", "x5 >= 0.5", "x8 >= 0.5")
+iframe  15 node  53 path c("root", "x1 >= 0.5", "x7 >= 0.5", "x6 >= 0.5", "x3 >= 0.5", "x5 < 0.5")
+iframe  16 node  27 path c("root", "x1 >= 0.5", "x7 >= 0.5", "x6 >= 0.5", "x3 < 0.5")
+iframe  18 node  14 path c("root", "x1 >= 0.5", "x7 < 0.5", "x4 < 0.5")
+iframe  19 node  15 path c("root", "x1 >= 0.5", "x7 < 0.5", "x4 >= 0.5")
+
+raw rules:
+    lab                                                                                                                     fit iclass       cover x1= x1< x1>= x7= x7< x7>= x2= x2< x2>= x4= x4< x4>= x5= x5< x5>= x3= x3< x3>= x21= x21< x21>= x12= x12< x12>= x9= x9< x9>= x18= x18< x18>= x19= x19< x19>= x6= x6< x6>= x13= x13< x13>= x8= x8< x8>= x24= x24< x24>= x11= x11< x11>= x16= x16< x16>= x20= x20< x20>=
+4     1 .0000000000 .7916666667 .0000000000 .1250000000 .0833333333 .0000000000 .0000000000 .0000000000 .0000000000 .0000000000      2 12.00000000     0.5                       0.5                                                                                                                                                                                                                                   
+10    4 .0000000000 .0454545455 .0000000000 .0000000000 .7727272727 .0000000000 .0909090909 .0000000000 .0454545455 .0454545455      5 11.00000000     0.5                            0.5                  0.5                                                                                                                                                                                                         
+11    6 .1600000000 .0000000000 .0000000000 .0000000000 .0000000000 .0000000000 .6800000000 .0400000000 .0800000000 .0400000000      7 12.50000000     0.5                            0.5                       0.5                                                                                                                                                                                                    
+12    2 .0370370370 .0000000000 .7037037037 .0740740741 .0000000000 .1111111111 .0000000000 .0000000000 .0740740741 .0000000000      3 13.50000000          0.5          0.5                                                                                                                                      0.5                                                                                                  
+104   0 .7142857143 .0000000000 .0000000000 .0000000000 .0000000000 .0000000000 .0000000000 .0000000000 .2857142857 .0000000000      1  7.00000000          0.5          0.5                                    0.5          0.5                                                                                       0.5                     0.5                                                                     
+105   8 .1428571429 .0000000000 .0000000000 .1428571429 .0000000000 .0000000000 .0000000000 .0000000000 .7142857143 .0000000000      9  3.50000000          0.5          0.5                                    0.5          0.5                                                                                       0.5                          0.5                                                                
+53    3 .1000000000 .0000000000 .0000000000 .5500000000 .0000000000 .0500000000 .0000000000 .1000000000 .1500000000 .0500000000      4 10.00000000          0.5          0.5                               0.5               0.5                                                                                       0.5                                                                                             
+27    5 .1000000000 .0000000000 .0000000000 .1000000000 .0000000000 .7000000000 .0500000000 .0000000000 .0500000000 .0000000000      6 10.00000000          0.5          0.5                                            0.5                                                                                            0.5                                                                                             
+14    7 .0000000000 .0000000000 .0000000000 .0000000000 .0000000000 .0000000000 .0000000000 .8500000000 .0000000000 .1500000000      8 10.00000000          0.5     0.5                       0.5                                                                                                                                                                                                                      
+15    9 .0000000000 .0000000000 .0476190476 .0476190476 .0476190476 .0952380952 .0000000000 .0000000000 .0952380952 .6666666667     10 10.50000000          0.5     0.5                            0.5                                                                                                                                                                                                                 
+
+processed rules:
+    y    0   1   2   3   4   5   6   7   8   9                                                                                                    
+104 0 [.71 .00 .00 .00 .00 .00 .00 .00 .29 .00] when x1 >= 0.5 & x7 >= 0.5 & x5 >= 0.5 & x6 >= 0.5 & x3 >= 0.5                         & x8 <  0.5
+4   1 [.00 .79 .00 .12 .08 .00 .00 .00 .00 .00] when x1 <  0.5                                                 & x2 <  0.5                        
+12  2 [.04 .00 .70 .07 .00 .11 .00 .00 .07 .00] when x1 >= 0.5 & x7 >= 0.5             & x6 <  0.5                                                
+53  3 [.10 .00 .00 .55 .00 .05 .00 .10 .15 .05] when x1 >= 0.5 & x7 >= 0.5 & x5 <  0.5 & x6 >= 0.5 & x3 >= 0.5                                    
+10  4 [.00 .05 .00 .00 .77 .00 .09 .00 .05 .05] when x1 <  0.5             & x5 <  0.5                         & x2 >= 0.5                        
+27  5 [.10 .00 .00 .10 .00 .70 .05 .00 .05 .00] when x1 >= 0.5 & x7 >= 0.5             & x6 >= 0.5 & x3 <  0.5                                    
+11  6 [.16 .00 .00 .00 .00 .00 .68 .04 .08 .04] when x1 <  0.5             & x5 >= 0.5                         & x2 >= 0.5                        
+14  7 [.00 .00 .00 .00 .00 .00 .00 .85 .00 .15] when x1 >= 0.5 & x7 <  0.5                                                 & x4 <  0.5            
+105 8 [.14 .00 .00 .14 .00 .00 .00 .00 .71 .00] when x1 >= 0.5 & x7 >= 0.5 & x5 >= 0.5 & x6 >= 0.5 & x3 >= 0.5                         & x8 >= 0.5
+15  9 [.00 .00 .05 .05 .05 .10 .00 .00 .10 .67] when x1 >= 0.5 & x7 <  0.5                                                 & x4 >= 0.5            
+
+ y    0   1   2   3   4   5   6   7   8   9                                                                                                    
+ 0 [.71 .00 .00 .00 .00 .00 .00 .00 .29 .00] when x1 >= 0.5 & x7 >= 0.5 & x5 >= 0.5 & x6 >= 0.5 & x3 >= 0.5                         & x8 <  0.5
+ 1 [.00 .79 .00 .12 .08 .00 .00 .00 .00 .00] when x1 <  0.5                                                 & x2 <  0.5                        
+ 2 [.04 .00 .70 .07 .00 .11 .00 .00 .07 .00] when x1 >= 0.5 & x7 >= 0.5             & x6 <  0.5                                                
+ 3 [.10 .00 .00 .55 .00 .05 .00 .10 .15 .05] when x1 >= 0.5 & x7 >= 0.5 & x5 <  0.5 & x6 >= 0.5 & x3 >= 0.5                                    
+ 4 [.00 .05 .00 .00 .77 .00 .09 .00 .05 .05] when x1 <  0.5             & x5 <  0.5                         & x2 >= 0.5                        
+ 5 [.10 .00 .00 .10 .00 .70 .05 .00 .05 .00] when x1 >= 0.5 & x7 >= 0.5             & x6 >= 0.5 & x3 <  0.5                                    
+ 6 [.16 .00 .00 .00 .00 .00 .68 .04 .08 .04] when x1 <  0.5             & x5 >= 0.5                         & x2 >= 0.5                        
+ 7 [.00 .00 .00 .00 .00 .00 .00 .85 .00 .15] when x1 >= 0.5 & x7 <  0.5                                                 & x4 <  0.5            
+ 8 [.14 .00 .00 .14 .00 .00 .00 .00 .71 .00] when x1 >= 0.5 & x7 >= 0.5 & x5 >= 0.5 & x6 >= 0.5 & x3 >= 0.5                         & x8 >= 0.5
+ 9 [.00 .00 .05 .05 .05 .10 .00 .00 .10 .67] when x1 >= 0.5 & x7 <  0.5                                                 & x4 >= 0.5            
 > 
 > df <- data.frame(y, x)
 > dfit.df <- rpart(y ~ ., data=df, method='class', control=temp3)
 > fit9.df <- prune(dfit.df, cp=.02)
 > print(rpart.rules(fit9.df, cover=TRUE))
  y    0   1   2   3   4   5   6   7   8   9                                                                                       cover
- 0 [.71 .00 .00 .00 .00 .00 .00 .00 .29 .00] when X1 >= 1 & X7 >= 1 & X5 >= 1 & X6 >= 1 & X3 >= 1                     & X8 <  1      7%
- 1 [.00 .79 .00 .12 .08 .00 .00 .00 .00 .00] when X1 <  1                                         & X2 <  1                         12%
- 2 [.04 .00 .70 .07 .00 .11 .00 .00 .07 .00] when X1 >= 1 & X7 >= 1           & X6 <  1                                             14%
- 3 [.10 .00 .00 .55 .00 .05 .00 .10 .15 .05] when X1 >= 1 & X7 >= 1 & X5 <  1 & X6 >= 1 & X3 >= 1                                   10%
- 4 [.00 .05 .00 .00 .77 .00 .09 .00 .05 .05] when X1 <  1           & X5 <  1                     & X2 >= 1                         11%
- 5 [.10 .00 .00 .10 .00 .70 .05 .00 .05 .00] when X1 >= 1 & X7 >= 1           & X6 >= 1 & X3 <  1                                   10%
- 6 [.16 .00 .00 .00 .00 .00 .68 .04 .08 .04] when X1 <  1           & X5 >= 1                     & X2 >= 1                         12%
- 7 [.00 .00 .00 .00 .00 .00 .00 .85 .00 .15] when X1 >= 1 & X7 <  1                                         & X4 <  1               10%
- 8 [.14 .00 .00 .14 .00 .00 .00 .00 .71 .00] when X1 >= 1 & X7 >= 1 & X5 >= 1 & X6 >= 1 & X3 >= 1                     & X8 >= 1      4%
- 9 [.00 .00 .05 .05 .05 .10 .00 .00 .10 .67] when X1 >= 1 & X7 <  1                                         & X4 >= 1               10%
+ 0 [.71 .00 .00 .00 .00 .00 .00 .00 .29 .00] when X1 is 1 & X7 is 1 & X5 is 1 & X6 is 1 & X3 is 1                     & X8 is 0      7%
+ 1 [.00 .79 .00 .12 .08 .00 .00 .00 .00 .00] when X1 is 0                                         & X2 is 0                         12%
+ 2 [.04 .00 .70 .07 .00 .11 .00 .00 .07 .00] when X1 is 1 & X7 is 1           & X6 is 0                                             14%
+ 3 [.10 .00 .00 .55 .00 .05 .00 .10 .15 .05] when X1 is 1 & X7 is 1 & X5 is 0 & X6 is 1 & X3 is 1                                   10%
+ 4 [.00 .05 .00 .00 .77 .00 .09 .00 .05 .05] when X1 is 0           & X5 is 0                     & X2 is 1                         11%
+ 5 [.10 .00 .00 .10 .00 .70 .05 .00 .05 .00] when X1 is 1 & X7 is 1           & X6 is 1 & X3 is 0                                   10%
+ 6 [.16 .00 .00 .00 .00 .00 .68 .04 .08 .04] when X1 is 0           & X5 is 1                     & X2 is 1                         12%
+ 7 [.00 .00 .00 .00 .00 .00 .00 .85 .00 .15] when X1 is 1 & X7 is 0                                         & X4 is 0               10%
+ 8 [.14 .00 .00 .14 .00 .00 .00 .00 .71 .00] when X1 is 1 & X7 is 1 & X5 is 1 & X6 is 1 & X3 is 1                     & X8 is 1      4%
+ 9 [.00 .00 .05 .05 .05 .10 .00 .00 .10 .67] when X1 is 1 & X7 is 0                                         & X4 is 1               10%
+> print(rpart.rules(fit9.df, cover=TRUE, roundint=FALSE))
+ y    0   1   2   3   4   5   6   7   8   9                                                                                                       cover
+ 0 [.71 .00 .00 .00 .00 .00 .00 .00 .29 .00] when X1 >= 0.5 & X7 >= 0.5 & X5 >= 0.5 & X6 >= 0.5 & X3 >= 0.5                         & X8 <  0.5      7%
+ 1 [.00 .79 .00 .12 .08 .00 .00 .00 .00 .00] when X1 <  0.5                                                 & X2 <  0.5                             12%
+ 2 [.04 .00 .70 .07 .00 .11 .00 .00 .07 .00] when X1 >= 0.5 & X7 >= 0.5             & X6 <  0.5                                                     14%
+ 3 [.10 .00 .00 .55 .00 .05 .00 .10 .15 .05] when X1 >= 0.5 & X7 >= 0.5 & X5 <  0.5 & X6 >= 0.5 & X3 >= 0.5                                         10%
+ 4 [.00 .05 .00 .00 .77 .00 .09 .00 .05 .05] when X1 <  0.5             & X5 <  0.5                         & X2 >= 0.5                             11%
+ 5 [.10 .00 .00 .10 .00 .70 .05 .00 .05 .00] when X1 >= 0.5 & X7 >= 0.5             & X6 >= 0.5 & X3 <  0.5                                         10%
+ 6 [.16 .00 .00 .00 .00 .00 .68 .04 .08 .04] when X1 <  0.5             & X5 >= 0.5                         & X2 >= 0.5                             12%
+ 7 [.00 .00 .00 .00 .00 .00 .00 .85 .00 .15] when X1 >= 0.5 & X7 <  0.5                                                 & X4 <  0.5                 10%
+ 8 [.14 .00 .00 .14 .00 .00 .00 .00 .71 .00] when X1 >= 0.5 & X7 >= 0.5 & X5 >= 0.5 & X6 >= 0.5 & X3 >= 0.5                         & X8 >= 0.5      4%
+ 9 [.00 .00 .05 .05 .05 .10 .00 .00 .10 .67] when X1 >= 0.5 & X7 <  0.5                                                 & X4 >= 0.5                 10%
+> print(rpart.rules(fit9.df, cover=TRUE, clip.facs=TRUE))
+ y    0   1   2   3   4   5   6   7   8   9                                                                               cover
+ 0 [.71 .00 .00 .00 .00 .00 .00 .00 .29 .00] when X1     & X7     & X5     & X6     & X3                       & not X8      7%
+ 1 [.00 .79 .00 .12 .08 .00 .00 .00 .00 .00] when not X1                                     & not X2                       12%
+ 2 [.04 .00 .70 .07 .00 .11 .00 .00 .07 .00] when X1     & X7              & not X6                                         14%
+ 3 [.10 .00 .00 .55 .00 .05 .00 .10 .15 .05] when X1     & X7     & not X5 & X6     & X3                                    10%
+ 4 [.00 .05 .00 .00 .77 .00 .09 .00 .05 .05] when not X1          & not X5                   & X2                           11%
+ 5 [.10 .00 .00 .10 .00 .70 .05 .00 .05 .00] when X1     & X7              & X6     & not X3                                10%
+ 6 [.16 .00 .00 .00 .00 .00 .68 .04 .08 .04] when not X1          & X5                       & X2                           12%
+ 7 [.00 .00 .00 .00 .00 .00 .00 .85 .00 .15] when X1     & not X7                                     & not X4              10%
+ 8 [.14 .00 .00 .14 .00 .00 .00 .00 .71 .00] when X1     & X7     & X5     & X6     & X3                       & X8          4%
+ 9 [.00 .00 .05 .05 .05 .10 .00 .00 .10 .67] when X1     & not X7                                     & X4                  10%
+> print(rpart.rules(fit9.df, cover=TRUE, roundint=FALSE, clip.facs=TRUE))
+ y    0   1   2   3   4   5   6   7   8   9                                                                                                       cover
+ 0 [.71 .00 .00 .00 .00 .00 .00 .00 .29 .00] when X1 >= 0.5 & X7 >= 0.5 & X5 >= 0.5 & X6 >= 0.5 & X3 >= 0.5                         & X8 <  0.5      7%
+ 1 [.00 .79 .00 .12 .08 .00 .00 .00 .00 .00] when X1 <  0.5                                                 & X2 <  0.5                             12%
+ 2 [.04 .00 .70 .07 .00 .11 .00 .00 .07 .00] when X1 >= 0.5 & X7 >= 0.5             & X6 <  0.5                                                     14%
+ 3 [.10 .00 .00 .55 .00 .05 .00 .10 .15 .05] when X1 >= 0.5 & X7 >= 0.5 & X5 <  0.5 & X6 >= 0.5 & X3 >= 0.5                                         10%
+ 4 [.00 .05 .00 .00 .77 .00 .09 .00 .05 .05] when X1 <  0.5             & X5 <  0.5                         & X2 >= 0.5                             11%
+ 5 [.10 .00 .00 .10 .00 .70 .05 .00 .05 .00] when X1 >= 0.5 & X7 >= 0.5             & X6 >= 0.5 & X3 <  0.5                                         10%
+ 6 [.16 .00 .00 .00 .00 .00 .68 .04 .08 .04] when X1 <  0.5             & X5 >= 0.5                         & X2 >= 0.5                             12%
+ 7 [.00 .00 .00 .00 .00 .00 .00 .85 .00 .15] when X1 >= 0.5 & X7 <  0.5                                                 & X4 <  0.5                 10%
+ 8 [.14 .00 .00 .14 .00 .00 .00 .00 .71 .00] when X1 >= 0.5 & X7 >= 0.5 & X5 >= 0.5 & X6 >= 0.5 & X3 >= 0.5                         & X8 >= 0.5      4%
+ 9 [.00 .00 .05 .05 .05 .10 .00 .00 .10 .67] when X1 >= 0.5 & X7 <  0.5                                                 & X4 >= 0.5                 10%
 > 
 > df.logical <- data.frame(y, x == 1)
 > dfit.df.logical <- rpart(y ~ ., data=df.logical, method='class', control=temp3)
 > fit9.df.logical <- prune(dfit.df.logical, cp=.02)
-> print(rpart.rules(fit9.df.logical))
- y    0   1   2   3   4   5   6   7   8   9                                                                                    
- 0 [.71 .00 .00 .00 .00 .00 .00 .00 .29 .00] when X1 is 1 & X7 is 1 & X5 is 1 & X6 is 1 & X3 is 1                     & X8 is 0
- 1 [.00 .79 .00 .12 .08 .00 .00 .00 .00 .00] when X1 is 0                                         & X2 is 0                    
- 2 [.04 .00 .70 .07 .00 .11 .00 .00 .07 .00] when X1 is 1 & X7 is 1           & X6 is 0                                        
- 3 [.10 .00 .00 .55 .00 .05 .00 .10 .15 .05] when X1 is 1 & X7 is 1 & X5 is 0 & X6 is 1 & X3 is 1                              
- 4 [.00 .05 .00 .00 .77 .00 .09 .00 .05 .05] when X1 is 0           & X5 is 0                     & X2 is 1                    
- 5 [.10 .00 .00 .10 .00 .70 .05 .00 .05 .00] when X1 is 1 & X7 is 1           & X6 is 1 & X3 is 0                              
- 6 [.16 .00 .00 .00 .00 .00 .68 .04 .08 .04] when X1 is 0           & X5 is 1                     & X2 is 1                    
- 7 [.00 .00 .00 .00 .00 .00 .00 .85 .00 .15] when X1 is 1 & X7 is 0                                         & X4 is 0          
- 8 [.14 .00 .00 .14 .00 .00 .00 .00 .71 .00] when X1 is 1 & X7 is 1 & X5 is 1 & X6 is 1 & X3 is 1                     & X8 is 1
- 9 [.00 .00 .05 .05 .05 .10 .00 .00 .10 .67] when X1 is 1 & X7 is 0                                         & X4 is 1          
+> print(rpart.rules(fit9.df.logical, cover=TRUE))
+ y    0   1   2   3   4   5   6   7   8   9                                                                                       cover
+ 0 [.71 .00 .00 .00 .00 .00 .00 .00 .29 .00] when X1 is 1 & X7 is 1 & X5 is 1 & X6 is 1 & X3 is 1                     & X8 is 0      7%
+ 1 [.00 .79 .00 .12 .08 .00 .00 .00 .00 .00] when X1 is 0                                         & X2 is 0                         12%
+ 2 [.04 .00 .70 .07 .00 .11 .00 .00 .07 .00] when X1 is 1 & X7 is 1           & X6 is 0                                             14%
+ 3 [.10 .00 .00 .55 .00 .05 .00 .10 .15 .05] when X1 is 1 & X7 is 1 & X5 is 0 & X6 is 1 & X3 is 1                                   10%
+ 4 [.00 .05 .00 .00 .77 .00 .09 .00 .05 .05] when X1 is 0           & X5 is 0                     & X2 is 1                         11%
+ 5 [.10 .00 .00 .10 .00 .70 .05 .00 .05 .00] when X1 is 1 & X7 is 1           & X6 is 1 & X3 is 0                                   10%
+ 6 [.16 .00 .00 .00 .00 .00 .68 .04 .08 .04] when X1 is 0           & X5 is 1                     & X2 is 1                         12%
+ 7 [.00 .00 .00 .00 .00 .00 .00 .85 .00 .15] when X1 is 1 & X7 is 0                                         & X4 is 0               10%
+ 8 [.14 .00 .00 .14 .00 .00 .00 .00 .71 .00] when X1 is 1 & X7 is 1 & X5 is 1 & X6 is 1 & X3 is 1                     & X8 is 1      4%
+ 9 [.00 .00 .05 .05 .05 .10 .00 .00 .10 .67] when X1 is 1 & X7 is 0                                         & X4 is 1               10%
+> print(rpart.rules(fit9.df.logical, cover=TRUE, roundint=FALSE))
+ y    0   1   2   3   4   5   6   7   8   9                                                                                       cover
+ 0 [.71 .00 .00 .00 .00 .00 .00 .00 .29 .00] when X1 is 1 & X7 is 1 & X5 is 1 & X6 is 1 & X3 is 1                     & X8 is 0      7%
+ 1 [.00 .79 .00 .12 .08 .00 .00 .00 .00 .00] when X1 is 0                                         & X2 is 0                         12%
+ 2 [.04 .00 .70 .07 .00 .11 .00 .00 .07 .00] when X1 is 1 & X7 is 1           & X6 is 0                                             14%
+ 3 [.10 .00 .00 .55 .00 .05 .00 .10 .15 .05] when X1 is 1 & X7 is 1 & X5 is 0 & X6 is 1 & X3 is 1                                   10%
+ 4 [.00 .05 .00 .00 .77 .00 .09 .00 .05 .05] when X1 is 0           & X5 is 0                     & X2 is 1                         11%
+ 5 [.10 .00 .00 .10 .00 .70 .05 .00 .05 .00] when X1 is 1 & X7 is 1           & X6 is 1 & X3 is 0                                   10%
+ 6 [.16 .00 .00 .00 .00 .00 .68 .04 .08 .04] when X1 is 0           & X5 is 1                     & X2 is 1                         12%
+ 7 [.00 .00 .00 .00 .00 .00 .00 .85 .00 .15] when X1 is 1 & X7 is 0                                         & X4 is 0               10%
+ 8 [.14 .00 .00 .14 .00 .00 .00 .00 .71 .00] when X1 is 1 & X7 is 1 & X5 is 1 & X6 is 1 & X3 is 1                     & X8 is 1      4%
+ 9 [.00 .00 .05 .05 .05 .10 .00 .00 .10 .67] when X1 is 1 & X7 is 0                                         & X4 is 1               10%
+> print(rpart.rules(fit9.df.logical, cover=TRUE, clip.facs=TRUE))
+ y    0   1   2   3   4   5   6   7   8   9                                                                               cover
+ 0 [.71 .00 .00 .00 .00 .00 .00 .00 .29 .00] when X1     & X7     & X5     & X6     & X3                       & not X8      7%
+ 1 [.00 .79 .00 .12 .08 .00 .00 .00 .00 .00] when not X1                                     & not X2                       12%
+ 2 [.04 .00 .70 .07 .00 .11 .00 .00 .07 .00] when X1     & X7              & not X6                                         14%
+ 3 [.10 .00 .00 .55 .00 .05 .00 .10 .15 .05] when X1     & X7     & not X5 & X6     & X3                                    10%
+ 4 [.00 .05 .00 .00 .77 .00 .09 .00 .05 .05] when not X1          & not X5                   & X2                           11%
+ 5 [.10 .00 .00 .10 .00 .70 .05 .00 .05 .00] when X1     & X7              & X6     & not X3                                10%
+ 6 [.16 .00 .00 .00 .00 .00 .68 .04 .08 .04] when not X1          & X5                       & X2                           12%
+ 7 [.00 .00 .00 .00 .00 .00 .00 .85 .00 .15] when X1     & not X7                                     & not X4              10%
+ 8 [.14 .00 .00 .14 .00 .00 .00 .00 .71 .00] when X1     & X7     & X5     & X6     & X3                       & X8          4%
+ 9 [.00 .00 .05 .05 .05 .10 .00 .00 .10 .67] when X1     & not X7                                     & X4                  10%
+> print(rpart.rules(fit9.df.logical, cover=TRUE, roundint=FALSE, clip.facs=TRUE))
+ y    0   1   2   3   4   5   6   7   8   9                                                                               cover
+ 0 [.71 .00 .00 .00 .00 .00 .00 .00 .29 .00] when X1     & X7     & X5     & X6     & X3                       & not X8      7%
+ 1 [.00 .79 .00 .12 .08 .00 .00 .00 .00 .00] when not X1                                     & not X2                       12%
+ 2 [.04 .00 .70 .07 .00 .11 .00 .00 .07 .00] when X1     & X7              & not X6                                         14%
+ 3 [.10 .00 .00 .55 .00 .05 .00 .10 .15 .05] when X1     & X7     & not X5 & X6     & X3                                    10%
+ 4 [.00 .05 .00 .00 .77 .00 .09 .00 .05 .05] when not X1          & not X5                   & X2                           11%
+ 5 [.10 .00 .00 .10 .00 .70 .05 .00 .05 .00] when X1     & X7              & X6     & not X3                                10%
+ 6 [.16 .00 .00 .00 .00 .00 .68 .04 .08 .04] when not X1          & X5                       & X2                           12%
+ 7 [.00 .00 .00 .00 .00 .00 .00 .85 .00 .15] when X1     & not X7                                     & not X4              10%
+ 8 [.14 .00 .00 .14 .00 .00 .00 .00 .71 .00] when X1     & X7     & X5     & X6     & X3                       & X8          4%
+ 9 [.00 .00 .05 .05 .05 .10 .00 .00 .10 .67] when X1     & not X7                                     & X4                  10%
 > 
 > # trace=1 below so we can see message: Variable name 'x1' is not in splits in terms$dataClasses
 > # This message is printed only when trace>0
-> par(mfrow=c(2,2))
+> par(mfrow=c(2,4))
 > if (USE.PRP) {
-+     prp(fit9,            branch=.3, compress=T, main="Section 4 dfit trace=0", trace=0, roundint=FALSE)    # silent but get.is.logical() fails
-+     prp(fit9,            branch=.3, compress=T, main="Section 4 dfit trace=1", trace=1, roundint=FALSE)    # message Variable not in dataClasses
-+     prp(fit9.df,         branch=.3, compress=T, main="Section 4 dfit.df", trace=1, roundint=FALSE)         # ok
-+     prp(fit9.df.logical, branch=.3, compress=T, main="Section 4 dfit.df.logical", trace=1, roundint=FALSE) # ok
++     prp(fit9,            branch=.3, compress=T, main="Section 4 dfit\ntrace=0 roundint=FALSE",             trace=0, roundint=FALSE) # silent but isbinary() fails
++     prp(fit9,            branch=.3, compress=T, main="Section 4 dfit\ntrace=1 roundint=FALSE",             trace=1, roundint=FALSE) # message Variable not in the model.frame
++     prp(fit9.df,         branch=.3, compress=T, main="Section 4 dfit.df\ntrace=1, roundint=FALSE",         trace=1, roundint=FALSE) # ok
++     prp(fit9.df.logical, branch=.3, compress=T, main="Section 4 dfit.df.logical\ntrace=1, roundint=FALSE", trace=1, roundint=FALSE) # ok
++ 
++     prp(fit9,            branch=.3, compress=T, main="Section 4 dfit trace=0\nroundint=TRUE",     roundint=TRUE)
++     prp(fit9,            branch=.3, compress=T, main="Section 4 dfit trace=1\nroundint=TRUE",     roundint=TRUE)
++     prp(fit9.df,         branch=.3, compress=T, main="Section 4 dfit.df\nroundint=TRUE",          roundint=TRUE)
++     prp(fit9.df.logical, branch=.3, compress=T, main="Section 4 dfit.df.logical\nroundint=TRUE",  roundint=TRUE)
 + } else {
 +     plot(fit9, branch=.3, compress=T, main="Section 4 trace=0")
 +     text(fit9)
 + }
-Variable 'x1' in splits is not in the model.frame (so cannot determine is.logical for the variable)
+Variable 'x1' in splits is not in the model.frame (so cannot determine roundint and is.binary for the variable)
 colnames(model.frame): y x
 cex 1   xlim c(0, 1)   ylim c(0, 1)
 cex 1   xlim c(0, 1)   ylim c(0, 1)
-cex 1   xlim c(-0.2, 1.2)   ylim c(0, 1)
+cex 1   xlim c(0, 1)   ylim c(0, 1)
 > par(old.par)
 > 
 > cat("### Section 5\n")

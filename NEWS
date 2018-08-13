@@ -1,6 +1,19 @@
 Changes to rpart.plot
 ---------------------
 
+3.0.4  Aug 13, 2018
+
+  Variables with values 0 and 1 only are now treated as logical variables
+  if roundint=TRUE i.e. they are displayed as "var is 0" and "var is 1".
+
+  Rpart.rules now explicitly shows if the model is a null model.
+
+  We now work better with caret train models with method="rpart".
+  (Extended handling of model$call$data, so rpart.plot no longer issues
+  the warning "Bad data field in model call" with such models.)
+
+  Documentation updates.
+
 3.0.3  Aug 5, 2018
 
   Survival responses are now once again handled correctly (broken

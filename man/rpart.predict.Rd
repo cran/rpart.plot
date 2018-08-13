@@ -25,7 +25,9 @@ but with an extra column showing the leaf node number for each prediction.
 \item{rules}{
 If \code{TRUE}, return a \code{data.frame}
 with the predictions as usual
-but with an extra column showing the rpart rule (as a string) for each prediction.
+but with an extra column showing the rpart rule (as a string) for each prediction.\cr
+It may be helpful to use \code{options(width=1000)}
+before printing this \code{data.frame}.
 }
 \item{...}{
 Passed on to \code{\link{rpart.rules}},

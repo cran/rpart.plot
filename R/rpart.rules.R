@@ -21,7 +21,9 @@ rpart.rules <- function(x=stop("no 'x' argument"),
         lt            <- ret$lt
         ge            <- ret$ge
         and           <- ret$and
+        when          <- ret$when
         because       <- ret$because
+        null.model    <- ret$null.model
         response.name <- ret$response.name
         rpart.predict <- ret$rpart.predict # hidden arguments for rpart.predict
         where         <- ret$where
@@ -46,19 +48,32 @@ rpart.rules <- function(x=stop("no 'x' argument"),
     stopifnot.string(facsep)
     # we trim spaces around these because print.data.frame
     # unavoidably adds spaces between columns
-    stopifnot.string(eq);      eq      <- trim.surrounding.space(eq)
-    stopifnot.string(lt);      lt      <- trim.surrounding.space(lt)
-    stopifnot.string(ge);      ge      <- trim.surrounding.space(ge)
-    stopifnot.string(and);     and     <- trim.surrounding.space(and)
+    stopifnot.string(eq, allow.empty=TRUE);
+    eq <- trim.surrounding.space(eq)
+    stopifnot.string(lt, allow.empty=TRUE);
+    lt <- trim.surrounding.space(lt)
+    stopifnot.string(ge, allow.empty=TRUE);
+    ge <- trim.surrounding.space(ge)
+    stopifnot.string(and, allow.empty=TRUE);
+    and <- trim.surrounding.space(and)
+    stopifnot.string(when, allow.empty=TRUE);
+    when <- trim.surrounding.space(when)
+    if(when == "" && (style %in% c("tall", "tallw") || rpart.predict))
+        when <- ":EMPTY:"
+    else if(nrow(obj$frame) == 1)   # null model? (no rules)
+        when <- null.model          # hack
     stopifnot.string(because, allow.empty=TRUE);
     because <- trim.surrounding.space(because)
+    stopifnot.string(null.model)
     trace <- as.numeric(check.numeric.scalar(trace, logical.ok=TRUE))
     # we get the variable names from the splits because
     # attr(x$terms,"dataClasses") sometimes doesn't save the actual
     # variable names (e.g. model fit9 in slowtests/rpart.report.R)
-    varnames <- unique(rownames(obj$splits))
-    if(length(varnames) == 0)       # null model, no splits?
-        varnames <- "-NONESUCH-"    # any name will do here
+    varnames <-
+        if(nrow(obj$frame) == 1)        # null model? (no rules)
+            varnames <- ":NULL.MODEL:"
+        else
+            unique(rownames(obj$splits))
 
     ret <- get.raw.rules(obj, extra, varlen, faclen, roundint, trace, facsep, varnames)
         rules          <- ret$rules
@@ -69,7 +84,7 @@ rpart.rules <- function(x=stop("no 'x' argument"),
 
     rules <- process.rules(obj, rules, style, cover, nn, clip.facs,
                 rpart.predict, where,
-                eq, lt, ge, and, because,
+                eq, lt, ge, and, when, because, null.model,
                 digits, trace, varorder, varlen,
                 nrules.per.var, varnames,
                 response.name,
@@ -83,8 +98,9 @@ rpart.rules <- function(x=stop("no 'x' argument"),
 
     class(rules) <- c("rpart.rules", "data.frame")
     attr(rules, "style") <- style
-    attr(rules, "and")   <- and
     attr(rules, "eq")    <- eq
+    attr(rules, "and")   <- and
+    attr(rules, "when")  <- when
 
     if(rpart.predict) {
         # return a vector of strings, one string for each element of where
@@ -113,7 +129,8 @@ print.rpart.rules <- function(x=stop("no 'x' argument"),
         class(x) <- "data.frame"
         print(x, row.names=FALSE)
     } else if(style == "tall" || style == "tallw")
-        print.style.tall(x, style, and=attr(x, "and"), eq=attr(x, "eq"))
+        print.style.tall(x, style, eq=attr(x, "eq"),
+                         and=attr(x, "and"), when=attr(x, "when"))
     else
         stop0("illegal style ", style)
 }
@@ -298,7 +315,7 @@ trace.print.rules <- function(rules, msg) # only used if trace > 0
 }
 process.rules <- function(obj, rules, style, cover, nn, clip.facs,
                           rpart.predict, where,
-                          eq, lt, ge, and, because,
+                          eq, lt, ge, and, when, because, null.model,
                           digits, trace, varorder, varlen,
                           nrules.per.var, varnames, response.name,
                           is.class.response, ylevels)
@@ -312,31 +329,33 @@ process.rules <- function(obj, rules, style, cover, nn, clip.facs,
     ret <- order.cols(rules, varorder, varnames, nrules.per.var)
         rules    <- ret$rules
         varnames <- ret$varnames
-    if(varlen != 0) { # do this after using the varnames to sort columns above
+    if(varlen != 0) { # note that we do this only after using varnames to sort cols above
         ret <- apply.varlen.to.colnames(rules, varnames, varlen)
             colnames(rules) <- ret$colnames
             varnames        <- ret$shortnames
     }
     rules.cover <- rules$cover
-    rules <- format.rules(rules, style, cover, clip.facs, eq, lt, ge, and,
+    rules <- format.rules(rules, style, cover, clip.facs, eq, lt, ge, and, when,
                           digits, trace,
                           response.name, varnames, n.subcol)
     # retain only used columns
     rules <- rules[, apply(rules, 2, function(col) any(col != "")), drop=FALSE]
-    if(rpart.predict) {
-        # drop all columns up to "when"
-        iwhen <- match("when", colnames(rules))[1] # index of "when" column
-        if(iwhen < ncol(rules)) {
-            rules <- rules[, iwhen:ncol(rules), drop=FALSE]
-            rules[1] <- because # replace "when" with "because"
-        }
-        else # null model (no rules)
-            rules <- as.data.frame(matrix(paste0(because, " null model"),
-                                   nrow=nrow(rules)), stringsAsFactors=FALSE)
-        colnames(rules) <- NULL # all columns unnamed
-    } else {
+    if(!rpart.predict) {
         # all columns unnamed, except first column (response.name)
         colnames(rules) <- c(response.name, repl("", ncol(rules)-1))
+    } else { # rpart.predict
+        if(nrow(obj$frame) == 1) # null model? (no rules)
+            rules <- as.data.frame(matrix(paste0(because, paste0(" ", null.model)),
+                                   nrow=nrow(rules)), stringsAsFactors=FALSE)
+        else {
+            # drop all columns up to column "when"
+            iwhen <- match("when", colnames(rules))[1] # index of "when" column
+            if(iwhen < ncol(rules)) {
+                rules <- rules[, iwhen:ncol(rules), drop=FALSE]
+                rules[1] <- because # replace "when" with "because"
+            }
+        colnames(rules) <- NULL # all columns unnamed
+        }
     }
     if(cover) {
         # append cover column (space in "  cover" to shift printed cover column right)
@@ -351,7 +370,7 @@ process.rules <- function(obj, rules, style, cover, nn, clip.facs,
     if(rpart.predict) {
         # must generate the rule for each element of where
         if(style != "wide")
-            stop0("style = \"", style, "\" is not allowed in this context")
+            stop0("style = \"", style, "\" is not supported by rpart.predict")
         check.vec(where, "where", na.ok=TRUE)
         nn <- as.numeric(rownames(obj$frame)[where])
         stopifnot(!any(is.na(nn)))
@@ -369,7 +388,7 @@ process.rules <- function(obj, rules, style, cover, nn, clip.facs,
         # add column names etc. for a nice print
         colnames(rules)[2+nn] <- fit.colname(ylevels, fit, n.subcol)
         rules[,2+nn] <- paste0("[", rules[,2+nn], "]")
-        rules[,3+nn] <- " when"
+        rules[,3+nn] <- paste0(" ", when)
     }
     # following trim is necessary because we may not use all elements in
     # format.gt and format.le although we called format() with all elements
@@ -435,7 +454,7 @@ apply.varlen.to.colnames <- function(rules, varnames, varlen)
     }
     list(colnames=colnames, shortnames=shortnames)
 }
-format.rules <- function(rules, style, cover, clip.facs, eq, lt, ge, and,
+format.rules <- function(rules, style, cover, clip.facs, eq, lt, ge, and, when,
                          digits, trace,
                          response.name, varnames, n.subcol)
 {
@@ -453,7 +472,7 @@ format.rules <- function(rules, style, cover, clip.facs, eq, lt, ge, and,
                 data.frame(fit=rules$fit, stringsAsFactors=FALSE)
 
     rownames(new) <- rownames(rules)
-    new$when <- "when"
+    new$when <- when
     icol <- 0 # global var for n() function
     # subsequent is TRUE if split is not the first for this rule
     subsequent <- repl(FALSE, nrow(rules))
@@ -645,7 +664,7 @@ order.cols <- function(rules, varorder, varnames, nrules.per.var)
     list(rules    = rules[, c(1:4, ivar), drop=FALSE], # 1:4 is lab,fit,iclass,cover
          varnames = varnames[order])
 }
-print.style.tall <- function(rules, style, and, eq)
+print.style.tall <- function(rules, style, eq, and, when)
 {
     newline.with.spaces <- function()
     {
@@ -706,10 +725,10 @@ print.style.tall <- function(rules, style, and, eq)
         for(j in (2 + have.nn):(ncol(rules) - have.cover)) {
             e <- trim.surrounding.space(rules[i, j])
             if(nchar(e)) {
-                if(e == "when") {
+                if(e == when) {
                     if(have.cover)
                         printf(" with cover %-s", gsub("^ *", "", rules[i, ncol]))
-                    printf(" when")
+                    printf(" %s", if(when == ":EMPTY:") "" else when)
                     newline.with.spaces()
                 } else if(e == and)
                     newline.with.spaces()
@@ -800,7 +819,8 @@ check.if.dot.arg.supported.by.rpart.rules <- function(x=stop("no 'x' arg"),
     boxes.include.gap=FALSE,
     legend.x=NULL, legend.y=NULL, legend.cex=1,
     # extra args for rpart.rules, not in prp arg list
-    and=" & ", because=" because ", response.name=NULL,
+    and=" & ", when=" when ", because=" because ", null.model="null model",
+    response.name=NULL,
     # hidden args for rpart.predict
     RPART.PREDICT=FALSE, WHERE=NULL)
 {
@@ -927,7 +947,8 @@ check.if.dot.arg.supported.by.rpart.rules <- function(x=stop("no 'x' arg"),
     if(!missing(legend.cex))          warn1(legend.cex)
 
     list(extra=extra, digits=digits, varlen=varlen, faclen=faclen, trace=trace,
-         facsep=facsep, eq=eq, lt=lt, ge=ge, and=and, because=because,
+         facsep=facsep, eq=eq, lt=lt, ge=ge, and=and,
+         when=when, because=because, null.model=null.model,
          response.name=response.name,
          rpart.predict=RPART.PREDICT, where=WHERE)
 }

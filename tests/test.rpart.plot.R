@@ -12,6 +12,9 @@ ptitanic1$sex <- NULL
 ptitanic1$parch <- NULL
 survived <- rpart(survived ~ ., data=ptitanic1, method="class")
 print(rpart.rules(survived, clip.facs=TRUE))
+options(digits=4) # avoid numerical discrepancies across machines and R versions
+options(width=1e3)
+print(head(rpart.predict(survived, rules=TRUE)))
 ptitanic1 <- NULL # delete the data, will affect male and sibsp in printed rules
 print(rpart.rules(survived, roundint=FALSE)) # roundint=FALSE else warning
 data(iris)      # multiclass model

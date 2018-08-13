@@ -29,6 +29,16 @@ Loading required package: rpart
      0.73 when female     & age <  16.5         & sibsp <  3 &        3rd
      0.89 when not female & age <   9.5         & sibsp <  3             
      0.93 when female                                        & 1st or 2nd
+> options(digits=4) # avoid numerical discrepancies across machines and R versions
+> options(width=1e3)
+> print(head(rpart.predict(survived, rules=TRUE)))
+    died survived                                                                              
+1 0.0680   0.9320 because female is 1                                    & pclass is 1st or 2nd
+2 0.1111   0.8889 because female is 0 & age <   9.5         & sibsp <  3                       
+3 0.0680   0.9320 because female is 1                                    & pclass is 1st or 2nd
+4 0.8291   0.1709 because female is 0 & age >=          9.5                                    
+5 0.0680   0.9320 because female is 1                                    & pclass is 1st or 2nd
+6 0.8291   0.1709 because female is 0 & age >=          9.5                                    
 > ptitanic1 <- NULL # delete the data, will affect male and sibsp in printed rules
 > print(rpart.rules(survived, roundint=FALSE)) # roundint=FALSE else warning
  survived                                                                               

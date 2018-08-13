@@ -27,12 +27,23 @@ main="[front] An Example\nbox.palette=\nc(\"palegreen3\", \"khaki2\", \"lightcor
     prefix="ozone\n", branch.col="gray", branch.lwd=2,
     extra=101, under=T, lt=" < ", ge=" >= ", cex.main=1.5)
 
-prp(a, main="[front] An Example\nbox.palette=\"GnYlRd\"",
-    type=4, fallen=T, branch=.3, round=0, leaf.round=9,
-    clip.right.labs=F, under.cex=1,
-    box.palette="GnYlRd",
-    prefix="ozone\n", branch.col="gray", branch.lwd=2,
-    extra=101, under=T, lt=" < ", ge=" >= ", cex.main=1.5)
+prp(a,
+    type = 4,                # left and right split labels (see Figure 2)
+    clip.right.labs = FALSE, # full right split labels
+    extra = 101,             # show nbr of obs and percentages (see Figure 3)
+    under = TRUE,            # position extra info _under_ the boxes
+    under.cex = 1,           # size of text under the boxes (default is .8)
+    fallen.leaves = TRUE,    # put leaves at the bottom of plot
+    box.palette = "GnYlRd",  # color of the boxes
+    branch = .3,             # branch lines with narrow shoulders and down slopes
+    round = 0,               # no rounding of nodes (sharp edges)
+    leaf.round = 9,          # round leaf nodes (for leaves, supersedes round argument)
+    prefix = "ozone\n",      # prepend this string to the node labels
+    main = "An Example",     # main title
+    cex.main = 1.5,          # big main title
+    branch.col = "gray",     # color of branch lines
+    branch.lwd = 2)          # line width of branch lines
+
 par(old.par)
 
 #--- example.R ---

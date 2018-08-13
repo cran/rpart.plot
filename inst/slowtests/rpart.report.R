@@ -58,25 +58,37 @@ print(rpart.rules(dfit))
 
 fit9 <- prune(dfit, cp=.02)
 print(rpart.rules(fit9, style='tall'))
+print(rpart.rules(fit9, trace=1, roundint=FALSE)) # message Variable not in the model.frame
 
 df <- data.frame(y, x)
 dfit.df <- rpart(y ~ ., data=df, method='class', control=temp3)
 fit9.df <- prune(dfit.df, cp=.02)
 print(rpart.rules(fit9.df, cover=TRUE))
+print(rpart.rules(fit9.df, cover=TRUE, roundint=FALSE))
+print(rpart.rules(fit9.df, cover=TRUE, clip.facs=TRUE))
+print(rpart.rules(fit9.df, cover=TRUE, roundint=FALSE, clip.facs=TRUE))
 
 df.logical <- data.frame(y, x == 1)
 dfit.df.logical <- rpart(y ~ ., data=df.logical, method='class', control=temp3)
 fit9.df.logical <- prune(dfit.df.logical, cp=.02)
-print(rpart.rules(fit9.df.logical))
+print(rpart.rules(fit9.df.logical, cover=TRUE))
+print(rpart.rules(fit9.df.logical, cover=TRUE, roundint=FALSE))
+print(rpart.rules(fit9.df.logical, cover=TRUE, clip.facs=TRUE))
+print(rpart.rules(fit9.df.logical, cover=TRUE, roundint=FALSE, clip.facs=TRUE))
 
 # trace=1 below so we can see message: Variable name 'x1' is not in splits in terms$dataClasses
 # This message is printed only when trace>0
-par(mfrow=c(2,2))
+par(mfrow=c(2,4))
 if (USE.PRP) {
-    prp(fit9,            branch=.3, compress=T, main="Section 4 dfit trace=0", trace=0, roundint=FALSE)    # silent but get.is.logical() fails
-    prp(fit9,            branch=.3, compress=T, main="Section 4 dfit trace=1", trace=1, roundint=FALSE)    # message Variable not in dataClasses
-    prp(fit9.df,         branch=.3, compress=T, main="Section 4 dfit.df", trace=1, roundint=FALSE)         # ok
-    prp(fit9.df.logical, branch=.3, compress=T, main="Section 4 dfit.df.logical", trace=1, roundint=FALSE) # ok
+    prp(fit9,            branch=.3, compress=T, main="Section 4 dfit\ntrace=0 roundint=FALSE",             trace=0, roundint=FALSE) # silent but isbinary() fails
+    prp(fit9,            branch=.3, compress=T, main="Section 4 dfit\ntrace=1 roundint=FALSE",             trace=1, roundint=FALSE) # message Variable not in the model.frame
+    prp(fit9.df,         branch=.3, compress=T, main="Section 4 dfit.df\ntrace=1, roundint=FALSE",         trace=1, roundint=FALSE) # ok
+    prp(fit9.df.logical, branch=.3, compress=T, main="Section 4 dfit.df.logical\ntrace=1, roundint=FALSE", trace=1, roundint=FALSE) # ok
+
+    prp(fit9,            branch=.3, compress=T, main="Section 4 dfit trace=0\nroundint=TRUE",     roundint=TRUE)
+    prp(fit9,            branch=.3, compress=T, main="Section 4 dfit trace=1\nroundint=TRUE",     roundint=TRUE)
+    prp(fit9.df,         branch=.3, compress=T, main="Section 4 dfit.df\nroundint=TRUE",          roundint=TRUE)
+    prp(fit9.df.logical, branch=.3, compress=T, main="Section 4 dfit.df.logical\nroundint=TRUE",  roundint=TRUE)
 } else {
     plot(fit9, branch=.3, compress=T, main="Section 4 trace=0")
     text(fit9)

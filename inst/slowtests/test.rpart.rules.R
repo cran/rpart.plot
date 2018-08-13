@@ -22,7 +22,7 @@ expect.err(try(print(rpart.rules(Volume), digit=4)),  "specify 'digits' in rpart
 expect.err(try(print(rpart.rules(Volume), dig=4)),    "specify 'digits' in rpart.rules (not in print.rpart.rules)")
 trees1 <- "bad data"
 options(warn=2) # treat warnings as errors
-expect.err(try(rpart.rules(Volume, digits=4)), "(converted from warning) Cannot retrieve the data used to build the model (so cannot determine roundint and is.logical for the variables).")
+expect.err(try(rpart.rules(Volume, digits=4)), "(converted from warning) Cannot retrieve the data used to build the model (so cannot determine roundint and is.binary for the variables).")
 expect.err(try(rpart.plot(Volume, digits=4, main="Volume\ntrees not available")), "Cannot retrieve the data used to build the model")
 expect.err(try(prp(Volume, digits=4, main="Volume\ntrees not available")), "Cannot retrieve the data used to build the model")
 rpart.plot(Volume, digits=4, roundint=FALSE, main="Volume roundint=FALSE\ndata not available")
@@ -54,7 +54,7 @@ print(rpart.rules(mileage))
 stopifnot(options("warn") == 1234) # make sure rpart.rules didn't mess up options(warn)
 options(warn=1) # print warnings as they occur
 print(rpart.rules(mileage, digits=0, trace=1)) # this also tests print(rules)
-print(rpart.rules(mileage, digits=2))
+print(rpart.rules(mileage, digits=2, trace=2))
 print(rpart.rules(mileage, digits=3))
 print(rpart.rules(mileage, digits=10))
 print(rpart.rules(mileage, digits=-10)) # should be same as digits=10
@@ -74,6 +74,10 @@ owidth <- options("width")
 options(width=1e3)
 print(predict(mileage)[1:5])
 print(rpart.predict(mileage)[1:5])
+print(head(rpart.predict(mileage, rules=TRUE, when="")))
+print(head(rpart.predict(mileage, rules=TRUE, when="WHEN")))
+print(head(rpart.predict(mileage, rules=TRUE, when="", because="reason:")))
+print(head(rpart.predict(mileage, rules=TRUE, because="")))
 stopifnot(identical(predict(mileage), rpart.predict(mileage)))
 print(rpart.predict(mileage, rules=TRUE)[12:14,])
 # use max and not identical because rpart.predict(mileage, rules=TRUE)[,1] doesn't have names
@@ -213,7 +217,7 @@ mod.without.data.arg <- ret$mod.without.data.arg
 # check if we can still access the data used to build the model in build.models
 print(rpart.rules(mod, roundint=FALSE, trace=.5)) # ok
 options(warn=2) # treat warnings as errors
-expect.err(try(rpart.rules(mod)), "Cannot retrieve the data used to build the model (so cannot determine roundint and is.logical for the variables).")
+expect.err(try(rpart.rules(mod)), "Cannot retrieve the data used to build the model (so cannot determine roundint and is.binary for the variables).")
 print(rpart.rules(mod.without.data.arg, roundint=FALSE, trace=.5)) # ok
 print(rpart.rules(mod.without.data.arg, roundint=TRUE, trace=.5))  # ok, because environment saved with formula in model
 options(warn=1) # print warnings as they occur
@@ -283,12 +287,12 @@ print(rpart.rules(oz.vis55.baddataClasses)) # should give a warning
 print(rpart.rules(oz.vis55.baddataClasses, roundint=FALSE)) # ok
 
 # test handling of malformed rpart object, such as package semtree passes
-# no terms component nor attribute (therefore cannot determine is.logical for the variables)
+# no terms component nor attribute (therefore cannot determine is.binary for the variables)
 cat("oz.vis55.noterms:\n")
 oz.vis55.noterms <- oz.vis55
 oz.vis55.noterms$terms <- NULL
-print(rpart.rules(oz.vis55.noterms, trace=1)) # trace message says "cannot determine is.logical"
-print(rpart.rules(oz.vis55.noterms)) # silent (but still cannot determine is.logical)
+print(rpart.rules(oz.vis55.noterms, trace=1)) # trace message says "cannot determine is.binary"
+print(rpart.rules(oz.vis55.noterms)) # silent (but still cannot determine is.binary)
 
 cat0("\n=== Country ===\n")
 Country <- rpart(Country~., data=cu.summary) # factor with 10 levels
@@ -318,6 +322,11 @@ stopifnot(identical(options("width"), old.width))
 owidth <- options("width")
 options(width=1e3)
 print(predict(Country)[1:5,])
+print(head(rpart.predict(Country, rules=TRUE)))
+print(head(rpart.predict(Country, rules=TRUE, when="")))
+print(head(rpart.predict(Country, rules=TRUE, when="WHEN")))
+print(head(rpart.predict(Country, rules=TRUE, when="", because="reason:")))
+print(head(rpart.predict(Country, rules=TRUE, because="")))
 stopifnot(all.equal(predict(Country), as.matrix(rpart.predict(Country, rules=TRUE)[,1:10])))
 stopifnot(max(abs(predict(Country) - rpart.predict(Country, rules=TRUE)[,1:10])) == 0)
 print(rpart.predict(Country, nn=TRUE)[1:5,])
@@ -327,12 +336,13 @@ stopifnot(all.equal(predict(Country), as.matrix(rpart.predict(Country, nn=TRUE, 
 
 print(predict(Country, type="class")[1:5])
 print(rpart.predict(Country, type="class", rules=TRUE, because="reason:")[1:5,])
+print(rpart.predict(Country, type="class", rules=TRUE, because="")[1:5,])
 pred <- rpart.predict(Country, type="class", rules=TRUE)
 names <- rownames(pred)
 pred <- pred[,1]
 names(pred) <- names
 stopifnot(all.equal(predict(Country, type="class"), pred))
-print(rpart.predict(Country, type="class", rules=TRUE, because="")[1:5,])
+print(rpart.predict(Country, type="class", rules=TRUE, because="\n")[1:5,])
 print(rpart.predict(Country, type="class", rules=TRUE, nn=TRUE)[1:5,])
 pred <- rpart.predict(Country, type="class", rules=TRUE, nn=TRUE)
 names <- rownames(pred)
@@ -385,7 +395,17 @@ print(rpart.rules(survived, style="wide", clip.facs=TRUE, varlen=-3, faclen=2, n
 print(rpart.rules(survived, style="tall", cover=TRUE, clip.facs=TRUE, varlen=-3, faclen=2, nn=TRUE))
 
 # rpart.predict (binomial response)
+stopifnot(identical(options("width"), old.width))
+owidth <- options("width")
+options(width=1e3)
 print(predict(survived)[1:5,])
+print(head(rpart.predict(survived, rules=TRUE)))
+print(head(rpart.predict(survived, rules=TRUE, when="")))
+print(head(rpart.predict(survived, rules=TRUE, when="WHEN")))
+print(head(rpart.predict(survived, rules=TRUE, when="", because="reason:")))
+print(head(rpart.predict(survived, rules=TRUE, because="")))
+options(width=owidth$width)
+stopifnot(identical(options("width"), old.width))
 stopifnot(all.equal(predict(survived), as.matrix(rpart.predict(survived, rules=TRUE)[,1:2])))
 stopifnot(max(abs(predict(survived) - rpart.predict(survived, rules=TRUE)[,1:2])) == 0)
 print(rpart.predict(survived, nn=TRUE)[1:5,])
@@ -506,10 +526,20 @@ expect.err(try(rpart.rules(survived, and=99)), "'and' is not a character variabl
 expect.err(try(rpart.rules(survived, response.name=99)), "'response.name' is not a character variable")
 expect.err(try(rpart.rules(survived, response.name=c("a", "b"))), "'response.name' has more than one element")
 expect.err(try(rpart.rules(survived, eq=NULL)), "'eq' is NULL (it should be a string)")
-expect.err(try(rpart.rules(survived, lt="")), "'lt' is an empty string")
-expect.err(try(rpart.rules(survived, ge="")), "'ge' is an empty string")
-expect.err(try(rpart.rules(survived, and="")), "'and' is an empty string")
-
+rpart.rules(survived, lt="")
+rpart.rules(survived, ge="")
+rpart.rules(survived, and="")
+rpart.rules(survived, when="if")
+rpart.rules(survived, when=" if ")
+rpart.rules(survived, when="     when")
+rpart.rules(survived, when="")
+rpart.rules(survived, extra=4)
+rpart.rules(survived, extra=4, when="reason:")
+rpart.rules(survived, extra=4, style="tall", when="\nreason:")
+rpart.rules(survived, extra=4, style="tall", when="\n\n")
+rpart.rules(survived, extra=4, style="tall", when="")
+print.data.frame(rpart.rules(survived))
+print.default(rpart.rules(survived))
 
 cat0("\n=== null model ===\n")
 data(ptitanic)
@@ -517,9 +547,18 @@ null.model <- rpart(survived~sibsp, data=ptitanic)
 print(rpart.rules(null.model))
 print(rpart.rules(null.model, style='wide'))
 print(rpart.rules(null.model, style='tall'))
+print(rpart.rules(null.model, null.model="NO RULES"))
+print(rpart.rules(null.model, style='wide', null.model="NO RULES"))
+print(rpart.rules(null.model, style='tall', null.model="NO RULES"))
 
 # rpart.predict (null.model)
 print(predict(null.model)[1:5,])
+print(head(rpart.predict(null.model, rules=TRUE)))
+print(head(rpart.predict(null.model, rules=TRUE, null.model="NO RULES")))
+print(head(rpart.predict(null.model, rules=TRUE, when="")))
+print(head(rpart.predict(null.model, rules=TRUE, when="WHEN")))
+print(head(rpart.predict(null.model, rules=TRUE, when="", because="reason:")))
+print(head(rpart.predict(null.model, rules=TRUE, because="")))
 stopifnot(all.equal(predict(null.model), as.matrix(rpart.predict(null.model, rules=TRUE)[,1:2])))
 stopifnot(max(abs(predict(null.model) - rpart.predict(null.model, rules=TRUE)[,1:2])) == 0)
 print(rpart.predict(null.model, nn=TRUE)[1:5,])
@@ -593,6 +632,10 @@ print(predict(rpart.surv)[1:5])
 print(rpart.predict(rpart.surv)[1:5])
 stopifnot(identical(predict(rpart.surv), rpart.predict(rpart.surv)))
 print(rpart.predict(rpart.surv, rules=TRUE)[12:14,])
+print(head(rpart.predict(rpart.surv, rules=TRUE, when="")))
+print(head(rpart.predict(rpart.surv, rules=TRUE, when="WHEN")))
+print(head(rpart.predict(rpart.surv, rules=TRUE, when="", because="reason:")))
+print(head(rpart.predict(rpart.surv, rules=TRUE, because="")))
 # use max and not identical because rpart.predict(rpart.surv, rules=TRUE)[,1] doesn't have names
 stopifnot(max(abs(predict(rpart.surv) - rpart.predict(rpart.surv, rules=TRUE)[,1])) == 0)
 stopifnot(identical(as.numeric(predict(rpart.surv)), rpart.predict(rpart.surv, rules=TRUE)[,1]))
@@ -611,11 +654,11 @@ stopifnot(identical(options("width"), old.width))
 
 survived <- rpart(survived ~ ., data=ptitanic)
 print(rpart.rules(survived))
-old.width <- options(width=1e3)$width
+owidth <- options(width=1e3)$width
 pred <- rpart.predict(survived, rules=TRUE)[2:4,]
 rownames(pred) <- NULL
 print(pred)
-expect.err(try(rpart.predict(survived, rules=TRUE, style="tall")), "style = \"tall\" is not allowed in this context")
+expect.err(try(rpart.predict(survived, rules=TRUE, style="tall")), "style = \"tall\" is not supported by rpart.predict")
 print(rpart.predict(survived, rules=TRUE, cover=TRUE)[2:4,])
 print(rpart.predict(survived, rules=TRUE, roundint=FALSE)[2:4,])
 print(rpart.predict(survived, rules=TRUE, roundint=FALSE, clip.facs=TRUE)[2:4,])
@@ -623,7 +666,7 @@ print(rpart.predict(survived, rules=TRUE, varorder="pclass")[2:4,])
 print(rpart.predict(survived, rules=TRUE, faclen=-2)[2:4,])
 print(rpart.predict(survived, rules=TRUE, varlen=2)[2:4,])
 print(rpart.predict(survived, rules=TRUE, varlen=2)[2:4,], digits=2)
-options(width=old.width)
+options(width=owidth)
 
 set.seed(2018)
 ptit <- ptitanic
@@ -661,4 +704,30 @@ print(rpart.predict(pclass, newdata=ptit[5:8,], nn=TRUE))
 print(rpart.predict(pclass, newdata=ptit[5:8,], rules=TRUE))
 print(rpart.predict(pclass, newdata=ptit[5:8,], nn=TRUE, rules=TRUE))
 
+# caret package
+
+library(caret)
+data(iris)
+Petal.Length <- rpart(Petal.Length ~ ., data=iris)
+print(rpart.rules(Petal.Length))
+set.seed(2018)
+# note that caret converts factors to indicator columns before invoking rpart
+caret.Petal.Length <- train(Petal.Length ~ ., data=iris, method="rpart", tuneLength=4)
+rpart.plot(caret.Petal.Length$finalModel, main="caret.Petal.Length$finalModel")
+rpart.rules(caret.Petal.Length$finalModel)
+rpart.rules(caret.Petal.Length$finalModel, roundint=FALSE)
+owidth <- options(width=1e3)$width
+head(rpart.predict(caret.Petal.Length$finalModel, rules=TRUE))
+# TODO fails: Error in eval(predvars, data, env) : object 'Speciesversicolor' not found
+# rpart.predict(caret.Petal.Length$finalModel, rules=TRUE, newdata=iris[50:52,])
+options(width=owidth)
+plotmo(Petal.Length, method="apartdep", do.par=2)
+rpart.plot(Petal.Length)
+plotmo(caret.Petal.Length$finalModel, method="apartdep", do.par=2)
+rpart.plot(caret.Petal.Length$finalModel)
+plotmo(caret.Petal.Length, method="apartdep")
+# TODO fails: Error in ux.list[[ipred1]] : invalid subscript type 'list'
+# plotmo(caret.Petal.Length, all2=TRUE, method="apartdep")
+
+stopifnot(identical(options("width"), old.width))
 source("test.epilog.R")

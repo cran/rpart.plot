@@ -125,7 +125,7 @@ prp <- function(x=stop("no 'x' arg"),
     round=NULL, leaf.round=NULL,
     shadow.col=0, prefix="", suffix="", xsep=NULL,
 
-    under.font=font, under.col=1, under.cex=.8,
+    under.percent=2, under.font=font, under.col=1, under.cex=.8,
 
     split.cex=1, split.font=2, split.family=family, split.col=1,
     split.box.col=0, split.border.col=0,
@@ -477,7 +477,7 @@ prp <- function(x=stop("no 'x' arg"),
     node.fun.name <- deparse(substitute(node.fun))
     node.labs <- internal.node.labs(obj, node.fun, node.fun.name, type, extra,
                                     under, xsep, digits, varlen,
-                                    prefix, suffix, class.stats)
+                                    prefix, suffix, class.stats, under.percent)
 
     # handle the box.col and box.palette arguments possibly specified by the user
     ret <- handle.box.palette.args(obj, trace, box.col, box.palette,
@@ -640,7 +640,6 @@ prp <- function(x=stop("no 'x' arg"),
                     node.labs, split.labs, node.xy, strheight,
                     type, branch, xflip, yflip, Margin, space, yspace,
                     cex, font, family, adj, box.col, border.col,
-                    under.cex, under.font, under.ygap,
                     split.cex, split.font, split.family, split.adj, split.yshift,
                     split.box.col, split.border.col, split.space, split.yspace,
                     main, sub, col.main, cex.main, col.sub, cex.sub,

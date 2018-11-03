@@ -1,6 +1,14 @@
 Changes to rpart.plot
 ---------------------
 
+3.0.5  Nov 2, 2018
+
+  We now handle splits with very small values better (less than 1e-10).
+  Thanks to Petr Lenhard for help on this.
+
+  Added the "under.percent" argument to control spacing before
+  the percentage when 100 is used with the "extra" argument.
+
 3.0.4  Aug 13, 2018
 
   Variables with values 0 and 1 only are now treated as logical variables
@@ -8,9 +16,9 @@ Changes to rpart.plot
 
   Rpart.rules now explicitly shows if the model is a null model.
 
-  We now work better with caret train models with method="rpart".
-  (Extended handling of model$call$data, so rpart.plot no longer issues
-  the warning "Bad data field in model call" with such models.)
+  We now work better with caret train models. (Extended handling
+  of model$call$data, so rpart.plot no longer issues the warning
+  "Bad data field in model call" with such models.)
 
   Documentation updates.
 

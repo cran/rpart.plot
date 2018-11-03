@@ -522,10 +522,6 @@ get.palette.fitted <- function(default.fitted, node.labs, pal.node.fun, trace)
 {
     fitted <- default.fitted
     if(pal.node.fun) {
-        # convert warning to errors (because silent=TRUE doesn't work for warnings)
-        old.warn <- getOption("warn")
-        on.exit(options(warn=old.warn))
-        options(warn=2)
         # extract first number in each label, if possible
         # two regexs separated by | below, first handles numbers with digits before
         # the point (if any), second handle numbers without digits before the point
@@ -533,7 +529,12 @@ get.palette.fitted <- function(default.fitted, node.labs, pal.node.fun, trace)
         m <- regexpr(regex, node.labs)
         labs <- regmatches(node.labs, m)
         labs[m == -1] <- NA # m==-1 for entries in node.labs which don't match regex
+        # convert warning to errors (because silent=TRUE doesn't work for warnings)
+        old.warn <- getOption("warn")
+        on.exit(options(warn=old.warn))
+        options(warn=2)
         fitted <- try(as.numeric(labs), silent=TRUE)
+        options(warn=old.warn)
         if(trace >= 2)
             cat("as.numeric(node.labs):", fitted, "\n")
         if(is.try.err(fitted) || anyNA(fitted)) {

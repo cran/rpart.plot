@@ -617,7 +617,7 @@ stopifnot(identical(options("width"), old.width))
 library('rpart.plot')
 library('survival')
 rpart.surv <- rpart(Surv(age, sibsp == 1) ~ ., ptitanic)
-rpart.plot(rpart.surv, under=TRUE)
+rpart.plot(rpart.surv, under=TRUE, main="survival model")
 print(rpart.rules(rpart.surv))
 print(rpart.rules(rpart.surv, cover=TRUE, clip.facs=TRUE, digits=4))
 options(warn=2) # treat warnings as errors
@@ -710,24 +710,67 @@ library(caret)
 data(iris)
 Petal.Length <- rpart(Petal.Length ~ ., data=iris)
 print(rpart.rules(Petal.Length))
+
+# caret train x,y interface
+
 set.seed(2018)
 # note that caret converts factors to indicator columns before invoking rpart
-caret.Petal.Length <- train(Petal.Length ~ ., data=iris, method="rpart", tuneLength=4)
-rpart.plot(caret.Petal.Length$finalModel, main="caret.Petal.Length$finalModel")
-rpart.rules(caret.Petal.Length$finalModel)
-rpart.rules(caret.Petal.Length$finalModel, roundint=FALSE)
-owidth <- options(width=1e3)$width
-head(rpart.predict(caret.Petal.Length$finalModel, rules=TRUE))
-# TODO fails: Error in eval(predvars, data, env) : object 'Speciesversicolor' not found
-# rpart.predict(caret.Petal.Length$finalModel, rules=TRUE, newdata=iris[50:52,])
-options(width=owidth)
+iPetal.Length <- 3 # index of Sepal.Length column
+caret.xy <- train(iris[,-iPetal.Length], iris[,iPetal.Length], method="rpart", tuneLength=4)
+rpart.rules(caret.xy$finalModel)
+rpart.rules(caret.xy$finalModel, roundint=FALSE)
 plotmo(Petal.Length, method="apartdep", do.par=2)
 rpart.plot(Petal.Length)
-plotmo(caret.Petal.Length$finalModel, method="apartdep", do.par=2)
-rpart.plot(caret.Petal.Length$finalModel)
-plotmo(caret.Petal.Length, method="apartdep")
-# TODO fails: Error in ux.list[[ipred1]] : invalid subscript type 'list'
-# plotmo(caret.Petal.Length, all2=TRUE, method="apartdep")
+
+owidth <- options(width=1e3)$width
+head(rpart.predict(caret.xy$finalModel, rules=TRUE))
+# TODO fails: Error in eval(predvars, data, env) : object 'Speciesversicolor' not found
+# rpart.predict(caret.xy$finalModel, rules=TRUE, newdata=iris[50:52,])
+options(width=owidth)
+
+plotmo(caret.xy, all2=TRUE, method="apartdep", do.par=2) # Warning: NA in singles, will plot all variables (as if all1=TRUE)
+rpart.plot(caret.xy$finalModel)
+
+plotmo(caret.xy$finalModel, method="apartdep", do.par=2, all2=TRUE)
+rpart.plot(caret.xy$finalModel)
+
+# caret train formula interface
+set.seed(2018)
+# note that caret converts factors to indicator columns before invoking rpart
+caret.form <- train(Petal.Length ~ ., data=iris, method="rpart", tuneLength=4)
+rpart.rules(caret.form$finalModel)
+rpart.rules(caret.form$finalModel, roundint=FALSE)
+plotmo(Petal.Length, method="apartdep", do.par=2)
+rpart.plot(Petal.Length)
+
+owidth <- options(width=1e3)$width
+head(rpart.predict(caret.form$finalModel, rules=TRUE))
+# TODO fails: Error in eval(predvars, data, env) : object 'Speciesversicolor' not found
+# rpart.predict(caret.form$finalModel, rules=TRUE, newdata=iris[50:52,])
+options(width=owidth)
+
+plotmo(caret.form, all2=TRUE, method="apartdep", do.par=2) # Warning: NA in singles, will plot all variables (as if all1=TRUE)
+rpart.plot(caret.form$finalModel)
+
+plotmo(caret.form$finalModel, method="apartdep", do.par=2, all2=TRUE)
+rpart.plot(caret.form$finalModel)
+
+# Dates
+
+par(mfrow=c(2, 2))
+set.seed(2018)
+xx <- 5 * rnorm(60)
+data <- data.frame(
+    yy  = c(1:30, 30:1) + xx,
+    xx  = xx,
+    dd = c(as.Date(paste0("2018-08-", 1:30)),
+           as.Date(paste0("2018-09-", 1:30))))
+print(head(data))
+datemod <- rpart(yy ~ ., data = data)
+print(rpart.rules(datemod))
+plotmo(datemod, pt.col=2, do.par=FALSE)
+rpart.plot(datemod)
+par(old.par)
 
 stopifnot(identical(options("width"), old.width))
 source("test.epilog.R")

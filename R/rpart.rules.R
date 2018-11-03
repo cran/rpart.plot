@@ -75,7 +75,8 @@ rpart.rules <- function(x=stop("no 'x' argument"),
         else
             unique(rownames(obj$splits))
 
-    ret <- get.raw.rules(obj, extra, varlen, faclen, roundint, trace, facsep, varnames)
+    ret <- get.raw.rules(obj, extra, varlen, faclen, roundint, trace,
+                         facsep, varnames)
         rules          <- ret$rules
         nrules.per.var <- ret$nrules.per.var
 
@@ -157,9 +158,11 @@ print.rpart.rules <- function(x=stop("no 'x' argument"),
 #   for anova models, iclass is floor(fit)
 #   for class models, iclass is the fitted class as an integer
 
-get.raw.rules <- function(obj, extra, varlen, faclen, roundint, trace, facsep, varnames)
+get.raw.rules <- function(obj, extra, varlen, faclen, roundint, trace,
+                          facsep, varnames)
 {
-    ret <- get.node.and.split.labs(obj, extra, faclen, roundint, trace, facsep)
+    ret <- get.node.and.split.labs(obj, extra, faclen, roundint, trace,
+                                  facsep, under.percent=2)
         node.labs  <- ret$node.labs
         split.labs <- ret$split.labs
 
@@ -202,7 +205,8 @@ get.raw.rules <- function(obj, extra, varlen, faclen, roundint, trace, facsep, v
     rownames(rules) <- rownames(obj$frame)[is.leaf]
     list(rules=rules, nrules.per.var=nrules.per.var)
 }
-get.node.and.split.labs <- function(obj, extra, faclen, roundint, trace, facsep)
+get.node.and.split.labs <- function(obj, extra, faclen, roundint, trace,
+                                    facsep, under.percent)
 {
     class.stats <- NULL
     if(obj$method == "class" || is.class.response(obj))
@@ -215,7 +219,7 @@ get.node.and.split.labs <- function(obj, extra, faclen, roundint, trace, facsep)
                 under=FALSE, xsep=NULL,
                 digits=-10, # we will apply digits later
                 varlen=0,   # full variable names in raw data.frame
-                prefix="", suffix="", class.stats),
+                prefix="", suffix="", class.stats, under.percent),
         split.labs =
             internal.split.labs(obj, type=TYPE4.fancy.all,
                 digits=-10, # we will apply digits later

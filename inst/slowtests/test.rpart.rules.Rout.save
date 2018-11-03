@@ -3438,7 +3438,7 @@ The following object is masked from 'package:rpart':
     solder
 
 > rpart.surv <- rpart(Surv(age, sibsp == 1) ~ ., ptitanic)
-> rpart.plot(rpart.surv, under=TRUE)
+> rpart.plot(rpart.surv, under=TRUE, main="survival model")
 > print(rpart.rules(rpart.surv))
  Surv                                                            
  0.53 when parch <  1                             & sex is   male
@@ -3731,26 +3731,76 @@ The following object is masked from 'package:survival':
           4.4 when Species is versicolor & Petal.Width >= 1.2                    
           5.3 when Species is  virginica                      & Sepal.Length <  7
           6.3 when Species is  virginica                      & Sepal.Length >= 7
+> 
+> # caret train x,y interface
+> 
 > set.seed(2018)
 > # note that caret converts factors to indicator columns before invoking rpart
-> caret.Petal.Length <- train(Petal.Length ~ ., data=iris, method="rpart", tuneLength=4)
-Warning in nominalTrainWorkflow(x = x, y = y, wts = weights, info = trainInfo,  :
-  There were missing values in resampled performance measures.
-> rpart.plot(caret.Petal.Length$finalModel, main="caret.Petal.Length$finalModel")
-> rpart.rules(caret.Petal.Length$finalModel)
+> iPetal.Length <- 3 # index of Sepal.Length column
+> caret.xy <- train(iris[,-iPetal.Length], iris[,iPetal.Length], method="rpart", tuneLength=4)
+> rpart.rules(caret.xy$finalModel)
+ .outcome                                               
+      1.5 when Species is     setosa                    
+      4.3 when Species is versicolor                    
+      5.3 when Species is  virginica & Sepal.Length <  7
+      6.3 when Species is  virginica & Sepal.Length >= 7
+> rpart.rules(caret.xy$finalModel, roundint=FALSE)
+ .outcome                                               
+      1.5 when Species is     setosa                    
+      4.3 when Species is versicolor                    
+      5.3 when Species is  virginica & Sepal.Length <  7
+      6.3 when Species is  virginica & Sepal.Length >= 7
+> plotmo(Petal.Length, method="apartdep", do.par=2)
+ plotmo grid:    Sepal.Length Sepal.Width Petal.Width Species
+                          5.8           3         1.3  setosa
+> rpart.plot(Petal.Length)
+> 
+> owidth <- options(width=1e3)$width
+> head(rpart.predict(caret.xy$finalModel, rules=TRUE))
+  .outcome                                                  
+1      1.5 because Species is     setosa                    
+2      1.5 because Species is     setosa                    
+3      1.5 because Species is     setosa                    
+4      1.5 because Species is     setosa                    
+5      1.5 because Species is     setosa                    
+6      1.5 because Species is     setosa                    
+> # TODO fails: Error in eval(predvars, data, env) : object 'Speciesversicolor' not found
+> # rpart.predict(caret.xy$finalModel, rules=TRUE, newdata=iris[50:52,])
+> options(width=owidth)
+> 
+> plotmo(caret.xy, all2=TRUE, method="apartdep", do.par=2) # Warning: NA in singles, will plot all variables (as if all1=TRUE)
+ plotmo grid:    Sepal.Length Sepal.Width Petal.Width Species
+                          5.8           3         1.3  setosa
+> rpart.plot(caret.xy$finalModel)
+> 
+> plotmo(caret.xy$finalModel, method="apartdep", do.par=2, all2=TRUE)
+ plotmo grid:    Sepal.Length Sepal.Width Petal.Width Species
+                          5.8           3         1.3  setosa
+> rpart.plot(caret.xy$finalModel)
+> 
+> # caret train formula interface
+> set.seed(2018)
+> # note that caret converts factors to indicator columns before invoking rpart
+> caret.form <- train(Petal.Length ~ ., data=iris, method="rpart", tuneLength=4)
+> rpart.rules(caret.form$finalModel)
  .outcome                                                                     
       1.5 when Petal.Width <  0.8                                             
       4.3 when Petal.Width >= 0.8 & Speciesversicolor is 1                    
       5.3 when Petal.Width >= 0.8 & Speciesversicolor is 0 & Sepal.Length <  7
       6.3 when Petal.Width >= 0.8 & Speciesversicolor is 0 & Sepal.Length >= 7
-> rpart.rules(caret.Petal.Length$finalModel, roundint=FALSE)
+> rpart.rules(caret.form$finalModel, roundint=FALSE)
  .outcome                                                                       
       1.5 when Petal.Width <  0.8                                               
       4.3 when Petal.Width >= 0.8 & Speciesversicolor >= 0.5                    
       5.3 when Petal.Width >= 0.8 & Speciesversicolor <  0.5 & Sepal.Length <  7
       6.3 when Petal.Width >= 0.8 & Speciesversicolor <  0.5 & Sepal.Length >= 7
+> plotmo(Petal.Length, method="apartdep", do.par=2)
+ plotmo grid:    Sepal.Length Sepal.Width Petal.Width Species
+                          5.8           3         1.3  setosa
+> rpart.plot(Petal.Length)
+> 
 > owidth <- options(width=1e3)$width
-> head(rpart.predict(caret.Petal.Length$finalModel, rules=TRUE))
+> head(rpart.predict(caret.form$finalModel, rules=TRUE))
   .outcome                                                                        
 1      1.5 because Petal.Width <  0.8                                             
 2      1.5 because Petal.Width <  0.8                                             
@@ -3759,23 +3809,54 @@ Warning in nominalTrainWorkflow(x = x, y = y, wts = weights, info = trainInfo,  
 5      1.5 because Petal.Width <  0.8                                             
 6      1.5 because Petal.Width <  0.8                                             
 > # TODO fails: Error in eval(predvars, data, env) : object 'Speciesversicolor' not found
-> # rpart.predict(caret.Petal.Length$finalModel, rules=TRUE, newdata=iris[50:52,])
+> # rpart.predict(caret.form$finalModel, rules=TRUE, newdata=iris[50:52,])
 > options(width=owidth)
-> plotmo(Petal.Length, method="apartdep", do.par=2)
+> 
+> plotmo(caret.form, all2=TRUE, method="apartdep", do.par=2) # Warning: NA in singles, will plot all variables (as if all1=TRUE)
+Warning: NA in singles, will plot all variables (as if all1=TRUE)
  plotmo grid:    Sepal.Length Sepal.Width Petal.Width Species
                           5.8           3         1.3  setosa
-> rpart.plot(Petal.Length)
-> plotmo(caret.Petal.Length$finalModel, method="apartdep", do.par=2)
+> rpart.plot(caret.form$finalModel)
+> 
+> plotmo(caret.form$finalModel, method="apartdep", do.par=2, all2=TRUE)
  plotmo grid:    Sepal.Length Sepal.Width Petal.Width Speciesversicolor
                           5.8           3         1.3                 0
  Speciesvirginica
                 0
-> rpart.plot(caret.Petal.Length$finalModel)
-> plotmo(caret.Petal.Length, method="apartdep")
- plotmo grid:    Sepal.Length Sepal.Width Petal.Width Species
-                          5.8           3         1.3  setosa
-> # TODO fails: Error in ux.list[[ipred1]] : invalid subscript type 'list'
-> # plotmo(caret.Petal.Length, all2=TRUE, method="apartdep")
+> rpart.plot(caret.form$finalModel)
+> 
+> # Dates
+> 
+> par(mfrow=c(2, 2))
+> set.seed(2018)
+> xx <- 5 * rnorm(60)
+> data <- data.frame(
++     yy  = c(1:30, 30:1) + xx,
++     xx  = xx,
++     dd = c(as.Date(paste0("2018-08-", 1:30)),
++            as.Date(paste0("2018-09-", 1:30))))
+> print(head(data))
+    yy    xx         dd
+1 -1.1 -2.11 2018-08-01
+2 -5.7 -7.75 2018-08-02
+3  2.7 -0.32 2018-08-03
+4  5.4  1.35 2018-08-04
+5 13.7  8.68 2018-08-05
+6  4.7 -1.32 2018-08-06
+> datemod <- rpart(yy ~ ., data = data)
+> print(rpart.rules(datemod))
+   yy                                     
+  4.2 when xx <  -2 & dd >=          17792
+  9.9 when xx >= -2 & dd <  17755         
+ 12.0 when xx <  -2 & dd <  17792         
+ 12.3 when xx >= -2 & dd >=          17789
+ 21.0 when xx >= -2 & dd is 17755 to 17767
+ 27.0 when xx >= -2 & dd is 17767 to 17789
+> plotmo(datemod, pt.col=2, do.par=FALSE)
+ plotmo grid:    xx         dd
+               -1.2 2018-08-31
+> rpart.plot(datemod)
+> par(old.par)
 > 
 > stopifnot(identical(options("width"), old.width))
 > source("test.epilog.R")

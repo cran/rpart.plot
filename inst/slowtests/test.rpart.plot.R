@@ -3,6 +3,9 @@
 
 source("test.prolog.R")
 
+dummy.plot <- function() {
+    plot(0, 0, col=0, bty="n", xlab="", ylab="", xaxt="n", yaxt="n")
+}
 print(sessionInfo())
 print(citation("rpart.plot"))
 
@@ -388,7 +391,7 @@ fit7 <- rpart(survived ~ ., data=ptitanic, cp=.01)
 prp(fit7, extra=1, branch=1, trace=3, nn=1, main="Page 10")
 par(old.par)
 
-par(mfrow=c(2,2))
+par(mfrow=c(2,3))
 prp(fit2, prefix=ifelse(fit2$frame$yval > .5, "survived\n", "died\n"), main="Page 11",
     fam.main="NewCenturySchoolbook", cex.main=1.3, trace=1,
     border.col=0, split.border.col="steelblue3")
@@ -401,6 +404,44 @@ ptitanic1$parch <- 1e7 * ptitanic1$parch
 fit2 <- rpart(survived~., data=ptitanic1)
 prp(fit2, faclen=0, digits=4, trace=1,
     border.col=NA, split.border.col="steelblue3", split.round=1)
+
+# even more extreme values
+ptitanic2 <- ptitanic
+ptitanic2$sibsp <- 1e12 * ptitanic2$sibsp
+ptitanic2$age <- 1e-16 * ptitanic2$age
+ptitanic2$parch <- 1e12 * ptitanic2$parch
+fit2a <- rpart(survived~., data=ptitanic2)
+prp(fit2a, faclen=0, digits=4, trace=1,
+    border.col=NA, split.border.col="steelblue3", split.round=1)
+
+cat("test tweak.splits\n")
+splits <- matrix(0, 2, 1)
+colnames(splits) <- "index"
+splits[,"index"] <- c(1234.5, 1235.5)
+cat("format(splits, digits=2)\n")
+print(format(splits, digits=2))
+tweak.splits <- rpart.plot:::tweak.splits(list(splits=splits), roundint=FALSE, digits=2, trace=FALSE)
+cat("format(tweak.splits, digits=2)\n")
+print(format(tweak.splits, digits=2))
+splits <- matrix(0, 22, 1)
+colnames(splits) <- "index"
+splits[,"index"] <- c( 1234.5,      1235.5,
+                       1234.5e-10,  1235.5e-10,
+                       1234.5e-20,  1235.5e-20,
+                      -1234.5,     -1235.5,
+                      -1234.5e-10, -1235.5e-10,
+                      -1234.5e-20, -1235.5e-20,
+
+                       1234.5e10,  1235.5e10,
+                       1234.5e20,  1235.5e20,
+                      -1234.5,    -1235.5,
+                      -1234.5e10, -1235.5e10,
+                      -1234.5e20, -1235.5e20)
+cat("format(splits, digits=4)\n")
+print(format(splits, digits=4))
+tweak.splits <- rpart.plot:::tweak.splits(list(splits=splits), roundint=FALSE, digits=2, trace=FALSE)
+cat("format(tweak.splits, digits=4)\n")
+print(format(tweak.splits, digits=4))
 
 # test small tree, also tests xcompact and ycompact
 fit.small <- rpart(survived~., data=ptitanic1, , control=list(cp=.1))
@@ -488,9 +529,9 @@ prp(a4, type=1, yesno=T, faclen=-1, under=F, extra=107, cex.main=.9, main="extra
 prp(a4, type=1, yesno=T, faclen=-1, under=F, extra=108, cex.main=.9, main="extra=108\nunder=F")
 prp(a4, type=1, yesno=T, faclen=-1, under=F, extra=109, cex.main=.9, main="extra=109\n under=F")
 
-plot(0, 0, type="n", axes=FALSE, xlab="", ylab="")
-plot(0, 0, type="n", axes=FALSE, xlab="", ylab="")
-plot(0, 0, type="n", axes=FALSE, xlab="", ylab="")
+dummy.plot()
+dummy.plot()
+dummy.plot()
 prp(a4, type=1, yesno=T, faclen=-1, under=T, extra=0, cex.main=.9, main="extra=0\nunder=T")
 prp(a4, type=1, yesno=T, faclen=-1, under=T, extra=1, cex.main=.9, main="extra=1\nunder=T")
 prp(a4, type=1, yesno=T, faclen=-1, under=T, extra=4, cex.main=.9, main="extra=4\nunder=T")
@@ -510,6 +551,94 @@ prp(a4, type=1, yesno=T, faclen=-1, under=T, extra=109, cex.main=.9, main="extra
 
 par(old.par)
 
+par(mfrow=c(9,4), mar = c(4, 3, 2, 1), mgp = c(1.5, .5, 0))
+
+a4 <- rpart(survived~., data=ptitanic, cp=.03)
+plot(a4, unif=T, branch=.3); text(a4, use.n=1, cex=1, xpd=NA, pretty=0); title("Page 16", cex.main=.9)
+dummy.plot()
+dummy.plot()
+dummy.plot()
+dummy.plot()
+dummy.plot()
+dummy.plot()
+dummy.plot()
+dummy.plot()
+prp(a4, type=1, yesno=T, faclen=-1, under=F, extra=100, under.percent=0, cex.main=.9, main="extra=100\nunder=F under.percent=0")
+prp(a4, type=1, yesno=T, faclen=-1, under=F, extra=101, under.percent=0, cex.main=.9, main="extra=101\nunder=F under.percent=0")
+prp(a4, type=1, yesno=T, faclen=-1, under=F, extra=104, under.percent=0, cex.main=.9, main="extra=104\nunder=F under.percent=0")
+prp(a4, type=1, yesno=T, faclen=-1, under=F, extra=105, under.percent=0, cex.main=.9, main="extra=105\nunder=F under.percent=0")
+prp(a4, type=1, yesno=T, faclen=-1, under=F, extra=106, under.percent=0, cex.main=.9, main="extra=106\nunder=F under.percent=0")
+prp(a4, type=1, yesno=T, faclen=-1, under=F, extra=107, under.percent=0, cex.main=.9, main="extra=107\nunder=F under.percent=0")
+prp(a4, type=1, yesno=T, faclen=-1, under=F, extra=108, under.percent=0, cex.main=.9, main="extra=108\nunder=F under.percent=0")
+prp(a4, type=1, yesno=T, faclen=-1, under=F, extra=109, under.percent=0, cex.main=.9, main="extra=109\n under=F under.percent=0")
+
+dummy.plot()
+dummy.plot()
+dummy.plot()
+
+dummy.plot()
+dummy.plot()
+dummy.plot()
+dummy.plot()
+dummy.plot()
+dummy.plot()
+dummy.plot()
+dummy.plot()
+prp(a4, type=1, yesno=T, faclen=-1, under=T, extra=100, under.percent=0, cex.main=.9, main="extra=100\nunder=T under.percent=0")
+prp(a4, type=1, yesno=T, faclen=-1, under=T, extra=101, under.percent=0, cex.main=.9, main="extra=101\nunder=T under.percent=0")
+prp(a4, type=1, yesno=T, faclen=-1, under=T, extra=104, under.percent=0, cex.main=.9, main="extra=104\nunder=T under.percent=0")
+prp(a4, type=1, yesno=T, faclen=-1, under=T, extra=105, under.percent=0, cex.main=.9, main="extra=105\nunder=T under.percent=0")
+prp(a4, type=1, yesno=T, faclen=-1, under=T, extra=106, under.percent=0, cex.main=.9, main="extra=106\nunder=T under.percent=0")
+prp(a4, type=1, yesno=T, faclen=-1, under=T, extra=107, under.percent=0, cex.main=.9, main="extra=107\nunder=T under.percent=0")
+prp(a4, type=1, yesno=T, faclen=-1, under=T, extra=108, under.percent=0, cex.main=.9, main="extra=108\nunder=T under.percent=0")
+prp(a4, type=1, yesno=T, faclen=-1, under=T, extra=109, under.percent=0, cex.main=.9, main="extra=109\n under=T under.percent=0")
+
+par(old.par)
+
+par(mfrow=c(9,4), mar = c(4, 3, 2, 1), mgp = c(1.5, .5, 0))
+
+a4 <- rpart(survived~., data=ptitanic, cp=.03)
+plot(a4, unif=T, branch=.3); text(a4, use.n=1, cex=1, xpd=NA, pretty=0); title("Page 17", cex.main=.9)
+dummy.plot()
+dummy.plot()
+dummy.plot()
+dummy.plot()
+dummy.plot()
+dummy.plot()
+dummy.plot()
+dummy.plot()
+prp(a4, type=1, yesno=T, faclen=-1, under=F, extra=100, under.percent=1, cex.main=.9, main="extra=100\nunder=F under.percent=1")
+prp(a4, type=1, yesno=T, faclen=-1, under=F, extra=101, under.percent=1, cex.main=.9, main="extra=101\nunder=F under.percent=1")
+prp(a4, type=1, yesno=T, faclen=-1, under=F, extra=104, under.percent=1, cex.main=.9, main="extra=104\nunder=F under.percent=1")
+prp(a4, type=1, yesno=T, faclen=-1, under=F, extra=105, under.percent=1, cex.main=.9, main="extra=105\nunder=F under.percent=1")
+prp(a4, type=1, yesno=T, faclen=-1, under=F, extra=106, under.percent=1, cex.main=.9, main="extra=106\nunder=F under.percent=1")
+prp(a4, type=1, yesno=T, faclen=-1, under=F, extra=107, under.percent=1, cex.main=.9, main="extra=107\nunder=F under.percent=1")
+prp(a4, type=1, yesno=T, faclen=-1, under=F, extra=108, under.percent=1, cex.main=.9, main="extra=108\nunder=F under.percent=1")
+prp(a4, type=1, yesno=T, faclen=-1, under=F, extra=109, under.percent=1, cex.main=.9, main="extra=109\n under=F under.percent=1")
+
+dummy.plot()
+dummy.plot()
+dummy.plot()
+
+dummy.plot()
+dummy.plot()
+dummy.plot()
+dummy.plot()
+dummy.plot()
+dummy.plot()
+dummy.plot()
+dummy.plot()
+prp(a4, type=1, yesno=T, faclen=-1, under=T, extra=100, under.percent=1, cex.main=.9, main="extra=100\nunder=T under.percent=1")
+prp(a4, type=1, yesno=T, faclen=-1, under=T, extra=101, under.percent=1, cex.main=.9, main="extra=101\nunder=T under.percent=1")
+prp(a4, type=1, yesno=T, faclen=-1, under=T, extra=104, under.percent=1, cex.main=.9, main="extra=104\nunder=T under.percent=1")
+prp(a4, type=1, yesno=T, faclen=-1, under=T, extra=105, under.percent=1, cex.main=.9, main="extra=105\nunder=T under.percent=1")
+prp(a4, type=1, yesno=T, faclen=-1, under=T, extra=106, under.percent=1, cex.main=.9, main="extra=106\nunder=T under.percent=1")
+prp(a4, type=1, yesno=T, faclen=-1, under=T, extra=107, under.percent=1, cex.main=.9, main="extra=107\nunder=T under.percent=1")
+prp(a4, type=1, yesno=T, faclen=-1, under=T, extra=108, under.percent=1, cex.main=.9, main="extra=108\nunder=T under.percent=1")
+prp(a4, type=1, yesno=T, faclen=-1, under=T, extra=109, under.percent=1, cex.main=.9, main="extra=109\n under=T under.percent=1")
+
+par(old.par)
+
 # May 2018: extra=9,10,11
 par(mfrow=c(2, 3))
 prp(a4, extra=9, main="extra=9")
@@ -525,10 +654,27 @@ expect.err(try(prp(a4, extra=1.23, main="extra=1.23")), 'extra=1.23 is illegal')
 par(old.par)
 
 par(mfrow=c(3,3))
-prp(a4, type=1,          extra=2,   main="Page 17")
+prp(a4, type=1,          extra=2,   main="Page 19")
 prp(a4, type=1, under=T, extra=3,   main="extra=3 (misclassification rate)\nunder=T")
 prp(a4, type=1,          extra=102, main="extra=102 (classification rate)\n")
 prp(a4, type=1, under=T, extra=103, main="extra=103 (misclassification rate)\nunder=T")
+par(old.par)
+
+# anova with under.percent
+anova.model <- rpart(Mileage ~ ., data = cu.summary)
+par(mfrow=c(4,3))
+for(under.percent in 0:2)
+    rpart.plot(anova.model, extra=100, under=FALSE, under.percent=under.percent,
+               main = paste("extra=100 under=FALSE\nunder.percent=", under.percent))
+for(under.percent in 0:2)
+    rpart.plot(anova.model, extra=100, under=TRUE, under.percent=under.percent,
+               main = paste("extra=100 under=TRUE\nunder.percent=", under.percent))
+for(under.percent in 0:2)
+    rpart.plot(anova.model, extra=101, under=FALSE, under.percent=under.percent,
+               main = paste("extra=101 under=FALSE\nunder.percent=", under.percent))
+for(under.percent in 0:2)
+    rpart.plot(anova.model, extra=101, under=TRUE, under.percent=under.percent,
+               main = paste("extra=101 under=TRUE\nunder.percent=", under.percent))
 par(old.par)
 
 # poisson
@@ -536,20 +682,35 @@ set.seed(8)
 ozone2 <- ozone1
 ozone2$O3a <- round(runif(330, 1, 10))
 y <- cbind(ozone2$O3, ozone2$O3a)
-a5 <- rpart(y~.-O3-O3a, data=ozone2, control=list(cp=.04))
+poisson.mod <- rpart(y~.-O3-O3a, data=ozone2, control=list(cp=.04))
 par(mfrow=c(2, 3))
-plot(a5, unif=TRUE, branch=.3, main="Page 18"); text(a5, use.n=TRUE, all=T, digits=3, xpd=NA, cex=1.1)
-prp(a5, extra=0, digits=3, type=4, trace=1, main="extra=0\ntype=4")
-prp(a5, extra=1, type=4, clip.right=FALSE, under=TRUE, main="extra=1: nbr of events, nbr of obs\ntype=4", trace=1, under.cex=1)
-prp(a5, extra=2, trace=1, type=0, under=T, main="extra=2: nbr of events", under.cex=1)
-prp(a5, extra=102, type=4, under=TRUE, xsep="/", main="extra=102\ntype=4", trace=1, under.cex=1)
+plot(poisson.mod, unif=TRUE, branch=.3, main="Page 21"); text(poisson.mod, use.n=TRUE, all=T, digits=3, xpd=NA, cex=1.1)
+prp(poisson.mod, extra=0, digits=3, type=4, trace=1, main="extra=0\ntype=4")
+prp(poisson.mod, extra=1, type=4, clip.right=FALSE, under=TRUE, main="extra=1: nbr of events, nbr of obs\ntype=4", trace=1, under.cex=1)
+prp(poisson.mod, extra=2, trace=1, type=0, under=T, main="extra=2: nbr of events", under.cex=1)
+prp(poisson.mod, extra=102, type=4, under=TRUE, xsep="/", main="extra=102\ntype=4", trace=1, under.cex=1)
+
+par(mfrow=c(4,3))
+for(under.percent in 0:2)
+    rpart.plot(poisson.mod, extra=100, under=FALSE, under.percent=under.percent,
+               main = paste("extra=100 under=FALSE\nunder.percent=", under.percent))
+for(under.percent in 0:2)
+    rpart.plot(poisson.mod, extra=100, under=TRUE, under.percent=under.percent,
+               main = paste("extra=100 under=TRUE\nunder.percent=", under.percent))
+for(under.percent in 0:2)
+    rpart.plot(poisson.mod, extra=101, under=FALSE, under.percent=under.percent,
+               main = paste("extra=101 under=FALSE\nunder.percent=", under.percent))
+for(under.percent in 0:2)
+    rpart.plot(poisson.mod, extra=101, under=TRUE, under.percent=under.percent,
+               main = paste("extra=101 under=TRUE\nunder.percent=", under.percent))
+
 par(old.par)
 
 # prefix, suffix, etc.
 a7 <- rpart(survived~., data=ptitanic, control=list(cp=.02))
 par(mfrow=c(2, 2))
 # test many parameters, and their vectorization
-prp(a7, main="Page 19", Margin=.03,
+prp(a7, main="Page 23", Margin=.03,
     extra=4, under=T, prefix="res:", suffix=" (probs)", split.suffix="\n\nabc", faclen=0, trace=3,
     nn=1,
     under.col=c(2,3), under.font=c(3,2), under.ygap=c(.2,-.2), under.cex=c(1.1, .8),
@@ -581,7 +742,7 @@ data(iris)
 a.iris <- rpart(Species~., data=iris)
 par(mfrow=c(2, 2))
 old.bg <- par(bg="gray")
-prp(a.iris, main="Page 20",
+prp(a.iris, main="Page 24",
     type=4, extra=1, under=TRUE,
     col=c("orange", "green", "wheat")[a.iris$frame$yval], under.col="red",
     border.col=c(3,4), nn.col=c(2,3),
@@ -597,7 +758,7 @@ par(old.par)
 
 par(mfrow=c(2, 3))
 a <- rpart(survived~., data=ptitanic, control=list(cp=.01))
-prp(a, uniform=T, branch=.4, compress=T, extra=104, trace=2, main="Page 21")
+prp(a, uniform=T, branch=.4, compress=T, extra=104, trace=2, main="Page 25")
 prp(a, uniform=T, branch=.4, compress=T, extra=104, mar=c(1,2,3,4), trace=2, main="test mar=c(1,2,3,4)")
 prp(a, uniform=T, branch=.4, compress=T, extra=104, mar=c(5,2,3,4), trace=2, main="test mar=c(5,2,3,4)")
 prp(a, uniform=T, branch=.4, compress=T, extra=104, xpd=T, trace=2, prefix="123456789", cex=1, main="test xpd=T, par=1")
@@ -608,7 +769,7 @@ par(old.par)
 
 a <- rpart(pclass ~ ., data=ptitanic, control=rpart.control(cp=.01))
 par(mfrow=c(2,3))
-prp(a, type=0, faclen=0, extra=1, under=F, shadow.col="darkgray", nn=T, yesno=0, split.shadow.col="darkgray", main="Page 22")
+prp(a, type=0, faclen=0, extra=1, under=F, shadow.col="darkgray", nn=T, yesno=0, split.shadow.col="darkgray", main="Page 26")
 prp(a, type=1, faclen=0, extra=1, under=F, shadow.col="darkgray", nn=T, yesno=1, main="type=1\nyesno=1")
 prp(a, type=1, faclen=0, extra=2, under=T, shadow.col="darkgray", nn=T, yesno=2, main="type=1\nyesno=2")
 prp(a, type=2, faclen=0, extra=3, under=F, shadow.col="darkgray", nn=T, yesno=0, split.shadow.col="darkgray", main="type=2\nyesno=0")
@@ -622,7 +783,7 @@ par(old.par)
 a <- rpart(pclass ~ ., data=ptitanic, cp=.005)
 par(mfrow=c(3,3))
 temp.par <- par(no.readonly=TRUE)
-prp(a, trace=2, main="Page 23") # trace=2 so can see the grid
+prp(a, trace=2, main="Page 27") # trace=2 so can see the grid
     # set par settings that can legally change to NULL for comparison
     temp.par$usr <- temp.par$fig <- temp.par$mfg <- temp.par$xaxp <- temp.par$yaxp <- NULL
     par <- par(no.readonly=TRUE)
@@ -637,7 +798,7 @@ par(old.par)
 # different branch types (also test different values for yesno)
 a <- rpart(pclass ~ ., data=ptitanic, cp=.02)
 par(mfrow=c(2,3))
-prp(a, branch.type=5, yesno=0, main="Page 24")
+prp(a, branch.type=5, yesno=0, main="Page 28")
 prp(a, branch.type=1, yesno=1, main="branch.type=1\ndev  yesno=1")
 prp(a, branch.type=2, yesno=2, main="branch.type=2\nsqrt(dev)\nuniform=FALSE  yesno=2", uniform=FALSE)
 prp(a, branch.type=6, yesno=0, fallen.leaves=T, main="branch.type=6\ncomplexity\nfallen.leaves  yesno=0")
@@ -648,7 +809,7 @@ par(old.par)
 par(mfrow=c(2,3))
 # continuous response
 a.age <- rpart(age~., data=ptitanic, cp=.04)
-prp(a.age, branch.type=7, branch.col="pink", main="Page 25")
+prp(a.age, branch.type=7, branch.col="pink", main="Page 29")
 
 # test different types with branch.type
 # prp(a, type=1, branch.type=5, branch.col="slategray3", main="type=1\nbranch.type=5") # already tested
@@ -668,7 +829,7 @@ prp(a, branch.type=branch.fun1, branch.col="slategray3", main="branch.fun1")
 par(old.par)
 
 par(mfrow=c(2,3))
-prp(root, branch.type=5, main="Page 26")
+prp(root, branch.type=5, main="Page 30")
 prp(a, branch=0, branch.type=5, branch.tweak=1.5, branch.col="slategray3",
     branch.fill=2, main="branch.type=5\nbranch args")
 par(old.par)
@@ -676,7 +837,7 @@ par(old.par)
 par(mfrow=c(4,4))
 set.seed(1924)
 root <- rpart(survived ~ ., data=ptitanic, cp=.5)
-temp <- prp(root, main="Page 27")
+temp <- prp(root, main="Page 31")
 print(temp)
 prp(root, type=1, main="type=1")
 prp(root, type=2, extra=1, main="type=2, extra=1")

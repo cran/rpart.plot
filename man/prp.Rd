@@ -45,7 +45,7 @@ prp(x=stop("no 'x' arg"),
     round=NULL, leaf.round=NULL,
     shadow.col=0, prefix="", suffix="", xsep=NULL,
 
-    under.font=font, under.col=1, under.cex=.8,
+    under.percent=2, under.font=font, under.col=1, under.cex=.8,
 
     split.cex=1, split.font=2, split.family=family, split.col=1,
     split.box.col=0, split.border.col=0,
@@ -496,6 +496,16 @@ classes).
      \code{"  "} (two spaces), but \code{" / "} for rates.
      Use \code{xsep="/"} for compatibility with \code{text.rpart}.
      See also \code{facsep}, which separates the factor levels in split labels.\cr
+  }
+  \item{under.percent}{
+    Control whitespace before the percentage (when 100 is used with the \code{extra} argument).
+     One of\cr
+     \bold{0} put a space before the percentage
+     \cr
+     \bold{1} put a newline before the percentage
+     \cr
+     \bold{2} (default) automatically choose a space or newline before the percentage.
+     \cr
 
      \bold{The following control the text under the boxes} (apply only if
      \code{under=TRUE} or there is a double newline \code{\\n\\n} in \code{prefix} or \code{suffix}).

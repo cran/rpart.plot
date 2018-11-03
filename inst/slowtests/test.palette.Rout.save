@@ -4,7 +4,7 @@
 Loading required package: rpart
 > library(rattle, quietly=TRUE)
 Rattle: A free graphical interface for data science with R.
-Version 5.1.0 Copyright (c) 2006-2017 Togaware Pty Ltd.
+Version 5.2.0 Copyright (c) 2006-2018 Togaware Pty Ltd.
 Type 'rattle()' to shake, rattle, and roll your data.
 > 
 > example(show.prp.palettes)

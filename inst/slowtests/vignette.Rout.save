@@ -399,7 +399,7 @@ cex 1 (before applying tweak 1.2)   xlim c(-0.65, 1.65)   ylim c(-0.75, 1.75)
 +            main="rpart.plot (with args)\n")
 > library(rattle, quietly=TRUE)
 Rattle: A free graphical interface for data science with R.
-Version 5.1.0 Copyright (c) 2006-2017 Togaware Pty Ltd.
+Version 5.2.0 Copyright (c) 2006-2018 Togaware Pty Ltd.
 Type 'rattle()' to shake, rattle, and roll your data.
 > fancyRpartPlot(binary.model, tweak=.8, cex.main=.9,
 +            main="\nfancyRpartPlot", sub="")

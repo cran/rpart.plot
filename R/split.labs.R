@@ -141,8 +141,8 @@ get.lsplit.rsplit <- function(x, isplit, split.var.names,
 #
 # Add verysmall to all other cuts where verysmall is something like 1e-10.
 # This is so format(cut, digits=digits) always rounds up (rather than the
-# default behaviour of format which is to round to even the last digit is
-# even).
+# default behaviour of format which is to round to even when the last digit
+# is even).
 # This gives more easily interpretable results, especially because split
 # cuts ending in .5 are common for integer predictors.
 # Thus "nbr.family.members < 2.5" is now rounded to "nbr.family.members < 3"
@@ -157,9 +157,18 @@ get.lsplit.rsplit <- function(x, isplit, split.var.names,
 
 tweak.splits <- function(obj, roundint, digits, trace)
 {
-    verysmall <- exp10(-abs(digits) - 8)
     splits <- obj$splits
+    if(is.null(splits))               # semtree object (from package semtree)
+        return(splits)
+    if(!is.numeric(splits[,"index"])) # paranoia
+        return(splits)
+
+    verysmall <- floor(log10(abs(splits[,"index"])))
+    verysmall[verysmall > 0] <- 0
+    verysmall <- exp10(-abs(verysmall) - 10)
+
     splits[,"index"] <- splits[,"index"] + verysmall
+
     # Because rpart.model.frame() may fail or give warnings, we do
     # processing here only if the roundint argument is TRUE.
     if(roundint) {
@@ -169,7 +178,7 @@ tweak.splits <- function(obj, roundint, digits, trace)
         for(varname in names(isroundint)) if(isroundint[varname]) {
             i <- rownames(splits) %in% varname
             if(length(i) > 0)
-                splits[,"index"][i] <- ceiling(splits[,"index"][i] - verysmall)
+                splits[,"index"][i] <- ceiling(splits[,"index"][i] - verysmall[i])
         }
     }
     splits

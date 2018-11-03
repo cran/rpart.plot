@@ -56,7 +56,7 @@ is.multiclass.response <- function(obj) {
 # call node.fun or obj$functions$text, and check its args and returned value
 internal.node.labs <- function(x, node.fun, node.fun.name, type, extra,
                                under, xsep, digits, varlen,
-                               prefix, suffix, class.stats)
+                               prefix, suffix, class.stats, under.percent)
 {
     stopifnot(is.numeric(extra) || is.logical(extra))
     stopifnot(length(extra) == 1)
@@ -70,11 +70,12 @@ internal.node.labs <- function(x, node.fun, node.fun.name, type, extra,
     frame <- x$frame
     labs <-
         if(x$method == "anova")
-            get.anova.labs(x, extra, under, digits, xsep, varlen)
+            get.anova.labs(x, extra, under, digits, xsep, varlen, under.percent)
         else if(x$method == "class")
-            get.class.labs(x, extra, under, digits, xsep, varlen, class.stats)
+            get.class.labs(x, extra, under, digits, xsep, varlen,
+                           class.stats, under.percent)
         else if(x$method == "poisson" || x$method == "exp")
-            get.poisson.labs(x, extra, under, digits, xsep, varlen)
+            get.poisson.labs(x, extra, under, digits, xsep, varlen, under.percent)
         else if(x$method == "mrt")
             get.mvpart.labs(x, extra, under, digits, xsep, varlen)
         else {
@@ -82,12 +83,13 @@ internal.node.labs <- function(x, node.fun, node.fun.name, type, extra,
                 warning0("Unrecognized rpart object: treating as a numeric response model")
                 if(x$method == "user")
                     x$method = "user.with.numeric.response" # used only in err msgs
-                get.anova.labs(x, extra, under, digits, xsep, varlen)
+                get.anova.labs(x, extra, under, digits, xsep, varlen, under.percent)
             } else if(is.class.response(x)) {
                 warning0("Unrecognized rpart object: treating as a class response model")
                 if(x$method == "user")
                     x$method = "user.with.class.response" # used only in err msgs
-                get.class.labs(x, extra, under, digits, xsep, varlen, class.stats)
+                get.class.labs(x, extra, under, digits, xsep, varlen,
+                               class.stats, under.percent)
             } else {
                 warning0("Unrecognized rpart object")
                 check.func.args(x$functions$text, "x$functions$text",
@@ -120,7 +122,7 @@ internal.node.labs <- function(x, node.fun, node.fun.name, type, extra,
     }
     labs
 }
-get.anova.labs <- function(x, extra, under, digits, xsep, varlen)
+get.anova.labs <- function(x, extra, under, digits, xsep, varlen, under.percent)
 {
     frame <- x$frame
     fitted <- format0(frame$yval, digits)
@@ -146,7 +148,20 @@ get.anova.labs <- function(x, extra, under, digits, xsep, varlen)
         }
 
     if(extra >= 100) {   # add percent?
-        sep <- if(extra == 100) newline else "  "
+        sep <- # space or newline before percent
+            if(under.percent == 0) {
+                "  "
+            } else if(under.percent == 1) {
+                if(under)
+                    "\n\n"
+                else
+                    "\n"
+            } else if(under.percent == 2) {
+                if(extra == 100)
+                    newline
+                else
+                    "  "
+            }
         labs <- sprint("%s%s%s%%", labs, sep,
                         formatf(100 * frame$wt / frame$wt[1],
                                 digits=max(0, abs(digits)-2)))
@@ -187,7 +202,8 @@ rescale.prob.across.all <- function(class.stats, scale, ntotal)
                     ncol=class.stats$nlev, byrow=TRUE)
     class.stats$prob.per.lev * scale / ntotal
 }
-get.class.labs <- function(x, extra, under, digits, xsep, varlen, class.stats)
+get.class.labs <- function(x, extra, under, digits, xsep, varlen,
+                           class.stats, under.percent)
 {
     frame <- x$frame
     n <- x$frame$n
@@ -277,20 +293,33 @@ get.class.labs <- function(x, extra, under, digits, xsep, varlen, class.stats)
                       "\n",                       # EX3.MISCLASS.RATE
                       "\n",                       # EX4.PROB.PER.CLASS
                       newline,                    # EX5.PROB.PER.CLASS.DONT
-                      if(under) "  " else "\n",   # EX6.PROB.2ND.CLASS # modified march 2016
+                      if(under) "  " else "\n",   # EX6.PROB.2ND.CLASS
                       if(under) "\n\n" else "\n", # EX7.PROB.2ND.CLASS.DONT
-                      "\n",                       # EX8.PROB.FITTED.CLASS
+                      if(under) "  " else "\n",   # EX8.PROB.FITTED.CLASS
                       "\n",                       # EX9.PROB.ACROSS.ALL
                       if(under) "  " else "\n",   # EX10.PROB.ACROSS.ALL.2ND.CLASS
                       if(under) "\n\n" else "\n") # EX11.PROB.ACROSS.ALL.2ND.CLASS.DONT
 
+        sep <- # space or newline before percent
+            if(under.percent == 0) {
+                "  "
+            } else if(under.percent == 1) {
+                if(sep == "\n\n")
+                    "\n\n"
+                else
+                    "\n"
+            } else if(under.percent == 2) {
+                sep
+            }
         labs <- sprint("%s%s%s%%", labs, sep,
                         formatf(100 * frame$wt / frame$wt[1],
                                 digits=max(0, abs(digits)-2)))
     }
     labs
 }
-get.poisson.labs <- function(x, extra, under, digits, xsep, varlen) # also used for exp
+# this function is also used for exp
+get.poisson.labs <- function(x, extra, under, digits, xsep,
+                             varlen, under.percent)
 {
     frame <- x$frame
     rate  <- format0(frame$yval2[,1], digits)
@@ -315,10 +344,25 @@ get.poisson.labs <- function(x, extra, under, digits, xsep, varlen) # also used 
         stop0("extra=", extra,
 ' is legal only for "class" models (you have a \"", x$method, "\" model)')
     }
-    if(extra >= 100)        # add percent?
-        labs <- sprint("%s%s%s%%", labs, newline,
+    if(extra >= 100) {        # add percent?
+        sep <- # space or newline before percent
+            if(under.percent == 0) {
+                "  "
+            } else if(under.percent == 1) {
+                if(under)
+                    "\n\n"
+                else
+                    "\n"
+            } else if(under.percent == 2) {
+                if(under)
+                    "\n\n"
+                else
+                    "\n"
+            }
+        labs <- sprint("%s%s%s%%", labs, sep,
                         formatf(100 * frame$wt / frame$wt[1],
                                 digits=max(0, abs(digits)-2)))
+    }
     labs
 }
 print.node.labs.and.stop <- function(labs, fun.name, ...)

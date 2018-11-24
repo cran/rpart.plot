@@ -349,6 +349,11 @@ prp <- function(x=stop("no 'x' arg"),
     #       extremely careful that abbreviation doesn't alias with other args.
     # TODO If you specify col.main=2 it affects both main and the color of the nodes.
 
+    old.warnPartialMatchDollar <- getOption("warnPartialMatchDollar")
+    if(is.boolean(old.warnPartialMatchDollar)) # prevents problem when old value is NULL
+        on.exit(options(warnPartialMatchDollar=old.warnPartialMatchDollar))
+    options(warnPartialMatchDollar=FALSE)
+
     dots <- match.call(expand.dots=FALSE)$...
     check.dots(dots)
     adj      <- eval.parent(dots$adj);   if(is.null(adj))      adj      <- par("adj")
@@ -367,6 +372,9 @@ prp <- function(x=stop("no 'x' arg"),
     xlim     <- eval.parent(dots$xl)
     xpd      <- eval.parent(dots$xp)
     ylim     <- eval.parent(dots$yl)
+
+    if(is.boolean(old.warnPartialMatchDollar))
+        options(warnPartialMatchDollar=old.warnPartialMatchDollar)
 
     if(is.null(under.col))   under.col   <- col
     if(is.null(border.col))  border.col  <- col

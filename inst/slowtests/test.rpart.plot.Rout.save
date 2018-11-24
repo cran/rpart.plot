@@ -4,9 +4,6 @@
 > source("test.prolog.R")
 Loading required package: rpart
 > 
-> dummy.plot <- function() {
-+     plot(0, 0, col=0, bty="n", xlab="", ylab="", xaxt="n", yaxt="n")
-+ }
 > print(sessionInfo())
 R version 3.5.1 (2018-07-02)
 Platform: x86_64-w64-mingw32/x64 (64-bit)
@@ -25,7 +22,7 @@ attached base packages:
 [1] stats     graphics  grDevices utils     datasets  methods   base     
 
 other attached packages:
-[1] rpart.plot_3.0.5 rpart_4.1-13    
+[1] rpart.plot_3.0.6 rpart_4.1-13    
 
 loaded via a namespace (and not attached):
 [1] compiler_3.5.1
@@ -36,7 +33,7 @@ Warning in citation("rpart.plot") :
 To cite package 'rpart.plot' in publications use:
 
   Stephen Milborrow (2018). rpart.plot: Plot 'rpart' Models: An
-  Enhanced Version of 'plot.rpart'. R package version 3.0.5.
+  Enhanced Version of 'plot.rpart'. R package version 3.0.6.
   http://www.milbo.org/rpart-plot
 
 A BibTeX entry for LaTeX users is
@@ -45,7 +42,7 @@ A BibTeX entry for LaTeX users is
     title = {rpart.plot: Plot 'rpart' Models: An Enhanced Version of 'plot.rpart'},
     author = {Stephen Milborrow},
     year = {2018},
-    note = {R package version 3.0.5},
+    note = {R package version 3.0.6},
     url = {http://www.milbo.org/rpart-plot},
   }
 
@@ -1372,9 +1369,9 @@ cex 1   xlim c(-0.2, 1.2)   ylim c(0, 1)
 > prp(a4, type=1, yesno=T, faclen=-1, under=F, extra=108, cex.main=.9, main="extra=108\nunder=F")
 > prp(a4, type=1, yesno=T, faclen=-1, under=F, extra=109, cex.main=.9, main="extra=109\n under=F")
 > 
-> dummy.plot()
-> dummy.plot()
-> dummy.plot()
+> empty.plot()
+> empty.plot()
+> empty.plot()
 > prp(a4, type=1, yesno=T, faclen=-1, under=T, extra=0, cex.main=.9, main="extra=0\nunder=T")
 > prp(a4, type=1, yesno=T, faclen=-1, under=T, extra=1, cex.main=.9, main="extra=1\nunder=T")
 > prp(a4, type=1, yesno=T, faclen=-1, under=T, extra=4, cex.main=.9, main="extra=4\nunder=T")
@@ -1398,14 +1395,14 @@ cex 1   xlim c(-0.2, 1.2)   ylim c(0, 1)
 > 
 > a4 <- rpart(survived~., data=ptitanic, cp=.03)
 > plot(a4, unif=T, branch=.3); text(a4, use.n=1, cex=1, xpd=NA, pretty=0); title("Page 16", cex.main=.9)
-> dummy.plot()
-> dummy.plot()
-> dummy.plot()
-> dummy.plot()
-> dummy.plot()
-> dummy.plot()
-> dummy.plot()
-> dummy.plot()
+> empty.plot()
+> empty.plot()
+> empty.plot()
+> empty.plot()
+> empty.plot()
+> empty.plot()
+> empty.plot()
+> empty.plot()
 > prp(a4, type=1, yesno=T, faclen=-1, under=F, extra=100, under.percent=0, cex.main=.9, main="extra=100\nunder=F under.percent=0")
 > prp(a4, type=1, yesno=T, faclen=-1, under=F, extra=101, under.percent=0, cex.main=.9, main="extra=101\nunder=F under.percent=0")
 > prp(a4, type=1, yesno=T, faclen=-1, under=F, extra=104, under.percent=0, cex.main=.9, main="extra=104\nunder=F under.percent=0")
@@ -1415,18 +1412,18 @@ cex 1   xlim c(-0.2, 1.2)   ylim c(0, 1)
 > prp(a4, type=1, yesno=T, faclen=-1, under=F, extra=108, under.percent=0, cex.main=.9, main="extra=108\nunder=F under.percent=0")
 > prp(a4, type=1, yesno=T, faclen=-1, under=F, extra=109, under.percent=0, cex.main=.9, main="extra=109\n under=F under.percent=0")
 > 
-> dummy.plot()
-> dummy.plot()
-> dummy.plot()
+> empty.plot()
+> empty.plot()
+> empty.plot()
 > 
-> dummy.plot()
-> dummy.plot()
-> dummy.plot()
-> dummy.plot()
-> dummy.plot()
-> dummy.plot()
-> dummy.plot()
-> dummy.plot()
+> empty.plot()
+> empty.plot()
+> empty.plot()
+> empty.plot()
+> empty.plot()
+> empty.plot()
+> empty.plot()
+> empty.plot()
 > prp(a4, type=1, yesno=T, faclen=-1, under=T, extra=100, under.percent=0, cex.main=.9, main="extra=100\nunder=T under.percent=0")
 > prp(a4, type=1, yesno=T, faclen=-1, under=T, extra=101, under.percent=0, cex.main=.9, main="extra=101\nunder=T under.percent=0")
 > prp(a4, type=1, yesno=T, faclen=-1, under=T, extra=104, under.percent=0, cex.main=.9, main="extra=104\nunder=T under.percent=0")
@@ -1442,14 +1439,14 @@ cex 1   xlim c(-0.2, 1.2)   ylim c(0, 1)
 > 
 > a4 <- rpart(survived~., data=ptitanic, cp=.03)
 > plot(a4, unif=T, branch=.3); text(a4, use.n=1, cex=1, xpd=NA, pretty=0); title("Page 17", cex.main=.9)
-> dummy.plot()
-> dummy.plot()
-> dummy.plot()
-> dummy.plot()
-> dummy.plot()
-> dummy.plot()
-> dummy.plot()
-> dummy.plot()
+> empty.plot()
+> empty.plot()
+> empty.plot()
+> empty.plot()
+> empty.plot()
+> empty.plot()
+> empty.plot()
+> empty.plot()
 > prp(a4, type=1, yesno=T, faclen=-1, under=F, extra=100, under.percent=1, cex.main=.9, main="extra=100\nunder=F under.percent=1")
 > prp(a4, type=1, yesno=T, faclen=-1, under=F, extra=101, under.percent=1, cex.main=.9, main="extra=101\nunder=F under.percent=1")
 > prp(a4, type=1, yesno=T, faclen=-1, under=F, extra=104, under.percent=1, cex.main=.9, main="extra=104\nunder=F under.percent=1")
@@ -1459,18 +1456,18 @@ cex 1   xlim c(-0.2, 1.2)   ylim c(0, 1)
 > prp(a4, type=1, yesno=T, faclen=-1, under=F, extra=108, under.percent=1, cex.main=.9, main="extra=108\nunder=F under.percent=1")
 > prp(a4, type=1, yesno=T, faclen=-1, under=F, extra=109, under.percent=1, cex.main=.9, main="extra=109\n under=F under.percent=1")
 > 
-> dummy.plot()
-> dummy.plot()
-> dummy.plot()
+> empty.plot()
+> empty.plot()
+> empty.plot()
 > 
-> dummy.plot()
-> dummy.plot()
-> dummy.plot()
-> dummy.plot()
-> dummy.plot()
-> dummy.plot()
-> dummy.plot()
-> dummy.plot()
+> empty.plot()
+> empty.plot()
+> empty.plot()
+> empty.plot()
+> empty.plot()
+> empty.plot()
+> empty.plot()
+> empty.plot()
 > prp(a4, type=1, yesno=T, faclen=-1, under=T, extra=100, under.percent=1, cex.main=.9, main="extra=100\nunder=T under.percent=1")
 > prp(a4, type=1, yesno=T, faclen=-1, under=T, extra=101, under.percent=1, cex.main=.9, main="extra=101\nunder=T under.percent=1")
 > prp(a4, type=1, yesno=T, faclen=-1, under=T, extra=104, under.percent=1, cex.main=.9, main="extra=104\nunder=T under.percent=1")

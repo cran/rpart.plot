@@ -117,11 +117,20 @@ rpart.rules <- function(x=stop("no 'x' argument"),
 print.rpart.rules <- function(x=stop("no 'x' argument"),
                               style=attr(x, "style"), ...)
 {
+    old.warnPartialMatchDollar <- getOption("warnPartialMatchDollar")
+    if(is.boolean(old.warnPartialMatchDollar)) # prevents problem when old value is NULL
+        on.exit(options(warnPartialMatchDollar=old.warnPartialMatchDollar))
+    options(warnPartialMatchDollar=FALSE)
+
     # some hand holding for an easy error: specifying digits in print.rpart.rules
     dots <- match.call(expand.dots=FALSE)$...
     if(!is.null(dots$di) || !is.null(dots$dig) || !is.null(dots$digi) ||
        !is.null(dots$digit) || !is.null(dots$digits))
         stop0("specify 'digits' in rpart.rules (not in print.rpart.rules)")
+
+    if(is.boolean(old.warnPartialMatchDollar))
+        options(warnPartialMatchDollar=old.warnPartialMatchDollar)
+
     stop.if.dot.arg.used(...)
     style <- match.choices(style, allowed.styles)
     old.width <- options(width=1e4)$width

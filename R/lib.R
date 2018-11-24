@@ -71,6 +71,12 @@ check.boolean <- function(b) # b==0 or b==1 is also ok
             " but it should be FALSE, TRUE, 0, or 1")
     b != 0 # convert to logical
 }
+is.boolean <- function(b) # b==NA or b==0 or b==1
+{
+    length(b) == 1 &&
+    (is.logical(b) || is.numeric(b)) &&
+    (is.na(b) || b == 0 || b == 1)
+}
 check.classname <- function(object, substituted.object, allowed.classnames)
 {
     err.msg <- quotify(allowed.classnames)

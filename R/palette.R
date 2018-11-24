@@ -392,7 +392,7 @@ length(box.palette), ".\n",
         box.palette <- rev(box.palette)
     if(trace >= 2 || warning.issued) {
         # show how colors are assigned to predicted classes
-        ylevel <- attr(obj, "ylevel")
+        ylevel <- attr(obj, "ylevels")
         ylevel <- if(is.null(ylevel)) as.character(ylevel) else ylevel
         max <- max(nchar(paste(ylevel[used.classes])))
         # sformat will be something like "box.col %-7.7s: %s\n"

@@ -1,6 +1,13 @@
 Changes to rpart.plot
 ---------------------
 
+3.0.6
+
+  Minor changes to internal function calls to prevent warnings when
+  options(warnPartialMatchArgs=TRUE).
+
+  Test script touchups.
+
 3.0.5  Nov 2, 2018
 
   We now handle splits with very small values better (less than 1e-10).

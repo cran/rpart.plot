@@ -103,7 +103,9 @@ Cannot retrieve the data used to build the model (model.frame: object 'Girth' no
 > trees1 <- trees * 10 # so all values integral
 > trees1[["Girth Around"]] <- trees1$Girth # space in predictor name
 > trees1$Girth <- NULL
+> options(warn=1) # print warnings as they occur (rpart gives a warning partial argument match of 'length' to 'length.out')
 > Volume.modTRUE <- rpart(formula=Volume~., data=trees1, cp=.001, model=TRUE)
+> options(warn=2) # treat warnings as errors
 > rules <- rpart.rules(Volume.modTRUE, digits=4)
 > print(rules)
  Volume                                
@@ -125,7 +127,9 @@ Cannot retrieve the data used to build the model (model.frame: object 'Girth' no
 === test digits, varlen, faclen, trace ===
 
 > 
+> options(warn=1) # print warnings as they occur (rpart gives a warning: partial argument match of 'length' to 'length.out')
 > mileage <- rpart(Mileage ~ ., data=cu.summary)
+> options(warn=2) # treat warnings as errors
 > 
 > options(warn=1234) # for testing that rpart.rules doesn't mess up options(warn)
 > print(rpart.rules(mileage))
@@ -1077,7 +1081,7 @@ processed rules:
 === Country ===
 > Country <- rpart(Country~., data=cu.summary) # factor with 10 levels
 > par(mfrow=c(1, 2))
-> rpart.plot(Country, type=3, clip.right.lab=FALSE, branch=.3, legend.x=-0.12, legend.y=.97)
+> rpart.plot(Country, type=3, clip.right.labs=FALSE, branch=.3, legend.x=-0.12, legend.y=.97)
 > print(rpart.rules(Country, cover=TRUE))
    Country  Bra Eng Fra Ger Jap Jap Kor Mex Swe USA                                                                                                             cover
    Germany [.00 .00 .00 .50 .10 .00 .00 .00 .30 .10] when Reliability is Much worse or worse or average & Price >=          16669 & Type is Compact or Sporty      9%

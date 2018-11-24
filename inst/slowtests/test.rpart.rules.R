@@ -36,7 +36,9 @@ print(rpart.rules(Volume, digits=4, roundint=FALSE, trace=.5)) # trace print: Ca
 trees1 <- trees * 10 # so all values integral
 trees1[["Girth Around"]] <- trees1$Girth # space in predictor name
 trees1$Girth <- NULL
+options(warn=1) # print warnings as they occur (rpart gives a warning partial argument match of 'length' to 'length.out')
 Volume.modTRUE <- rpart(formula=Volume~., data=trees1, cp=.001, model=TRUE)
+options(warn=2) # treat warnings as errors
 rules <- rpart.rules(Volume.modTRUE, digits=4)
 print(rules)
 trees1 <- "bad data"
@@ -47,7 +49,9 @@ par(old.par)
 
 cat0("\n=== test digits, varlen, faclen, trace ===\n\n")
 
+options(warn=1) # print warnings as they occur (rpart gives a warning: partial argument match of 'length' to 'length.out')
 mileage <- rpart(Mileage ~ ., data=cu.summary)
+options(warn=2) # treat warnings as errors
 
 options(warn=1234) # for testing that rpart.rules doesn't mess up options(warn)
 print(rpart.rules(mileage))
@@ -297,7 +301,7 @@ print(rpart.rules(oz.vis55.noterms)) # silent (but still cannot determine is.bin
 cat0("\n=== Country ===\n")
 Country <- rpart(Country~., data=cu.summary) # factor with 10 levels
 par(mfrow=c(1, 2))
-rpart.plot(Country, type=3, clip.right.lab=FALSE, branch=.3, legend.x=-0.12, legend.y=.97)
+rpart.plot(Country, type=3, clip.right.labs=FALSE, branch=.3, legend.x=-0.12, legend.y=.97)
 print(rpart.rules(Country, cover=TRUE))
 print(rpart.rules(Country, nn=TRUE))
 print(rpart.rules(Country, cover=TRUE, nn=TRUE))

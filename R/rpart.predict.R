@@ -8,6 +8,7 @@ rpart.predict <- function(object, newdata,
     # predict.rpart uses missing(), so deal with that
     missing.newdata <- missing(newdata)
     missing.type <- missing(type)
+
     pred <-
         if(missing.newdata && missing.type)
             predict(object=object, na.action=na.action) # invokes predict.rpart
@@ -45,6 +46,7 @@ append.to.pred <- function(pred, object, newdata, type, na.action,
              newdata <- getFromNamespace("rpart.matrix", ns="rpart")(newdata)
              getFromNamespace("pred.rpart", ns="rpart")(object, newdata)
          }
+
     names <- names(pred)
     pred <- as.data.frame(pred) # pred may be a vec or mat, convert to data.frame
     if(ncol(pred) == 1) {

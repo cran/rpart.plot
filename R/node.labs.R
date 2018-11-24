@@ -252,7 +252,7 @@ get.class.labs <- function(x, extra, under, digits, xsep, varlen,
         prob.per.lev <- apply(matrix(prob.per.lev, ncol=class.stats$nlev),
                               1, paste.with.breaks, collapse=xsep)
 
-    ylevel <- attr(x, "ylevel")
+    ylevel <- attr(x, "ylevels")
     # fitted level as a string
     # (as.character below converts factor levels to character)
     sfitted <-

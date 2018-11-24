@@ -176,7 +176,7 @@ Warning in citation("rpart.plot") :
 To cite package 'rpart.plot' in publications use:
 
   Stephen Milborrow (NA). rpart.plot: Plot 'rpart' Models: An Enhanced
-  Version of 'plot.rpart'. R package version 3.0.5.
+  Version of 'plot.rpart'. R package version 3.0.6.
   http://www.milbo.org/rpart-plot
 
 A BibTeX entry for LaTeX users is
@@ -184,7 +184,7 @@ A BibTeX entry for LaTeX users is
   @Manual{,
     title = {rpart.plot: Plot 'rpart' Models: An Enhanced Version of 'plot.rpart'},
     author = {Stephen Milborrow},
-    note = {R package version 3.0.5},
+    note = {R package version 3.0.6},
     url = {http://www.milbo.org/rpart-plot},
   }
 

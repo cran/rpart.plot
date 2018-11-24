@@ -9,7 +9,9 @@ options(warn=2) # treat warnings as errors (catch NA warnings, if any)
 #--- continuous response ---
 
 par(mfrow=c(2,2))
+options(warn=1) # print warnings as they occur (rpart gives a warning: partial argument match of 'length' to 'length.out')
 age <- rpart(age~., data=ptitanic, cp=.02)
+options(warn=2) # treat warnings as errors
 age$frame$yval[2] <- NA # node 2 (internal)
 age$frame$yval[6] <- NA # node 5 (leaf)
 age$frame$yval[8] <- NA # node 6 (leaf)
@@ -21,7 +23,9 @@ print(rpart.predict(age, rules=TRUE)[53:56,])
 
 # --- binary response ---
 
+options(warn=1) # print warnings as they occur (rpart gives a warning: partial argument match of 'length' to 'length.out')
 survived <- rpart(survived~., data=ptitanic, control=list(cp=.02))
+options(warn=2) # treat warnings as errors
 survived$frame$yval[3] <- survived$frame$yval2[3,1] <- survived$frame$yval2[3,5] <- NA # node 4 (leaf)
 survived$frame$yval[4] <- survived$frame$yval2[4,1] <- survived$frame$yval2[4,5] <- NA # node 5 (internal)
 
@@ -36,7 +40,9 @@ print(rpart.predict(survived, rules=TRUE)[1:5,])
 
 #--- multiclass response ---
 
+options(warn=1) # print warnings as they occur (rpart gives a warning: partial argument match of 'length' to 'length.out')
 pclass <- rpart(pclass ~ ., data=ptitanic, control=rpart.control(cp=.01))
+options(warn=2) # treat warnings as errors
 pclass$frame$yval[3] <- pclass$frame$yval2[3,1] <- NA # node 4
 pclass$frame$yval2[3, 6] <- NA # change class probs [.74 .16 .10] to  [.74 NA .10]
 rpart.plot(pclass, nn=1, main="pclass with na")

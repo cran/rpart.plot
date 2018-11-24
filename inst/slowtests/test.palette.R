@@ -370,7 +370,7 @@ par(mar=c(0, 0, 4, 0))
 rpart.plot(anova.mod, main="no node.fun")
 title("node.fun (anova model)\n\n")
 
-plot(c(0,1), c(0,1), col=0, bty="n", xlab="", xaxt="n", ylab="", yaxt="n")
+empty.plot()
 
 # test that we can extract the numeric values of the node labels from the labels
 plot2(anova.mod, node.fun=function(x, labs, digits, varlen) paste(labs))
@@ -438,7 +438,7 @@ par(mar=c(0, 0, 4, 0))
 rpart.plot(binom.mod, main="no node.fun")
 title("node.fun (binomial model)\n\n")
 
-plot(c(0,1), c(0,1), col=0, bty="n", xlab="", xaxt="n", ylab="", yaxt="n")
+empty.plot()
 
 # test that we can extract the numeric values of the node labels from the labels
 plot2(binom.mod, node.fun=function(x, labs, digits, varlen) paste(labs))
@@ -476,7 +476,7 @@ par(old.par)
 par(mfrow=c(4, 2), mar=c(0, 0, 3, 0))
 rpart.plot(binom.mod)
 title("pal.thresh with node.fun (binom mod)\n\n")
-plot(c(0,1), c(0,1), col=0, bty="n", xlab="", xaxt="n", ylab="", yaxt="n")
+empty.plot()
 
 plot2(binom.mod, node.fun=function(x, labs, digits, varlen)
                    round(2*(get.class.stats(x)$prob.per.lev[,2] - .5), 2))

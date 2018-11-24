@@ -107,8 +107,6 @@ par(old.par)
 
 #--- class-extra.R ---
 
-dummy.plot <- function()
-    plot(0, 0, col=0, bty="n", xlab="", ylab="", xaxt="n", yaxt="n")
 par(mfrow=c(4,5))
 par(mar = c(3, 3, 5, 1))
 par(mgp = c(1.5, .5, 0))
@@ -126,7 +124,7 @@ prp(a, under.cex=1, type=4, faclen=0, under=T, extra=8,   cex.main=1, main="extr
 prp(a, under.cex=1, type=4, faclen=0, under=T, extra=9,   cex.main=1, main="extra = 9\noverall prob\n(sum over all leaves is 1)", col=1, col.main=col.main)
 prp(a, under.cex=1, type=4, faclen=0, under=T, extra=10,  cex.main=1, main="extra = 10\noverall prob of 2nd class\n", col=1, col.main=col.main)
 prp(a, under.cex=1, type=4, faclen=0, under=T, extra=11,  cex.main=1, main="extra = 11\noverall prob of 2nd class\nfitted class not displayed", col=1, col.main=col.main)
-dummy.plot()
+empty.plot()
 prp(a, under.cex=1, type=4, faclen=0, under=T, extra=100, cex.main=1, main="extra = 100\npercent of obs\n", col=1, col.main=col.main)
 prp(a, under.cex=1, type=4, faclen=0, under=T, extra=106, cex.main=1, main="extra = 106\nprob of 2nd class and\npercent of obs", col=1, col.main=col.main)
 par(old.par)
@@ -270,9 +268,9 @@ par(old.par)
 #--- compact.R ---
 
 par(mfrow=c(3,3))
-plot(1,1, type="n", xlab="", ylab="", xaxt="n", yaxt="n", bty="n")
-plot(1,1, type="n", xlab="", ylab="", xaxt="n", yaxt="n", bty="n")
-plot(1,1, type="n", xlab="", ylab="", xaxt="n", yaxt="n", bty="n")
+empty.plot()
+empty.plot()
+empty.plot()
 
 a <- rpart(survived~., data=ptitanic, cp=.1)
 col.main <- rgb(80, 100, 130, maxColorValue=255)
@@ -412,7 +410,7 @@ data(ozone1)
 par(mfrow=c(3,3),
     mar=c(.5, 0.5, 2.5, .5), cex=.6, mgp = c(1.6, 0.6, 0))  # mar is b l t r
 a1 <- rpart(O3~., data=ozone1)
-prp(a1, type=1, cex=1, main="ozone level         \n", Mar=-.07)
+prp(a1, type=1, cex=1, main="ozone level         \n", Margin=-.07)
 col.persp <- rgb(220, 255, 255, maxColorValue=255)
 theta <- -35
 degree2 <- c("ibh", "temp")
@@ -464,20 +462,20 @@ par(mfrow=c(5,3))
 data(trees)
 par(mar=c(0, 2, 5, 2))
 Volume <- rpart(Volume ~ ., data=trees)
-dummy.plot()
+empty.plot()
 rpart.plot(Volume, type=3, yspace=.4,
-           clip.right.lab=FALSE,
+           clip.right.labs=FALSE,
            branch=.3, under=TRUE,
            cex=1.1, split.cex=.8)
-dummy.plot()
+empty.plot()
 cat("rpart.rules(Volume):\n")
 print(rpart.rules(Volume))
 
 data(ptitanic)
 survived <- rpart(survived ~ ., data=ptitanic, cp=.02)
 par(mar=c(0, 0, 3, 0))
-dummy.plot()
-rpart.plot(survived, type=3, clip.right.lab=FALSE, yspace=.2,
+empty.plot()
+rpart.plot(survived, type=3, clip.right.labs=FALSE, yspace=.2,
            branch=.3, under=TRUE,
            cex=.9, split.cex=1)
 cat("rpart.rules(survived, cover=TRUE):\n")

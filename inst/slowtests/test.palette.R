@@ -518,14 +518,14 @@ rpart.plot(mod.poisson, extra=0, fallen.leaves=TRUE,
            main="box.palette=\"BnGn\"\npal.thresh=.7\nnode.fun",
            box.palette="BnGn", pal.thresh=.7,
            node.fun=function(x, labs, digits, varlen)
-                    sprintf("now %.2f\nwas %.2f", 10*as.numeric(labs)-5, as.numeric(labs)))
+                    sprint("now %.2f\nwas %.2f", 10*as.numeric(labs)-5, as.numeric(labs)))
 
 rpart.plot(mod.poisson, extra=0, fallen.leaves=TRUE,
            main="box.palette=\"BnGn\"\npal.thresh=-1\nnode.fun\npal.node.fun=TRUE",
            box.palette="BnGn", pal.thresh=-1,
            pal.node.fun=TRUE,
            node.fun=function(x, labs, digits, varlen)
-                    sprintf("now %.2f\nwas %.2f", 10*as.numeric(labs)-5, as.numeric(labs)))
+                    sprint("now %.2f\nwas %.2f", 10*as.numeric(labs)-5, as.numeric(labs)))
 par(old.par)
 
 #--- multiclass model ---

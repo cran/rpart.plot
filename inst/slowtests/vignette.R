@@ -190,7 +190,7 @@ for(iframe in 1:nrow(tree1$frame)) {
     dev.hold()     # hold screen output to prevent flashing
     prp(tree1, compress=FALSE, faclen=3, varlen=-3,
        col=cols, branch.col=cols, split.col=cols,
-       main=sprintf("\n%d", iframe), yesno=FALSE)
+       main=sprint("\n%d", iframe), yesno=FALSE)
     dev.flush()
     # Sys.sleep(1) # wait one second
 }

@@ -23,8 +23,8 @@ rpart.plot(anova.model, type=5, under=TRUE, varlen=-2, faclen=4,
 
 expect.err(try(rpart.plot(anova.model, type=-1)), "type must be 0...5, you have type=-1")
 expect.err(try(rpart.plot(anova.model, type=6)), "type must be 0...5, you have type=6")
-expect.err(try(rpart.plot(anova.model, type="x")), "type=x but it should be an an integer")
-expect.err(try(rpart.plot(anova.model, type=1.23)), "type=1.23 but it should be an an integer")
+expect.err(try(rpart.plot(anova.model, type="x")), "'type' is a string but it should be an integer")
+expect.err(try(rpart.plot(anova.model, type=1.23)), "type=1.23 but it should be an integer")
 
 par(old.par)
 
@@ -65,8 +65,8 @@ prp(anova.model, type=5, under=TRUE, varlen=-2, faclen=4,
 
 expect.err(try(prp(anova.model, type=-1)), "type must be 0...5, you have type=-1")
 expect.err(try(prp(anova.model, type=6)), "type must be 0...5, you have type=6")
-expect.err(try(prp(anova.model, type="x")), "type=x but it should be an an integer")
-expect.err(try(prp(anova.model, type=1.23)), "type=1.23 but it should be an an integer")
+expect.err(try(prp(anova.model, type="x")), "'type' is a string but it should be an integer")
+expect.err(try(prp(anova.model, type=1.23)), "type=1.23 but it should be an integer")
 
 par(old.par)
 

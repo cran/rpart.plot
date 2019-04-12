@@ -1,6 +1,6 @@
 @rem test.imports.bat:
 
-@"C:\PROGRA~1\R\R-3.5.1\bin\x64\R.exe" CMD BATCH --quiet --vanilla test.imports.R
+@"C:\PROGRA~1\R\R-3.5.3\bin\x64\R.exe" CMD BATCH --quiet --vanilla test.imports.R
 @if %errorlevel% equ 0 goto good1:
 @echo R returned errorlevel %errorlevel%, see test.imports.Rout:
 @echo.

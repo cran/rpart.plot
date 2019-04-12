@@ -11,7 +11,7 @@ expect.err <- function(object, expected.msg="")
             cat0("Got error as expected from ",
                  deparse(substitute(object)), "\n")
         else
-            stop(sprintf("Expected: %s\n  Got:      %s",
+            stop(sprint("Expected: %s\n  Got:      %s",
                          expected.msg, substr(msg[1], 1, 1000)))
     } else
         stop("Did not get expected error: ", expected.msg)

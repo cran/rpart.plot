@@ -754,6 +754,7 @@ Got error as expected from try(rpart.rules(mod))
 
 === fit.oz, digits=4 ===
 > library(earth)
+Loading required package: Formula
 Loading required package: plotmo
 Loading required package: plotrix
 Loading required package: TeachingDemos
@@ -3742,6 +3743,8 @@ The following object is masked from 'package:survival':
 > # note that caret converts factors to indicator columns before invoking rpart
 > iPetal.Length <- 3 # index of Sepal.Length column
 > caret.xy <- train(iris[,-iPetal.Length], iris[,iPetal.Length], method="rpart", tuneLength=4)
+Warning in nominalTrainWorkflow(x = x, y = y, wts = weights, info = trainInfo,  :
+  There were missing values in resampled performance measures.
 > rpart.rules(caret.xy$finalModel)
  .outcome                                               
       1.5 when Species is     setosa                    
@@ -3786,6 +3789,8 @@ The following object is masked from 'package:survival':
 > set.seed(2018)
 > # note that caret converts factors to indicator columns before invoking rpart
 > caret.form <- train(Petal.Length ~ ., data=iris, method="rpart", tuneLength=4)
+Warning in nominalTrainWorkflow(x = x, y = y, wts = weights, info = trainInfo,  :
+  There were missing values in resampled performance measures.
 > rpart.rules(caret.form$finalModel)
  .outcome                                                                     
       1.5 when Petal.Width <  0.8                                             

@@ -4,12 +4,13 @@
 Loading required package: rpart
 > data(ptitanic)
 > library(earth)
+Loading required package: Formula
 Loading required package: plotmo
 Loading required package: plotrix
 Loading required package: TeachingDemos
 > data(ozone1)
 > sessionInfo()
-R version 3.5.1 (2018-07-02)
+R version 3.5.3 (2019-03-11)
 Platform: x86_64-w64-mingw32/x64 (64-bit)
 Running under: Windows 7 x64 (build 7601) Service Pack 1
 
@@ -49,7 +50,7 @@ loaded via a namespace (and not attached):
 +             cat0("Got error as expected from ",
 +                  deparse(substitute(object)), "\n")
 +         else
-+             stop(sprintf("Expected: %s\n  Got:      %s",
++             stop(sprint("Expected: %s\n  Got:      %s",
 +                          expected.msg, substr(msg[1], 1, 1000)))
 +     } else
 +         stop("Did not get expected error: ", expected.msg)
@@ -176,7 +177,7 @@ Warning in citation("rpart.plot") :
 To cite package 'rpart.plot' in publications use:
 
   Stephen Milborrow (NA). rpart.plot: Plot 'rpart' Models: An Enhanced
-  Version of 'plot.rpart'. R package version 3.0.6.
+  Version of 'plot.rpart'. R package version 3.0.7.
   http://www.milbo.org/rpart-plot
 
 A BibTeX entry for LaTeX users is
@@ -184,7 +185,7 @@ A BibTeX entry for LaTeX users is
   @Manual{,
     title = {rpart.plot: Plot 'rpart' Models: An Enhanced Version of 'plot.rpart'},
     author = {Stephen Milborrow},
-    note = {R package version 3.0.6},
+    note = {R package version 3.0.7},
     url = {http://www.milbo.org/rpart-plot},
   }
 
@@ -525,7 +526,7 @@ cex 1   xlim c(0, 1)   ylim c(-0.05, 1.05)
 +     col <- ifelse(fit$frame$complexity >= cp[i], 1, "gray")
 +     lwd <- ifelse(fit$frame$complexity >= cp[i], 2, 1)
 +     prp(fit, type=1, col=col, branch.col=col, lwd=lwd,
-+            sub=sprintf("movie %g", i), col.s=2, trace=1)
++            sub=sprint("movie %g", i), col.s=2, trace=1)
 + }
 cex 1   xlim c(0, 1)   ylim c(0, 1)
 cex 1   xlim c(0, 1)   ylim c(0, 1)
@@ -554,7 +555,7 @@ cex 0.849   xlim c(0, 1)   ylim c(0, 1)
 > 
 > my.labs <- function(x, labs, digits, varlen)
 + {
-+     sprintf("ozone %.3g\ndev %.1f", x$frame$yval, x$frame$dev)
++     sprint("ozone %.3g\ndev %.1f", x$frame$yval, x$frame$dev)
 + }
 > data(ozone1)
 > fit <- rpart(O3~., data=ozone1)
@@ -564,7 +565,7 @@ cex 0.75   xlim c(0, 1)   ylim c(-0.1, 1.1)
 > 
 > my.labs2 <- function(x, labs, digits, varlen)
 + {
-+     sprintf("%s\n%.2g",
++     sprint("%s\n%.2g",
 +             ifelse(x$frame$yval > .5, "survived", "died"),
 +             x$frame$yval)
 + }
@@ -574,7 +575,7 @@ cex 1   xlim c(0, 1)   ylim c(-0.05, 1.05)
 > 
 > my.labs3 <- function(x, labs, digits, varlen) # use passed in labs
 + {
-+     sprintf("%s\n\ndev %.1f", labs, x$frame$dev)
++     sprint("%s\n\ndev %.1f", labs, x$frame$dev)
 + }
 > prp(fit2, node.fun=my.labs3, main="my.labs3\nextra=100", trace=1, extra=100, under=T)
 cex 1   xlim c(0, 1)   ylim c(0, 1)
@@ -1291,7 +1292,7 @@ cex 1   xlim c(0, 1)   ylim c(0, 1)
 > 
 > my.split.labs <- function(x, labs, digits, varlen, faclen)
 + {
-+     sprintf("my.split.lab\n%s", labs)
++     sprint("my.split.lab\n%s", labs)
 + }
 > prp(a7, type=4, extra=4, under=T,
 +     faclen=0, trace=3,
@@ -3914,7 +3915,7 @@ Got error as expected from try(rpart.plot(mod.multiclass, type = 2, extra = "aut
 > data(ozone1)
 
 > sessionInfo()
-R version 3.5.1 (2018-07-02)
+R version 3.5.3 (2019-03-11)
 Platform: x86_64-w64-mingw32/x64 (64-bit)
 Running under: Windows 7 x64 (build 7601) Service Pack 1
 
@@ -3998,7 +3999,7 @@ Warning: NA in fitted values (fitted[3] is NA)
 > data(ozone1)
 
 > sessionInfo()
-R version 3.5.1 (2018-07-02)
+R version 3.5.3 (2019-03-11)
 Platform: x86_64-w64-mingw32/x64 (64-bit)
 Running under: Windows 7 x64 (build 7601) Service Pack 1
 
@@ -4205,7 +4206,7 @@ Got error as expected from try(prp(anova.model, type = "x"))
 
 > options(warn = 1)
 
-> printf <- function(format, ...) cat(sprintf(format, 
+> printf <- function(format, ...) cat(sprint(format, 
 +     ...), sep = "")
 
 > cat0 <- function(...) cat(..., sep = "")

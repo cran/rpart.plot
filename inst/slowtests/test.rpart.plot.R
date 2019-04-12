@@ -79,7 +79,7 @@ for(i in 1:length(cp)) {
     col <- ifelse(fit$frame$complexity >= cp[i], 1, "gray")
     lwd <- ifelse(fit$frame$complexity >= cp[i], 2, 1)
     prp(fit, type=1, col=col, branch.col=col, lwd=lwd,
-           sub=sprintf("movie %g", i), col.s=2, trace=1)
+           sub=sprint("movie %g", i), col.s=2, trace=1)
 }
 
 # return the given node and all its ancestors (a vector of node numbers)
@@ -104,7 +104,7 @@ par(old.par)
 
 my.labs <- function(x, labs, digits, varlen)
 {
-    sprintf("ozone %.3g\ndev %.1f", x$frame$yval, x$frame$dev)
+    sprint("ozone %.3g\ndev %.1f", x$frame$yval, x$frame$dev)
 }
 data(ozone1)
 fit <- rpart(O3~., data=ozone1)
@@ -113,7 +113,7 @@ prp(fit, node.fun=my.labs, main="Page 5", trace=1)
 
 my.labs2 <- function(x, labs, digits, varlen)
 {
-    sprintf("%s\n%.2g",
+    sprint("%s\n%.2g",
             ifelse(x$frame$yval > .5, "survived", "died"),
             x$frame$yval)
 }
@@ -122,7 +122,7 @@ prp(fit2, node.fun=my.labs2, main="my.labs2", trace=1)
 
 my.labs3 <- function(x, labs, digits, varlen) # use passed in labs
 {
-    sprintf("%s\n\ndev %.1f", labs, x$frame$dev)
+    sprint("%s\n\ndev %.1f", labs, x$frame$dev)
 }
 prp(fit2, node.fun=my.labs3, main="my.labs3\nextra=100", trace=1, extra=100, under=T)
 par(old.par)
@@ -721,7 +721,7 @@ prp(a7, main="Page 23", Margin=.03,
 
 my.split.labs <- function(x, labs, digits, varlen, faclen)
 {
-    sprintf("my.split.lab\n%s", labs)
+    sprint("my.split.lab\n%s", labs)
 }
 prp(a7, type=4, extra=4, under=T,
     faclen=0, trace=3,

@@ -18,7 +18,7 @@ check <- function(object, object.name, check.name, check.func, na.ok=FALSE)
         which.na <- which(is.na(any))
         if(length(which.na)) {
             stopf("NA in %s\n       %s[%d] is %g",
-                  object.name, unquote(object.name),
+                  object.name, object.name,
                   which.na[1], object[which.na[1]])
         }
     }
@@ -26,7 +26,7 @@ check <- function(object, object.name, check.name, check.func, na.ok=FALSE)
         which <- which(check.func(object))
         stopifnot(length(which) > 0)
         stopf("%s in %s\n       %s[%d] is %g",
-              check.name, object.name, unquote(object.name),
+              check.name, object.name, object.name,
               which[1], object[which[1]])
     }
 }
@@ -52,8 +52,8 @@ check <- function(object, object.name, check.name, check.func, na.ok=FALSE)
 #             printf("\n")
 #             s <- paste0(strwrap(list.as.char(args),
 #                         width=getOption("width"), exdent=7), collapse="\n")
-#             stop0("cannot evaluate '", names(args)[i],
-#                   "' in\n       ", fname, "(", s, ")")
+#             stop0("cannot evaluate ", quotify(names(args)[i], "'"),
+#                   " in\n       ", fname, "(", s, ")")
 #         }
 #     }
 # }
@@ -67,7 +67,7 @@ check.boolean <- function(b) # b==0 or b==1 is also ok
         stop0("the ", short.deparse(substitute(b), "given"),
               " argument is not FALSE, TRUE, 0, or 1")
     if(!(is.logical(b) || is.numeric(b)) || is.na(b) || !(b == 0 || b == 1))
-        stop0(short.deparse(substitute(b), "the argument"), "=", b,
+        stop0(short.deparse(substitute(b), "the argument"), "=", as.char(b),
             " but it should be FALSE, TRUE, 0, or 1")
     b != 0 # convert to logical
 }
@@ -79,40 +79,52 @@ is.boolean <- function(b) # b==NA or b==0 or b==1
 }
 check.classname <- function(object, substituted.object, allowed.classnames)
 {
-    err.msg <- quotify(allowed.classnames)
+    expected.classname <- quotify(allowed.classnames)
     if(length(allowed.classnames) > 1)
-        err.msg <- sprint("one of\n%s", err.msg)
+        expected.classname <- sprint("one of\n%s", expected.classname)
     if(is.null(object))
         stopf("object is NULL but expected an object of class of %s",
-              err.msg)
+              expected.classname)
     if(!inherits(object, allowed.classnames)) {
-        stopf("the class of '%s' is \"%s\" but expected the class to be %s",
-              paste.trunc(substituted.object, maxlen=30),
-              class(object)[1], err.msg)
+        stopf("the class of %s is \"%s\" but expected the class to be %s",
+              quotify(paste.trunc(substituted.object, maxlen=30)),
+              class(object)[1], expected.classname)
     }
+}
+# adjust name so e.g. error message is "argument is NULL" not "NULL is NULL"
+tweak.name <- function(name, quote=TRUE)
+{
+    quoted.name <- quotify(name, quote="'")
+    if(name %in% c("NULL", "NA") ||
+           (substr(name[1], 1, 1) %in% c("+", "-")) ||
+           grepl("[0-9]", substr(name[1], 1, 1))) {
+        quoted.name <- name <- "argument"
+    }
+    if(quote) quoted.name else name
 }
 check.integer.scalar <- function(object, min=NA, max=NA, null.ok=FALSE,
                                  na.ok=FALSE, logical.ok=TRUE,
                                  char.ok=FALSE,
                                  object.name=short.deparse(substitute(object)))
 {
-    stop.msg <- function()
+    stop.msg <- function(s)
     {
         s.null    <- if(null.ok)    ", or NULL"          else ""
         s.na      <- if(na.ok)      ", or NA"            else ""
         s.logical <- if(logical.ok) ", or TRUE or FALSE" else ""
         s.char    <- if(char.ok)    ", or a string"      else ""
-        stop0(object.name, "=", object[1], " but it should be an an integer",
+        stop0(s,
+              " but it should be an integer",
               s.null, s.na, s.logical, s.char)
     }
     if(is.character(object)) {
         if(!char.ok || length(object) != 1)
-            stop.msg()
+            stop.msg(paste0(tweak.name(object.name), " is a string"))
     } else {
         check.numeric.scalar(object, min, max, null.ok, na.ok, logical.ok,
                              char.ok.msg=char.ok, object.name=object.name)
         if(!is.null(object) && !is.na(object) && object != floor(object))
-                stop.msg()
+            stop.msg(paste0(tweak.name(object.name, quote=FALSE), "=", object[1]))
     }
     object
 }
@@ -167,32 +179,37 @@ check.numeric.scalar <- function(object, min=NA, max=NA, null.ok=FALSE,
     s.logical <- if(logical.ok) ", or TRUE or FALSE" else ""
     if(na.ok)
         logical.ok <- TRUE # needed because NA is a logical
-    any.na <- !is.null(object) && anyNA(object)
+    any.na <- !is.null(object) &&
+                # following needed because anyNA gives error on some objects
+                (is.numeric(object) || is.logical(object) ||
+                    is.list(object) || is.character(object)) &&
+                anyNA(object)
     if(is.null(object)) {
         if(!null.ok)
-            stop0(object.name, "=NULL is not allowed")
+            stop0(tweak.name(object.name), " is NULL")
     } else if(any.na && !na.ok)
-        stop0(object.name, "=NA is not allowed")
+        stop0(tweak.name(object.name), " is NA")
     else if(!is.numeric(object) && !(is.logical(object) && logical.ok)) {
         s.na   <- if(na.ok)       ", or NA"       else ""
         s.null <- if(null.ok)     ", or NULL"     else ""
         s.char <- if(char.ok.msg) ", or a string" else ""
-        stopf("'%s' must be numeric%s%s%s%s (whereas its current class is \"%s\")",
-              object.name, s.null, s.na, s.char, s.logical, class(object)[1])
+        stopf("%s must be numeric%s%s%s%s (whereas its current class is %s)",
+              tweak.name(object.name),
+              s.null, s.na, s.char, s.logical, quotify(class(object)[1]))
     } else if(length(object) != 1)
-        stopf("the length of '%s' must be 1 (whereas its current length is %d)",
-              object.name, length(object))
-    if(!is.null(object) && !is.na(object)) {
+        stopf("the length of %s must be 1 (whereas its current length is %d)",
+              tweak.name(object.name), length(object))
+    if(!is.null(object) && !any.na) {
         if(!is.na(min) && !is.na(max) && (object < min || object > max)) {
-            stop0(object.name, "=", object,
+            stop0(tweak.name(object.name, quote=FALSE), "=", object,
                   " but it should be between ", min, " and ", max)
         }
         if(!is.na(min) && object < min) {
-            stop0(object.name, "=", object,
+            stop0(tweak.name(object.name, quote=FALSE), "=", object,
                   " but it should be at least ", min)
         }
         if(!is.na(max) && object > max) {
-            stop0(object.name, "=", object,
+            stop0(tweak.name(object.name, quote=FALSE), "=", object,
                   " but it should not be greater than ", max)
         }
     }
@@ -221,18 +238,27 @@ check.that.most.are.positive <- function(x, xname, user.arg, non.positive.msg, f
 check.vec <- function(object, object.name, expected.len=NA, logical.ok=TRUE, na.ok=FALSE)
 {
     if(!(NROW(object) == 1 || NCOL(object) == 1))
-        stop0(object.name, " is not a vector\n       ",
-              object.name, " has dimensions ", NROW(object), " by ", NCOL(object))
+        stop0(tweak.name(object.name), " is not a vector\n       ",
+              "It has dimensions ", NROW(object), " by ", NCOL(object))
     if(!((logical.ok && is.logical(object)) || is.numeric(object)))
-        stop0(object.name, " is not numeric")
+        stop0(tweak.name(object.name), " is not numeric")
     if(!is.na(expected.len) && length(object) != expected.len)
-        stop0(object.name, " has the wrong length ",
+        stop0(tweak.name(object.name), " has the wrong length ",
               length(object), ", expected ", expected.len)
     if(na.ok)
         object[is.na(object)] <- 1 # prevent check is.finite from complaining
     else
         check(object, object.name, "NA", is.na)
     check(object, object.name, "non-finite value", function(object) {!is.finite(object)})
+}
+cleantry <- function(err) # clean up a try.err (remove "Error: " etc.)
+{
+    stopifnot(is.try.err(err))
+    attributes(err) <- NULL
+    err <- gsub("^[^:]*: *", "", err) # remove "Error: " (actually everything up to the first colon)
+    err <- gsub("\n", " ", err, fixed=TRUE)  # remove newlines
+    err <- gsub("  +", " ", err)             # multiple spaces to single spaces
+    gsub(" $", "", err)                      # remove trailing space
 }
 # returns the column name, if that is not possible then something like x[,1]
 colname <- function(object, i, object.name=trunc.deparse(substitute(object)))
@@ -308,7 +334,7 @@ exp10 <- function(x) # e.g. exp10(-3) = 1e-3
 
 fix.lim <- function(lim)
 {
-    if(!is.null(lim)) {
+    if(!is.null(lim) && !isDate(lim)) {
         stopifnot(is.numeric(lim), length(lim) == 2)
         # constants below are arbitrary
         small <- max(1e-6, .001 * abs(lim[1]), .001 * abs(lim[2]))
@@ -396,7 +422,7 @@ get.model.env <- function(object, object.name="object", trace=0)
         if(is.null(call))
             printf("object class is \"%s\" with no call\n", class(object)[1])
         else
-            printf.wrap("object call is %s\n", strip.deparse(call))
+            printf.wrap("object call is %s\n", strip.deparse(call), maxlen=80)
         printf("--get.model.env for %s object\n", class(object)[1])
     }
     # following will fail for non-formula models because they have no terms field
@@ -453,8 +479,8 @@ get.weighted.rsq <- function(y, yhat, w=NULL) # NAs will be dropped before calc
         yhat <- yhat[!is.na]
         if(length(y) == 0)
             stop0("length(y) == 0 after deleting NAs in y or yhat")
-        rss <- sum((y - yhat)^2)
-        tss <- sum((y - mean(y))^2)
+        rss <- sos(y - yhat)
+        tss <- sos(y - mean(y))
     } else {
         stopifnot(length(w) == length(yhat))
         is.na <- is.na(y) | is.na(yhat) | is.na(w)
@@ -463,8 +489,8 @@ get.weighted.rsq <- function(y, yhat, w=NULL) # NAs will be dropped before calc
         w    <- w[!is.na]
         if(length(y) == 0)
             stop0("length(y) == 0 after deleting NAs in y or yhat or w")
-        rss <- sum(w * (y - yhat)^2)
-        tss <- sum(w * (y - weighted.mean(y, w))^2)
+        rss <- sos(y - yhat, w)
+        tss <- sos(y - weighted.mean(y, w), w)
     }
     get.rsq(rss, tss)
 }
@@ -495,7 +521,9 @@ imatch.choices <- function(arg, choices,
     if(nchar(err.msg) == 0)
         err.msg <- sprint("Choose%s one of: %s", err.msg.ext, quotify(choices))
     if(!is.character(arg) || length(arg) != 1 || !nzchar(arg))
-         stopf("illegal '%s' argument\n%s", argname, err.msg)
+         stopf("illegal %s argument\n%s", quotify(argname, "'"), err.msg)
+    if(argname %in% c("NULL", "NA"))
+        argname <- "argument"
     imatch <- pmatch(arg, choices)
     if(anyNA(imatch)) {
         imatch <- NULL
@@ -515,6 +543,10 @@ imatch.choices <- function(arg, choices,
                   argname, paste(arg), err.msg)
     }
     imatch
+}
+isDate <- function(x)
+{
+    inherits(x, "Date")
 }
 # TRUE if all values in object are integers, ignoring NAs
 # assumes object is numeric or logical (check this before call this function)
@@ -574,7 +606,7 @@ lighten <- function(col, lighten.amount, alpha=1)
     else
         rgb(rgb[1,], rgb[2,], rgb[3,], alpha)
 }
-# returns the expanded arg
+# returns the expanded arg (error msg if arg is not an allowed choice in calling func)
 match.arg1 <- function(arg, argname=deparse(substitute(arg)))
 {
     formal.args <- formals(sys.function(sys.parent()))
@@ -582,10 +614,11 @@ match.arg1 <- function(arg, argname=deparse(substitute(arg)))
     formal.argnames[imatch.choices(arg[1], formal.argnames, argname)]
 }
 # returns a string, choices is a vector of strings
+# error msg if arg is not an allowed choice
 match.choices <- function(arg,
             choices,
             argname=deparse(substitute(arg)),
-            err.msg="",              # error message, "" for automatic
+            err.msg="",              # error message ("" for automatic)
             err.msg.ext="")          # extension to error message
 {
     choices[imatch.choices(arg, choices, argname,
@@ -628,8 +661,8 @@ my.data.frame <- function(x, trace, stringsAsFactors=TRUE)
         # come here for sparse matrices from the Matrix package
         df <- try(as.matrix(x))
         if(is.try.err(df))
-            stopf("Cannot convert '%s' object to a data.frame or matrix",
-                  class(x)[1])
+            stopf("Cannot convert %s object to a data.frame or matrix",
+                  quotify(class(x)[1]))
         df <- as.data.frame(df, stringsAsFactors=stringsAsFactors)
         trace2(trace, "converted %s object to data.frame\n", class(x)[1])
     }
@@ -688,7 +721,7 @@ pastef <- function(s, fmt, ...) # paste the printf style args to s
 {
     paste0(s, sprint(fmt, ...))
 }
-print.first.few.elements.of.vector <- function(x, trace, name=NULL)
+print_first_few_elements_of_vector <- function(x, trace, name=NULL)
 {
     try(cat(" min", min(x), "max", max(x)), silent=TRUE)
     spaces <- "               "
@@ -790,9 +823,9 @@ quotify <- function(s, quote="\"") # add quotes and collapse to a single string
     if(is.null(s))
         "NULL"
     else if(length(s) == 0)
-        paste0(quote, quote)       # not sure what is best here
-    else if(substr(s[1], 1, 1) == quote) # already has quotes?
-        paste.collapse(s)
+        paste0(quote, quote)
+    else if(substr(s[1], 1, 1) == "'" || substr(s[1], 1, 1) == "\"")
+        paste.collapse(s) # already has quotes
     else
         paste0(quote, paste(s, collapse=paste0(quote, " ", quote)), quote)
 }
@@ -862,10 +895,19 @@ short.deparse <- function(object, alternative="object")
         s
 }
 # Remove duplicates in x, then sort (smallest first).
-# Following is faster than sort(unique(x)) because it requires only one sort.
+# Also works for Dates.
 sort.unique <- function(x)
 {
-    rle(sort(x, na.last=NA))[["values"]]  # rle() is in base, na.last=NA drops NAs
+    sort(unique(x), na.last=NA) # na.last=NA drops NAs
+}
+sos <- function(x, weights=NULL) # sum of squares
+{
+    if(is.null(weights))
+        sum(as.vector(x^2))
+    else {
+        stopifnot(length(weights) == length(x))
+        sum(weights * as.vector(x^2))
+    }
 }
 stop0 <- function(...)
 {
@@ -879,20 +921,24 @@ stopf <- function(fmt, ...) # args like printf
 stopifnot.string <- function(s, name=short.deparse(substitute(s)),
                              null.ok=FALSE, allow.empty=FALSE)
 {
+    if(name %in% c("NULL", "NA"))
+        name <- "argument"
     if(is.null(s)) {
         if(null.ok)
             return()
         else
-            stop0("'", name, "' is NULL (it should be a string)")
+            stop0(quotify(name, "'"), " is NULL (it should be a string)")
     }
     if(!is.character(s))
-        stop0("'", name, "' is not a character variable (class(",
+        stop0(quotify(name, "'"), " is not a character variable (class(",
               name, ") is \"", class(s), "\")")
+    if(length(s) == 0)
+        stop0(quotify(name, "'"), " is empty (it has no elements)")
     if(length(s) != 1)
-        stop0("'", name, "' has more than one element\n       ",
+        stop0(quotify(name, "'"), " has more than one element\n       ",
               name, " = c(", paste.trunc("\"", s, "\"", sep=""), ")")
     if(!allow.empty && !nzchar(s))
-        stop0("'", name, "' is an empty string")
+        stop0(quotify(name, "'"), " is an empty string")
 }
 strip.deparse <- function(object) # deparse, collapse, remove most white space
 {
@@ -948,11 +994,17 @@ text.on.white <- function(x, y, label,
     else
         stop0("srt=", srt, " is not allowed (only 0, 90, and -90 are supported)")
 }
-to.logical <- function(object, len)
+to.logical <- function(object, len) # object can be a boolean or numeric vector
 {
     xlogical <- repl(FALSE, len)
     xlogical[object] <- TRUE
     xlogical
+}
+trace0 <- function(trace, fmt, ...)
+{
+    stopifnot(!(is.numeric(trace) && is.logical(trace)))
+    if(trace >= 0)
+        cat(sprint(fmt, ...), sep="")
 }
 trace1 <- function(trace, fmt, ...)
 {
@@ -1028,4 +1080,44 @@ warnf <- function(fmt, ...) # args like printf
 warning0 <- function(...)
 {
     warning(..., call.=FALSE)
+}
+# Binomial pairs response: fraction true for each row.
+#
+# This function is used by both earth and plotmo.
+# If you change it here, change it there too.
+#
+# The first column of y is considered to be "true", the second "false".
+#
+# Example y:
+#   survived died
+#      1        1
+#      0        0   # both values zero
+#      3        4
+#
+# becomes:
+#   survived
+#         .5        # 1 / (1 + 1)
+#          0        # special case (both survived and died equal to 0)
+#        .43        # 3 / (3 + 4)
+
+bpairs.yfrac <- function(y, trace)
+{
+    stopifnot(NCOL(y) == 2)
+    both.zero <- (y[,1] == 0) & (y[,2] == 0)
+    y[both.zero, 2] <- 1 # so zero rows will be translated to 0 in next line
+    yfrac <- y[, 1, drop=FALSE] / (y[,1] + y[,2]) # fraction true
+    trace.bpairs.yfrac(yfrac, trace)
+    yfrac
+}
+trace.bpairs.yfrac <- function(yfrac, trace)
+{
+    # based on code in print.earth.fit.args
+    if(trace >= 4)
+        cat("\n")
+    if(trace >= 1 && trace < 7) { # don't print matrices when doing very detailed earth.c tracing
+        tracex <- if(trace >= 5) 4 else 2 # adjust trace for print_summary
+        details <- if(trace >= 4) 2 else if(trace >= 1) -1 else 0
+        print_summary(yfrac, "yfrac", tracex, details=details)
+        if(details > 1) printf("\n")
+    }
 }

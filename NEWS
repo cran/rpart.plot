@@ -1,12 +1,20 @@
 Changes to rpart.plot
 ---------------------
 
-3.0.6
+3.0.7  Apr 11, 2019
+
+  Minor documentation updates.
+  Minor updates to the libraries shared with earth and plotmo.
+  This package now requires R version at least 3.4.0.
+
+3.0.6  Nov 23, 2018
 
   Minor changes to internal function calls to prevent warnings when
   options(warnPartialMatchArgs=TRUE).
 
   Test script touchups.
+
+  Added "LazyData: yes" to the DESCRIPTION file.
 
 3.0.5  Nov 2, 2018
 

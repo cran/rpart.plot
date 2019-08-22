@@ -3435,13 +3435,6 @@ Warning: varorder="nonesuch1" does not uniquely match one of: "sex" "pclass" "pa
 > 
 > library('rpart.plot')
 > library('survival')
-
-Attaching package: 'survival'
-
-The following object is masked from 'package:rpart':
-
-    solder
-
 > rpart.surv <- rpart(Surv(age, sibsp == 1) ~ ., ptitanic)
 > rpart.plot(rpart.surv, under=TRUE, main="survival model")
 > print(rpart.rules(rpart.surv))
@@ -3616,74 +3609,75 @@ Got error as expected from try(rpart.predict(survived, rules = TRUE, style = "ta
 4 0.829     0.17 because sx is   male & ag >=          9.5                                       
 > options(width=owidth)
 > 
-> set.seed(2018)
+> set.seed(2020)
 > ptit <- ptitanic
 > ptit <- ptit[sample.int(nrow(ptitanic)),]
 > ptit <- ptit[1:50,]
 > pclass <- rpart(pclass~., data=ptit, control=list(cp=.05))
 > print(rpart.rules(pclass))
- pclass  1st 2nd 3rd                                
-    1st [.78 .11 .11] when age >= 27 & sex is female
-    3rd [.29 .06 .65] when age >= 27 & sex is   male
-    3rd [.08 .17 .75] when age <  27                
+ pclass  1st 2nd 3rd                                                    
+    1st [.50 .10 .40] when age >= 17 & parch <  1 & survived is survived
+    2nd [.43 .57 .00] when age >= 17 & parch >= 1                       
+    3rd [.09 .09 .82] when age >= 17 & parch <  1 & survived is     died
+    3rd [.00 .09 .91] when age <  17                                    
 > options(digits=2)
 > 
 > print(predict(pclass)[1:5,])
-      1st   2nd  3rd
-441 0.778 0.111 0.11
-607 0.083 0.167 0.75
-80  0.778 0.111 0.11
-258 0.778 0.111 0.11
-619 0.294 0.059 0.65
+       1st   2nd  3rd
+1260 0.091 0.091 0.82
+534  0.429 0.571 0.00
+728  0.091 0.091 0.82
+321  0.500 0.100 0.40
+273  0.500 0.100 0.40
 > stopifnot(all.equal(predict(pclass), as.matrix(rpart.predict(pclass, rules=TRUE)[,1:3])))
 > stopifnot(max(abs(predict(pclass) - rpart.predict(pclass, rules=TRUE)[,1:3])) == 0)
 > print(rpart.predict(pclass, nn=TRUE)[1:5,])
-      1st   2nd  3rd nn
-441 0.778 0.111 0.11  4
-607 0.083 0.167 0.75  3
-80  0.778 0.111 0.11  4
-258 0.778 0.111 0.11  4
-619 0.294 0.059 0.65  5
+       1st   2nd  3rd nn
+1260 0.091 0.091 0.82 11
+534  0.429 0.571 0.00  4
+728  0.091 0.091 0.82 11
+321  0.500 0.100 0.40 10
+273  0.500 0.100 0.40 10
 > stopifnot(all.equal(predict(pclass), as.matrix(rpart.predict(pclass, nn=TRUE)[,1:3])))
 > print(rpart.predict(pclass, nn=TRUE, rules=TRUE)[1:5,])
-      1st   2nd  3rd nn                                  
-441 0.778 0.111 0.11  4 because age >= 27 & sex is female
-607 0.083 0.167 0.75  3 because age <  27                
-80  0.778 0.111 0.11  4 because age >= 27 & sex is female
-258 0.778 0.111 0.11  4 because age >= 27 & sex is female
-619 0.294 0.059 0.65  5 because age >= 27 & sex is   male
+       1st   2nd  3rd nn                                                      
+1260 0.091 0.091 0.82 11 because age >= 17 & parch <  1 & survived is     died
+534  0.429 0.571 0.00  4 because age >= 17 & parch >= 1                       
+728  0.091 0.091 0.82 11 because age >= 17 & parch <  1 & survived is     died
+321  0.500 0.100 0.40 10 because age >= 17 & parch <  1 & survived is survived
+273  0.500 0.100 0.40 10 because age >= 17 & parch <  1 & survived is survived
 > stopifnot(all.equal(predict(pclass), as.matrix(rpart.predict(pclass, nn=TRUE, rules=TRUE)[,1:3])))
 > 
 > print(predict(pclass, type="class")[1:5])
-441 607  80 258 619 
-1st 3rd 1st 1st 3rd 
+1260  534  728  321  273 
+ 3rd  2nd  3rd  1st  1st 
 Levels: 1st 2nd 3rd
 > print(rpart.predict(pclass, type="class", rules=TRUE)[1:5,])
-    class                                  
-441   1st because age >= 27 & sex is female
-607   3rd because age <  27                
-80    1st because age >= 27 & sex is female
-258   1st because age >= 27 & sex is female
-619   3rd because age >= 27 & sex is   male
+     class                                                      
+1260   3rd because age >= 17 & parch <  1 & survived is     died
+534    2nd because age >= 17 & parch >= 1                       
+728    3rd because age >= 17 & parch <  1 & survived is     died
+321    1st because age >= 17 & parch <  1 & survived is survived
+273    1st because age >= 17 & parch <  1 & survived is survived
 > pred <- rpart.predict(pclass, type="class", rules=TRUE)
 > names <- rownames(pred)
 > pred <- pred[,1]
 > names(pred) <- names
 > stopifnot(all.equal(predict(pclass, type="class"), pred))
 > print(rpart.predict(pclass, type="class", rules=TRUE)[1:5,])
-    class                                  
-441   1st because age >= 27 & sex is female
-607   3rd because age <  27                
-80    1st because age >= 27 & sex is female
-258   1st because age >= 27 & sex is female
-619   3rd because age >= 27 & sex is   male
+     class                                                      
+1260   3rd because age >= 17 & parch <  1 & survived is     died
+534    2nd because age >= 17 & parch >= 1                       
+728    3rd because age >= 17 & parch <  1 & survived is     died
+321    1st because age >= 17 & parch <  1 & survived is survived
+273    1st because age >= 17 & parch <  1 & survived is survived
 > print(rpart.predict(pclass, type="class", rules=TRUE, nn=TRUE)[1:5,])
-    class nn                                  
-441   1st  4 because age >= 27 & sex is female
-607   3rd  3 because age <  27                
-80    1st  4 because age >= 27 & sex is female
-258   1st  4 because age >= 27 & sex is female
-619   3rd  5 because age >= 27 & sex is   male
+     class nn                                                      
+1260   3rd 11 because age >= 17 & parch <  1 & survived is     died
+534    2nd  4 because age >= 17 & parch >= 1                       
+728    3rd 11 because age >= 17 & parch <  1 & survived is     died
+321    1st 10 because age >= 17 & parch <  1 & survived is survived
+273    1st 10 because age >= 17 & parch <  1 & survived is survived
 > pred <- rpart.predict(pclass, type="class", rules=TRUE, nn=TRUE)
 > names <- rownames(pred)
 > pred <- pred[,1]
@@ -3691,29 +3685,29 @@ Levels: 1st 2nd 3rd
 > stopifnot(all.equal(predict(pclass, type="class"), pred))
 > 
 > print(rpart.predict(pclass, newdata=ptit[5:8,]))
-      1st   2nd  3rd
-619 0.294 0.059 0.65
-393 0.083 0.167 0.75
-791 0.294 0.059 0.65
-170 0.778 0.111 0.11
+       1st   2nd  3rd
+273  0.500 0.100 0.40
+1188 0.000 0.091 0.91
+170  0.091 0.091 0.82
+945  0.091 0.091 0.82
 > print(rpart.predict(pclass, newdata=ptit[5:8,], nn=TRUE))
-      1st   2nd  3rd nn
-619 0.294 0.059 0.65  5
-393 0.083 0.167 0.75  3
-791 0.294 0.059 0.65  5
-170 0.778 0.111 0.11  4
+       1st   2nd  3rd nn
+273  0.500 0.100 0.40 10
+1188 0.000 0.091 0.91  3
+170  0.091 0.091 0.82 11
+945  0.091 0.091 0.82 11
 > print(rpart.predict(pclass, newdata=ptit[5:8,], rules=TRUE))
-      1st   2nd  3rd                                  
-619 0.294 0.059 0.65 because age >= 27 & sex is   male
-393 0.083 0.167 0.75 because age <  27                
-791 0.294 0.059 0.65 because age >= 27 & sex is   male
-170 0.778 0.111 0.11 because age >= 27 & sex is female
+       1st   2nd  3rd                                                      
+273  0.500 0.100 0.40 because age >= 17 & parch <  1 & survived is survived
+1188 0.000 0.091 0.91 because age <  17                                    
+170  0.091 0.091 0.82 because age >= 17 & parch <  1 & survived is     died
+945  0.091 0.091 0.82 because age >= 17 & parch <  1 & survived is     died
 > print(rpart.predict(pclass, newdata=ptit[5:8,], nn=TRUE, rules=TRUE))
-      1st   2nd  3rd nn                                  
-619 0.294 0.059 0.65  5 because age >= 27 & sex is   male
-393 0.083 0.167 0.75  3 because age <  27                
-791 0.294 0.059 0.65  5 because age >= 27 & sex is   male
-170 0.778 0.111 0.11  4 because age >= 27 & sex is female
+       1st   2nd  3rd nn                                                      
+273  0.500 0.100 0.40 10 because age >= 17 & parch <  1 & survived is survived
+1188 0.000 0.091 0.91  3 because age <  17                                    
+170  0.091 0.091 0.82 11 because age >= 17 & parch <  1 & survived is     died
+945  0.091 0.091 0.82 11 because age >= 17 & parch <  1 & survived is     died
 > 
 > # caret package
 > 

@@ -365,7 +365,7 @@ handle.multiclass.palette <- function(obj, box.palette, trace, class.stats)
                 warning.issued <- TRUE
                 warning0(
 "All boxes will be white (the box.palette argument will be ignored) because\n",
-"the number of classes predicted by the model ", class.stats$nlev,
+"the number of classes in the response ", class.stats$nlev,
 " is greater than length(box.palette) ",
 length(box.palette), ".\n",
 "To silence this warning use box.palette=0 or trace=-1.")
@@ -451,22 +451,24 @@ possible.palette.legend <- function(ret, class.stats, box.col, box.palette,
 
     # get here if multi-level-response model with a list box.palette
 
-     # same as code in handle.multiclass.palette
+    # same as code in handle.multiclass.palette
     used.classes <- 1:class.stats$nlev
     if(class.stats$nlev > length(box.palette))
         used.classes <- unique(sort(class.stats$fitted, na.last=TRUE))
+
+    nlegend <- length(class.stats$ylevels)
 
     # box.palette is a list of vecs, we select one color from each vector
     legend.col <- select.legend.col(box.palette)
     if(is.na(legend.col[1]))
         return() # all legend colors the same, no legend
 
-    # set legend to names of all classes (if class unused then append "unused")
-    # also set col to appropriate class colors (if class unused then bg color)
-    col <- character(length=class.stats$nlev)
-    legend <- character(length=class.stats$nlev)
+    # set legend to names of all classes (if class never predicted then append "unused")
+    # also set col to appropriate class colors (if class unpredicted then bg color)
+    col <- character(length=nlegend)
+    legend <- character(length=nlegend)
     iclass <- 1
-    for(i in 1:class.stats$nlev) {
+    for(i in 1:nlegend) {
         if(i %in% used.classes) {
             legend[i] <- attr(obj, "ylevels")[i]
             col[i]    <- legend.col[iclass]
@@ -478,7 +480,7 @@ possible.palette.legend <- function(ret, class.stats, box.col, box.palette,
     }
     x <- legend.x
     if(is.null(x)) { # auto horizontal position?
-        x <- if(ret$x[1] > .5) ret$xlim[1]                      # left side
+        x <- if(ret$x[1] > .5) ret$xlim[1]                       # left side
              else ret$xlim[2] - .2 * (ret$xlim[2] - ret$xlim[1]) # right side
         # May 2018: removed this because it's probably best to always display
         #           the legend even if there is some overwriting
@@ -495,12 +497,16 @@ possible.palette.legend <- function(ret, class.stats, box.col, box.palette,
     y <- legend.y
     if(is.null(y)) # auto vertical position? estimate from height of legend
         y <- ret$y[1] + min(5, 1 + length(legend)) * strheight("X")
+    # legend.skip.unpredicted <- TRUE
+    # if(legend.skip.unpredicted) {
+    #     legend <- legend[used.classes]
+    #     col    <- col[used.classes]
+    # }
     if(trace >= 1)
         printf("legend.x %g   legend.y %g\n", x, y)
     legend(x=x, y=y, legend=legend,
         col=0, xpd=NA, bty="n", cex=tweak * legend.cex * min(1.1 * ret$cex, 1),
-        border=0,
-        fill=col)
+        border=0, fill=col)
 }
 select.legend.col <- function(box.palette)
 {

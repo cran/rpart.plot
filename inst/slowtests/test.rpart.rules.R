@@ -672,7 +672,7 @@ print(rpart.predict(survived, rules=TRUE, varlen=2)[2:4,])
 print(rpart.predict(survived, rules=TRUE, varlen=2)[2:4,], digits=2)
 options(width=owidth)
 
-set.seed(2018)
+set.seed(2020)
 ptit <- ptitanic
 ptit <- ptit[sample.int(nrow(ptitanic)),]
 ptit <- ptit[1:50,]

@@ -193,6 +193,10 @@ get.class.stats <- function(x)
     list(yval2=yval2,
          fitted=fitted,
          nlev=nlev,
+         # Aug 2019: ylevels is necessary for the multiclass model legend when
+         # the last level in the response is unused in the training data and thus
+         # does't appear in yval2 e.g. see "unusedlev" in the rpart.plot tests
+         ylevels=attr(x, "ylevels"),
          n.per.lev=n.per.lev,
          prob.per.lev=prob.per.lev)
 }

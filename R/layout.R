@@ -536,7 +536,6 @@ get.layout <- function(obj, type, nn, yesno, fallen.leaves, branch,
     }
     if(auto.cex)
         cex  <- scale * cex
-
     list(node.xy=list(x=x, y=y), # coords of center of each node box
          cex=cex,
          xlim=c(-xmax / 2 + .5, xmax / 2 + .5), # center graph horizontally

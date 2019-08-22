@@ -1,7 +1,7 @@
 @rem test.rpart.plot.bat: this does a regression test of rpart.plot and rpart.plot
 @rem Stephen Milborrow Nov 2010 Gardens, Cape Town
 
-@"C:\PROGRA~1\R\R-3.5.3\bin\x64\R.exe" CMD BATCH --quiet --vanilla test.rpart.plot.R
+@"C:\PROGRA~1\R\R-3.6.1\bin\x64\R.exe" CMD BATCH --quiet --vanilla test.rpart.plot.R
 @if %errorlevel% equ 0 goto good1:
 @echo R returned errorlevel %errorlevel%, see test.rpart.plot.Rout:
 @echo.

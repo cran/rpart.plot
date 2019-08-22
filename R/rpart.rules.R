@@ -336,7 +336,7 @@ process.rules <- function(obj, rules, style, cover, nn, clip.facs,
     ret <- format.fit(rules$fit, digits, is.class.response)
         rules$fit <- ret$fit
         rowmaxs   <- ret$rowmaxs
-        n.subcol  <- ret$n.subcol
+        ncol.fit  <- ret$ncol.fit
     fit <- rules$fit # needed for fit.colname()
     rules <- order.rows(rules, rowmaxs)
     ret <- order.cols(rules, varorder, varnames, nrules.per.var)
@@ -350,7 +350,7 @@ process.rules <- function(obj, rules, style, cover, nn, clip.facs,
     rules.cover <- rules$cover
     rules <- format.rules(rules, style, cover, clip.facs, eq, lt, ge, and, when,
                           digits, trace,
-                          response.name, varnames, n.subcol)
+                          response.name, varnames, ncol.fit)
     # retain only used columns
     rules <- rules[, apply(rules, 2, function(col) any(col != "")), drop=FALSE]
     if(!rpart.predict) {
@@ -397,9 +397,9 @@ process.rules <- function(obj, rules, style, cover, nn, clip.facs,
         rownames(rules) <- NULL
         # retain only used columns
         rules <- rules[, apply(rules, 2, function(col) any(col != "")), drop=FALSE]
-    } else if(n.subcol > 1) { # multiple probabilities
+    } else if(ncol.fit > 1) { # multiple probabilities
         # add column names etc. for a nice print
-        colnames(rules)[2+nn] <- fit.colname(ylevels, fit, n.subcol)
+        colnames(rules)[2+nn] <- fit.colname(ylevels, fit, ncol.fit)
         rules[,2+nn] <- paste0("[", rules[,2+nn], "]")
         rules[,3+nn] <- paste0(" ", when)
     }
@@ -412,15 +412,15 @@ format.fit <- function(fit, digits, is.class.response)
     fit <- strsplit(fit, " ", fixed=TRUE) # ".12 .34 .56" becomes ".12" ".34" ".56"
     nrow <- length(fit) # fit is a list
     fit <- matrix(as.numeric.na.ok(unlist(fit)), nrow=nrow, byrow=TRUE) # matrix of floats
-    n.subcol <- ncol(fit)
+    ncol.fit <- ncol(fit)
     rowmaxs <-
-        if(n.subcol == 2) {
+        if(ncol.fit == 2) {
             # binomial model with both probabilities predicted e.g. ".12" ".34"
-            # want to order rows on prob of 2nd class (ignore prob for first class)
+            # want to order rows on prob of 2nd class (ignoring prob of 1st class)
             rowmaxs <- fit[,2]
         } else
             rowmaxs <- apply(fit, 1, max)     # max of each row of fits
-    if(n.subcol == 1) {
+    if(ncol.fit == 1) {
         fit <- # align for printing
             if(is.class.response) # probabilities, always 2 decimal places
                 format(sprint("%.2f", fit), justify="right")
@@ -442,7 +442,7 @@ format.fit <- function(fit, digits, is.class.response)
                 else
                     gsub("0.", ".", fit, fixed=TRUE)  # "0.12" becomes ".12"
     }
-    list(fit=fit, rowmaxs=rowmaxs, n.subcol=n.subcol)
+    list(fit=fit, rowmaxs=rowmaxs, ncol.fit=ncol.fit)
 }
 trim.surrounding.space <- function(s)
 {
@@ -469,7 +469,7 @@ apply.varlen.to.colnames <- function(rules, varnames, varlen)
 }
 format.rules <- function(rules, style, cover, clip.facs, eq, lt, ge, and, when,
                          digits, trace,
-                         response.name, varnames, n.subcol)
+                         response.name, varnames, ncol.fit)
 {
     n <- function() # generate a new column name
     {
@@ -479,7 +479,7 @@ format.rules <- function(rules, style, cover, clip.facs, eq, lt, ge, and, when,
     #--- format.rules starts here ---
     # build up the new rules column by column
 
-    new <- if(n.subcol > 1) # multiple responses, add class label
+    new <- if(ncol.fit > 1) # multiple responses, add class label
                 data.frame(class=rules$lab, fit=rules$fit, stringsAsFactors=FALSE)
            else
                 data.frame(fit=rules$fit, stringsAsFactors=FALSE)
@@ -554,12 +554,20 @@ format.rules <- function(rules, style, cover, clip.facs, eq, lt, ge, and, when,
     }
     new
 }
+# predicting multiple probabilities
 # add truncated class names like "1st 2nd 3rd" above the ".12 .34 .56"
-fit.colname <- function(ylevels, fit, n.subcol)
+fit.colname <- function(ylevels, fit, ncol.fit)
 {
-    colname <- NULL
-    if(n.subcol != length(ylevels)) # should never happen
-        warnf("ncol(fit) %d != length(ylevels) %d", n.subcol, length(ylevels))
+    # Aug 2019: commented following out because if last level in the response
+    # is unused in the training data, then it does't appear in yval2
+    # e.g. see "unusedlev" in the rpart.plot tests
+    #
+    # if(ncol.fit != length(ylevels)) # should never happen
+    #     warning0("ncol(fit) ", ncol.fit, " != length(ylevels) ", length(ylevels),
+    #              "\n           ylevels(fit):  ", quotify(ylevels), "\n")
+
+    ylevels <- ylevels[1:ncol.fit] # necessary if last level(s) are unused in training data
+
     width <- unlist(gregexpr(" ", substring(fit, 2)))[1] # position of first space
     if(width < 1) # paranoia                             # substring to skip possible lead space
         width <- 1

@@ -558,4 +558,52 @@ plot2(mod.multiclass, box.palette=list("pink", "lightblue", "lightgray"),
 
 par(old.par)
 
+# multiclass model: test handling of response classes that aren't used in the training data
+
+par(mfrow = c(2, 2), mar = c(3, 3, 3, 1), mgp = c(1.5, 0.5, 0))
+data(cu.summary)
+# reference model
+dat <- cu.summary
+aref <- rpart(Reliability~., data=dat)
+print(rpart.rules(aref))
+
+dat <- cu.summary
+# add an extra level to Reliability that is unused in the data
+# in this example, unusedlev is the last level (it won't appear in yval2)
+levs <- c("muchworse", "worse", "average",
+          "better", "muchbetter", "unusedlev1")
+asnum <- as.numeric(cu.summary$Reliability)
+dat$Reliability <- factor(levs[asnum], levels=levs, labels=levs, ordered=TRUE)
+# print(head(dat, 50))
+a1 <- rpart(Reliability~., data=dat)
+rpart.plot(a1, main="test response classes that aren't used in the training data\na1", do.par=FALSE)
+print(rpart.rules(a1))
+aref$cptable <- a1$cptable <- NULL
+attr(aref, "ylevels") <- attr(a1, "ylevels") <- NULL
+stopifnot(identical(aref, a1))
+
+dat <- cu.summary
+# add an extra level to Reliability that is unused in the data
+# in this example, unused level is not the last level (it will appear in yval2)
+levs <- c("muchworse", "worse", "average",
+          "better", "unusedlev", "muchbetter")
+asnum <- as.numeric(cu.summary$Reliability)
+asnum[asnum == 5] <- 6 # skip unused level
+dat$Reliability <- factor(levs[asnum], levels=levs, labels=levs, ordered=TRUE)
+a2 <- rpart(Reliability~., data=dat)
+rpart.plot(a2, main="a2", do.par=FALSE)
+print(rpart.rules(a2))
+
+dat <- cu.summary
+# add two extra levels to Reliability that are unused in the data
+levs <- c("muchworse", "worse", "average",
+          "better", "unusedlev1", "muchbetter", "unusedlev2")
+asnum <- as.numeric(cu.summary$Reliability)
+asnum[asnum == 5] <- 6 # skip unused level
+dat$Reliability <- factor(levs[asnum], levels=levs, labels=levs, ordered=TRUE)
+a3 <- rpart(Reliability~., data=dat)
+rpart.plot(a3, main="a3", do.par=FALSE)
+print(rpart.rules(a3))
+par(old.par)
+
 source("test.epilog.R")

@@ -1,6 +1,19 @@
 Changes to rpart.plot
 ---------------------
 
+3.0.8  Aug 21, 2019
+
+  Updated test scripts for the new random number generator
+  that came with R version 3.6.0.
+
+  Fixed an incorrect warning: ncol(fit) 5 != length(ylevels) 6.
+  This was issued under certain circumstances for multiclass models
+  when a class is never predicted in the training data.
+
+  The legend for multiclass models now shows classes that are
+  never predicted in the training data, even when rpart doesn't
+  include such classes in yval2.
+
 3.0.7  Apr 11, 2019
 
   Minor documentation updates.

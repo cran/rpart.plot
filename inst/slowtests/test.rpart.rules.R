@@ -717,7 +717,7 @@ print(rpart.rules(Petal.Length))
 
 # caret train x,y interface
 
-set.seed(2018)
+set.seed(2020)
 # note that caret converts factors to indicator columns before invoking rpart
 iPetal.Length <- 3 # index of Sepal.Length column
 caret.xy <- train(iris[,-iPetal.Length], iris[,iPetal.Length], method="rpart", tuneLength=4)
@@ -739,7 +739,7 @@ plotmo(caret.xy$finalModel, method="apartdep", do.par=2, all2=TRUE)
 rpart.plot(caret.xy$finalModel)
 
 # caret train formula interface
-set.seed(2018)
+set.seed(2020)
 # note that caret converts factors to indicator columns before invoking rpart
 caret.form <- train(Petal.Length ~ ., data=iris, method="rpart", tuneLength=4)
 rpart.rules(caret.form$finalModel)
@@ -762,7 +762,7 @@ rpart.plot(caret.form$finalModel)
 # Dates
 
 par(mfrow=c(2, 2))
-set.seed(2018)
+set.seed(2020)
 xx <- 5 * rnorm(60)
 data <- data.frame(
     yy  = c(1:30, 30:1) + xx,

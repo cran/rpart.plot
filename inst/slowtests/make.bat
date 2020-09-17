@@ -1,6 +1,5 @@
 @rem rpart.plot/inst/slowtests/make.bat
 
-time /T
 @call test.rpart.plot.bat
                         @if %errorlevel% NEQ 0 goto error
 @call test.rpart.rules.bat
@@ -27,5 +26,4 @@ time /T
 :error
 @echo ==== ERROR ====
 :done
-time /T
 @exit /B  0

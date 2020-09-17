@@ -50,13 +50,13 @@ prnt..> rpart.rules(model)
 > # can't use digits in print.rpart.rules (instead must specify digits in rpart.rules)
 > expect.err(try(print(rpart.rules(Volume), digits=4)), "specify 'digits' in rpart.rules (not in print.rpart.rules)")
 Error : specify 'digits' in rpart.rules (not in print.rpart.rules)
-Got error as expected from try(print(rpart.rules(Volume), digits = 4))
+Got expected error from try(print(rpart.rules(Volume), digits = 4))
 > expect.err(try(print(rpart.rules(Volume), digit=4)),  "specify 'digits' in rpart.rules (not in print.rpart.rules)")
 Error : specify 'digits' in rpart.rules (not in print.rpart.rules)
-Got error as expected from try(print(rpart.rules(Volume), digit = 4))
+Got expected error from try(print(rpart.rules(Volume), digit = 4))
 > expect.err(try(print(rpart.rules(Volume), dig=4)),    "specify 'digits' in rpart.rules (not in print.rpart.rules)")
 Error : specify 'digits' in rpart.rules (not in print.rpart.rules)
-Got error as expected from try(print(rpart.rules(Volume), dig = 4))
+Got expected error from try(print(rpart.rules(Volume), dig = 4))
 > trees1 <- "bad data"
 > options(warn=2) # treat warnings as errors
 > expect.err(try(rpart.rules(Volume, digits=4)), "(converted from warning) Cannot retrieve the data used to build the model (so cannot determine roundint and is.binary for the variables).")
@@ -64,19 +64,19 @@ Error : (converted from warning) Cannot retrieve the data used to build the mode
 To silence this warning:
     Call rpart.rules with roundint=FALSE,
     or rebuild the rpart model with model=TRUE.
-Got error as expected from try(rpart.rules(Volume, digits = 4))
+Got expected error from try(rpart.rules(Volume, digits = 4))
 > expect.err(try(rpart.plot(Volume, digits=4, main="Volume\ntrees not available")), "Cannot retrieve the data used to build the model")
 Error : (converted from warning) Cannot retrieve the data used to build the model (so cannot determine roundint and is.binary for the variables).
 To silence this warning:
     Call rpart.plot with roundint=FALSE,
     or rebuild the rpart model with model=TRUE.
-Got error as expected from try(rpart.plot(Volume, digits = 4, main = "Volume\ntrees not available"))
+Got expected error from try(rpart.plot(Volume, digits = 4, main = "Volume\ntrees not available"))
 > expect.err(try(prp(Volume, digits=4, main="Volume\ntrees not available")), "Cannot retrieve the data used to build the model")
 Error : (converted from warning) Cannot retrieve the data used to build the model (so cannot determine roundint and is.binary for the variables).
 To silence this warning:
     Call prp with roundint=FALSE,
     or rebuild the rpart model with model=TRUE.
-Got error as expected from try(prp(Volume, digits = 4, main = "Volume\ntrees not available"))
+Got expected error from try(prp(Volume, digits = 4, main = "Volume\ntrees not available"))
 > rpart.plot(Volume, digits=4, roundint=FALSE, main="Volume roundint=FALSE\ndata not available")
 > trees1 <- trees[,1:2] # only part of the data
 > expect.err(try(rpart.rules(Volume, digits=4)), "(converted from warning) Cannot retrieve the data used to build the model (model.frame: invalid type (list) for variable 'Volume').")
@@ -84,7 +84,7 @@ Error : (converted from warning) Cannot retrieve the data used to build the mode
 To silence this warning:
     Call rpart.rules with roundint=FALSE,
     or rebuild the rpart model with model=TRUE.
-Got error as expected from try(rpart.rules(Volume, digits = 4))
+Got expected error from try(rpart.rules(Volume, digits = 4))
 > print(rpart.rules(Volume, digits=4, roundint=FALSE, trace=.5)) # trace print: Cannot retrieve the data used to build the model (model.frame: invalid type (list) for variable 'Volume')
 Cannot retrieve the data used to build the model (model.frame: invalid type (list) for variable 'Volume')
  Volume                             
@@ -239,7 +239,7 @@ processed rules:
 > stopifnot(identical(rpart.rules(mileage, digits=-10), rpart.rules(mileage, digits=10)))
 > expect.err(try(rpart.rules(mileage, digits=99)), "digits=99 but it should be between -22 and 22")
 Error : digits=99 but it should be between -22 and 22
-Got error as expected from try(rpart.rules(mileage, digits = 99))
+Got expected error from try(rpart.rules(mileage, digits = 99))
 > 
 > print(rpart.rules(mileage, faclen=1))
  Mileage                                          
@@ -737,7 +737,7 @@ Error : (converted from warning) Cannot retrieve the data used to build the mode
 To silence this warning:
     Call rpart.rules with roundint=FALSE,
     or rebuild the rpart model with model=TRUE.
-Got error as expected from try(rpart.rules(mod))
+Got expected error from try(rpart.rules(mod))
 > print(rpart.rules(mod.without.data.arg, roundint=FALSE, trace=.5)) # ok
  Volume                         
     179 when Girth <  125       
@@ -1329,18 +1329,18 @@ Country is USA       [.00 .00 .02 .04 .17 .00 .07 .04 .00 .67] with cover 46% wh
 > expect.err(try(rpart.rules(Country, nonesuch="nonesuch")), 'unused argument (nonesuch = "nonesuch")')
 Error in check.if.dot.arg.supported.by.rpart.rules(...) : 
   unused argument (nonesuch = "nonesuch")
-Got error as expected from try(rpart.rules(Country, nonesuch = "nonesuch"))
+Got expected error from try(rpart.rules(Country, nonesuch = "nonesuch"))
 > expect.err(try(print(rpart.rules(Country), nonesuch2="nonesuch2")), 'unused argument (nonesuch2 = "nonesuch2")')
 Error in stop.if.dot.arg.used(...) : 
   unused argument (nonesuch2 = "nonesuch2")
-Got error as expected from try(print(rpart.rules(Country), nonesuch2 = "nonesuch2"))
+Got expected error from try(print(rpart.rules(Country), nonesuch2 = "nonesuch2"))
 > expect.err(try(rpart.rules(99)), "Not an rpart object")
 Error in rpart.rules(99) : Not an rpart object
-Got error as expected from try(rpart.rules(99))
+Got expected error from try(rpart.rules(99))
 > expect.err(try(rpart.rules(Country, ylim=c(0,1))), 'unused argument (ylim = c(0, 1))')
 Error in check.if.dot.arg.supported.by.rpart.rules(...) : 
   unused argument (ylim = c(0, 1))
-Got error as expected from try(rpart.rules(Country, ylim = c(0, 1)))
+Got expected error from try(rpart.rules(Country, ylim = c(0, 1)))
 > 
 > # rpart.predict (factor response, 10 levels)
 > stopifnot(identical(options("width"), old.width))
@@ -2243,17 +2243,17 @@ extra="A"
 extra=1
 > expect.err(try(rpart.rules(survived, extra=1)), "extra=1 is not supported by rpart.rules")
 Error : (converted from warning) extra=1 is not supported by rpart.rules (although useable for plots)
-Got error as expected from try(rpart.rules(survived, extra = 1))
+Got expected error from try(rpart.rules(survived, extra = 1))
 > cat0("extra=2\n")
 extra=2
 > expect.err(try(rpart.rules(survived, extra=2)), "extra=2 is not supported by rpart.rules")
 Error : (converted from warning) extra=2 is not supported by rpart.rules (although useable for plots)
-Got error as expected from try(rpart.rules(survived, extra = 2))
+Got expected error from try(rpart.rules(survived, extra = 2))
 > cat0("extra=3\n")
 extra=3
 > expect.err(try(rpart.rules(survived, extra=3)), "extra=3 is not supported by rpart.rules")
 Error : (converted from warning) extra=3 is not supported by rpart.rules (although useable for plots)
-Got error as expected from try(rpart.rules(survived, extra = 3))
+Got expected error from try(rpart.rules(survived, extra = 3))
 > cat0("extra=4\n")
 extra=4
 > print(rpart.rules(survived, extra=4))
@@ -2387,7 +2387,7 @@ The 'extra' argument:
     Add 100 to also display the percentage of observations in the node
 
 Error : extra=23 is illegal
-Got error as expected from try(rpart.rules(survived, extra = 123))
+Got expected error from try(rpart.rules(survived, extra = 123))
 > options(warn=1) # print warnings as they occur
 > 
 > cat0("\n=== \"extra\" argument, multiclass model ===\n")
@@ -2414,17 +2414,17 @@ extra=0
 extra=1
 > expect.err(try(print(rpart.rules(Species, extra=1))), "extra=1 is not supported by rpart.rules")
 Error : (converted from warning) extra=1 is not supported by rpart.rules (although useable for plots)
-Got error as expected from try(print(rpart.rules(Species, extra = 1)))
+Got expected error from try(print(rpart.rules(Species, extra = 1)))
 > cat0("extra=2\n")
 extra=2
 > expect.err(try(print(rpart.rules(Species, extra=2))), "extra=2 is not supported by rpart.rules")
 Error : (converted from warning) extra=2 is not supported by rpart.rules (although useable for plots)
-Got error as expected from try(print(rpart.rules(Species, extra = 2)))
+Got expected error from try(print(rpart.rules(Species, extra = 2)))
 > cat0("extra=3\n")
 extra=3
 > expect.err(try(print(rpart.rules(Species, extra=3))), "extra=3 is not supported by rpart.rules")
 Error : (converted from warning) extra=3 is not supported by rpart.rules (although useable for plots)
-Got error as expected from try(print(rpart.rules(Species, extra = 3)))
+Got expected error from try(print(rpart.rules(Species, extra = 3)))
 > cat0("extra=4\n")
 extra=4
 > print(rpart.rules(Species, extra=4))
@@ -2443,12 +2443,12 @@ extra=5
 extra=6
 > expect.err(try(print(rpart.rules(Species, extra=6))), "extra=106 but the response has 3 levels (only the 2nd level is displayed)")
 Error : (converted from warning) extra=106 but the response has 3 levels (only the 2nd level is displayed)
-Got error as expected from try(print(rpart.rules(Species, extra = 6)))
+Got expected error from try(print(rpart.rules(Species, extra = 6)))
 > cat0("extra=7\n")
 extra=7
 > expect.err(try(print(rpart.rules(Species, extra=7))), "extra=106 but the response has 3 levels (only the 2nd level is displayed)")
 Error : (converted from warning) extra=106 but the response has 3 levels (only the 2nd level is displayed)
-Got error as expected from try(print(rpart.rules(Species, extra = 7)))
+Got expected error from try(print(rpart.rules(Species, extra = 7)))
 > cat0("extra=8\n")
 extra=8
 > print(rpart.rules(Species, extra=8))
@@ -2467,12 +2467,12 @@ extra=9
 extra=10
 > expect.err(try(print(rpart.rules(Species, extra=10))), "extra=110 but the response has 3 levels (only the 2nd level is displayed)")
 Error : (converted from warning) extra=110 but the response has 3 levels (only the 2nd level is displayed)
-Got error as expected from try(print(rpart.rules(Species, extra = 10)))
+Got expected error from try(print(rpart.rules(Species, extra = 10)))
 > cat0("extra=11\n")
 extra=11
 > expect.err(try(print(rpart.rules(Species, extra=11))), "extra=110 but the response has 3 levels (only the 2nd level is displayed)")
 Error : (converted from warning) extra=110 but the response has 3 levels (only the 2nd level is displayed)
-Got error as expected from try(print(rpart.rules(Species, extra = 11)))
+Got expected error from try(print(rpart.rules(Species, extra = 11)))
 > cat0("extra=12\n")
 extra=12
 > expect.err(try(print(rpart.rules(Species, extra=12))), "extra=12 is illegal")
@@ -2494,7 +2494,7 @@ The 'extra' argument:
     Add 100 to also display the percentage of observations in the node
 
 Error : extra=12 is illegal
-Got error as expected from try(print(rpart.rules(Species, extra = 12)))
+Got expected error from try(print(rpart.rules(Species, extra = 12)))
 > options(warn=1) # print warnings as they occur
 > 
 > cat0("\n=== \"and\" and related arguments ===\n")
@@ -2715,17 +2715,17 @@ survived probability is 0.93 when
 > 
 > expect.err(try(rpart.rules(survived, and=99)), "'and' is not a character variable")
 Error : 'and' is not a character variable (class(and) is "numeric")
-Got error as expected from try(rpart.rules(survived, and = 99))
+Got expected error from try(rpart.rules(survived, and = 99))
 > expect.err(try(rpart.rules(survived, response.name=99)), "'response.name' is not a character variable")
 Error : 'response.name' is not a character variable (class(response.name) is "numeric")
-Got error as expected from try(rpart.rules(survived, response.name = 99))
+Got expected error from try(rpart.rules(survived, response.name = 99))
 > expect.err(try(rpart.rules(survived, response.name=c("a", "b"))), "'response.name' has more than one element")
 Error : 'response.name' has more than one element
        response.name = c("a" "b")
-Got error as expected from try(rpart.rules(survived, response.name = c("a", "b")))
+Got expected error from try(rpart.rules(survived, response.name = c("a", "b")))
 > expect.err(try(rpart.rules(survived, eq=NULL)), "'eq' is NULL (it should be a string)")
 Error : 'eq' is NULL (it should be a string)
-Got error as expected from try(rpart.rules(survived, eq = NULL))
+Got expected error from try(rpart.rules(survived, eq = NULL))
 > rpart.rules(survived, lt="")
  survived                                                                                          
      0.05 when sex is   male & age     9.5         & sibsp >= 3                                    
@@ -3380,23 +3380,23 @@ Levels: died survived
 > options(warn=2) # treat warnings as errors
 > expect.err(try(rpart.rules(survived, varorder='nonesuch')),      'varorder="nonesuch" does not uniquely match one of: "sex" "pclass" "parch" "age" "sibsp"')
 Error : (converted from warning) varorder="nonesuch" does not uniquely match one of: "sex" "pclass" "parch" "age" "sibsp"
-Got error as expected from try(rpart.rules(survived, varorder = "nonesuch"))
+Got expected error from try(rpart.rules(survived, varorder = "nonesuch"))
 > expect.err(try(rpart.rules(survived, varorder='p')),             'varorder="p" does not uniquely match one of: "sex" "pclass" "parch" "age" "sibsp"')
 Error : (converted from warning) varorder="p" does not uniquely match one of: "sex" "pclass" "parch" "age" "sibsp"
-Got error as expected from try(rpart.rules(survived, varorder = "p"))
+Got expected error from try(rpart.rules(survived, varorder = "p"))
 > expect.err(try(rpart.rules(survived, varorder='')),              'varorder="" does not uniquely match one of: "sex" "pclass" "parch" "age" "sibsp"')
 Error : (converted from warning) varorder="" does not uniquely match one of: "sex" "pclass" "parch" "age" "sibsp"
-Got error as expected from try(rpart.rules(survived, varorder = ""))
+Got expected error from try(rpart.rules(survived, varorder = ""))
 > expect.err(try(rpart.rules(survived, varorder=c('pclass', ''))), 'varorder="" does not uniquely match one of: "sex" "pclass" "parch" "age" "sibsp"')
 Error : (converted from warning) varorder="" does not uniquely match one of: "sex" "pclass" "parch" "age" "sibsp"
-Got error as expected from try(rpart.rules(survived, varorder = c("pclass", "")))
+Got expected error from try(rpart.rules(survived, varorder = c("pclass", "")))
 > expect.err(try(rpart.rules(survived, varorder=99)),              'is.character(varorder) is not TRUE')
 Error in order.cols(rules, varorder, varnames, nrules.per.var) : 
   is.character(varorder) is not TRUE
-Got error as expected from try(rpart.rules(survived, varorder = 99))
+Got expected error from try(rpart.rules(survived, varorder = 99))
 > expect.err(try(rpart.rules(survived, shadow.col="gray")),        "rpart.rules: ignoring argument 'shadow.col'")
 Error : (converted from warning) rpart.rules: ignoring argument 'shadow.col'
-Got error as expected from try(rpart.rules(survived, shadow.col = "gray"))
+Got expected error from try(rpart.rules(survived, shadow.col = "gray"))
 > options(warn=1) # print warnings as they occur
 > rpart.rules(survived, varorder=c('nonesuch1','pcl','nonesuch2')) # will give warnings but still print the rules
 Warning: varorder="nonesuch2" does not uniquely match one of: "sex" "pclass" "parch" "age" "sibsp"
@@ -3454,10 +3454,10 @@ Warning: varorder="nonesuch1" does not uniquely match one of: "sex" "pclass" "pa
 > options(warn=2) # treat warnings as errors
 > expect.err(try(rpart.rules(rpart.surv, extra=1)), "(converted from warning) extra=1 is not supported by rpart.rules")
 Error : (converted from warning) extra=1 is not supported by rpart.rules (although useable for plots)
-Got error as expected from try(rpart.rules(rpart.surv, extra = 1))
+Got expected error from try(rpart.rules(rpart.surv, extra = 1))
 > expect.err(try(rpart.rules(rpart.surv, extra=2)), "(converted from warning) extra=2 is not supported by rpart.rules")
 Error : (converted from warning) extra=2 is not supported by rpart.rules (although useable for plots)
-Got error as expected from try(rpart.rules(rpart.surv, extra = 2))
+Got expected error from try(rpart.rules(rpart.surv, extra = 2))
 > options(warn=1) # print warnings as they occur
 > 
 > owidth <- options("width")
@@ -3571,7 +3571,7 @@ Got error as expected from try(rpart.rules(rpart.surv, extra = 2))
 3 0.8291457 0.1708543 because sex is   male & age >=          9.5                                                 
 > expect.err(try(rpart.predict(survived, rules=TRUE, style="tall")), "style = \"tall\" is not supported by rpart.predict")
 Error : style = "tall" is not supported by rpart.predict
-Got error as expected from try(rpart.predict(survived, rules = TRUE, style = "tall"))
+Got expected error from try(rpart.predict(survived, rules = TRUE, style = "tall"))
 > print(rpart.predict(survived, rules=TRUE, cover=TRUE)[2:4,])
        died  survived                                                                                                                   
 2 0.1111111 0.8888889 because sex is   male  & age <   9.5           & sibsp  <    3                                                  2%
@@ -3733,7 +3733,7 @@ The following object is masked from 'package:survival':
 > 
 > # caret train x,y interface
 > 
-> set.seed(2018)
+> set.seed(2020)
 > # note that caret converts factors to indicator columns before invoking rpart
 > iPetal.Length <- 3 # index of Sepal.Length column
 > caret.xy <- train(iris[,-iPetal.Length], iris[,iPetal.Length], method="rpart", tuneLength=4)
@@ -3780,7 +3780,7 @@ Warning in nominalTrainWorkflow(x = x, y = y, wts = weights, info = trainInfo,  
 > rpart.plot(caret.xy$finalModel)
 > 
 > # caret train formula interface
-> set.seed(2018)
+> set.seed(2020)
 > # note that caret converts factors to indicator columns before invoking rpart
 > caret.form <- train(Petal.Length ~ ., data=iris, method="rpart", tuneLength=4)
 Warning in nominalTrainWorkflow(x = x, y = y, wts = weights, info = trainInfo,  :
@@ -3831,7 +3831,7 @@ Warning: NA in singles, will plot all variables (as if all1=TRUE)
 > # Dates
 > 
 > par(mfrow=c(2, 2))
-> set.seed(2018)
+> set.seed(2020)
 > xx <- 5 * rnorm(60)
 > data <- data.frame(
 +     yy  = c(1:30, 30:1) + xx,
@@ -3840,24 +3840,23 @@ Warning: NA in singles, will plot all variables (as if all1=TRUE)
 +            as.Date(paste0("2018-09-", 1:30))))
 > print(head(data))
     yy    xx         dd
-1 -1.1 -2.11 2018-08-01
-2 -5.7 -7.75 2018-08-02
-3  2.7 -0.32 2018-08-03
-4  5.4  1.35 2018-08-04
-5 13.7  8.68 2018-08-05
-6  4.7 -1.32 2018-08-06
+1  2.9   1.9 2018-08-01
+2  3.5   1.5 2018-08-02
+3 -2.5  -5.5 2018-08-03
+4 -1.7  -5.7 2018-08-04
+5 -9.0 -14.0 2018-08-05
+6  9.6   3.6 2018-08-06
 > datemod <- rpart(yy ~ ., data = data)
 > print(rpart.rules(datemod))
-   yy                                     
-  4.2 when xx <  -2 & dd >=          17792
-  9.9 when xx >= -2 & dd <  17755         
- 12.0 when xx <  -2 & dd <  17792         
- 12.3 when xx >= -2 & dd >=          17789
- 21.0 when xx >= -2 & dd is 17755 to 17767
- 27.0 when xx >= -2 & dd is 17767 to 17789
+   yy                                       
+  1.3 when xx <  -4.2                       
+  9.1 when xx >= -4.2 & dd >=          17788
+ 11.4 when xx >= -4.2 & dd <  17759         
+ 20.8 when xx >= -4.2 & dd is 17781 to 17788
+ 28.3 when xx >= -4.2 & dd is 17759 to 17781
 > plotmo(datemod, pt.col=2, do.par=FALSE)
  plotmo grid:    xx         dd
-               -1.2 2018-08-31
+               0.59 2018-08-31
 > rpart.plot(datemod)
 > par(old.par)
 > 

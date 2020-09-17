@@ -5,7 +5,7 @@
 Loading required package: rpart
 > 
 > print(sessionInfo())
-R version 3.6.1 (2019-07-05)
+R version 4.0.2 (2020-06-22)
 Platform: x86_64-w64-mingw32/x64 (64-bit)
 Running under: Windows 7 x64 (build 7601) Service Pack 1
 
@@ -22,28 +22,28 @@ attached base packages:
 [1] stats     graphics  grDevices utils     datasets  methods   base     
 
 other attached packages:
-[1] rpart.plot_3.0.8 rpart_4.1-15    
+[1] rpart.plot_3.0.9 rpart_4.1-15    
 
 loaded via a namespace (and not attached):
-[1] compiler_3.6.1
+[1] compiler_4.0.2
 > print(citation("rpart.plot"))
 Warning in citation("rpart.plot") :
   no date field in DESCRIPTION file of package 'rpart.plot'
 
 To cite package 'rpart.plot' in publications use:
 
-  Stephen Milborrow (2019). rpart.plot: Plot 'rpart' Models: An
-  Enhanced Version of 'plot.rpart'. R package version 3.0.8.
-  http://www.milbo.org/rpart-plot
+  Stephen Milborrow (2020). rpart.plot: Plot 'rpart' Models: An
+  Enhanced Version of 'plot.rpart'. R package version 3.0.9.
+  http://www.milbo.org/rpart-plot/index.html
 
 A BibTeX entry for LaTeX users is
 
   @Manual{,
     title = {rpart.plot: Plot 'rpart' Models: An Enhanced Version of 'plot.rpart'},
     author = {Stephen Milborrow},
-    year = {2019},
-    note = {R package version 3.0.8},
-    url = {http://www.milbo.org/rpart-plot},
+    year = {2020},
+    note = {R package version 3.0.9},
+    url = {http://www.milbo.org/rpart-plot/index.html},
   }
 
 ATTENTION: This citation information has been auto-generated from the
@@ -87,35 +87,6 @@ rprt.p> rpart.plot(multi.class.model,
 rprt.p+            main = "vehicle reliability\n(multi class response)")
 
 rprt.p> par(old.par)
-> example(rpart.plot.version1)
-
-rpr..1> data(ptitanic)
-
-rpr..1> tree <- rpart(survived ~ ., data = ptitanic, cp = .02)
-
-rpr..1>                                 # cp = .02 because want small tree for demo
-rpr..1> 
-rpr..1> old.par <- par(mfrow = c(2,2))
-
-rpr..1>                                 # put 4 figures on one page
-rpr..1> 
-rpr..1> rpart.plot.version1(tree, main = "default rpart.plot.version1\n(type = 0, extra = 0)")
-
-rpr..1> rpart.plot.version1(tree, main = "type = 4, extra = 6",
-rpr..1+                     type = 4, extra = 6,
-rpr..1+                     faclen = 0) # faclen = 0 to print full factor names
-
-rpr..1> rpart.plot.version1(tree, main = "extra = 106,  under = TRUE",
-rpr..1+                     extra = 106, under = TRUE, faclen = 0)
-
-rpr..1> # compare to the plotting functions in the rpart package
-rpr..1> plot(tree, uniform = TRUE, compress = TRUE, branch = .2)
-
-rpr..1> text(tree, use.n = TRUE, cex = .8, xpd = NA) # cex is a guess, depends on your window size
-
-rpr..1> title("compare to the plotting functions\nin the rpart package", cex.sub = .8)
-
-rpr..1> par(old.par)
 > example(prp)
 
 prp> data(ptitanic)
@@ -564,7 +535,7 @@ rprt.p> head(rpart.predict(model, rules=TRUE))
 > cols <- ifelse(fit$frame$yval > .5, "palegreen", "pink")
 > par(mfrow=c(2,2))
 > prp(fit, box.col=cols, main="Page 4", prefix="probability\n", trace=1)
-cex 1   xlim c(0, 1)   ylim c(-0.05, 1.05)
+cex 1   xlim c(0, 1)   ylim c(0, 1)
 > 
 > fit <- rpart(survived~., data=ititanic)
 > cp <- sort(unique(fit$frame$complexity))[4:5] # just do 2, for a quicker test
@@ -627,7 +598,7 @@ cex 0.75   xlim c(0, 1)   ylim c(-0.1, 1.1)
 + }
 > fit2 <- rpart(survived~., data=ititanic)
 > prp(fit2, node.fun=my.labs2, main="my.labs2", trace=1)
-cex 1   xlim c(0, 1)   ylim c(-0.05, 1.05)
+cex 1   xlim c(0, 1)   ylim c(0, 1)
 > 
 > my.labs3 <- function(x, labs, digits, varlen) # use passed in labs
 + {
@@ -759,7 +730,7 @@ cex 0.4   xlim c(0, 1)   ylim c(0, 1)
 +     split.cex=.7,
 +     faclen=0, trace=1,
 +     boxes.include.gap=boxes.include.gap)
-cex 0.625   xlim c(0, 1)   ylim c(-0.05, 1.05)
+cex 0.625   xlim c(0, 1)   ylim c(0, 1)
 > 
 > # TODO split.yshift indexing is confusing
 > prp(a20, type=4, trace=2, nn=T, split.border.col=1,
@@ -1129,7 +1100,7 @@ Warning: cex and tweak both specified, applying both
 > expect.err(try(prp(fit4.strange.method, main="left=FALSE, fonts, user method", left=FALSE, font=c(1,2,3), split.cex=c(1, 1.2), branch=.5, trace=1, extra=1)),
 +            "Unrecognized rpart object: treating as a class response model")
 Error : (converted from warning) Unrecognized rpart object: treating as a class response model
-Got error as expected from try(prp(fit4.strange.method, main = "left=FALSE, fonts, user method",     left = FALSE, font = c(1, 2, 3), split.cex = c(1, 1.2), branch = 0.5,     trace = 1, extra = 1))
+Got expected error from try(prp(fit4.strange.method, main = "left=FALSE, fonts, user method",     left = FALSE, font = c(1, 2, 3), split.cex = c(1, 1.2), branch = 0.5,     trace = 1, extra = 1))
 > options(warn=1) # print warnings as they occur
 > prp(fit4.strange.method, main="left=FALSE, fonts, user method", left=FALSE, font=c(1,2,3), split.cex=c(1, 1.2), branch=.5, trace=1, extra=1)
 Warning: Unrecognized rpart object: treating as a class response model
@@ -1144,7 +1115,7 @@ cex 1   xlim c(0, 1)   ylim c(0, 1)
 > expect.err(try(prp(fit.oz1, main="unknown.anova.method\ndigits=7", digits=7, trace=1)),
 +            "Unrecognized rpart object: treating as a numeric response model")
 Error : (converted from warning) Unrecognized rpart object: treating as a numeric response model
-Got error as expected from try(prp(fit.oz1, main = "unknown.anova.method\ndigits=7", digits = 7,     trace = 1))
+Got expected error from try(prp(fit.oz1, main = "unknown.anova.method\ndigits=7", digits = 7,     trace = 1))
 > options(warn=1) # print warnings as they occur
 > obj <- prp(fit.oz1, main="unknown.anova.method\ndigits=7", digits=7, trace=1)
 Warning: Unrecognized rpart object: treating as a numeric response model
@@ -1185,7 +1156,7 @@ $xlim
 [1] 0 1
 
 $ylim
-[1] -0.05  1.05
+[1] 0 1
 
 $x
  [1] 0.39948603 0.12197472 0.04154716 0.20240228 0.12269930 0.28210527
@@ -1212,18 +1183,18 @@ x 0.8907463 0.8182890 0.9632035
   0.8110433 0.8907463 0.8907463
 
 $branch.y
-       [,1]      [,2]      [,3]      [,4]      [,5]      [,6]      [,7]
-y 0.9619019 0.7256678 0.5274375 0.4894337 0.2912034 0.2531996 0.0549693
-         NA 0.9087421 0.6725080 0.6725080 0.4362739 0.4362739 0.2000398
-         NA 0.9087421 0.6725080 0.6725080 0.4362739 0.4362739 0.2000398
-       [,8]      [,9]     [,10]     [,11]     [,12]     [,13]     [,14]
-y 0.0549693 0.7256678 0.4894337 0.2912034 0.2912034 0.4894337 0.2912034
-  0.2000398 0.9087421 0.6725080 0.4362739 0.4362739 0.6725080 0.4362739
-  0.2000398 0.9087421 0.6725080 0.4362739 0.4362739 0.6725080 0.4362739
-      [,15]     [,16]     [,17]
-y 0.2531996 0.0549693 0.0549693
-  0.4362739 0.2000398 0.2000398
-  0.4362739 0.2000398 0.2000398
+      [,1]      [,2]      [,3]      [,4]      [,5]      [,6]       [,7]
+y 0.961472 0.7252379 0.5235527 0.4890038 0.2873186 0.2527697 0.05108448
+        NA 0.9131449 0.6769108 0.6769108 0.4406767 0.4406767 0.20444256
+        NA 0.9131449 0.6769108 0.6769108 0.4406767 0.4406767 0.20444256
+        [,8]      [,9]     [,10]     [,11]     [,12]     [,13]     [,14]
+y 0.05108448 0.7252379 0.4890038 0.2873186 0.2873186 0.4890038 0.2873186
+  0.20444256 0.9131449 0.6769108 0.4406767 0.4406767 0.6769108 0.4406767
+  0.20444256 0.9131449 0.6769108 0.4406767 0.4406767 0.6769108 0.4406767
+      [,15]      [,16]      [,17]
+y 0.2527697 0.05108448 0.05108448
+  0.4406767 0.20444256 0.20444256
+  0.4406767 0.20444256 0.20444256
 
 $labs
  [1] "12"  "7.4" "5.1" "9.7" "6.5" "11"  "9.1" "14"  "20"  "16"  "11"  "17" 
@@ -1240,10 +1211,10 @@ $boxes$x1
 [16] 0.7822259619 0.9271404841
 
 $boxes$y1
- [1]  0.880253481  0.644019366  0.470460254  0.407785251  0.234226138
- [6]  0.171551135 -0.002007977 -0.002007977  0.644019366  0.407785251
-[11]  0.234226138  0.234226138  0.407785251  0.234226138  0.171551135
-[16] -0.002007977 -0.002007977
+ [1]  0.8872461466  0.6510120314  0.4717551917  0.4147779162  0.2355210765
+ [6]  0.1785438010 -0.0007130387 -0.0007130387  0.6510120314  0.4147779162
+[11]  0.2355210765  0.2355210765  0.4147779162  0.2355210765  0.1785438010
+[16] -0.0007130387 -0.0007130387
 
 $boxes$x2
  [1] 0.43554907 0.16319228 0.08276472 0.24361984 0.16391685 0.31816831
@@ -1251,9 +1222,9 @@ $boxes$x2
 [13] 0.84710632 0.76740333 0.92680930 0.85435204 0.99926657
 
 $boxes$y2
- [1] 0.9372308 0.7009966 0.5274375 0.4647625 0.2912034 0.2285284 0.0549693
- [8] 0.0549693 0.7009966 0.4647625 0.2912034 0.2912034 0.4647625 0.2912034
-[15] 0.2285284 0.0549693 0.0549693
+ [1] 0.93904367 0.70280955 0.52355271 0.46657544 0.28731860 0.23034132
+ [7] 0.05108448 0.05108448 0.70280955 0.46657544 0.28731860 0.28731860
+[13] 0.46657544 0.28731860 0.23034132 0.05108448 0.05108448
 
 
 $split.labs
@@ -1269,9 +1240,9 @@ $split.box$x1
 [13] 0.700110026          NA 0.796945275          NA          NA
 
 $split.box$y1
- [1] 0.9429285 0.7066944        NA 0.4704603        NA 0.2342261        NA
- [8]        NA 0.7066944 0.4704603        NA        NA 0.4704603        NA
-[15] 0.2342261        NA        NA
+ [1] 0.9442234 0.7079893        NA 0.4717552        NA 0.2355211        NA
+ [8]        NA 0.7079893 0.4717552        NA        NA 0.4717552        NA
+[15] 0.2355211        NA        NA
 
 $split.box$x2
  [1] 0.5009817 0.2384333        NA 0.2941081        NA 0.3722721        NA
@@ -1279,9 +1250,9 @@ $split.box$x2
 [15] 0.9845473        NA        NA
 
 $split.box$y2
- [1] 0.9999058 0.7636716        NA 0.5274375        NA 0.2912034        NA
- [8]        NA 0.7636716 0.5274375        NA        NA 0.5274375        NA
-[15] 0.2912034        NA        NA
+ [1] 0.9960209 0.7597868        NA 0.5235527        NA 0.2873186        NA
+ [8]        NA 0.7597868 0.5235527        NA        NA 0.5235527        NA
+[15] 0.2873186        NA        NA
 
 
 > par(old.par)
@@ -1507,7 +1478,7 @@ The 'extra' argument:
     Add 100 to also display the percentage of observations in the node
 
 Error : extra=12 is illegal
-Got error as expected from try(prp(a4, extra = 12, main = "extra=12"))
+Got expected error from try(prp(a4, extra = 12, main = "extra=12"))
 > expect.err(try(prp(a4, extra=99, main="extra=99")), 'extra=99 is illegal')
 
 The 'extra' argument:
@@ -1527,7 +1498,7 @@ The 'extra' argument:
     Add 100 to also display the percentage of observations in the node
 
 Error : extra=99 is illegal
-Got error as expected from try(prp(a4, extra = 99, main = "extra=99"))
+Got expected error from try(prp(a4, extra = 99, main = "extra=99"))
 > expect.err(try(prp(a4, extra=-1, main="extra=-1")), 'extra=-1 is illegal')
 
 The 'extra' argument:
@@ -1547,7 +1518,7 @@ The 'extra' argument:
     Add 100 to also display the percentage of observations in the node
 
 Error : extra=-1 is illegal
-Got error as expected from try(prp(a4, extra = -1, main = "extra=-1"))
+Got expected error from try(prp(a4, extra = -1, main = "extra=-1"))
 > expect.err(try(prp(a4, extra=1.23, main="extra=1.23")), 'extra=1.23 is illegal')
 
 The 'extra' argument:
@@ -1567,7 +1538,7 @@ The 'extra' argument:
     Add 100 to also display the percentage of observations in the node
 
 Error : extra=1.23 is illegal
-Got error as expected from try(prp(a4, extra = 1.23, main = "extra=1.23"))
+Got expected error from try(prp(a4, extra = 1.23, main = "extra=1.23"))
 > par(old.par)
 > 
 > par(mfrow=c(3,3))
@@ -1958,23 +1929,8 @@ $split.box$y2
 > # prp(a, under=T, type=4, extra=111, main="extra=111")
 > # par(old.par)
 > 
-> # # TODO this seems to not work with the new version of rpart (4.0.2)
-> # library(rpart.plot)
-> # library(rpartOrdinal)
-> # library(rpartScore)
-> # data(lowbwt)
-> # lowbwt <- lowbwt[1:80,]
-> # lowbwt$Category.s <-
-> #     ifelse(lowbwt$bwt <= 2500, 3,
-> #     ifelse(lowbwt$bwt <= 3000, 2,
-> #     ifelse(lowbwt$bwt <= 3500, 1,
-> #                                0)))
-> # # Gives error
-> # a <- rpartScore(Category.s ~ age + lwt + race + smoke +
-> #                 ptl + ht + ui + ftv, data = lowbwt)
-> # prp(a, extra=100, main="rpartScore\nextra=100", under=TRUE)
-> 
-> # Cannot install rpartOrdinal: package 'rpartOrdinal' is not available (for R version 3.2.0)
+> # TODO Cannot install rpartOrdinal: package 'rpartOrdinal' is not available (for R version 4.0.2)
+> #
 > # library(rpartOrdinal)
 > # data(lowbwt)
 > # lowbwt$Category <- factor(
@@ -2040,7 +1996,7 @@ Error : the FUN argument to the prp function needs the following arguments:
     x ...
 You have:
     xbad y1 labels ...
-Got error as expected from try(prp(a100, FUN = function(xbad, y1, labels, ...) text(xbad,     y1, labels, ...)))
+Got expected error from try(prp(a100, FUN = function(xbad, y1, labels, ...) text(xbad,     y1, labels, ...)))
 > title("a100d", cex=.6)
 > # user specified FUN only has to match up to the dots
 > prp(a100, FUN=function(x, y1, labels, ...) text(x, y1, labels, ...))
@@ -2055,7 +2011,7 @@ Error : the FUN argument to the prp function needs the following arguments:
     x ...
 You have:
     xbad y labels ...
-Got error as expected from try(prp(a100, FUN = my.bad.text))
+Got expected error from try(prp(a100, FUN = my.bad.text))
 > title("a100f", cex=.6)
 > # define the function text in the global environment and use that
 > text <- function(x, y, labels, ...) graphics::text(x, y, paste0("my-", labels), ...)
@@ -2064,5 +2020,39 @@ Got error as expected from try(prp(a100, FUN = my.bad.text))
 > title("a100g", cex=.6)
 > remove(text)
 > par(old.par)
+> 
+> library(rpartScore)
+> data(birthwt, package="MASS")
+> birthwt$Category.s <-
++     ifelse(birthwt$bwt <= 2500, 3,
++     ifelse(birthwt$bwt <= 3000, 2,
++     ifelse(birthwt$bwt <= 3500, 1,
++                                 0)))
+> a <- rpartScore(Category.s ~ age + lwt + race + smoke +
++                 ptl + ht + ui + ftv, data = birthwt)
+> cat("a$method", a$method, "\n")
+a$method user 
+> rpart.plot(a, tweak=1.2, main="rpartScore", under=TRUE)
+> plot(a)
+> text(a)
+> options(width=200)
+> print(rpart.rules(a, cover=TRUE))
+ Category.s                                                                               cover
+          0 when lwt is 110 to 138 & ui is 0 & smoke is 0                   & race <  2     12%
+          0 when lwt >=        110 & ui is 0 & smoke is 1 & age <  20                        7%
+          1 when lwt >=        138 & ui is 0 & smoke is 0                   & race <  2      9%
+          1 when lwt >=        110 & ui is 0 & smoke is 0                   & race >= 2     23%
+          2 when lwt <  110                               & age <  19                        5%
+          2 when lwt >=        110 & ui is 0 & smoke is 1 & age >=       25                 10%
+          3 when lwt <  110                               & age >=       19                 17%
+          3 when lwt >=        110 & ui is 0 & smoke is 1 & age is 20 to 25                  8%
+          3 when lwt >=        110 & ui is 1                                                 9%
+> print(rpart.predict(a, newdata=birthwt[3:7,], rules=TRUE))
+   Category.s                                                                            
+87          3 because lwt <  110                               & age >=    19            
+88          3 because lwt <  110                               & age >=    19            
+89          2 because lwt <  110                               & age <  19               
+91          1 because lwt >=        110 & ui is 0 & smoke is 0                & race >= 2
+92          0 because lwt is 110 to 138 & ui is 0 & smoke is 0                & race <  2
 > 
 > source("test.epilog.R")

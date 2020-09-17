@@ -147,7 +147,7 @@ expand.palette <- function(pal, default.pal)
             }
             pal_i <- match.choices(pal_i, predefined.palette.names,
                                    argname="box.palette",
-                                   err.msg=predefined.palettes.msg)
+                                   errmsg=predefined.palettes.msg)
             if(is.auto(pal_i))
                 pal_i <- default.pal
             pal_i <- getFromNamespace(pal_i, "rpart.plot")

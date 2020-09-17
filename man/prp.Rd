@@ -4,27 +4,33 @@
 \description{
 Plot an \code{\link{rpart}} model.
 
-This function combines and extends \code{\link{plot.rpart}} and
-\code{\link{text.rpart}} in the \code{\link{rpart}} package.
+First-time users should use \code{\link{rpart.plot}} instead,
+which provides a simplified interface to this function.
+
 For an overview, please see the package vignette
 \href{../doc/prp.pdf}{Plotting rpart trees with the rpart.plot package}.
-
-The function \code{\link{rpart.plot}} provides a simplified interface
-to this function.
-First-time users should use \code{\link{rpart.plot}} rather than
-this function.
 
 The arguments of this function are a superset of those of
 \code{\link{rpart.plot}} and some of the arguments have different
 defaults.
-See the \code{\link{rpart.plot}} help page for a table showing the
-different defaults.
+In detail the different defaults are:
 
-(The defaults are different for historical reasons: for backwards
+\tabular{llclcr}{
+                     \tab | \tab \code{\link{rpart.plot}} \tab | \tab \code{\link{prp}} \tab | \cr
+                     \tab   \tab               \tab   \tab              \tab   \cr
+\code{type}          \tab | \tab \code{2}      \tab | \tab \code{0}     \tab | \cr
+\code{extra}         \tab | \tab \code{"auto"} \tab | \tab \code{0}     \tab | \cr
+\code{fallen.leaves} \tab | \tab \code{TRUE}   \tab | \tab \code{FALSE} \tab | \cr
+\code{varlen}        \tab | \tab \code{0}      \tab | \tab \code{-8}    \tab | \cr
+\code{faclen}        \tab | \tab \code{0}      \tab | \tab \code{3}     \tab | \cr
+\code{box.palette}   \tab | \tab \code{"auto"} \tab | \tab \code{0}     \tab | \cr
+}
+
+The defaults are different for historical reasons: for backwards
 compatibility the defaults of \code{\link{prp}} haven't changed,
 whereas the defaults of \code{\link{rpart.plot}} were changed when
 \code{type="auto"} and \code{box.palette} were introduced
-in version 2.0.0 of this package.)
+in version 2.0.0 of this package.
 }
 \usage{
 prp(x=stop("no 'x' arg"),
@@ -105,8 +111,7 @@ prp(x=stop("no 'x' arg"),
               Similar to \code{text.rpart}'s \code{fancy=TRUE}.
               See also \code{clip.right.labs}.\cr
 
-     \bold{5} \bold{New in version 2.2.0.}
-              Show the split variable name in the interior nodes.\cr
+     \bold{5} Show the split variable name in the interior nodes.\cr
   }
   \item{extra}{
      Display extra information at the nodes. Possible values:
@@ -157,13 +162,11 @@ Automatically select a value based on the model type, as follows:\cr
               relative to observations falling \emph{in the node} --
               the sum of the probabilities across the node is 1.
 
-     \bold{10} \bold{New in version 2.2.0.}
-              Class models:
+     \bold{10} Class models:
               Like \code{9} but display the probability of the second class only.
               Useful for binary responses.\cr
 
-     \bold{11} \bold{New in version 2.2.0.}
-              Class models:
+     \bold{11} Class models:
               Like \code{10} but don't display the fitted class.\cr
 
      \bold{+100} Add \code{100} to any of the above to also display
@@ -275,7 +278,6 @@ Automatically select a value based on the model type, as follows:\cr
      (\code{a} for the first level, \code{b} for the second, etc.).
   }
   \item{roundint}{
-     \bold{New in version 3.0.0.}
      If \code{roundint=TRUE} (default) and all values of a predictor in the
      training data are integers, then splits for that predictor
      are rounded to integer.
@@ -301,7 +303,6 @@ Automatically select a value based on the model type, as follows:\cr
      or change it more than you want.
   }
 \item{clip.facs}{
-\bold{New in version 3.0.0.}
 Default \code{FALSE}.
 If \code{TRUE}, print splits on factors as \code{female} instead of
 \code{sex = female}; the variable name and equals is dropped.

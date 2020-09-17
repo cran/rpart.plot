@@ -7,9 +7,9 @@ optionally show the node numbers and rules for the predicted values.
 }
 \usage{
 rpart.predict(object, newdata,
-         type = c("vector", "prob", "class", "matrix"),
-         na.action = na.pass,
-         nn=FALSE, rules=FALSE, ...)
+              type = c("vector", "prob", "class", "matrix"),
+              na.action = na.pass,
+              nn=FALSE, rules=FALSE, ...)
 }
 \arguments{
 \item{object, newdata, type, na.action}{

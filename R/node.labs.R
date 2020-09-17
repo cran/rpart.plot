@@ -79,14 +79,22 @@ internal.node.labs <- function(x, node.fun, node.fun.name, type, extra,
         else if(x$method == "mrt")
             get.mvpart.labs(x, extra, under, digits, xsep, varlen)
         else {
+            # Special handling for rpartScore objects. They have the same class "rpart"
+            # as standard rpart objects), so we use the call field to disambiguate them.
+            is.rpartScore <- is.character(x$method) && x$method[1] == "user" &&
+                             !is.null(x$call) &&
+                             grepl("^rpartScore", format(x$call))[1]
+
             if(is.numeric.response(x)) {
-                warning0("Unrecognized rpart object: treating as a numeric response model")
-                if(x$method == "user")
+                if(!is.rpartScore)
+                    warning0("Unrecognized rpart object: treating as a numeric response model")
+                if(is.character(x$method) && x$method[1] == "user")
                     x$method = "user.with.numeric.response" # used only in err msgs
                 get.anova.labs(x, extra, under, digits, xsep, varlen, under.percent)
             } else if(is.class.response(x)) {
-                warning0("Unrecognized rpart object: treating as a class response model")
-                if(x$method == "user")
+                if(!is.rpartScore)
+                    warning0("Unrecognized rpart object: treating as a class response model")
+                if(is.character(x$method) && x$method[1] == "user")
                     x$method = "user.with.class.response" # used only in err msgs
                 get.class.labs(x, extra, under, digits, xsep, varlen,
                                class.stats, under.percent)

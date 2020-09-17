@@ -7,7 +7,6 @@ print(sessionInfo())
 print(citation("rpart.plot"))
 
 example(rpart.plot)
-example(rpart.plot.version1)
 example(prp)
 
 data(ptitanic)
@@ -888,23 +887,8 @@ par(old.par)
 # prp(a, under=T, type=4, extra=111, main="extra=111")
 # par(old.par)
 
-# # TODO this seems to not work with the new version of rpart (4.0.2)
-# library(rpart.plot)
-# library(rpartOrdinal)
-# library(rpartScore)
-# data(lowbwt)
-# lowbwt <- lowbwt[1:80,]
-# lowbwt$Category.s <-
-#     ifelse(lowbwt$bwt <= 2500, 3,
-#     ifelse(lowbwt$bwt <= 3000, 2,
-#     ifelse(lowbwt$bwt <= 3500, 1,
-#                                0)))
-# # Gives error
-# a <- rpartScore(Category.s ~ age + lwt + race + smoke +
-#                 ptl + ht + ui + ftv, data = lowbwt)
-# prp(a, extra=100, main="rpartScore\nextra=100", under=TRUE)
-
-# Cannot install rpartOrdinal: package 'rpartOrdinal' is not available (for R version 3.2.0)
+# TODO Cannot install rpartOrdinal: package 'rpartOrdinal' is not available (for R version 4.0.2)
+#
 # library(rpartOrdinal)
 # data(lowbwt)
 # lowbwt$Category <- factor(
@@ -982,5 +966,22 @@ prp(a100, FUN=text)
 title("a100g", cex=.6)
 remove(text)
 par(old.par)
+
+library(rpartScore)
+data(birthwt, package="MASS")
+birthwt$Category.s <-
+    ifelse(birthwt$bwt <= 2500, 3,
+    ifelse(birthwt$bwt <= 3000, 2,
+    ifelse(birthwt$bwt <= 3500, 1,
+                                0)))
+a <- rpartScore(Category.s ~ age + lwt + race + smoke +
+                ptl + ht + ui + ftv, data = birthwt)
+cat("a$method", a$method, "\n")
+rpart.plot(a, tweak=1.2, main="rpartScore", under=TRUE)
+plot(a)
+text(a)
+options(width=200)
+print(rpart.rules(a, cover=TRUE))
+print(rpart.predict(a, newdata=birthwt[3:7,], rules=TRUE))
 
 source("test.epilog.R")

@@ -9,13 +9,13 @@ describe.col <- function(col, show.hex=TRUE, check.palette.index=TRUE)
     rpart.plot:::describe.col(col, show.hex, check.palette.index)
 }
 stopifnot(identical(describe.col(1), "#000000 (black)"))
-stopifnot(identical(describe.col(2), "#FF0000 (red)"))
+stopifnot(identical(describe.col(2), "#DF536B (near indianred2 #EE6363)"))
 
 stopifnot(identical(describe.col(rgb(0, 1, 0)),  "#00FF00 (green)"))
 stopifnot(identical(describe.col(rgb(0, 1, 1)),  "#00FFFF (cyan)"))
 stopifnot(identical(describe.col(rgb(.1,.2,.3)), "#1A334D (near darkslategray #2F4F4F)"))
 
-stopifnot(identical(describe.col(col2rgb(3)),         "#00CD00 (green3)"))
+stopifnot(identical(describe.col(col2rgb(3)),         "#61D04F (near palegreen3 #7CCD7C)"))
 stopifnot(identical(describe.col(col2rgb("green3")),  "#00CD00 (green3)"))
 stopifnot(identical(describe.col(col2rgb("#00CD01")), "#00CD01 (near green3 #00CD00)"))
 

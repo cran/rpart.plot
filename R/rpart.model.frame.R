@@ -160,7 +160,7 @@ rpart.model.frame <- function(obj, roundint, trace, env, caller)
     }
     data <- call[["data"]]
     if(!is.null(data)) { # null if data arg not used in original call to rpart
-        if(inherits(data, "name")) {
+        if(inherits(data, "name") || inherits(data, "call")) {
             data <- try(eval(data, envir=env), silent=TRUE)
             # will be a try error here if legitimate model but data no longer available
             if(is.try.err(data) ||
@@ -171,7 +171,7 @@ rpart.model.frame <- function(obj, roundint, trace, env, caller)
                 return(NA)
             }
         } else if(!is.data.frame(data) && !is.matrix(data)) {
-            msg("Bad 'data' field in model 'call' (expected a data.frame or a matrix)")
+            msg("Bad 'data' argument in model call (expected a data.frame or a matrix)")
             return(NA)
         }
     }

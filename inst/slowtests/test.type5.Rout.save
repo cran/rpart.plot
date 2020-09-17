@@ -24,16 +24,16 @@ Loading required package: rpart
 > 
 > expect.err(try(rpart.plot(anova.model, type=-1)), "type must be 0...5, you have type=-1")
 Error : type must be 0...5, you have type=-1
-Got error as expected from try(rpart.plot(anova.model, type = -1))
+Got expected error from try(rpart.plot(anova.model, type = -1))
 > expect.err(try(rpart.plot(anova.model, type=6)), "type must be 0...5, you have type=6")
 Error : type must be 0...5, you have type=6
-Got error as expected from try(rpart.plot(anova.model, type = 6))
+Got expected error from try(rpart.plot(anova.model, type = 6))
 > expect.err(try(rpart.plot(anova.model, type="x")), "'type' is a string but it should be an integer")
 Error : 'type' is a string but it should be an integer
-Got error as expected from try(rpart.plot(anova.model, type = "x"))
+Got expected error from try(rpart.plot(anova.model, type = "x"))
 > expect.err(try(rpart.plot(anova.model, type=1.23)), "type=1.23 but it should be an integer")
 Error : type=1.23 but it should be an integer
-Got error as expected from try(rpart.plot(anova.model, type = 1.23))
+Got expected error from try(rpart.plot(anova.model, type = 1.23))
 > 
 > par(old.par)
 > 
@@ -74,16 +74,16 @@ Got error as expected from try(rpart.plot(anova.model, type = 1.23))
 > 
 > expect.err(try(prp(anova.model, type=-1)), "type must be 0...5, you have type=-1")
 Error : type must be 0...5, you have type=-1
-Got error as expected from try(prp(anova.model, type = -1))
+Got expected error from try(prp(anova.model, type = -1))
 > expect.err(try(prp(anova.model, type=6)), "type must be 0...5, you have type=6")
 Error : type must be 0...5, you have type=6
-Got error as expected from try(prp(anova.model, type = 6))
+Got expected error from try(prp(anova.model, type = 6))
 > expect.err(try(prp(anova.model, type="x")), "'type' is a string but it should be an integer")
 Error : 'type' is a string but it should be an integer
-Got error as expected from try(prp(anova.model, type = "x"))
+Got expected error from try(prp(anova.model, type = "x"))
 > expect.err(try(prp(anova.model, type=1.23)), "type=1.23 but it should be an integer")
 Error : type=1.23 but it should be an integer
-Got error as expected from try(prp(anova.model, type = 1.23))
+Got expected error from try(prp(anova.model, type = 1.23))
 > 
 > par(old.par)
 > 

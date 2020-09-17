@@ -1,6 +1,21 @@
 Changes to rpart.plot
 ---------------------
 
+3.0.9  Sep 16, 2020
+
+  We now support models built with rpart(formula, data=func(data)),
+  where the data argument is a function call.
+
+  Removed the very old function rpart.plot.version1.
+
+  Quietened the warning for rpartScore models (treat rpartScore as a special case).
+
+  Minor documentation updates.
+
+  Updated the libraries shared with the earth and plotmo packages.
+
+  Updated the test scripts for R version 4.0.2.
+
 3.0.8  Aug 21, 2019
 
   Updated test scripts for the new random number generator

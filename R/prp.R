@@ -79,34 +79,34 @@ rpart.plot <- function(x=stop("no 'x' arg"),
         box.palette=box.palette, shadow.col=shadow.col,
         ...)
 }
-rpart.plot.version1 <- function(x=stop("no 'x' arg"),
-    type=0, extra=0, under=FALSE, fallen.leaves=FALSE,
-    digits=2, varlen=-8, faclen=3,
-    cex=NULL, tweak=1,
-    snip=FALSE,
-    box.palette=0, shadow.col=0,
-    ...)
-{
-    if(!inherits(x, "rpart"))
-        stop("Not an rpart object")
-    # We have to get "trace" for get.modelframe.info, but I don't want to
-    # add trace to the rpart.plot arg list, hence the following bit of
-    # code to get trace from the dots.
-    dots <- match.call(expand.dots=FALSE)$...
-    trace <- 0
-    if(!is.null(dots$trace))
-        trace <- eval(dots$trace)
-    x$varinfo <- get.modelframe.info(x, roundint=FALSE, trace,
-                                     parent.frame(), "rpart.plot.version1")
-    prp(x,
-        type=type, extra=extra,
-        under=under, fallen.leaves=fallen.leaves, clip.facs=FALSE,
-        digits=digits, varlen=varlen, faclen=faclen, roundint=FALSE,
-        cex=cex, tweak=tweak,
-        snip=snip,
-        box.palette=box.palette, shadow.col=shadow.col,
-        ...)
-}
+# rpart.plot.version1 <- function(x=stop("no 'x' arg"),
+#     type=0, extra=0, under=FALSE, fallen.leaves=FALSE,
+#     digits=2, varlen=-8, faclen=3,
+#     cex=NULL, tweak=1,
+#     snip=FALSE,
+#     box.palette=0, shadow.col=0,
+#     ...)
+# {
+#     if(!inherits(x, "rpart"))
+#         stop("Not an rpart object")
+#     # We have to get "trace" for get.modelframe.info, but I don't want to
+#     # add trace to the rpart.plot arg list, hence the following bit of
+#     # code to get trace from the dots.
+#     dots <- match.call(expand.dots=FALSE)$...
+#     trace <- 0
+#     if(!is.null(dots$trace))
+#         trace <- eval(dots$trace)
+#     x$varinfo <- get.modelframe.info(x, roundint=FALSE, trace,
+#                                      parent.frame(), "rpart.plot.version1")
+#     prp(x,
+#         type=type, extra=extra,
+#         under=under, fallen.leaves=fallen.leaves, clip.facs=FALSE,
+#         digits=digits, varlen=varlen, faclen=faclen, roundint=FALSE,
+#         cex=cex, tweak=tweak,
+#         snip=snip,
+#         box.palette=box.palette, shadow.col=shadow.col,
+#         ...)
+# }
 prp <- function(x=stop("no 'x' arg"),
     type=0, extra=0, under=FALSE, fallen.leaves=FALSE,
     nn=FALSE, ni=FALSE, yesno=TRUE,

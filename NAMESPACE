@@ -1,7 +1,6 @@
 import(rpart)
 export(prp)
 export(rpart.plot)
-export(rpart.plot.version1)
 export(rpart.predict)
 export(rpart.rules)
 export(show.prp.palettes)

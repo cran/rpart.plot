@@ -50,7 +50,7 @@ cex 0.849   xlim c(0, 1)   ylim c(0, 1)
 Error : Diverging palettes like box.palette="BuGn" cannot be used for this model
        because there are NAs in the fitted values.
        Try something like box.palette="Blues"
-Got error as expected from try(rpart.plot(survived, nn = 1, type = 1, fallen.leaves = FALSE,     main = "survived with na"))
+Got expected error from try(rpart.plot(survived, nn = 1, type = 1, fallen.leaves = FALSE,     main = "survived with na"))
 > 
 > rpart.plot(survived, nn=1, type=1, fallen.leaves=FALSE, box.palette="Blues",
 +            main="survived with na")

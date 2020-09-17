@@ -11,25 +11,11 @@ For an overview, please see the package vignette
 This function is a simplified front-end to \code{\link{prp}},
 with only the most useful arguments of that function, and
 with different defaults for some of the arguments.
-
-The different defaults for the \code{extra} and \code{col.palette}
-arguments mean that this function automatically creates a colored plot
-suitable for the type of model (whereas \code{\link{prp}} by default
-creates a minimal plot).  In detail the different defaults are:
-
-\tabular{llclcr}{
-                     \tab | \tab \code{\link{rpart.plot}} \tab | \tab \code{\link{prp}} \tab | \cr
-                     \tab   \tab               \tab   \tab              \tab   \cr
-\code{type}          \tab | \tab \code{2}      \tab | \tab \code{0}     \tab | \cr
-\code{extra}         \tab | \tab \code{"auto"} \tab | \tab \code{0}     \tab | \cr
-\code{fallen.leaves} \tab | \tab \code{TRUE}   \tab | \tab \code{FALSE} \tab | \cr
-\code{varlen}        \tab | \tab \code{0}      \tab | \tab \code{-8}    \tab | \cr
-\code{faclen}        \tab | \tab \code{0}      \tab | \tab \code{3}     \tab | \cr
-\code{box.palette}   \tab | \tab \code{"auto"} \tab | \tab \code{0}     \tab | \cr
-}
-
-The function \code{\link{rpart.plot.version1}} is compatible with
-old versions of this function and has the same defaults as \code{\link{prp}}.
+The different defaults mean that this function automatically creates a
+colored plot suitable for the type of model (whereas \code{\link{prp}}
+by default creates a minimal plot).
+See the \code{\link{prp}} help page for a table showing the
+different defaults.
 }
 \usage{
 rpart.plot(x = stop("no 'x' arg"),
@@ -69,8 +55,7 @@ If you don't want a colored plot, use \code{box.palette=0}.
               Similar to \code{text.rpart}'s \code{fancy=TRUE}.
               See also \code{clip.right.labs}.\cr
 
-     \bold{5} \bold{New in version 2.2.0.}
-              Show the split variable name in the interior nodes.\cr
+     \bold{5} Show the split variable name in the interior nodes.\cr
   }
   \item{extra}{
      Display extra information at the nodes. Possible values:
@@ -121,13 +106,11 @@ Automatically select a value based on the model type, as follows:\cr
               relative to observations falling \emph{in the node} --
               the sum of the probabilities across the node is 1.
 
-     \bold{10} \bold{New in version 2.2.0.}
-              Class models:
+     \bold{10} Class models:
               Like \code{9} but display the probability of the second class only.
               Useful for binary responses.\cr
 
-     \bold{11} \bold{New in version 2.2.0.}
-              Class models:
+     \bold{11} Class models:
               Like \code{10} but don't display the fitted class.\cr
 
      \bold{+100} Add \code{100} to any of the above to also display
@@ -186,7 +169,6 @@ Automatically select a value based on the model type, as follows:\cr
      (\code{a} for the first level, \code{b} for the second, etc.).
   }
   \item{roundint}{
-     \bold{New in version 3.0.0.}
      If \code{roundint=TRUE} (default) and all values of a predictor in the
      training data are integers, then splits for that predictor
      are rounded to integer.
@@ -212,7 +194,6 @@ Automatically select a value based on the model type, as follows:\cr
      or change it more than you want.
   }
 \item{clip.facs}{
-\bold{New in version 3.0.0.}
 Default \code{FALSE}.
 If \code{TRUE}, print splits on factors as \code{female} instead of
 \code{sex = female}; the variable name and equals is dropped.
@@ -277,7 +258,6 @@ The returned value is identical to that of \code{\link{prp}}.
 \seealso{
   The package vignette \href{../doc/prp.pdf}{Plotting rpart trees with the rpart.plot package}\cr
   \code{\link{prp}}\cr
-  \code{\link{rpart.plot.version1}}\cr
   \code{\link{rpart.rules}}\cr
 Functions in the \code{rpart} package:
   \code{\link{plot.rpart}}

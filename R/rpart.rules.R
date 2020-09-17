@@ -7,7 +7,7 @@ rpart.rules <- function(x=stop("no 'x' argument"),
                         roundint=TRUE, clip.facs=FALSE,
                         varorder=NULL, ...)
 {
-   if(!inherits(x, "rpart"))
+    if(!inherits(x, "rpart"))
         stop("Not an rpart object")
 
     ret <- check.if.dot.arg.supported.by.rpart.rules(...)

@@ -13,9 +13,6 @@ get.layout <- function(obj, type, nn, yesno, fallen.leaves, branch,
     max.auto.cex, min.auto.cex, ycompress.cex, accept.cex,
     shift.amounts, Fallen.yspace, bg)
 {
-    printf2 <- function(...) if(trace >= 2) cat0(sprint(..., sep=""))
-    printf3 <- function(...) if(trace >= 4) cat0("        ", sprint(..., sep=""))
-
     merge1 <- function(vec, split.vec)
     {
         vec       <- recycle(vec, nodes)
@@ -283,9 +280,10 @@ get.layout <- function(obj, type, nn, yesno, fallen.leaves, branch,
                     break
                 }
             }
-            printf3(
+            if(trace >= 4)
+                printf(
 "get.actual.scale: scale %4.2f relative.scale %4.2f best.scale %4.2f upper-lower %5.3f\n",
-                scale, relative.scale, best.scale, upper - lower)
+                    scale, relative.scale, best.scale, upper - lower)
             if(upper - lower < .02)
                 break
             scale <- (lower + upper) / 2
@@ -359,12 +357,14 @@ get.layout <- function(obj, type, nn, yesno, fallen.leaves, branch,
                 shifted.y <- get.shifted.y(shift.amount, ref.shift, nnodes)
                 # check that a shift doesn't move nodes above the nodes for the level above
                 if(any(shifted.y > shifted.y[iparents], na.rm=TRUE)) {
-                    printf2("    node shifter: skipping invalid      shift.amount %-4.1f\n", shift.amount)
+                    if(trace >= 2)
+                        printf("    node shifter: skipping invalid      shift.amount %-4.1f\n", shift.amount)
                     next
                 }
                 scale.after.shifting <- get.actual.scale(x.org, shifted.y, split.yshift)
-                printf2("    node shifter: cex improvement %-5.3g shift.amount %-4.1f ",
-                        scale.after.shifting / start.scale, shift.amount)
+                if(trace >= 2)
+                    printf("    node shifter: cex improvement %-5.3g shift.amount %-4.1f ",
+                           scale.after.shifting / start.scale, shift.amount)
                 # Note use of >= versus > below, so will use 1st shift unless actually worse.
                 # We do want to move enough to allow some room for expansion, but
                 # don't want to move labels too far up towards the fancy split labels.
@@ -375,7 +375,8 @@ get.layout <- function(obj, type, nn, yesno, fallen.leaves, branch,
                     if(trace >= 2)
                         printf("<new best")
                 }
-                printf2("\n")
+                if(trace >= 2)
+                    printf("\n")
             }
             list(best.scale.after.shifting=best.scale.after.shifting,
                  best.shift.amount=best.shift.amount)
@@ -403,8 +404,9 @@ get.layout <- function(obj, type, nn, yesno, fallen.leaves, branch,
                 # Note that the scale returned by get.actual.scale is clamped at
                 # min.auto.cex and thus can't be used to compare different configurations.
 
-                printf2("shifter: forcing shift, because start.scale %.3g <= min.auto.cex %.3g\n",
-                        start.scale, min.auto.cex)
+                if(trace >= 2)
+                    printf("shifter: forcing shift, because start.scale %.3g <= min.auto.cex %.3g\n",
+                           start.scale, min.auto.cex)
                 if(accept.cex > .98)
                     accept.cex <- .98 # force shift to be accepted, unless actually worse
             }
@@ -427,8 +429,8 @@ get.layout <- function(obj, type, nn, yesno, fallen.leaves, branch,
         new.scale <- get.actual.scale(x, y, split.yshift)
         xmax <- round(new.scale * xcompact.ratio - .05, 1) # round down to one digit after point
         xmax <- max(xmax, 1) # never expand horizontally
-        if(xmax != 1)
-            printf2("compacted horizontally, new xlim is c(0, %.3g)\n", xmax)
+        if(xmax != 1 && trace >= 2)
+            printf("compacted horizontally, new xlim is c(0, %.3g)\n", xmax)
         xmax
     }
     do.ycompact <- function(scale)
@@ -467,8 +469,8 @@ get.layout <- function(obj, type, nn, yesno, fallen.leaves, branch,
             new.ymax <- new.ymax + .1 # TODO could use an intelligent bump here for speed
         }
         ymax <- max(1, round(ymax - .05, 1)) # round down to one digit after point
-        if(ymax > 1)
-            printf2("compacted vertically, new ylim is c(0, %.3g)\n", ymax)
+        if(ymax > 1 && trace >= 2)
+            printf("compacted vertically, new ylim is c(0, %.3g)\n", ymax)
         ymax
     }
     tree.depth <- function (nodes) # lifted from rpart::tree.depth.R
@@ -506,7 +508,8 @@ get.layout <- function(obj, type, nn, yesno, fallen.leaves, branch,
     scale <- ymax <- xmax <- 1
     scale <- get.actual.scale(x.org, y.org, split.yshift)
 
-    printf2("initial scale %.3g\n", scale)
+    if(trace >= 2)
+        printf("initial scale %.3g\n", scale)
     shifted <- shifter(scale)
     if(shifted$scale / scale >= shifted$accept.cex) {
         y <- shifted$y
@@ -515,7 +518,8 @@ get.layout <- function(obj, type, nn, yesno, fallen.leaves, branch,
     }
     scale.before.clip <- scale
     if(auto.cex && scale > max.auto.cex) {
-        printf2("clipped scale %.3g to max.auto.cex %.3g\n", scale, max.auto.cex)
+        if(trace >= 2)
+            printf("clipped scale %.3g to max.auto.cex %.3g\n", scale, max.auto.cex)
         scale <- max.auto.cex
     }
     # get node xy taking into account xmin, xmax etc. adjustment for labs on edges

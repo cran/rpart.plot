@@ -647,6 +647,10 @@ expect.err(try(prp(a4, extra=12, main="extra=12")), 'extra=12 is illegal')
 expect.err(try(prp(a4, extra=99, main="extra=99")), 'extra=99 is illegal')
 expect.err(try(prp(a4, extra=-1, main="extra=-1")), 'extra=-1 is illegal')
 expect.err(try(prp(a4, extra=1.23, main="extra=1.23")), 'extra=1.23 is illegal')
+# Dec 2020: test illegal args
+expect.err(try(prp(a4, nonesuch=99())), 'prp: illegal argument "nonesuch"')
+expect.err(try(prp(a4, cex.mx=99)),     'prp: illegal argument "cex.mx"')
+expect.err(try(prp(a4, xl.=c(1,2))),    'prp: illegal argument "xl."')
 par(old.par)
 
 par(mfrow=c(3,3))
@@ -887,7 +891,7 @@ par(old.par)
 # prp(a, under=T, type=4, extra=111, main="extra=111")
 # par(old.par)
 
-# TODO Cannot install rpartOrdinal: package 'rpartOrdinal' is not available (for R version 4.0.2)
+# TODO Cannot install rpartOrdinal: package 'rpartOrdinal' is not available (for R version 4.0.3)
 #
 # library(rpartOrdinal)
 # data(lowbwt)

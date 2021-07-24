@@ -5,7 +5,7 @@
 Loading required package: rpart
 > 
 > print(sessionInfo())
-R version 4.0.2 (2020-06-22)
+R version 4.1.0 (2021-05-18)
 Platform: x86_64-w64-mingw32/x64 (64-bit)
 Running under: Windows 7 x64 (build 7601) Service Pack 1
 
@@ -22,18 +22,18 @@ attached base packages:
 [1] stats     graphics  grDevices utils     datasets  methods   base     
 
 other attached packages:
-[1] rpart.plot_3.0.9 rpart_4.1-15    
+[1] rpart.plot_3.1.0 rpart_4.1-15    
 
 loaded via a namespace (and not attached):
-[1] compiler_4.0.2
+[1] compiler_4.1.0
 > print(citation("rpart.plot"))
 Warning in citation("rpart.plot") :
   no date field in DESCRIPTION file of package 'rpart.plot'
 
 To cite package 'rpart.plot' in publications use:
 
-  Stephen Milborrow (2020). rpart.plot: Plot 'rpart' Models: An
-  Enhanced Version of 'plot.rpart'. R package version 3.0.9.
+  Stephen Milborrow (2021). rpart.plot: Plot 'rpart' Models: An
+  Enhanced Version of 'plot.rpart'. R package version 3.1.0.
   http://www.milbo.org/rpart-plot/index.html
 
 A BibTeX entry for LaTeX users is
@@ -41,8 +41,8 @@ A BibTeX entry for LaTeX users is
   @Manual{,
     title = {rpart.plot: Plot 'rpart' Models: An Enhanced Version of 'plot.rpart'},
     author = {Stephen Milborrow},
-    year = {2020},
-    note = {R package version 3.0.9},
+    year = {2021},
+    note = {R package version 3.1.0},
     url = {http://www.milbo.org/rpart-plot/index.html},
   }
 
@@ -1539,6 +1539,16 @@ The 'extra' argument:
 
 Error : extra=1.23 is illegal
 Got expected error from try(prp(a4, extra = 1.23, main = "extra=1.23"))
+> # Dec 2020: test illegal args
+> expect.err(try(prp(a4, nonesuch=99())), 'prp: illegal argument "nonesuch"')
+Error : prp: illegal argument "nonesuch"
+Got expected error from try(prp(a4, nonesuch = 99()))
+> expect.err(try(prp(a4, cex.mx=99)),     'prp: illegal argument "cex.mx"')
+Error : prp: illegal argument "cex.mx"
+Got expected error from try(prp(a4, cex.mx = 99))
+> expect.err(try(prp(a4, xl.=c(1,2))),    'prp: illegal argument "xl."')
+Error : prp: illegal argument "xl."
+Got expected error from try(prp(a4, xl. = c(1, 2)))
 > par(old.par)
 > 
 > par(mfrow=c(3,3))
@@ -1929,7 +1939,7 @@ $split.box$y2
 > # prp(a, under=T, type=4, extra=111, main="extra=111")
 > # par(old.par)
 > 
-> # TODO Cannot install rpartOrdinal: package 'rpartOrdinal' is not available (for R version 4.0.2)
+> # TODO Cannot install rpartOrdinal: package 'rpartOrdinal' is not available (for R version 4.0.3)
 > #
 > # library(rpartOrdinal)
 > # data(lowbwt)

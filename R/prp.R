@@ -340,7 +340,13 @@ prp <- function(x=stop("no 'x' arg"),
 
     if(!inherits(x, "rpart"))
         stop("Not an rpart object")
+
     obj <- x
+
+    old.warnPartialMatchDollar <- getOption("warnPartialMatchDollar")
+    if(is.boolean(old.warnPartialMatchDollar)) # prevents problem when old value is NULL
+        on.exit(options(warnPartialMatchDollar=old.warnPartialMatchDollar))
+    options(warnPartialMatchDollar=FALSE)
 
     # Process dots args.  The call to eval.parent is necessary to evaluate the
     # call to say "c" when user does something like "xlim=c(0,2)". Note
@@ -348,11 +354,6 @@ prp <- function(x=stop("no 'x' arg"),
     # TODO Is there a better way? This approach is fragile, we have to be
     #       extremely careful that abbreviation doesn't alias with other args.
     # TODO If you specify col.main=2 it affects both main and the color of the nodes.
-
-    old.warnPartialMatchDollar <- getOption("warnPartialMatchDollar")
-    if(is.boolean(old.warnPartialMatchDollar)) # prevents problem when old value is NULL
-        on.exit(options(warnPartialMatchDollar=old.warnPartialMatchDollar))
-    options(warnPartialMatchDollar=FALSE)
 
     dots <- match.call(expand.dots=FALSE)$...
     check.dots(dots)

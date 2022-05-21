@@ -1,9 +1,13 @@
 Changes to rpart.plot
 ---------------------
 
+3.1.1  May 20, 2021
+
+  Minor updates for R version 4.2.0.
+
 3.1.0  July 23, 2021
 
-  Minor updates for R version 4.1.0. 
+  Minor updates for R version 4.1.0.
   These updates quieten some warnings from sprintf when prp's trace flag is set.
 
 3.0.9  Sep 16, 2020

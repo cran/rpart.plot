@@ -5,7 +5,7 @@
 Loading required package: rpart
 > 
 > print(sessionInfo())
-R version 4.1.0 (2021-05-18)
+R version 4.2.0 (2022-04-22 ucrt)
 Platform: x86_64-w64-mingw32/x64 (64-bit)
 Running under: Windows 7 x64 (build 7601) Service Pack 1
 
@@ -22,33 +22,35 @@ attached base packages:
 [1] stats     graphics  grDevices utils     datasets  methods   base     
 
 other attached packages:
-[1] rpart.plot_3.1.0 rpart_4.1-15    
+[1] rpart.plot_3.1.1 rpart_4.1.16    
 
 loaded via a namespace (and not attached):
-[1] compiler_4.1.0
+[1] compiler_4.2.0
 > print(citation("rpart.plot"))
 Warning in citation("rpart.plot") :
   no date field in DESCRIPTION file of package 'rpart.plot'
 
 To cite package 'rpart.plot' in publications use:
 
-  Stephen Milborrow (2021). rpart.plot: Plot 'rpart' Models: An
-  Enhanced Version of 'plot.rpart'. R package version 3.1.0.
-  http://www.milbo.org/rpart-plot/index.html
+  Milborrow S (2022). _rpart.plot: Plot 'rpart' Models: An Enhanced
+  Version of 'plot.rpart'_. R package version 3.1.1,
+  <http://www.milbo.org/rpart-plot/index.html>.
 
 A BibTeX entry for LaTeX users is
 
   @Manual{,
     title = {rpart.plot: Plot 'rpart' Models: An Enhanced Version of 'plot.rpart'},
     author = {Stephen Milborrow},
-    year = {2021},
-    note = {R package version 3.1.0},
+    year = {2022},
+    note = {R package version 3.1.1},
     url = {http://www.milbo.org/rpart-plot/index.html},
   }
 
 ATTENTION: This citation information has been auto-generated from the
 package DESCRIPTION file and may need manual editing, see
 'help("citation")'.
+
+
 
 > 
 > example(rpart.plot)

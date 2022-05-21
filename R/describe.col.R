@@ -32,7 +32,7 @@ describe.col <- function(col, show.hex=TRUE, check.palette.index=TRUE)
                       " (only ", length(palette()),
                       " colors in the current palette)")
         }
-        if(is.zero(col) || is.na(col))
+        if(is.zero(col)[1] || is.na(col)[1])
             col <- par("bg")
     }
     if(must.convert)

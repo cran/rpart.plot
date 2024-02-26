@@ -562,7 +562,7 @@ classes).
   \item{split.lwd}{
      Line width of the split box border relative to \code{cex}
      (which by default is calculated automatically).
-     The border is by default invisible, see code{split.border.col}.
+     The border is by default invisible, see \code{split.border.col}.
   }
   \item{split.round}{
      Controls the rounding of the corners of the split boxes.

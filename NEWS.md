@@ -1,16 +1,21 @@
 Changes to rpart.plot
 ---------------------
 
-3.1.1  May 20, 2021
+## 3.1.2 Feb 16, 2024
+
+  Updates for R version 4.3.2.
+  For example, had to change "sort.unique" to "sort_unique".
+
+## 3.1.1  May 20, 2021
 
   Minor updates for R version 4.2.0.
 
-3.1.0  July 23, 2021
+## 3.1.0  July 23, 2021
 
   Minor updates for R version 4.1.0.
   These updates quieten some warnings from sprintf when prp's trace flag is set.
 
-3.0.9  Sep 16, 2020
+## 3.0.9  Sep 16, 2020
 
   We now support models built with rpart(formula, data=func(data)),
   where the data argument is a function call.
@@ -25,7 +30,7 @@ Changes to rpart.plot
 
   Updated the test scripts for R version 4.0.3.
 
-3.0.8  Aug 21, 2019
+## 3.0.8  Aug 21, 2019
 
   Updated test scripts for the new random number generator
   that came with R version 3.6.0.
@@ -38,13 +43,13 @@ Changes to rpart.plot
   never predicted in the training data, even when rpart doesn't
   include such classes in yval2.
 
-3.0.7  Apr 11, 2019
+## 3.0.7  Apr 11, 2019
 
   Minor documentation updates.
   Minor updates to the libraries shared with earth and plotmo.
   This package now requires R version at least 3.4.0.
 
-3.0.6  Nov 23, 2018
+## 3.0.6  Nov 23, 2018
 
   Minor changes to internal function calls to prevent warnings when
   options(warnPartialMatchArgs=TRUE).
@@ -53,7 +58,7 @@ Changes to rpart.plot
 
   Added "LazyData: yes" to the DESCRIPTION file.
 
-3.0.5  Nov 2, 2018
+## 3.0.5  Nov 2, 2018
 
   We now handle splits with very small values better (less than 1e-10).
   Thanks to Petr Lenhard for help on this.
@@ -61,7 +66,7 @@ Changes to rpart.plot
   Added the "under.percent" argument to control spacing before
   the percentage when 100 is used with the "extra" argument.
 
-3.0.4  Aug 13, 2018
+## 3.0.4  Aug 13, 2018
 
   Variables with values 0 and 1 only are now treated as logical variables
   if roundint=TRUE i.e. they are displayed as "var is 0" and "var is 1".
@@ -74,7 +79,7 @@ Changes to rpart.plot
 
   Documentation updates.
 
-3.0.3  Aug 5, 2018
+## 3.0.3  Aug 5, 2018
 
   Survival responses are now once again handled correctly (broken
   in version 3.0.0).  Thanks to Robert Redd for help on this.
@@ -87,15 +92,15 @@ Changes to rpart.plot
 
   Documentation updates.
 
-3.0.2  July 25, 2018
+## 3.0.2  July 25, 2018
 
   Documentation fixes.
 
-3.0.1  July 19, 2018
+## 3.0.1  July 19, 2018
 
   Touchups to the documentation and code for rules.
 
-3.0.0  July 10, 2018
+## 3.0.0  July 10, 2018
 
   Added the rpart.rules function to display a set of rules for a tree.
 
@@ -125,7 +130,7 @@ Changes to rpart.plot
   "pclass = 2nd,3rd" is displayed simply as "2nd,3rd".
   See Section 4.1 in the package vignette.
 
-2.2.0    May 19, 2018
+## 2.2.0    May 19, 2018
 
   Added new option type=5 (puts the split variable name in the interior nodes).
 
@@ -146,18 +151,18 @@ Changes to rpart.plot
   (but that happens outside the standard CRAN build system).  It does mean
   that the tar.gz file for rpart.plot is a little smaller (now 628 kByte).
 
-2.1.2    Apr 20, 2017
+## 2.1.2    Apr 20, 2017
 
   Added dependency on R version 3.2.0 (necessary for use of anyNA).
 
   The digits argument can now be negative, meaning use the standard
   R "format" function (with the absolute value of digits).
 
-2.1.1    Feb 17, 2017
+## 2.1.1    Feb 17, 2017
 
   Added the BlGnYl palette.
 
-2.1.0    Sep 26, 2016
+## 2.1.0    Sep 26, 2016
 
   Added the pal.thresh and pal.node.fun arguments, and the
   show.prp.palettes function.  Tweaked the colors in the
@@ -170,11 +175,11 @@ Changes to rpart.plot
   of internal.node.labs and internal.split.labs). The default
   behaviour hasn't changed.
 
-2.0.1    Jun 22, 2016
+## 2.0.1    Jun 22, 2016
 
   Using box.palette=0 now works more consistently.
 
-2.0.0    Jun 10, 2016
+## 2.0.0    Jun 10, 2016
 
   The function rpart.plot now has different defaults, so it
   automatically creates a colored plot tailored to the type of model.
@@ -202,51 +207,51 @@ Changes to rpart.plot
   Merged the library source file lib.R with the earth and
   plotmo packages's lib.R.
 
-1.5.3    Sep 30, 2015
+## 1.5.3    Sep 30, 2015
    We now deal correctly with the situation when the user has
    a variable named "text" in the current environment.
 
    Minor updates for CRAN checks.
 
-1.5.2    Feb 4, 2015
+## 1.5.2    Feb 4, 2015
    Added an example to the vignette based on a question on Stack Exchange.
    Unified some small utility funcs like printf with my other packages.
 
-1.5.1    Dec 14, 2014
+## 1.5.1    Dec 14, 2014
    Removed link in the man pages to obsoleted package mvpart.
    Documentation touchups.
 
-1.5.0    Nov 30, 2014
+## 1.5.0    Nov 30, 2014
    Updates to the documentation, mostly to satisfy CRAN recommendations.
    The slowtests postscript file is no longer included, to reduce package size.
 
-1.4-5    Nov 19, 2014
+## 1.4-5    Nov 19, 2014
    Added an example to the vignette for wrapping long split labels over multiple lines.
    Added inst/slowtests/webpage-figs.R so user can regenerate the web page figures.
    Added bibliography to the vignette.
    Minor updates to the vignette and test scripts.
 
-1.4-4    Feb 5, 2014
+## 1.4-4    Feb 5, 2014
    Removed use of ::: by removing outdated conversion from old-style
    rpart objects.  This change was made mainly to satisfy CRAN checks.
 
    Moved slow tests from the src/tests to the inst/slowtests directory.
 
-1.4-3    Dec 20, 2012
+## 1.4-3    Dec 20, 2012
    Loosened sanity check in get.class.labs to allow for numerical error.
    Thanks for Sandrine Lunven for help with this issue.
 
    Tweaked vignette to refer now to the rpart package vignette (instead
    of the old rpart reports).
 
-1.4-2    Dec 15, 2012
+## 1.4-2    Dec 15, 2012
 
     Changed some code that was using "0" as a color.
     Changed some code that was doing rep(NULL, n).
     R 2.15-2 complains about the above, although previous versions
     let them slip by.
 
-1.4-1    Oct 24, 2012
+## 1.4-1    Oct 24, 2012
 
     Updates for compatibility with rpart_3.1-55 (R 2.15.2).
 
@@ -254,7 +259,7 @@ Changes to rpart.plot
     with plot.rpart,  added section on using split.fun, other
     touchups).
 
-1.4-0    Oct 10, 2012
+## 1.4-0    Oct 10, 2012
 
     We now minimally access internal functions in the rpart package
     (which are accessed using "rpart:::") and thus are now less
@@ -265,7 +270,7 @@ Changes to rpart.plot
     The vignette now has an appendix on mvpart objects.
 
 
-1.3-0    Aug 15, 2012
+## 1.3-0    Aug 15, 2012
 
     There is now more white space in the split text (achieved by
     adding white space to the default eq, lt, and ge args).
@@ -283,31 +288,31 @@ Changes to rpart.plot
 
     Removed unnecessary LICENSE file because rpart is now GSL-3.
 
-1.2-2    Mar 31, 2011
+## 1.2-2    Mar 31, 2011
 
     Touch-ups for the new version of plotmo (1.2-6)
 
-1.2-1    Mar 25, 2011
+## 1.2-1    Mar 25, 2011
 
     Touch-ups to the vignette.
 
-1.2-0    Mar 24, 2011
+## 1.2-0    Mar 24, 2011
 
     Added the clip.left.labs argument.
     Extended the vignette.
 
-1.1-1    Mar 9, 2011
+## 1.1-1    Mar 9, 2011
 
     We now call the object's text() function unless the object
     has a standard method ("anova", "class", "poisson" or "exp").
     We now support mvpart::mrt objects
 
-1.1-0    Mar 5, 2011
+## 1.1-0    Mar 5, 2011
 
     The prp.pdf file is now smaller, thanks to qpdf.
     Made several miscellaneous touch-ups to docs and code.
     Thanks to Jason Roberts for his feedback.
 
-1.0-0    Feb 25, 2011
+## 1.0-0    Feb 25, 2011
 
     Initial release

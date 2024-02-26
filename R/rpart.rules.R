@@ -139,7 +139,7 @@ print.rpart.rules <- function(x=stop("no 'x' argument"),
         class(x) <- "data.frame"
         print(x, row.names=FALSE)
     } else if(style == "tall" || style == "tallw")
-        print.style.tall(x, style, eq=attr(x, "eq"),
+        print_style_tall(x, style, eq=attr(x, "eq"),
                          and=attr(x, "and"), when=attr(x, "when"))
     else
         stop0("illegal style ", style)
@@ -333,7 +333,7 @@ process.rules <- function(obj, rules, style, cover, nn, clip.facs,
                           nrules.per.var, varnames, response.name,
                           is.class.response, ylevels)
 {
-    ret <- format.fit(rules$fit, digits, is.class.response)
+    ret <- format_fit(rules$fit, digits, is.class.response)
         rules$fit <- ret$fit
         rowmaxs   <- ret$rowmaxs
         ncol.fit  <- ret$ncol.fit
@@ -348,7 +348,7 @@ process.rules <- function(obj, rules, style, cover, nn, clip.facs,
             varnames        <- ret$shortnames
     }
     rules.cover <- rules$cover
-    rules <- format.rules(rules, style, cover, clip.facs, eq, lt, ge, and, when,
+    rules <- format_rules(rules, style, cover, clip.facs, eq, lt, ge, and, when,
                           digits, trace,
                           response.name, varnames, ncol.fit)
     # retain only used columns
@@ -407,11 +407,11 @@ process.rules <- function(obj, rules, style, cover, nn, clip.facs,
     # format.gt and format.le although we called format() with all elements
     trim.leading.space.in.columns(rules)
 }
-format.fit <- function(fit, digits, is.class.response)
+format_fit <- function(fit, digits, is.class.response)
 {
     fit <- strsplit(fit, " ", fixed=TRUE) # ".12 .34 .56" becomes ".12" ".34" ".56"
     nrow <- length(fit) # fit is a list
-    fit <- matrix(as.numeric.na.ok(unlist(fit)), nrow=nrow, byrow=TRUE) # matrix of floats
+    fit <- matrix(as_numeric_na_ok(unlist(fit)), nrow=nrow, byrow=TRUE) # matrix of floats
     ncol.fit <- ncol(fit)
     rowmaxs <-
         if(ncol.fit == 2) {
@@ -449,7 +449,7 @@ trim.surrounding.space <- function(s)
     # trim leading and trailing space (this trims a maximum of one space on each side)
     gsub("^ | $", "", s)
 }
-as.numeric.na.ok <- function(x) # as.numeric issues warning if NAs, we don't want that
+as_numeric_na_ok <- function(x) # as.numeric issues warning if NAs, we don't want that
 {
     old.warn <- getOption("warn")   # no warning in as.numeric() if NAs in fit
     on.exit(options(warn=old.warn))
@@ -467,7 +467,7 @@ apply.varlen.to.colnames <- function(rules, varnames, varlen)
     }
     list(colnames=colnames, shortnames=shortnames)
 }
-format.rules <- function(rules, style, cover, clip.facs, eq, lt, ge, and, when,
+format_rules <- function(rules, style, cover, clip.facs, eq, lt, ge, and, when,
                          digits, trace,
                          response.name, varnames, ncol.fit)
 {
@@ -476,7 +476,7 @@ format.rules <- function(rules, style, cover, clip.facs, eq, lt, ge, and, when,
         icol <<- icol + 1
         sprint("c%d", icol)
     }
-    #--- format.rules starts here ---
+    #--- format_rules starts here ---
     # build up the new rules column by column
 
     new <- if(ncol.fit > 1) # multiple responses, add class label
@@ -685,7 +685,7 @@ order.cols <- function(rules, varorder, varnames, nrules.per.var)
     list(rules    = rules[, c(1:4, ivar), drop=FALSE], # 1:4 is lab,fit,iclass,cover
          varnames = varnames[order])
 }
-print.style.tall <- function(rules, style, eq, and, when)
+print_style_tall <- function(rules, style, eq, and, when)
 {
     newline.with.spaces <- function()
     {
@@ -698,7 +698,7 @@ print.style.tall <- function(rules, style, eq, and, when)
         if(have.nn)
             printf(format.nn, "")
     }
-    #--- print.style.tall starts here ---
+    #--- print_style_tall starts here ---
     colnames <- colnames(rules)
     ncol <- ncol(rules)
     have.nn <- colnames[1] == "nn"

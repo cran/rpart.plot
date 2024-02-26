@@ -210,7 +210,7 @@ is.diverging <- function(pal, trace)
 # Each element indicates the quantile of the corresponding element in fitted.
 # The returned index vector is intended to be used as in index into a color palette.
 
-quantile.index <- function(fitted, pal.halflen, trace)
+quantile_index <- function(fitted, pal.halflen, trace)
 {
     # length(fitted)==0 if called from get.col.from.diverging.palette
     # and no fitted > pal.thresh
@@ -224,19 +224,19 @@ quantile.index <- function(fitted, pal.halflen, trace)
     q <- quantile(fitted.nona,      # e.g. pal.halflen=2 means q=c(0, .5, 1)
                   probs=seq(0, 1, length.out=pal.halflen+1), na.rm=TRUE)
     q <- q[2:length(q)]             # e.g. pal.halflen=2 means q is now c(.5, 1)
-    quantile.index <- rep(NA, times=length(fitted.nona))
+    quantile_index <- rep(NA, times=length(fitted.nona))
     # TODO could be vectorized?
     for(ifitted in 1:length(fitted.nona))
         for(iq in 1:length(q)) {
             if(fitted.nona[ifitted] <= q[iq]) {
-                quantile.index[ifitted] <- iq
+                quantile_index[ifitted] <- iq
                 break
             }
         }
-    quantile.index[is.na(fitted)] <- NA
-    quantile.index
+    quantile_index[is.na(fitted)] <- NA
+    quantile_index
 }
-# Returns box colors (like palette[quantile.index]) but values in fitted
+# Returns box colors (like palette[quantile_index]) but values in fitted
 # below pal.thresh take colors in the first half of palette; values above
 # pal.thresh take colors in the second half of palette.
 # For example, with palette=BuGn, fitted values below pal.thresh=.5
@@ -251,15 +251,15 @@ get.col.from.diverging.palette <- function(fitted, pal, trace, box.palette, pal.
               "\" cannot be used for this model\n",
               "       because there are NAs in the fitted values.\n",
               "       Try something like box.palette=\"Blues\"")
-    index1 <- quantile.index(fitted[fitted <= pal.thresh], length(pal)/2, trace)
-    index2 <- quantile.index(fitted[fitted >  pal.thresh], length(pal)/2, trace)
+    index1 <- quantile_index(fitted[fitted <= pal.thresh], length(pal)/2, trace)
+    index2 <- quantile_index(fitted[fitted >  pal.thresh], length(pal)/2, trace)
     index <- rep(NA, times=length(fitted))
     index[fitted <= pal.thresh] <- index1
     index[fitted >  pal.thresh] <- index2 + length(pal) / 2
     index[is.na(fitted)] <- NA
     pal[index]
 }
-print.palette <- function(pal)
+print_palette <- function(pal)
 {
     if(length(pal) > 20)
         printf("   %d colors from %s   to   %s\n",
@@ -290,13 +290,13 @@ handle.anova.palette <- function(obj, box.palette, trace,
                describe.col(pal[length(pal)], show.hex=FALSE))
     if(trace >= 3) {
         printf("expanded box.palette:\n")
-        print.palette(pal)
+        print_palette(pal)
     }
     list(box.col=if(diverging)
                     get.col.from.diverging.palette(fitted,
                         pal, trace, box.palette, pal.thresh)
                  else
-                    pal[quantile.index(fitted, length(pal), trace)],
+                    pal[quantile_index(fitted, length(pal), trace)],
          box.palette=pal)
 }
 # multiclass response, or two class response with box.palette=list
@@ -355,7 +355,7 @@ handle.multiclass.palette <- function(obj, box.palette, trace, class.stats)
         printf("multiclass box.palette:\n")
         for(i in 1:length(box.palette)) {
             printf("box.palette[[%d]]:\n", i)
-            print.palette(box.palette[[i]])
+            print_palette(box.palette[[i]])
         }
     }
     warning.issued <- FALSE
@@ -558,7 +558,7 @@ get.palette.fitted <- function(default.fitted, node.labs, pal.node.fun, trace)
 smart.median <- function(x)
 {
     median <- median(x, na.rm=TRUE)
-    sort <- sort.unique(x)
+    sort <- sort_unique(x)
     len <- length(sort)
     if(len >= 2) {
         if(median == sort[1])
@@ -596,7 +596,7 @@ handle.box.palette <- function(obj, box.palette, trace, class.stats, node.labs,
                                      node.labs, pal.node.fun, trace)
         handle.anova.palette(obj, box.palette, trace, fitted,
             get.pal.thresh(smart.median(fitted)))
-    } else if(obj$method == "anova" || is.numeric.response(obj)) {
+    } else if(obj$method == "anova" || is_numeric_response(obj)) {
         fitted <- get.palette.fitted(obj$frame$yval,
                                      node.labs, pal.node.fun, trace)
         handle.anova.palette(obj, box.palette, trace, fitted,

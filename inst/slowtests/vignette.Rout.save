@@ -10,7 +10,6 @@ Loading required package: rpart
 Loading required package: Formula
 Loading required package: plotmo
 Loading required package: plotrix
-Loading required package: TeachingDemos
 > data(ozone1)
 > par(mfrow=c(3,3), mgp = c(1.5, .5, 0))
 > a <- rpart(O3~., data=ozone1, cp=.024)
@@ -455,7 +454,7 @@ Type 'rattle()' to shake, rattle, and roll your data.
 +        main="MARS", col.persp=col.persp)
 > 
 > library(randomForest)
-randomForest 4.7-1
+randomForest 4.7-1.1
 Type rfNews() to see new features/changes/bug fixes.
 
 Attaching package: 'randomForest'

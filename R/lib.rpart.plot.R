@@ -209,7 +209,7 @@ formatf <- function(x, digits=2, strip.leading.zeros=FALSE)
 # Truncate names to smallest length where all names
 # are still unique, but retain at least minlen chars.
 
-unique.substr <- function(names, minlen)
+unique_substr <- function(names, minlen)
 {
     stopifnot(minlen > 0)
     maxlen <- 100 # arbitrary
@@ -227,7 +227,7 @@ unique.substr <- function(names, minlen)
     substr(names, 1, len)
 }
 # my.abbreviate does this:
-#   minlen < 0  truncate names (but keep them unique, see unique.substr)
+#   minlen < 0  truncate names (but keep them unique, see unique_substr)
 #   minlen = 0  leave names as is
 #   minlen > 0  abbreviate names
 # Also, if one.is.special and minlen=1 then print names using alphanumeric chars a, b, ...
@@ -245,7 +245,7 @@ my.abbreviate <- function(names, minlen, one.is.special=FALSE)
     } else if(minlen > 0)
         abbreviate(names, minlen)
     else if(minlen < 0)
-        unique.substr(names, -minlen)
+        unique_substr(names, -minlen)
     else # minlen == 0
         paste(names)
 }

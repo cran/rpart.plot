@@ -23,7 +23,6 @@ Loading required package: rpart
 Loading required package: Formula
 Loading required package: plotmo
 Loading required package: plotrix
-Loading required package: TeachingDemos
 > data(ozone1)
 > # return the given node and all its ancestors (a vector of node numbers)
 > path.to.root <- function(node, ancestors=NULL)

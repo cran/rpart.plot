@@ -503,7 +503,7 @@ prp <- function(x=stop("no 'x' arg"),
         border.col[!is.leaf] <-
             if(is.specified(split.border.col)) split.border.col else 1
     }
-    split.labs <- split.labs.wrapper(obj, split.fun,
+    split.labs <- split_labs_wrapper(obj, split.fun,
                 deparse(substitute(split.fun)),
                 split.prefix, split.suffix,
                 right.split.prefix, right.split.suffix,

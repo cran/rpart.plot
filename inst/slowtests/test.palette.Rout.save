@@ -383,7 +383,6 @@ Got expected error from try(rpart.plot(mod.country, type = 2, extra = "auto", fa
 Loading required package: Formula
 Loading required package: plotmo
 Loading required package: plotrix
-Loading required package: TeachingDemos
 > data(ozone1)
 > ozone2 <- ozone1
 > set.seed(8)

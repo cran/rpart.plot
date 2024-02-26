@@ -757,7 +757,6 @@ Got expected error from try(rpart.rules(mod))
 Loading required package: Formula
 Loading required package: plotmo
 Loading required package: plotrix
-Loading required package: TeachingDemos
 > data(ozone1)
 > fit.oz <- rpart(O3~., data=ozone1)
 > cat("rpart.rules(fit.oz)\n")

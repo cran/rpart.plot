@@ -37,7 +37,7 @@ extra.help <- function()
 is.vec <- function(x) {
     (NROW(x) == 1 || NCOL(x) == 1) && NROW(x) * NCOL(x) > 0
 }
-is.numeric.response <- function(obj) {
+is_numeric_response <- function(obj) {
     # see if we have the fields necessary for
     # get.anova.labs (but not get.class.labs)
     is.vec(obj$frame$yval) && is.null(obj$frame$yval2)
@@ -85,7 +85,7 @@ internal.node.labs <- function(x, node.fun, node.fun.name, type, extra,
                              !is.null(x$call) &&
                              grepl("^rpartScore", format(x$call))[1]
 
-            if(is.numeric.response(x)) {
+            if(is_numeric_response(x)) {
                 if(!is.rpartScore)
                     warning0("Unrecognized rpart object: treating as a numeric response model")
                 if(is.character(x$method) && x$method[1] == "user")
@@ -377,7 +377,7 @@ get.poisson.labs <- function(x, extra, under, digits, xsep,
     }
     labs
 }
-print.node.labs.and.stop <- function(labs, fun.name, ...)
+print_node_labs_and_stop <- function(labs, fun.name, ...)
 {
     cat("\nnode labs:\n")
     print(labs)
@@ -388,14 +388,14 @@ print.node.labs.and.stop <- function(labs, fun.name, ...)
 check.returned.labs <- function(x, labs, fun.name)
 {
     if(length(labs) == 0)
-        print.node.labs.and.stop(labs, fun.name, "length(labs) == 0")
+        print_node_labs_and_stop(labs, fun.name, "length(labs) == 0")
     if(!is.character(labs)) {
         labs <- as.character(labs)
         if(anyNA(labs))
-            print.node.labs.and.stop(labs, fun.name, "NA in labs")
+            print_node_labs_and_stop(labs, fun.name, "NA in labs")
     }
     if(length(labs) != nrow(x$frame))
-        print.node.labs.and.stop(labs, fun.name, "\nthe number ", length(labs),
+        print_node_labs_and_stop(labs, fun.name, "\nthe number ", length(labs),
             " of returned labels is not equal to the number of rows in frame ",
             nrow(x$frame))
 }

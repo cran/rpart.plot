@@ -1,6 +1,6 @@
 # split.labs.R: functions for generating split.labels
 
-split.labs.wrapper <- function(x, split.fun, split.fun.name,
+split_labs_wrapper <- function(x, split.fun, split.fun.name,
                                split.prefix, split.suffix,
                                right.split.prefix, right.split.suffix,
                                type, clip.facs,

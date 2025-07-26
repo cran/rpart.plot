@@ -454,7 +454,7 @@ Type 'rattle()' to shake, rattle, and roll your data.
 +        main="MARS", col.persp=col.persp)
 > 
 > library(randomForest)
-randomForest 4.7-1.1
+randomForest 4.7-1.2
 Type rfNews() to see new features/changes/bug fixes.
 
 Attaching package: 'randomForest'

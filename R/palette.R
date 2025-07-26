@@ -531,7 +531,7 @@ get.palette.fitted <- function(default.fitted, node.labs, pal.node.fun, trace)
         # extract first number in each label, if possible
         # two regexs separated by | below, first handles numbers with digits before
         # the point (if any), second handle numbers without digits before the point
-        regex <- "-?[0-9]+\\.?[0-9]*e?-?[0-9]*|-?\\.[0-9]+e?-?[0-9]*"
+        regex <- "-?[0-9]+\\.?[0-9]*e?[-+]?[0-9]*|-?\\.[0-9]+e?[-+]?[0-9]*"
         m <- regexpr(regex, node.labs)
         labs <- regmatches(node.labs, m)
         labs[m == -1] <- NA # m==-1 for entries in node.labs which don't match regex

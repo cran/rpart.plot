@@ -2,7 +2,7 @@
 \alias{rpart.plot}
 \title{Plot an rpart model. A simplified interface to the prp function.}
 \description{
-Plot an \code{\link{rpart}} model, automatically tailoring the plot
+Plot an \code{\link[rpart]{rpart}} model, automatically tailoring the plot
 for the model's response type.
 
 For an overview, please see the package vignette
@@ -34,7 +34,7 @@ Just those arguments will suffice for many users.
 If you don't want a colored plot, use \code{box.palette=0}.
 
   \item{x}{
-     An \code{\link{rpart}} object.  The only required argument.
+     An \code{\link[rpart]{rpart}} object.  The only required argument.
   }
   \item{type}{
     Type of plot. Possible values:
@@ -164,7 +164,7 @@ Automatically select a value based on the model type, as follows:\cr
      Length of factor level names in splits.
      Default \code{0}, meaning display the full factor names.
      Possible values are as \code{varlen} above, except that
-     for back-compatibility with \code{\link{text.rpart}} the special value \code{1}
+     for back-compatibility with \code{\link[rpart]{text.rpart}} the special value \code{1}
      means represent the factor levels with alphabetic characters
      (\code{a} for the first level, \code{b} for the second, etc.).
   }
@@ -251,7 +251,7 @@ e.g. \code{box.palette="-auto"} or \code{box.palette="-Grays"}.
 The returned value is identical to that of \code{\link{prp}}.
 }
 \author{
-  Stephen Milborrow, borrowing heavily from the \code{\link{rpart}}
+  Stephen Milborrow, borrowing heavily from the \code{\link[rpart]{rpart}}
   package by Terry M. Therneau and Beth Atkinson,
   and the R port of that package by Brian Ripley.
 }
@@ -260,9 +260,9 @@ The returned value is identical to that of \code{\link{prp}}.
   \code{\link{prp}}\cr
   \code{\link{rpart.rules}}\cr
 Functions in the \code{rpart} package:
-  \code{\link{plot.rpart}}
-  \code{\link{text.rpart}}
-  \code{\link{rpart}}
+  \code{\link[rpart]{plot.rpart}}
+  \code{\link[rpart]{text.rpart}}
+  \code{\link[rpart]{rpart}}
 }
 \examples{
 old.par <- par(mfrow=c(2,2))            # put 4 figures on one page

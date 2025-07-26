@@ -15,7 +15,7 @@ rpart.rules(x = stop("no 'x' argument"),
 }
 \arguments{
 \item{x}{
-An \code{\link{rpart}} object.  The only required argument.
+An \code{\link[rpart]{rpart}} object.  The only required argument.
 }
 \item{style}{One of:\cr
 \bold{"wide"} (default) One rule per line.  May require a lot of horizontal space.\cr

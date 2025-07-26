@@ -1,6 +1,6 @@
 @rem usersplits.bat:
 
-@"C:\PROGRA~1\R\R-4.3.2\bin\x64\R.exe" CMD BATCH --quiet --vanilla usersplits.R
+@"C:\PROGRA~1\R\R-4.5.1\bin\x64\R.exe" CMD BATCH --quiet --vanilla usersplits.R
 @if %errorlevel% equ 0 goto good1:
 @echo R returned errorlevel %errorlevel%, see usersplits.Rout:
 @echo.

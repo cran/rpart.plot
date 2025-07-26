@@ -18,9 +18,6 @@
 The dataset was compiled by Frank Harrell and Robert Dawson:\cr
 \url{https://hbiostat.org/data/repo/titanic.html}.
 
-See also:\cr
-\url{https://biostat.app.vumc.org/wiki/pub/Main/DataSets/titanic3info.txt}.
-
 For this version of the Titanic data, passenger details were deleted,
 \code{survived} was cast as a \code{factor},
 and the name changed to \code{ptitanic} to minimize confusion with

@@ -1,6 +1,10 @@
 Changes to rpart.plot
 ---------------------
 
+## 3.1.3 July 28, 2025
+
+  Updates for CRAN checks in R version 4.5.1.
+
 ## 3.1.2 Feb 16, 2024
 
   Updates for R version 4.3.2.

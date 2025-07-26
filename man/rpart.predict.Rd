@@ -2,7 +2,7 @@
 \alias{rpart.predict}
 \title{Extended version of predict.rpart}
 \description{
-Identical to \code{\link{predict.rpart}} but
+Identical to \code{\link[rpart]{predict.rpart}} but
 optionally show the node numbers and rules for the predicted values.
 }
 \usage{
@@ -13,9 +13,9 @@ rpart.predict(object, newdata,
 }
 \arguments{
 \item{object, newdata, type, na.action}{
-Identical to the same arguments for \code{\link{predict.rpart}}.\cr
+Identical to the same arguments for \code{\link[rpart]{predict.rpart}}.\cr
 If both \code{nn} and \code{rules} are \code{FALSE},
-the returned value is identical to \code{\link{predict.rpart}}.
+the returned value is identical to \code{\link[rpart]{predict.rpart}}.
 }
 \item{nn}{
 If \code{TRUE}, return a \code{data.frame}
@@ -35,11 +35,11 @@ for example \code{clip.facs=TRUE}.
 }
 }
 \value{
-Same as \code{\link{predict.rpart}},
+Same as \code{\link[rpart]{predict.rpart}},
 but with additional information if \code{nn=TRUE} and/or \code{rules=TRUE}.
 }
 \seealso{
-\code{\link{predict.rpart}}\cr
+\code{\link[rpart]{predict.rpart}}\cr
 \code{\link{rpart.rules}}
 }
 \examples{

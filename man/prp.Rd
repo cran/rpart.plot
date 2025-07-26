@@ -2,7 +2,7 @@
 \alias{prp}
 \title{Plot an rpart model.}
 \description{
-Plot an \code{\link{rpart}} model.
+Plot an \code{\link[rpart]{rpart}} model.
 
 First-time users should use \code{\link{rpart.plot}} instead,
 which provides a simplified interface to this function.
@@ -91,7 +91,7 @@ prp(x=stop("no 'x' arg"),
 }
 \arguments{
   \item{x}{
-     An \code{\link{rpart}} object.  The only required argument.
+     An \code{\link[rpart]{rpart}} object.  The only required argument.
   }
   \item{type}{
     Type of plot. Possible values:
@@ -199,7 +199,7 @@ Automatically select a value based on the model type, as follows:\cr
   }
   \item{ni}{
      Display the node indices,
-     i.e. the row numbers of the nodes in the object's \code{\link[=rpart.object]{frame}}.
+     i.e. the row numbers of the nodes in the object's \code{\link[rpart]{rpart.object}} \code{frame}.
      Default \code{FALSE}.
   }
   \item{yesno}{
@@ -273,7 +273,7 @@ Automatically select a value based on the model type, as follows:\cr
      Length of factor level names in splits.
      Default \code{3}, meaning \code{\link{abbreviate}} to three characters.
      Possible values are as \code{varlen} above, except that
-     for back-compatibility with \code{\link{text.rpart}} the special value \code{1}
+     for back-compatibility with \code{\link[rpart]{text.rpart}} the special value \code{1}
      means represent the factor levels with alphabetic characters
      (\code{a} for the first level, \code{b} for the second, etc.).
   }
@@ -993,9 +993,9 @@ With the default args most of these are calculated automatically.
   The package vignette \href{../doc/prp.pdf}{Plotting rpart trees with the rpart.plot package}\cr\cr
   \code{\link{rpart.plot}}\cr\cr
 Functions in the \code{rpart} package:
-  \code{\link{plot.rpart}}
-  \code{\link{text.rpart}}
-  \code{\link{rpart}}
+  \code{\link[rpart]{plot.rpart}}
+  \code{\link[rpart]{text.rpart}}
+  \code{\link[rpart]{rpart}}
 }
 \examples{
 data(ptitanic)
